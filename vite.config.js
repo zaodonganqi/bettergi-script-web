@@ -16,13 +16,4 @@ export default defineConfig({
                 import.meta.url))
         },
     },
-    css: {
-        preprocessorOptions: {
-            less: {
-                modifyVars: {
-                    'text-color': 'rgba(219, 61, 61, 0.75)',
-                }
-            }
-        }
-    }
 })

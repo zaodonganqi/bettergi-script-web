@@ -4,7 +4,7 @@
     <a-layout-sider :width="240" class="custom-sider">
       <div class="sider-header">
         <span class="sider-logo"></span>
-        <a-select v-model:value="selectedValue" style="width: 200px" @change="handleChange">
+        <a-select v-model:value="selectedValue" style="width: 180px" @change="handleChange">
           <a-select-option v-for="option in options" :key="option.value" :value="option.value">
             {{ option.label }}
           </a-select-option>
