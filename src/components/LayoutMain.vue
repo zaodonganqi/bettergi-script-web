@@ -1,10 +1,14 @@
 <template>
   <a-layout class="main-layout">
-    <!-- 侧边栏 -->
-    <a-layout-sider :width="240" class="custom-sider">
+    <!-- 左侧菜单 -->
+    <a-layout-sider class="custom-sider">
       <div class="sider-header">
-        <span class="sider-logo"></span>
-        <a-select v-model:value="selectedValue" style="width: 180px" @change="handleChange">
+        <div 
+          class="sider-logo"
+          title="访问 BetterGI 官网"
+          @click="openExternalLink"
+        ></div>
+        <a-select v-model:value="selectedValue" class="repo-select" @change="handleChange">
           <a-select-option v-for="option in options" :key="option.value" :value="option.value">
             {{ option.label }}
           </a-select-option>
@@ -26,18 +30,33 @@
         <div class="sider-link">外链2</div>
       </div>
     </a-layout-sider>
-    <!-- 主体部分 -->
-    <a-layout>
-      <!-- 顶部栏 -->
-      <a-layout-header class="custom-header">
-        <span class="header-title">脚本列表</span>
-        <a-input-search v-model:value="search" placeholder="输入关键词查询" class="header-search" />
-        <a-button type="primary" class="header-btn header-btn-all">全部</a-button>
-        <a-button class="header-btn">已订阅</a-button>
-      </a-layout-header>
-      <a-layout-content class="main-content">
-        <slot />
-      </a-layout-content>
+
+    <!-- 中间脚本列表 -->
+    <a-layout-sider class="script-sider">
+      <div class="script-header">
+        <span class="script-title">脚本列表</span>
+        <div class="script-actions">
+          <a-button type="primary" class="script-btn script-btn-all">全部</a-button>
+          <a-button class="script-btn">已订阅</a-button>
+        </div>
+      </div>
+      <div class="search-section">
+        <a-input-search
+          v-model:value="search"
+          placeholder="输入关键词查询"
+          class="script-search"
+          @search="handleSearch"
+          allow-clear
+        />
+      </div>
+      <div class="script-list">
+        <slot name="script-list" :search-key="search" />
+      </div>
+    </a-layout-sider>
+
+    <!-- 右侧内容区域 -->
+    <a-layout class="main-right">
+      <slot name="content" />
     </a-layout>
   </a-layout>
 </template>
@@ -46,12 +65,13 @@
 import { ref } from 'vue';
 import { AppstoreOutlined, FolderOutlined, FileOutlined, CalculatorOutlined, BulbOutlined } from '@ant-design/icons-vue';
 import { Select } from 'ant-design-vue';
+
 const selectedMenu = ref(['1']);
 const search = ref('');
 const menuList = [
-  { key: '1', label: '地图图案', icon: FolderOutlined, count: 128 },
+  { key: '1', label: '地图追踪', icon: FolderOutlined, count: 128 },
   { key: '2', label: 'Javascript 脚本', icon: FileOutlined, count: 9 },
-  { key: '3', label: '数学题解', icon: CalculatorOutlined, count: 4 },
+  { key: '3', label: '战斗策略', icon: CalculatorOutlined, count: 4 },
   { key: '4', label: '七圣召唤策略', icon: BulbOutlined, count: 23 },
 ];
 
@@ -65,14 +85,31 @@ const selectedValue = ref(1);
 const handleChange = (value) => {
   console.log('选择仓库变化: ', value)
 };
+
+const handleSearch = (value) => {
+  search.value = value;
+};
+
+const openExternalLink = () => {
+  window.open('https://bettergi.com/', '_blank', 'fullscreen=yes,width=1920,height=1080');
+};
 </script>
 
 <style scoped>
 .main-layout {
-  height: 100vh;
+  height: calc(100vh - 20px);
+  width: calc(100% - 20px);
+  margin: 10px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  background: #fff;
 }
 
 .custom-sider {
+  width: 320px !important;
+  min-width: 320px !important;
+  max-width: 320px !important;
   background: #f7f8fa !important;
   border-right: 1px solid #e5e7eb;
   display: flex;
@@ -81,21 +118,29 @@ const handleChange = (value) => {
 }
 
 .sider-header {
-  height: 56px;
+  height: 60px;
   display: flex;
   align-items: center;
-  padding-left: 24px;
+  padding: 0 16px;
   font-weight: 600;
   font-size: 18px;
   color: #222;
   border-bottom: 1px solid #ececec;
+  width: 100%;
 }
 
 .sider-logo {
-  width: 20px;
-  height: 20px;
-  background: url('@/assets/logo.svg') no-repeat center/contain;
+  width: 40px;
+  height: 40px;
+  background: url('@/assets/logo.png') no-repeat center/contain;
   margin-right: 10px;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.sider-logo:hover {
+  opacity: 0.8;
 }
 
 .sider-title {
@@ -104,12 +149,29 @@ const handleChange = (value) => {
 
 .sider-menu-wrap {
   flex: 1;
-  padding-top: 8px;
+  padding: 8px;
+  width: 100%;
+}
+
+.repo-select {
+  width: 100%;
+  margin-left: 10px;
+}
+
+.repo-select :deep(.ant-select-selector) {
+  height: 36px !important;
+  padding: 4px 12px !important;
+  font-size: 15px !important;
+}
+
+.repo-select :deep(.ant-select-selection-item) {
+  line-height: 28px !important;
 }
 
 .custom-menu {
   background: transparent !important;
   border: none;
+  width: 100%;
 }
 
 .custom-menu-item {
@@ -145,10 +207,11 @@ const handleChange = (value) => {
 }
 
 .sider-footer {
-  padding: 24px 0 0 24px;
+  padding: 24px 16px;
   color: #999;
   font-size: 14px;
   border-top: 1px solid #ececec;
+  width: 100%;
 }
 
 .sider-link {
@@ -156,45 +219,65 @@ const handleChange = (value) => {
   cursor: pointer;
 }
 
-.custom-header {
+.script-sider {
+  width: 320px !important;
+  min-width: 320px !important;
+  max-width: 320px !important;
   background: #fff !important;
-  border-bottom: 1px solid #e5e7eb;
-  height: 56px;
+  border-right: 1px solid #e5e7eb;
   display: flex;
+  flex-direction: column;
+}
+
+.script-header {
+  height: 60px;
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
   align-items: center;
-  padding: 0 32px 0 24px;
+  border-bottom: 1px solid #ececec;
 }
 
-.header-title {
-  font-size: 22px;
-  font-weight: 700;
+.script-title {
+  font-size: 16px;
+  font-weight: 600;
   color: #222;
-  margin-right: 32px;
 }
 
-.header-search {
-  width: 260px;
-  margin-right: auto;
+.script-actions {
+  display: flex;
+  gap: 8px;
 }
 
-.header-btn {
-  margin-left: 12px;
-  border-radius: 6px;
-  font-weight: 500;
-  height: 32px;
-  padding: 0 18px;
-  font-size: 15px;
+.script-btn {
+  height: 28px;
+  padding: 0 12px;
+  font-size: 14px;
+  border-radius: 4px;
 }
 
-.header-btn-all {
+.script-btn-all {
   background: #181822 !important;
   border: none !important;
 }
 
-.main-content {
-  display: flex;
-  height: calc(100vh - 56px);
+.search-section {
+  padding: 12px 16px;
+  border-bottom: 1px solid #ececec;
+}
+
+.script-search {
+  width: 100%;
+}
+
+.script-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+.main-right {
   background: #f5f6fa;
-  padding: 0;
+  padding: 24px;
 }
 </style>
