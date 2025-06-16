@@ -3,11 +3,7 @@
     <!-- 左侧菜单 -->
     <a-layout-sider class="custom-sider">
       <div class="sider-header">
-        <div 
-          class="sider-logo"
-          title="访问 BetterGI 官网"
-          @click="openExternalLink"
-        ></div>
+        <div class="sider-logo" title="访问 BetterGI 官网" @click="openExternalLink"></div>
         <a-select v-model:value="selectedValue" class="repo-select" @change="handleChange">
           <a-select-option v-for="option in options" :key="option.value" :value="option.value">
             {{ option.label }}
@@ -15,7 +11,7 @@
         </a-select>
       </div>
       <div class="sider-menu-wrap">
-        <a-menu v-model:selectedKeys="selectedMenu" mode="inline" class="custom-menu">
+        <a-menu v-model:selectedKeys="selectedMenu" mode="inline" class="custom-menu" @select="handleMenuSelect">
           <a-menu-item v-for="item in menuList" :key="item.key" class="custom-menu-item">
             <span class="menu-icon">
               <component :is="item.icon" />
@@ -31,43 +27,59 @@
       </div>
     </a-layout-sider>
 
-    <!-- 中间脚本列表 -->
+    <!-- 中间内容区域 -->
     <a-layout-sider class="script-sider">
       <div class="script-header">
-        <span class="script-title">脚本列表</span>
+        <span class="script-title">{{ currentMenuTitle }}</span>
         <div class="script-actions">
           <a-button type="primary" class="script-btn script-btn-all">全部</a-button>
           <a-button class="script-btn">已订阅</a-button>
         </div>
       </div>
       <div class="search-section">
-        <a-input-search
-          v-model:value="search"
-          placeholder="输入关键词查询"
-          class="script-search"
-          @search="handleSearch"
-          allow-clear
-        />
+        <a-input v-model:value="search" :placeholder="searchPlaceholder" class="script-search" @search="handleSearch" allow-clear>
+          <template #prefix>
+            <SearchOutlined />
+          </template>
+        </a-input>
       </div>
-      <div class="script-list">
-        <slot name="script-list" :search-key="search" />
+      <!-- 地图追踪的树状结构 -->
+      <div v-if="selectedMenu[0] === '1'" class="script-list">
+        <MapTreeList ref="mapTreeRef" :search-key="search" @select="handleMapSelect" />
+      </div>
+      <!-- Javascript脚本列表 -->
+      <div v-else-if="selectedMenu[0] === '2'" class="script-list">
+        <ScriptList :search-key="search" ref="scriptListRef" @select="handleScriptSelect" />
+      </div>
+      <!-- 战斗策略列表 -->
+      <div v-else-if="selectedMenu[0] === '3'" class="script-list">
+        <CombatStrategyList :search-key="search" ref="combatStrategyRef" @select="handleScriptSelect" />
+      </div>
+      <!-- 七圣召唤策略列表 -->
+      <div v-else-if="selectedMenu[0] === '4'" class="script-list">
+        <CardStrategyList :search-key="search" ref="cardStrategyRef" @select="handleScriptSelect" />
       </div>
     </a-layout-sider>
 
     <!-- 右侧内容区域 -->
     <a-layout class="main-right">
-      <slot name="content" />
+      <ScriptDetail :script="selectedScript" />
     </a-layout>
   </a-layout>
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { AppstoreOutlined, FolderOutlined, FileOutlined, CalculatorOutlined, BulbOutlined } from '@ant-design/icons-vue';
-import { Select } from 'ant-design-vue';
+import { ref, computed } from 'vue';
+import { FolderOutlined, FileOutlined, CalculatorOutlined, BulbOutlined, SearchOutlined } from '@ant-design/icons-vue';
+import MapTreeList from './lists/MapTreeList.vue';
+import ScriptList from './lists/ScriptList.vue';
+import CombatStrategyList from './lists/CombatStrategyList.vue';
+import CardStrategyList from './lists/CardStrategyList.vue';
+import ScriptDetail from './ScriptDetail.vue';
 
 const selectedMenu = ref(['1']);
 const search = ref('');
+
 const menuList = [
   { key: '1', label: '地图追踪', icon: FolderOutlined, count: 128 },
   { key: '2', label: 'Javascript 脚本', icon: FileOutlined, count: 9 },
@@ -82,16 +94,56 @@ const options = ref([
 ]);
 
 const selectedValue = ref(1);
+
+// 计算当前菜单标题
+const currentMenuTitle = computed(() => {
+  const current = menuList.find(item => item.key === selectedMenu.value[0]);
+  return current ? current.label : '';
+});
+
+// 计算搜索框占位符
+const searchPlaceholder = computed(() => {
+  switch (selectedMenu.value[0]) {
+    case '1':
+      return '搜索地图位置';
+    case '2':
+      return '搜索脚本';
+    case '3':
+      return '搜索战斗策略';
+    case '4':
+      return '搜索七圣召唤策略';
+    default:
+      return '输入关键词查询';
+  }
+});
+
 const handleChange = (value) => {
-  console.log('选择仓库变化: ', value)
+  console.log('选择仓库变化: ', value);
 };
 
 const handleSearch = (value) => {
   search.value = value;
 };
 
+const handleMenuSelect = ({ key }) => {
+  selectedMenu.value = [key];
+  search.value = '';
+};
+
 const openExternalLink = () => {
   window.open('https://bettergi.com/', '_blank', 'fullscreen=yes,width=1920,height=1080');
+};
+
+const selectedScript = ref(null);
+const selectedLocation = ref(null);
+
+const handleScriptSelect = (script) => {
+  selectedScript.value = script;
+};
+
+const handleMapSelect = (location) => {
+  selectedLocation.value = location;
+  selectedScript.value = location; // 使用同一个详情组件
 };
 </script>
 
@@ -101,9 +153,9 @@ const openExternalLink = () => {
   width: calc(100% - 20px);
   margin: 10px;
   border-radius: 12px;
-  overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   background: #fff;
+  display: flex;
 }
 
 .custom-sider {
@@ -115,6 +167,7 @@ const openExternalLink = () => {
   display: flex;
   flex-direction: column;
   padding: 0;
+  height: 100%;
 }
 
 .sider-header {
@@ -127,6 +180,7 @@ const openExternalLink = () => {
   color: #222;
   border-bottom: 1px solid #ececec;
   width: 100%;
+  flex-shrink: 0;
 }
 
 .sider-logo {
@@ -148,9 +202,10 @@ const openExternalLink = () => {
 }
 
 .sider-menu-wrap {
-  flex: 1;
   padding: 8px;
+  height: 100%;
   width: 100%;
+  overflow-y: auto;
 }
 
 .repo-select {
@@ -212,6 +267,7 @@ const openExternalLink = () => {
   font-size: 14px;
   border-top: 1px solid #ececec;
   width: 100%;
+  flex-shrink: 0;
 }
 
 .sider-link {
@@ -225,8 +281,8 @@ const openExternalLink = () => {
   max-width: 320px !important;
   background: #fff !important;
   border-right: 1px solid #e5e7eb;
-  display: flex;
-  flex-direction: column;
+  height: 100%;
+  position: relative;
 }
 
 .script-header {
@@ -257,11 +313,11 @@ const openExternalLink = () => {
 }
 
 .script-btn-all {
-  background: #181822 !important;
   border: none !important;
 }
 
 .search-section {
+  height: 60px;
   padding: 12px 16px;
   border-bottom: 1px solid #ececec;
 }
@@ -271,13 +327,91 @@ const openExternalLink = () => {
 }
 
 .script-list {
-  flex: 1;
+  position: absolute;
+  top: 120px; /* script-header + search-section 的高度 */
+  left: 0;
+  right: 0;
+  bottom: 0;
   overflow-y: auto;
   padding: 8px;
 }
 
 .main-right {
+  flex: 1;
   background: #f5f6fa;
   padding: 24px;
+  overflow-y: auto;
+}
+
+.strategy-tabs {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.strategy-tabs :deep(.ant-tabs-content) {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.strategy-list {
+  padding: 8px;
+}
+
+.strategy-item {
+  background: #fff;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 12px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s;
+}
+
+.strategy-item:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px);
+}
+
+.strategy-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.strategy-title {
+  font-size: 16px;
+  font-weight: 500;
+  color: #222;
+}
+
+.strategy-tag {
+  font-size: 12px;
+  color: #1890ff;
+  background: rgba(24, 144, 255, 0.1);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.strategy-desc {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+
+.strategy-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #999;
+}
+
+.strategy-author {
+  color: #1890ff;
+}
+
+.strategy-date {
+  color: #999;
 }
 </style>

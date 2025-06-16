@@ -1,10 +1,10 @@
 <template>
-  <div class="script-list">
+  <div class="list-container">
     <div
-      v-for="item in filteredScripts"
+      v-for="item in filteredStrategies"
       :key="item.id"
       :class="['script-item', { active: item.id === selectedId }]"
-      @click="selectScript(item.id)"
+      @click="selectStrategy(item.id)"
     >
       <div class="item-header">
         <span class="item-title">{{ item.title }}</span>
@@ -32,88 +32,78 @@ const props = defineProps({
 
 const emit = defineEmits(['select']);
 
-const scripts = ref([
+const strategies = ref([
   {
     id: 1,
-    title: '自动钓鱼指南',
-    author: 'xxx',
-    desc: 'Hi, let\'s have a meeting tomorrow to discuss the project...',
-    detail: 'Hi, let\'s have a meeting tomorrow to discuss the project details and have some ideas I\'d like to share. It\'s crucial that we...',
-    tags: ['钓鱼', '里约', 'JS'],
-    time: '1年前',
+    title: '深渊12层速通攻略',
+    author: '战斗大师',
+    desc: '详细讲解深渊12层的速通技巧和阵容搭配...',
+    detail: '本攻略将详细介绍深渊12层的速通技巧，包括角色选择、装备搭配、技能释放时机等关键要素...',
+    tags: ['深渊', '速通', '攻略'],
+    time: '3天前',
     unread: true,
   },
   {
     id: 2,
-    title: 'Alice Smith',
-    author: 'Alice Smith',
-    desc: 'Thank you for the project update. It looks great!...',
-    detail: 'Thank you for the project update. I\'ve gone through the report, and the progress is impressive. The team has done a fantastic job...',
-    tags: ['work', 'important'],
-    time: 'over 1 year ago',
+    title: '世界BOSS讨伐指南',
+    author: '讨伐专家',
+    desc: '世界BOSS的讨伐技巧和注意事项...',
+    detail: '本指南将详细介绍世界BOSS的讨伐技巧，包括队伍配置、输出手法、躲避技巧等...',
+    tags: ['世界BOSS', '讨伐'],
+    time: '1周前',
     unread: false,
   },
   {
     id: 3,
-    title: 'Bob Johnson',
-    author: 'Bob Johnson',
-    desc: 'Any plans for the weekend? I was thinking of going hiking...',
-    detail: 'Any plans for the weekend? I was thinking of going hiking in the nearby mountains. It\'s been a while since we had some outdoor fun...',
-    tags: ['personal'],
-    time: 'about 2 years ago',
+    title: '元素反应详解',
+    author: '元素专家',
+    desc: '深入解析元素反应机制和实战应用...',
+    detail: '本攻略将深入解析元素反应机制，包括触发条件、伤害计算、实战应用等...',
+    tags: ['元素反应', '机制'],
+    time: '2周前',
     unread: false,
   },
   {
     id: 4,
-    title: 'Emily Davis',
-    author: 'Emily Davis',
-    desc: 'I have a question about the budget for the upcoming project...',
-    detail: 'I have a question about the budget for the upcoming project. It seems like there\'s a discrepancy in the allocation of resources...',
-    tags: ['work', 'budget'],
-    time: 'about 2 years ago',
+    title: '角色培养指南',
+    author: '培养专家',
+    desc: '角色培养的优先级和资源分配...',
+    detail: '本指南将详细介绍角色培养的优先级和资源分配，帮助玩家合理规划培养路线...',
+    tags: ['培养', '资源'],
+    time: '1个月前',
     unread: true,
-  },
-  {
-    id: 5,
-    title: 'Michael Wilson',
-    author: 'Michael Wilson',
-    desc: 'I have an important announcement to make during our team meeting...',
-    detail: 'I have an important announcement to make during our team meeting. It pertains to a strategic shift in our approach to the upcoming product launch...',
-    tags: [],
-    time: 'about 2 years ago',
-    unread: false,
   },
 ]);
 
 const selectedId = ref(1);
 
-const selectScript = (id) => {
+const selectStrategy = (id) => {
   selectedId.value = id;
-  emit('select', scripts.value.find(script => script.id === id));
+  const strategy = strategies.value.find(strategy => strategy.id === id);
+  emit('select', strategy);
 };
 
-const filteredScripts = computed(() => {
-  if (!props.searchKey) return scripts.value;
+const filteredStrategies = computed(() => {
+  if (!props.searchKey) return strategies.value;
   
   const searchLower = props.searchKey.toLowerCase();
-  return scripts.value.filter(script => {
+  return strategies.value.filter(strategy => {
     return (
-      script.title.toLowerCase().includes(searchLower) ||
-      script.author.toLowerCase().includes(searchLower) ||
-      script.desc.toLowerCase().includes(searchLower) ||
-      script.detail.toLowerCase().includes(searchLower) ||
-      script.tags.some(tag => tag.toLowerCase().includes(searchLower))
+      strategy.title.toLowerCase().includes(searchLower) ||
+      strategy.author.toLowerCase().includes(searchLower) ||
+      strategy.desc.toLowerCase().includes(searchLower) ||
+      strategy.detail.toLowerCase().includes(searchLower) ||
+      strategy.tags.some(tag => tag.toLowerCase().includes(searchLower))
     );
   });
 });
 </script>
 
 <style scoped>
-.script-list {
+.list-container {
   width: 100%;
-  background: #fff;
+  max-height: 100%;
   overflow-y: auto;
-  padding-top: 8px;
 }
 
 .script-item {
@@ -195,4 +185,5 @@ const filteredScripts = computed(() => {
   font-size: 12px;
   margin-top: 2px;
 }
+
 </style> 

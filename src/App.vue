@@ -1,8 +1,6 @@
 <script setup>
 import { ref } from 'vue';
 import LayoutMain from './components/LayoutMain.vue';
-import ScriptListPanel from './components/ScriptListPanel.vue';
-import ScriptDetail from './components/ScriptDetail.vue';
 
 const selectedScript = ref(null);
 
@@ -12,14 +10,7 @@ const handleScriptSelect = (script) => {
 </script>
 
 <template>
-  <LayoutMain>
-    <template #script-list="{ searchKey }">
-      <ScriptListPanel :search-key="searchKey" @select="handleScriptSelect" />
-    </template>
-    <template #content>
-      <ScriptDetail :script="selectedScript" />
-    </template>
-  </LayoutMain>
+  <LayoutMain/>
 </template>
 
 <style>
