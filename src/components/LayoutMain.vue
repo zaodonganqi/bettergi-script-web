@@ -328,10 +328,12 @@ const handleMapSelect = (location) => {
 
 .script-list {
   position: absolute;
-  top: 120px; /* script-header + search-section 的高度 */
+  top: 120px;
   left: 0;
   right: 0;
   bottom: 0;
+  width: 100%;
+  overflow-x: hidden;
   overflow-y: auto;
   padding: 8px;
 }

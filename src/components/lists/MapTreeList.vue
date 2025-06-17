@@ -1,17 +1,25 @@
 <template>
   <div class="list-container">
     <a-tree
-      :data="filteredTreeData"
-      :defaultExpandedKeys="expandedKeys"
+      :treeData="filteredTreeData"
+      :expandedKeys="expandedKeys"
+      :selectedKeys="selectedKeys"
       @select="handleSelect"
+      @expand="handleExpand"
     >
-      <template #title="{ title }">
-        <span>{{ title }}</span>
-      </template>
-      <template #extra="nodeData">
-        <a-button type="text" size="mini" style="position: absolute; right: 8px; top: 6px; color: #3370ff;" @click.stop="handleSubscribe(nodeData)">
-          订阅
-        </a-button>
+      <template #title="{ title, key, isLeaf }">
+        <div class="tree-node-container">
+          <span class="tree-node-title">{{ title }}</span>
+          <a-button 
+            class="subscribe-btn"
+            type="text" 
+            size="small" 
+            style="color: #3370ff;" 
+            @click.stop="handleSubscribe({ key, title })"
+          >
+            订阅
+          </a-button>
+        </div>
       </template>
     </a-tree>
   </div>
@@ -31,50 +39,35 @@ const props = defineProps({
 
 const emit = defineEmits(['select']);
 
-const expandedKeys = ref(['1', '1-1', '1-2']); // 默认展开的节点
+const expandedKeys = ref([]);
+const selectedKeys = ref([]);
 const treeData = ref([]);
+const originalTreeData = ref([]); // 添加原始数据存储
 
+// 拼音匹配函数
 const isPinyinMatch = (text, search) => {
   const searchLower = search.toLowerCase();
   const textLower = text.toLowerCase();
-
-  if (textLower.includes(searchLower)) {
-    return true;
-  }
-
-  const pinyinMatch = match(textLower, searchLower);
-  return !!pinyinMatch;
+  return textLower.includes(searchLower) || !!match(textLower, searchLower);
 };
 
-const filteredTreeData = computed(() => {
-  if (!props.searchKey) return treeData.value;
+// 处理节点展开
+const handleExpand = (keys) => {
+  const newExpandedKeys = [];
   
-  return filterTreeNodes(treeData.value, props.searchKey);
-});
-
-const filterTreeNodes = (nodes, searchText) => {
-  return nodes.map(node => {
-    const isSelfMatch = isPinyinMatch(node.title, searchText);
-    
-    if (isSelfMatch) {
-      return { ...node };
+  keys.forEach(key => {
+    const node = findNodeByKey(treeData.value, key);
+    // 只有当节点有非叶子子节点时才允许展开
+    if (node && node.children && node.children.some(child => child.children?.length > 0)) {
+      newExpandedKeys.push(key);
     }
-
-    if (node.children) {
-      const filteredChildren = filterTreeNodes(node.children, searchText);
-      if (filteredChildren.length > 0) {
-        return {
-          ...node,
-          children: filteredChildren
-        };
-      }
-    }
-
-    return null;
-  }).filter(Boolean);
+  });
+  
+  expandedKeys.value = newExpandedKeys;
 };
 
-const handleSelect = (selectedKeys, event) => {
+// 处理节点选择
+const handleSelect = (selectedKeys, { node }) => {
   if (selectedKeys.length > 0) {
     const selectedNode = findNodeByKey(treeData.value, selectedKeys[0]);
     if (selectedNode) {
@@ -92,7 +85,15 @@ const handleSelect = (selectedKeys, event) => {
   }
 };
 
+// 处理订阅
+const handleSubscribe = (nodeData) => {
+  console.log('订阅位置:', nodeData);
+  // TODO: 实现订阅功能
+};
+
+// 查找节点
 const findNodeByKey = (nodes, key) => {
+  if (!nodes) return null;
   for (const node of nodes) {
     if (node.key === key) return node;
     if (node.children) {
@@ -103,11 +104,11 @@ const findNodeByKey = (nodes, key) => {
   return null;
 };
 
+// 获取节点路径
 const getNodePath = (nodes, key, path = []) => {
+  if (!nodes) return null;
   for (const node of nodes) {
-    if (node.key === key) {
-      return [...path, node.title];
-    }
+    if (node.key === key) return [...path, node.title];
     if (node.children) {
       const found = getNodePath(node.children, key, [...path, node.title]);
       if (found) return found;
@@ -116,53 +117,82 @@ const getNodePath = (nodes, key, path = []) => {
   return null;
 };
 
-const handleSubscribe = (nodeData) => {
-  console.log('订阅位置:', nodeData);
-  // TODO: 实现订阅功能
+// 过滤树节点
+const filterTreeNodes = (nodes, searchText) => {
+  if (!searchText) return nodes;
+  
+  return nodes.map(node => {
+    const isSelfMatch = isPinyinMatch(node.title, searchText);
+    
+    // 如果当前节点匹配，返回完整节点（包括子节点）
+    if (isSelfMatch) {
+      return {
+        ...node,
+        // 搜索匹配时强制显示所有子节点
+        children: node.rawChildren?.map((child, idx) => 
+          processNode(child, node.key)
+        ) || []
+      };
+    }
+    
+    // 检查子节点是否有匹配
+    if (node.children) {
+      const filteredChildren = filterTreeNodes(node.children, searchText);
+      if (filteredChildren.length > 0) {
+        return {
+          ...node,
+          children: filteredChildren
+        };
+      }
+    }
+    
+    return null;
+  }).filter(Boolean);
 };
 
+// 生成树形数据
 const generateTreeData = (data) => {
   if (!data || !data.indexes) return [];
   
-  console.log('indexes数据:', data.indexes);
-  // 找到地图追踪分类
   const mapCategory = data.indexes.find(category => category.name === 'pathing');
-  console.log('找到的地图分类:', mapCategory);
   if (!mapCategory) return [];
 
-  // 将地图数据转换为树形结构
-  const treeData = mapCategory.children.map((location, index) => ({
-    key: `${index + 1}`,
-    title: location.name,
-    children: location.children ? location.children.map((child, childIndex) => ({
-      key: `${index + 1}-${childIndex + 1}`,
-      title: child.name,
-      children: child.children ? child.children.map((grandChild, grandChildIndex) => ({
-        key: `${index + 1}-${childIndex + 1}-${grandChildIndex + 1}`,
-        title: grandChild.name,
-        description: grandChild.description,
-        author: grandChild.author,
-        date: grandChild.date,
-        tags: grandChild.tags
-      })) : []
-    })) : []
-  }));
-  console.log('生成的树形数据:', treeData);
-  return treeData;
+  const processNode = (node, parentKey = '') => {
+    const currentKey = parentKey ? `${parentKey}-${node.name}` : node.name;
+    const children = node.children?.map((child, idx) => processNode(child, currentKey)) || [];
+    
+    // 正确计算 isLeaf：只有没有子节点的才是叶子节点
+    const isLeaf = children.length === 0;
+    
+    return {
+      key: currentKey,
+      title: node.name,
+      isLeaf, // 正确设置叶子节点标识
+      children,
+      description: node.description,
+      author: node.author,
+      date: node.date,
+      tags: node.tags,
+      // 保存原始子节点信息用于搜索
+      rawChildren: node.children || []
+    };
+  };
+
+  return mapCategory.children.map(node => processNode(node));
 };
 
+// 计算过滤后的树形数据
+const filteredTreeData = computed(() => {
+  if (!props.searchKey) return treeData.value;
+  return filterTreeNodes(treeData.value, props.searchKey);
+});
+
 onMounted(() => {
-  console.log('组件已挂载');
-  console.log('repoData:', repoData);
-  
   if (repoData && repoData.indexes) {
-    console.log('找到indexes数据');
     treeData.value = generateTreeData(repoData);
-    console.log('地图树数据已加载:', treeData.value);
-  } else {
-    console.log('未找到indexes数据');
   }
 });
+
 </script>
 
 <style scoped>
@@ -170,22 +200,41 @@ onMounted(() => {
   width: 100%;
   height: 100%;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 8px;
+  scrollbar-gutter: stable both-edges;
 }
 
-:deep(.arco-tree-node) {
-  padding: 4px 0;
+.tree-node-container {
+  display: flex;
+  width: 100%;
+  min-height: 32px; /* 确保最小高度 */
+  position: relative;
+  align-items: center; /* 垂直居中 */
+  word-break: break-word; /* 允许单词内换行 */
+  padding-right: 40px; /* 为按钮预留空间 */
+  box-sizing: border-box; /* 包含padding在宽度内 */
 }
 
-:deep(.arco-tree-node-title) {
-  font-size: 14px;
+.tree-node-title {
+  flex: 1;
+  white-space: normal; /* 允许自动换行 */
+  overflow-wrap: break-word; /* 长单词换行 */
+  min-width: 0; /* 防止文本溢出容器 */
+  padding-right: 8px; /* 标题与按钮之间的间距 */
 }
 
-:deep(.arco-tree-node-selected) {
-  background-color: #f5faff;
+.subscribe-btn {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #3370ff;
+  flex-shrink: 0; /* 防止按钮被压缩 */
 }
 
-:deep(.arco-tree-node:hover) {
-  background-color: #f0f6ff;
+:deep(.ant-tree) {
+  width: calc(100% - 10px); /* 预留滚动条宽度 */
 }
+
 </style> 
