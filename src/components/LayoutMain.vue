@@ -186,7 +186,7 @@ const handleMapSelect = (location) => {
 .sider-logo {
   width: 40px;
   height: 40px;
-  background: url('@/assets/logo.png') no-repeat center/contain;
+  background: url('@/assets/favicon.ico') no-repeat center/contain;
   margin-right: 10px;
   flex-shrink: 0;
   cursor: pointer;
@@ -279,7 +279,7 @@ const handleMapSelect = (location) => {
   width: 320px !important;
   min-width: 320px !important;
   max-width: 320px !important;
-  background: #fff !important;
+  background: #f7f8fa !important;
   border-right: 1px solid #e5e7eb;
   height: 100%;
   position: relative;
@@ -336,6 +336,7 @@ const handleMapSelect = (location) => {
   overflow-x: hidden;
   overflow-y: auto;
   padding: 8px;
+  background: #f7f8fa;
 }
 
 .main-right {

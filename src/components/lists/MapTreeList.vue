@@ -1,26 +1,20 @@
 <template>
   <div class="list-container">
-    <a-tree
-      :treeData="filteredTreeData"
-      :expandedKeys="expandedKeys"
-      :selectedKeys="selectedKeys"
-      @select="handleSelect"
-      @expand="handleExpand"
-    >
+    <a-tree :treeData="filteredTreeData" :expandedKeys="expandedKeys" :selectedKeys="selectedKeys"
+      @select="handleSelect" @expand="handleExpand">
       <template #title="{ title, key, isLeaf }">
         <div class="tree-node-container">
           <span class="tree-node-title">{{ title }}</span>
-          <a-button 
-            class="subscribe-btn"
-            type="text" 
-            size="small" 
-            style="color: #3370ff;" 
-            @click.stop="handleSubscribe({ key, title })"
-          >
+          <a-button class="subscribe-btn" type="text" size="small" style="color: #3370ff;"
+            @click.stop="handleSubscribe({ key, title })">
             订阅
           </a-button>
         </div>
       </template>
+      <!-- <a-button class="subscribe-btn" type="text" size="small" style="color: #3370ff;"
+        @click.stop="handleSubscribe({ key, title })">
+        订阅
+      </a-button> -->
     </a-tree>
   </div>
 </template>
@@ -42,7 +36,6 @@ const emit = defineEmits(['select']);
 const expandedKeys = ref([]);
 const selectedKeys = ref([]);
 const treeData = ref([]);
-const originalTreeData = ref([]); // 添加原始数据存储
 
 // 拼音匹配函数
 const isPinyinMatch = (text, search) => {
@@ -208,20 +201,12 @@ onMounted(() => {
 .tree-node-container {
   display: flex;
   width: 100%;
-  min-height: 32px; /* 确保最小高度 */
   position: relative;
-  align-items: center; /* 垂直居中 */
-  word-break: break-word; /* 允许单词内换行 */
-  padding-right: 40px; /* 为按钮预留空间 */
-  box-sizing: border-box; /* 包含padding在宽度内 */
 }
 
 .tree-node-title {
   flex: 1;
-  white-space: normal; /* 允许自动换行 */
-  overflow-wrap: break-word; /* 长单词换行 */
-  min-width: 0; /* 防止文本溢出容器 */
-  padding-right: 8px; /* 标题与按钮之间的间距 */
+  padding-right: 50px; /* 标题与按钮之间的间距 */
 }
 
 .subscribe-btn {
@@ -229,12 +214,19 @@ onMounted(() => {
   right: 0;
   top: 50%;
   transform: translateY(-50%);
-  color: #3370ff;
-  flex-shrink: 0; /* 防止按钮被压缩 */
 }
 
 :deep(.ant-tree) {
   width: calc(100% - 10px); /* 预留滚动条宽度 */
+  background: #f7f8fa;
 }
 
+:deep(.ant-tree-treenode) {
+  width: 100%; /* 确保节点占满容器 */
+  padding: 4px 0; /* 增加垂直间距 */
+}
+
+:deep(.ant-tree-node-content-wrapper) {
+  width: 100%; /* 内容区域占满节点 */
+}
 </style> 
