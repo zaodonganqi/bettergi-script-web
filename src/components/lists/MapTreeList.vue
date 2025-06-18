@@ -11,10 +11,6 @@
           </a-button>
         </div>
       </template>
-      <!-- <a-button class="subscribe-btn" type="text" size="small" style="color: #3370ff;"
-        @click.stop="handleSubscribe({ key, title })">
-        订阅
-      </a-button> -->
     </a-tree>
   </div>
 </template>
