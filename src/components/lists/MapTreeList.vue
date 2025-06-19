@@ -26,7 +26,6 @@ import { ref, computed, onMounted } from 'vue';
 import { match } from 'pinyin-pro';
 import repoData from '@/assets/repo.json';
 import { CaretRightOutlined, CaretDownOutlined } from '@ant-design/icons-vue';
-import { version } from 'less';
 
 const props = defineProps({
   searchKey: {
@@ -74,7 +73,7 @@ const handleSelect = (selectedKeysList, { node }) => {
     lastUpdated: selectedNode.lastUpdated || '',
     path: getNodePath(treeData.value, selectedNode.key),
   });
-  console.log("已选择节点", selectedNode)
+  console.log("已选择节点", selectedNode, getNodePath(treeData.value, selectedNode.key))
 };
 
 // 处理订阅
@@ -82,7 +81,7 @@ const handleSubscribe = (nodeData) => {
   // TODO: 实现订阅功能
 };
 
-// 查找节点（优化性能）
+// 查找节点
 const findNodeByKey = (nodes, key) => {
   if (!nodes) return null;
 
