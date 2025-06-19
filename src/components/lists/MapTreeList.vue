@@ -27,6 +27,34 @@ import { match } from 'pinyin-pro';
 import repoData from '@/assets/repo.json';
 import { CaretRightOutlined, CaretDownOutlined } from '@ant-design/icons-vue';
 
+// 计算叶子节点数量
+const calculateLeafCount = () => {
+  const leafCount = countLeafNodes(treeData.value);
+  console.log("仓库总脚本数量:", leafCount);
+  emit('leafCount', leafCount);
+};
+
+// 递归计算叶子节点
+const countLeafNodes = (nodes) => {
+  let count = 0;
+
+  if (!nodes) return 0;
+
+  for (const node of nodes) {
+    // 如果节点不可展开，则视为叶子节点
+    if (!hasExpandableChildren(node)) {
+      count++;
+    }
+
+    // 递归计算子节点
+    if (node.children && node.children.length > 0) {
+      count += countLeafNodes(node.children);
+    }
+  }
+
+  return count;
+};
+
 const props = defineProps({
   searchKey: {
     type: String,
@@ -34,8 +62,7 @@ const props = defineProps({
   }
 });
 
-const emit = defineEmits(['select']);
-
+const emit = defineEmits(['select', 'leafCount']);
 const expandedKeys = ref([]);
 const selectedKeys = ref([]);
 const treeData = ref([]);
@@ -73,6 +100,7 @@ const handleSelect = (selectedKeysList, { node }) => {
     lastUpdated: selectedNode.lastUpdated || '',
     path: getNodePath(treeData.value, selectedNode.key),
   });
+  selectedKeys.value = selectedNode.key ? [selectedNode.key] : [];
   console.log("已选择节点", selectedNode, getNodePath(treeData.value, selectedNode.key))
 };
 
@@ -142,10 +170,7 @@ const filterTreeNodes = (nodes, searchText) => {
   if (!searchText) return nodes;
 
   return nodes.map(node => {
-    // 检查是否匹配
     const isMatch = match(node.title.toLowerCase(), searchText.toLowerCase());
-
-    // 直接匹配返回全部子节点
     if (isMatch) {
       return {
         ...node,
@@ -171,9 +196,10 @@ const generateTreeData = (data) => {
   return mapCategory?.children?.map(node => processNode(node)) || [];
 };
 
-// 计算过滤后的树形数据
+// 获取过滤后的树形数据
 const filteredTreeData = computed(() =>
   filterTreeNodes(treeData.value, props.searchKey)
+
 );
 
 // 初始化
@@ -182,10 +208,13 @@ onMounted(() => {
     treeData.value = generateTreeData(repoData);
   }
 });
+// 暴露方法给父组件
+defineExpose({
+  calculateLeafCount
+});
 </script>
 
 <style scoped>
-/* 保持原有样式不变 */
 .list-container {
   width: 100%;
   height: 100%;
@@ -196,9 +225,11 @@ onMounted(() => {
 }
 
 .tree-node-container {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
   width: 100%;
-  position: relative;
+  gap: 8px;
 }
 
 .empty-switcher {
@@ -226,10 +257,11 @@ onMounted(() => {
 
 :deep(.ant-tree-treenode) {
   width: 100%;
-  padding: 4px 0;
+  padding: 5px;
 }
 
 :deep(.ant-tree-node-content-wrapper) {
   width: 100%;
+  transition: all 0.2s ease;
 }
 </style>

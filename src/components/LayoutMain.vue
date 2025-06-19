@@ -45,7 +45,7 @@
       </div>
       <!-- 地图追踪的树状结构 -->
       <div v-if="selectedMenu[0] === '1'" class="script-list">
-        <MapTreeList ref="mapTreeRef" :search-key="search" @select="handleMapSelect" />
+        <MapTreeList ref="mapTreeRef" :search-key="search" @select="handleMapSelect" @leaf-count="handleLeafCount" />
       </div>
       <!-- Javascript脚本列表 -->
       <div v-else-if="selectedMenu[0] === '2'" class="script-list">
@@ -69,7 +69,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { FolderOutlined, FileOutlined, CalculatorOutlined, BulbOutlined, SearchOutlined } from '@ant-design/icons-vue';
 import MapTreeList from './lists/MapTreeList.vue';
 import ScriptList from './lists/ScriptList.vue';
@@ -80,12 +80,12 @@ import ScriptDetail from './ScriptDetail.vue';
 const selectedMenu = ref(['1']);
 const search = ref('');
 
-const menuList = [
-  { key: '1', label: '地图追踪', icon: FolderOutlined, count: 128 },
-  { key: '2', label: 'Javascript 脚本', icon: FileOutlined, count: 9 },
-  { key: '3', label: '战斗策略', icon: CalculatorOutlined, count: 4 },
-  { key: '4', label: '七圣召唤策略', icon: BulbOutlined, count: 23 },
-];
+const menuList = ref([
+  { key: '1', label: '地图追踪', icon: FolderOutlined, count: 0 },
+  { key: '2', label: 'Javascript 脚本', icon: FileOutlined, count: 0 },
+  { key: '3', label: '战斗策略', icon: CalculatorOutlined, count: 0 },
+  { key: '4', label: '七圣召唤策略', icon: BulbOutlined, count: 0 },
+]);
 
 const options = ref([
   { value: 1, label: '本地仓库' },
@@ -97,7 +97,7 @@ const selectedValue = ref(1);
 
 // 计算当前菜单标题
 const currentMenuTitle = computed(() => {
-  const current = menuList.find(item => item.key === selectedMenu.value[0]);
+  const current = menuList.value.find(item => item.key === selectedMenu.value[0]);
   return current ? current.label : '';
 });
 
@@ -141,10 +141,28 @@ const handleScriptSelect = (script) => {
   selectedScript.value = script;
 };
 
+// 地图追踪板块
 const handleMapSelect = (location) => {
   selectedLocation.value = location;
   selectedScript.value = location; // 使用同一个详情组件
 };
+
+const mapTreeRef = ref(null);
+
+const handleLeafCount = (count) => {
+  const index = menuList.value.findIndex(item => item.key === '1');
+  if (index !== -1) {
+    menuList.value[index].count = count;
+  }
+};
+
+// 监听树组件是否加载完成
+watch(mapTreeRef, (newVal) => {
+  if (newVal) {
+    // 请求树组件计算叶子节点数量
+    newVal.calculateLeafCount();
+  }
+});
 </script>
 
 <style scoped>
@@ -276,9 +294,9 @@ const handleMapSelect = (location) => {
 }
 
 .script-sider {
-  width: 320px !important;
-  min-width: 320px !important;
-  max-width: 320px !important;
+  width: 400px !important;
+  min-width: 400px !important;
+  max-width: 400px !important;
   background: #f7f8fa !important;
   border-right: 1px solid #e5e7eb;
   height: 100%;
