@@ -22,6 +22,7 @@
 
 <script setup>
 import { ref, computed } from 'vue';
+import repoData from '@/assets/repo.json';
 
 const props = defineProps({
   searchKey: {
@@ -30,62 +31,43 @@ const props = defineProps({
   }
 });
 
-const emit = defineEmits(['select']);
+const emit = defineEmits(['select', 'scriptCount']);
 
-const scripts = ref([
-  {
-    id: 1,
-    title: '自动钓鱼指南',
-    author: 'xxx',
-    desc: 'Hi, let\'s have a meeting tomorrow to discuss the project...',
-    detail: 'Hi, let\'s have a meeting tomorrow to discuss the project details and have some ideas I\'d like to share. It\'s crucial that we...',
-    tags: ['钓鱼', '里约', 'JS'],
-    time: '1年前',
-    unread: true,
-  },
-  {
-    id: 2,
-    title: 'Alice Smith',
-    author: 'Alice Smith',
-    desc: 'Thank you for the project update. It looks great!...',
-    detail: 'Thank you for the project update. I\'ve gone through the report, and the progress is impressive. The team has done a fantastic job...',
-    tags: ['work', 'important'],
-    time: 'over 1 year ago',
-    unread: false,
-  },
-  {
-    id: 3,
-    title: 'Bob Johnson',
-    author: 'Bob Johnson',
-    desc: 'Any plans for the weekend? I was thinking of going hiking...',
-    detail: 'Any plans for the weekend? I was thinking of going hiking in the nearby mountains. It\'s been a while since we had some outdoor fun...',
-    tags: ['personal'],
-    time: 'about 2 years ago',
-    unread: false,
-  },
-  {
-    id: 4,
-    title: 'Emily Davis',
-    author: 'Emily Davis',
-    desc: 'I have a question about the budget for the upcoming project...',
-    detail: 'I have a question about the budget for the upcoming project. It seems like there\'s a discrepancy in the allocation of resources...',
-    tags: ['work', 'budget'],
-    time: 'about 2 years ago',
-    unread: true,
-  },
-  {
-    id: 5,
-    title: 'Michael Wilson',
-    author: 'Michael Wilson',
-    desc: 'I have an important announcement to make during our team meeting...',
-    detail: 'I have an important announcement to make during our team meeting. It pertains to a strategic shift in our approach to the upcoming product launch...',
-    tags: [],
-    time: 'about 2 years ago',
-    unread: false,
-  },
-]);
+function getJsScriptsFromRepo(repo) {
+  const jsNode = repo.indexes.find(item => item.name === 'js');
+  if (!jsNode || !jsNode.children) return [];
+  // 处理children
+  return jsNode.children.map(child => {
+    if (child.type === 'directory') {
+      if (child.description && child.description.includes('~|~')) {
+        const [nameSuffix, newDescription] = child.description.split('~|~');
+        child = {
+          ...child,
+          name: `${child.name} - ${nameSuffix.trim()}`,
+          description: newDescription.trim(),
+        };
+      }
+      return child;
+    }
+    return child;
+  });
+}
 
-const selectedId = ref(1);
+const scripts = ref(
+  getJsScriptsFromRepo(repoData).map((item, idx) => ({
+    id: idx + 1,
+    title: item.name,
+    author: item.author || '',
+    desc: item.description || '',
+    tags: item.tags || [],
+    time: item.lastUpdated || '',
+    unread: false, // 可根据需要自定义
+    hash: item.hash,
+    version: item.version,
+  }))
+);
+
+const selectedId = ref(scripts.value.length > 0 ? scripts.value[0].id : null);
 
 const selectScript = (id) => {
   selectedId.value = id;
@@ -107,6 +89,14 @@ const filteredScripts = computed(() => {
     );
   });
 });
+
+const calculateScriptCount = () => {
+  emit('scriptCount', scripts.value.length);
+};
+
+defineExpose({
+  calculateScriptCount
+});
 </script>
 
 <style scoped>
@@ -114,6 +104,7 @@ const filteredScripts = computed(() => {
   width: 100%;
   max-height: 100%;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .script-item {
@@ -150,6 +141,7 @@ const filteredScripts = computed(() => {
   font-size: 16px;
   font-weight: 700;
   color: #222;
+  margin-bottom: 4px;
 }
 
 .item-dot {
@@ -164,20 +156,20 @@ const filteredScripts = computed(() => {
 .item-author {
   color: #888;
   font-size: 13px;
-  margin-bottom: 2px;
+  margin-bottom: 4px;
 }
 
 .item-desc {
   color: #555;
   font-size: 13px;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .item-tags {
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 
 .item-tag {

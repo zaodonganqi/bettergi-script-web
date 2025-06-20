@@ -9,9 +9,12 @@
         </span>
         <span v-else class="empty-switcher"></span>
       </template>
-      <template #title="{ title, key }">
+      <template #title="{ title, key, dataRef }">
         <div class="tree-node-container">
-          <span class="tree-node-title">{{ title }}</span>
+          <div class="tree-node-title">
+            <a-image v-if="dataRef.showIcon" :src="dataRef.icon" :width="22" :placeholder="false" @error="dataRef.showIcon=false"/>
+            <span>{{ title }}</span>
+          </div>
           <a-button class="subscribe-btn" type="text" size="small" @click.stop="handleSubscribe({ key, title })">
             订阅
           </a-button>
@@ -26,34 +29,6 @@ import { ref, computed, onMounted } from 'vue';
 import { match } from 'pinyin-pro';
 import repoData from '@/assets/repo.json';
 import { CaretRightOutlined, CaretDownOutlined } from '@ant-design/icons-vue';
-
-// 计算叶子节点数量
-const calculateLeafCount = () => {
-  const leafCount = countLeafNodes(treeData.value);
-  console.log("仓库总脚本数量:", leafCount);
-  emit('leafCount', leafCount);
-};
-
-// 递归计算叶子节点
-const countLeafNodes = (nodes) => {
-  let count = 0;
-
-  if (!nodes) return 0;
-
-  for (const node of nodes) {
-    // 如果节点不可展开，则视为叶子节点
-    if (!hasExpandableChildren(node)) {
-      count++;
-    }
-
-    // 递归计算子节点
-    if (node.children && node.children.length > 0) {
-      count += countLeafNodes(node.children);
-    }
-  }
-
-  return count;
-};
 
 const props = defineProps({
   searchKey: {
@@ -81,7 +56,7 @@ const handleExpand = (keys) => {
 };
 
 // 处理节点选择
-const handleSelect = (selectedKeysList, { node }) => {
+const handleSelect = (selectedKeysList) => {
   if (selectedKeysList.length === 0) return;
 
   const selectedNode = findNodeByKey(treeData.value, selectedKeysList[0]);
@@ -101,7 +76,7 @@ const handleSelect = (selectedKeysList, { node }) => {
     path: getNodePath(treeData.value, selectedNode.key),
   });
   selectedKeys.value = selectedNode.key ? [selectedNode.key] : [];
-  console.log("已选择节点", selectedNode, getNodePath(treeData.value, selectedNode.key))
+  console.log("已选择节点", selectedNode)
 };
 
 // 处理订阅
@@ -144,10 +119,26 @@ const getNodePath = (nodes, key) => {
   return findPath(nodes, key) ? path : null;
 };
 
+// 获取节点图标
+const getIconUrl = (tag) => {
+  const baseIconUrl = "https://raw.githubusercontent.com/babalae/bettergi-scripts-list/refs/heads/main/repo/pathing/";
+  const encodedTag = tag
+  const iconPath = `${baseIconUrl}${encodedTag}/icon.ico`;
+
+  // // 使用当前选中的镜像URL格式
+  // if (selectedRepo.value && selectedRepo.value !== 'local') {
+  //   const mirrorFormat = selectedRepo.value.split(baseRepo)[0];
+  //   return mirrorFormat + iconPath;
+  // }
+
+  return iconPath;
+};
+
 // 处理节点数据
 const processNode = (node, parentKey = '') => {
-  const currentKey = parentKey ? `${parentKey}-${node.name}` : node.name;
+  const currentKey = parentKey ? `${parentKey}/${node.name}` : node.name;
   const children = node.children?.map(child => processNode(child, currentKey)) || [];
+  const iconPath = getIconUrl(currentKey);
 
   return {
     key: currentKey,
@@ -161,7 +152,9 @@ const processNode = (node, parentKey = '') => {
     tags: node.tags,
     lastUpdated: node.lastUpdated,
     rawChildren: node.children || [],
-    children
+    children,
+    icon: iconPath,
+    showIcon: node.showIcon || false
   };
 };
 
@@ -208,10 +201,6 @@ onMounted(() => {
     treeData.value = generateTreeData(repoData);
   }
 });
-// 暴露方法给父组件
-defineExpose({
-  calculateLeafCount
-});
 </script>
 
 <style scoped>
@@ -239,7 +228,7 @@ defineExpose({
 
 .tree-node-title {
   flex: 1;
-  padding-right: 50px;
+  padding-right: 40px;
 }
 
 .subscribe-btn {

@@ -11,19 +11,21 @@
         </a-select>
       </div>
       <div class="sider-menu-wrap">
-        <a-menu v-model:selectedKeys="selectedMenu" mode="inline" class="custom-menu" @select="handleMenuSelect">
-          <a-menu-item v-for="item in menuList" :key="item.key" class="custom-menu-item">
-            <span class="menu-icon">
-              <component :is="item.icon" />
-            </span>
-            <span class="menu-label">{{ item.label }}</span>
-            <span v-if="item.count !== undefined" class="menu-count">{{ item.count }}</span>
-          </a-menu-item>
-        </a-menu>
-      </div>
-      <div class="sider-footer">
-        <div class="sider-link">外链1</div>
-        <div class="sider-link">外链2</div>
+        <div>
+          <a-menu v-model:selectedKeys="selectedMenu" mode="vertical" class="custom-menu" @select="handleMenuSelect">
+            <a-menu-item v-for="item in menuList" :key="item.key" class="custom-menu-item">
+              <span class="menu-icon">
+                <component :is="item.icon" />
+              </span>
+              <span class="menu-label">{{ item.label }}</span>
+              <span v-if="item.count !== undefined" class="menu-count">{{ item.count }}</span>
+            </a-menu-item>
+          </a-menu>
+        </div>
+        <div class="sider-footer">
+          <div class="sider-link">外链1</div>
+          <div class="sider-link">外链2</div>
+        </div>
       </div>
     </a-layout-sider>
 
@@ -37,7 +39,8 @@
         </div>
       </div>
       <div class="search-section">
-        <a-input v-model:value="search" :placeholder="searchPlaceholder" class="script-search" @search="handleSearch" allow-clear>
+        <a-input v-model:value="search" :placeholder="searchPlaceholder" class="script-search" @search="handleSearch"
+          allow-clear>
           <template #prefix>
             <SearchOutlined />
           </template>
@@ -49,7 +52,8 @@
       </div>
       <!-- Javascript脚本列表 -->
       <div v-else-if="selectedMenu[0] === '2'" class="script-list">
-        <ScriptList :search-key="search" ref="scriptListRef" @select="handleScriptSelect" />
+        <ScriptList :search-key="search" ref="scriptListRef" @select="handleScriptSelect"
+          @script-count="handleScriptCount" />
       </div>
       <!-- 战斗策略列表 -->
       <div v-else-if="selectedMenu[0] === '3'" class="script-list">
@@ -62,20 +66,27 @@
     </a-layout-sider>
 
     <!-- 右侧内容区域 -->
-    <a-layout class="main-right">
-      <ScriptDetail :script="selectedScript" />
+    <a-layout>
+      <div v-if="selectedMenu[0] === '1'" class="main-right">
+        <MapDetail :script="selectedScript" />
+      </div>
+      <div v-else class="main-right">
+        <ScriptDetail :script="selectedScript" />
+      </div>
     </a-layout>
   </a-layout>
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, onMounted } from 'vue';
 import { FolderOutlined, FileOutlined, CalculatorOutlined, BulbOutlined, SearchOutlined } from '@ant-design/icons-vue';
 import MapTreeList from './lists/MapTreeList.vue';
 import ScriptList from './lists/ScriptList.vue';
 import CombatStrategyList from './lists/CombatStrategyList.vue';
 import CardStrategyList from './lists/CardStrategyList.vue';
-import ScriptDetail from './ScriptDetail.vue';
+import ScriptDetail from './details/ScriptDetail.vue';
+import MapDetail from './details/MapDetail.vue';
+import repoData from '@/assets/repo.json';
 
 const selectedMenu = ref(['1']);
 const search = ref('');
@@ -148,6 +159,9 @@ const handleMapSelect = (location) => {
 };
 
 const mapTreeRef = ref(null);
+const scriptListRef = ref(null);
+const combatStrategyRef = ref(null);
+const cardStrategyRef = ref(null);
 
 const handleLeafCount = (count) => {
   const index = menuList.value.findIndex(item => item.key === '1');
@@ -156,12 +170,48 @@ const handleLeafCount = (count) => {
   }
 };
 
-// 监听树组件是否加载完成
-watch(mapTreeRef, (newVal) => {
-  if (newVal) {
-    // 请求树组件计算叶子节点数量
-    newVal.calculateLeafCount();
+const handleScriptCount = (count) => {
+  const index = menuList.value.findIndex(item => item.key === '2');
+  if (index !== -1) {
+    menuList.value[index].count = count;
   }
+};
+
+function getJsCount(repo) {
+  const jsNode = repo.indexes.find(item => item.name === 'js');
+  return jsNode?.children?.length || 0;
+}
+function getMapCount(repo) {
+  const mapNode = repo.indexes.find(item => item.name === 'pathing');
+  function countLeaf(nodes) {
+    if (!nodes) return 0;
+    let count = 0;
+    for (const node of nodes) {
+      if (!node.children || node.children.length === 0) {
+        count++;
+      } else {
+        count += countLeaf(node.children);
+      }
+    }
+    return count;
+  }
+  return countLeaf(mapNode?.children);
+}
+function getCombatCount(repo) {
+  const combatNode = repo.indexes.find(item => item.name === 'combat');
+  return combatNode?.children?.length || 0;
+}
+function getCardCount(repo) {
+  const cardNode = repo.indexes.find(item => item.name === 'tcg');
+  return cardNode?.children?.length || 0;
+}
+
+onMounted(() => {
+  // 页面初始化时统计数量
+  menuList.value[0].count = getMapCount(repoData);
+  menuList.value[1].count = getJsCount(repoData);
+  menuList.value[2].count = getCombatCount(repoData);
+  menuList.value[3].count = getCardCount(repoData);
 });
 </script>
 
@@ -171,7 +221,7 @@ watch(mapTreeRef, (newVal) => {
   width: calc(100% - 20px);
   margin: 10px;
   border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
   background: #fff;
   display: flex;
 }
@@ -221,9 +271,9 @@ watch(mapTreeRef, (newVal) => {
 
 .sider-menu-wrap {
   padding: 8px;
-  height: 100%;
   width: 100%;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .repo-select {
@@ -243,7 +293,6 @@ watch(mapTreeRef, (newVal) => {
 
 .custom-menu {
   background: transparent !important;
-  border: none;
   width: 100%;
 }
 
@@ -256,7 +305,6 @@ watch(mapTreeRef, (newVal) => {
   border-radius: 8px;
   margin: 0 8px;
   padding: 0 16px !important;
-  transition: background 0.2s;
 }
 
 .ant-menu-item-selected {
@@ -359,9 +407,11 @@ watch(mapTreeRef, (newVal) => {
 
 .main-right {
   flex: 1;
+  height: 100%;
   background: #f5f6fa;
   padding: 24px;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .strategy-tabs {

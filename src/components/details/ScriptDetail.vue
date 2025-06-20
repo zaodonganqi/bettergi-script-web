@@ -4,13 +4,11 @@
       <div class="detail-header">
         <div class="detail-title">{{ script.title }}</div>
         <div class="detail-meta">
-          <span class="detail-author">{{ script.author }}</span>
-          <span class="detail-desc">{{ script.desc }}</span>
+          <span class="detail-author">作者：{{ script.author }}</span>
         </div>
         <div class="detail-time">{{ script.time }}</div>
       </div>
-      <div class="detail-content">{{ script.detail }}</div>
-      <div class="detail-readme">这里是README.md</div>
+      <div class="detail-desc">{{ script.desc }}</div>
       <!-- 输入区 -->
       <div class="detail-input-wrap">
         <a-input v-model:value="input" placeholder="评论..." class="detail-input" />
@@ -61,34 +59,26 @@ const input = ref('');
 .detail-meta {
   color: #888;
   font-size: 14px;
-  margin-bottom: 4px;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 .detail-author {
   margin-right: 12px;
 }
 
-.detail-desc {
-  color: #888;
-}
-
 .detail-time {
   color: #aaa;
   font-size: 13px;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
-.detail-content {
-  color: #555;
-  font-size: 15px;
-  margin-bottom: 18px;
-}
-
-.detail-readme {
+.detail-desc {
   border-top: 1px solid #eee;
   padding-top: 16px;
-  color: #888;
-  font-size: 14px;
+  color: #555;
+  font-size: 15px;
+  white-space: pre-line;
 }
 
 .detail-empty {

@@ -22,6 +22,7 @@
 
 <script setup>
 import { ref, computed } from 'vue';
+import repoData from '@/assets/repo.json';
 
 const props = defineProps({
   searchKey: {
@@ -32,48 +33,52 @@ const props = defineProps({
 
 const emit = defineEmits(['select']);
 
-const strategies = ref([
-  {
-    id: 1,
-    title: '七圣召唤入门指南',
-    author: '卡牌大师',
-    desc: '七圣召唤的基础规则和玩法介绍...',
-    detail: '本指南将详细介绍七圣召唤的基础规则、卡牌类型、对战机制等入门知识...',
-    tags: ['入门', '规则', '指南'],
-    time: '2天前',
-    unread: true,
-  },
-  {
-    id: 2,
-    title: '强力卡组推荐',
-    author: '构筑专家',
-    desc: '当前版本最强卡组构筑和打法详解...',
-    detail: '本攻略将详细介绍当前版本最强卡组的构筑思路、核心卡牌、打法技巧等...',
-    tags: ['卡组', '构筑', '推荐'],
-    time: '5天前',
+function getTcgStrategiesFromRepo(repo) {
+  const tcgNode = repo.indexes.find(item => item.name === 'tcg');
+  if (!tcgNode || !tcgNode.children) return [];
+  // 递归收集所有叶子节点
+  const result = [];
+  function traverse(nodes) {
+    for (let child of nodes) {
+      if (child.children && child.children.length > 0) {
+        traverse(child.children);
+      } else {
+        if (child.type === 'directory') {
+          if (child.description && child.description.includes('~|~')) {
+            const [nameSuffix, newDescription] = child.description.split('~|~');
+            child = {
+              ...child,
+              name: `${child.name} - ${nameSuffix.trim()}`,
+              description: newDescription.trim(),
+            };
+          }
+        }
+        result.push(child);
+      }
+    }
+  }
+  traverse(tcgNode.children);
+  return result;
+}
+
+function removeFileSuffix(name) {
+  return name.replace(/\.[^.]+$/, '');
+}
+
+const strategies = ref(
+  getTcgStrategiesFromRepo(repoData).map((item, idx) => ({
+    id: idx + 1,
+    title: removeFileSuffix(item.name),
+    author: item.author || '',
+    desc: item.description || '',
+    detail: item.description || '',
+    tags: item.tags || [],
+    time: item.lastUpdated || '',
     unread: false,
-  },
-  {
-    id: 3,
-    title: '元素共鸣详解',
-    author: '元素专家',
-    desc: '元素共鸣机制和实战应用...',
-    detail: '本攻略将深入解析元素共鸣机制，包括触发条件、效果叠加、实战应用等...',
-    tags: ['元素共鸣', '机制'],
-    time: '1周前',
-    unread: false,
-  },
-  {
-    id: 4,
-    title: '卡牌收集指南',
-    author: '收集专家',
-    desc: '卡牌收集的优先级和获取方式...',
-    detail: '本指南将详细介绍卡牌收集的优先级和获取方式，帮助玩家快速组建强力卡组...',
-    tags: ['收集', '获取'],
-    time: '2周前',
-    unread: true,
-  },
-]);
+    hash: item.hash,
+    version: item.version,
+  }))
+);
 
 const selectedId = ref(1);
 
@@ -140,6 +145,7 @@ const filteredStrategies = computed(() => {
   font-size: 16px;
   font-weight: 700;
   color: #222;
+  margin-bottom: 4px;
 }
 
 .item-dot {
@@ -154,20 +160,20 @@ const filteredStrategies = computed(() => {
 .item-author {
   color: #888;
   font-size: 13px;
-  margin-bottom: 2px;
+  margin-bottom: 4px;
 }
 
 .item-desc {
   color: #555;
   font-size: 13px;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .item-tags {
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 
 .item-tag {

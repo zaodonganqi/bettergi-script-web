@@ -22,6 +22,7 @@
 
 <script setup>
 import { ref, computed } from 'vue';
+import repoData from '@/assets/repo.json';
 
 const props = defineProps({
   searchKey: {
@@ -32,48 +33,52 @@ const props = defineProps({
 
 const emit = defineEmits(['select']);
 
-const strategies = ref([
-  {
-    id: 1,
-    title: '深渊12层速通攻略',
-    author: '战斗大师',
-    desc: '详细讲解深渊12层的速通技巧和阵容搭配...',
-    detail: '本攻略将详细介绍深渊12层的速通技巧，包括角色选择、装备搭配、技能释放时机等关键要素...',
-    tags: ['深渊', '速通', '攻略'],
-    time: '3天前',
-    unread: true,
-  },
-  {
-    id: 2,
-    title: '世界BOSS讨伐指南',
-    author: '讨伐专家',
-    desc: '世界BOSS的讨伐技巧和注意事项...',
-    detail: '本指南将详细介绍世界BOSS的讨伐技巧，包括队伍配置、输出手法、躲避技巧等...',
-    tags: ['世界BOSS', '讨伐'],
-    time: '1周前',
+function getCombatStrategiesFromRepo(repo) {
+  const combatNode = repo.indexes.find(item => item.name === 'combat');
+  if (!combatNode || !combatNode.children) return [];
+  // 递归收集所有叶子节点
+  const result = [];
+  function traverse(nodes) {
+    for (let child of nodes) {
+      if (child.children && child.children.length > 0) {
+        traverse(child.children);
+      } else {
+        if (child.type === 'directory') {
+          if (child.description && child.description.includes('~|~')) {
+            const [nameSuffix, newDescription] = child.description.split('~|~');
+            child = {
+              ...child,
+              name: `${child.name} - ${nameSuffix.trim()}`,
+              description: newDescription.trim(),
+            };
+          }
+        }
+        result.push(child);
+      }
+    }
+  }
+  traverse(combatNode.children);
+  return result;
+}
+
+function removeFileSuffix(name) {
+  return name.replace(/\.[^.]+$/, '');
+}
+
+const strategies = ref(
+  getCombatStrategiesFromRepo(repoData).map((item, idx) => ({
+    id: idx + 1,
+    title: removeFileSuffix(item.name),
+    author: item.author || '',
+    desc: item.description || '',
+    detail: item.description || '',
+    tags: item.tags || [],
+    time: item.lastUpdated || '',
     unread: false,
-  },
-  {
-    id: 3,
-    title: '元素反应详解',
-    author: '元素专家',
-    desc: '深入解析元素反应机制和实战应用...',
-    detail: '本攻略将深入解析元素反应机制，包括触发条件、伤害计算、实战应用等...',
-    tags: ['元素反应', '机制'],
-    time: '2周前',
-    unread: false,
-  },
-  {
-    id: 4,
-    title: '角色培养指南',
-    author: '培养专家',
-    desc: '角色培养的优先级和资源分配...',
-    detail: '本指南将详细介绍角色培养的优先级和资源分配，帮助玩家合理规划培养路线...',
-    tags: ['培养', '资源'],
-    time: '1个月前',
-    unread: true,
-  },
-]);
+    hash: item.hash,
+    version: item.version,
+  }))
+);
 
 const selectedId = ref(1);
 
@@ -140,6 +145,7 @@ const filteredStrategies = computed(() => {
   font-size: 16px;
   font-weight: 700;
   color: #222;
+  margin-bottom: 4px;
 }
 
 .item-dot {
@@ -154,20 +160,20 @@ const filteredStrategies = computed(() => {
 .item-author {
   color: #888;
   font-size: 13px;
-  margin-bottom: 2px;
+  margin-bottom: 4px;
 }
 
 .item-desc {
   color: #555;
   font-size: 13px;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .item-tags {
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 
 .item-tag {
