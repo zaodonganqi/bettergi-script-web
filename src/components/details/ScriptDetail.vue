@@ -8,7 +8,8 @@
         </div>
         <div class="detail-time">{{ script.time }}</div>
       </div>
-      <div class="detail-desc">{{ script.desc }}</div>
+      <div v-if="script.desc" class="detail-desc">{{ script.desc }}</div>
+      <div v-else class="detail-desc">暂无描述</div>
       <!-- 输入区 -->
       <div class="detail-input-wrap">
         <a-input v-model:value="input" placeholder="评论..." class="detail-input" />

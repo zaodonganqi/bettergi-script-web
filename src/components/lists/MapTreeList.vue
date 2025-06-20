@@ -27,15 +27,20 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { match } from 'pinyin-pro';
-import repoData from '@/assets/repo.json';
 import { CaretRightOutlined, CaretDownOutlined } from '@ant-design/icons-vue';
 
 const props = defineProps({
   searchKey: {
     type: String,
     default: ''
+  },
+  repoData: {
+    type: Object,
+    required: true,
+    default: null
   }
 });
+const { repoData } = props;
 
 const emit = defineEmits(['select', 'leafCount']);
 const expandedKeys = ref([]);
@@ -144,13 +149,13 @@ const processNode = (node, parentKey = '') => {
     key: currentKey,
     title: node.name,
     name: node.name,
-    type: node.type,
-    hash: node.hash,
+    type: node.type || '',
+    hash: node.hash || '',
     version: node.version,
-    author: node.author,
-    description: node.description,
-    tags: node.tags,
-    lastUpdated: node.lastUpdated,
+    author: node.author || '无',
+    description: node.description || '无',
+    tags: node.tags || [],
+    lastUpdated: node.lastUpdated || '无',
     rawChildren: node.children || [],
     children,
     icon: iconPath,

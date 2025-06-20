@@ -22,14 +22,19 @@
 
 <script setup>
 import { ref, computed } from 'vue';
-import repoData from '@/assets/repo.json';
 
 const props = defineProps({
   searchKey: {
     type: String,
     default: ''
+  },
+  repoData: {
+    type: Object,
+    required: true,
+    default: null
   }
 });
+const { repoData } = props;
 
 const emit = defineEmits(['select']);
 
@@ -69,9 +74,8 @@ const strategies = ref(
   getTcgStrategiesFromRepo(repoData).map((item, idx) => ({
     id: idx + 1,
     title: removeFileSuffix(item.name),
-    author: item.author || '',
+    author: item.author || '无',
     desc: item.description || '',
-    detail: item.description || '',
     tags: item.tags || [],
     time: item.lastUpdated || '',
     unread: false,

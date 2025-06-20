@@ -48,20 +48,20 @@
       </div>
       <!-- 地图追踪的树状结构 -->
       <div v-if="selectedMenu[0] === '1'" class="script-list">
-        <MapTreeList ref="mapTreeRef" :search-key="search" @select="handleMapSelect" @leaf-count="handleLeafCount" />
+        <MapTreeList ref="mapTreeRef" :search-key="search" :repo-data="repoData" @select="handleMapSelect" @leaf-count="handleLeafCount" />
       </div>
       <!-- Javascript脚本列表 -->
       <div v-else-if="selectedMenu[0] === '2'" class="script-list">
-        <ScriptList :search-key="search" ref="scriptListRef" @select="handleScriptSelect"
+        <ScriptList :search-key="search" :repo-data="repoData" ref="scriptListRef" @select="handleScriptSelect"
           @script-count="handleScriptCount" />
       </div>
       <!-- 战斗策略列表 -->
       <div v-else-if="selectedMenu[0] === '3'" class="script-list">
-        <CombatStrategyList :search-key="search" ref="combatStrategyRef" @select="handleScriptSelect" />
+        <CombatStrategyList :search-key="search" :repo-data="repoData" ref="combatStrategyRef" @select="handleScriptSelect" />
       </div>
       <!-- 七圣召唤策略列表 -->
       <div v-else-if="selectedMenu[0] === '4'" class="script-list">
-        <CardStrategyList :search-key="search" ref="cardStrategyRef" @select="handleScriptSelect" />
+        <CardStrategyList :search-key="search" :repo-data="repoData" ref="cardStrategyRef" @select="handleScriptSelect" />
       </div>
     </a-layout-sider>
 
@@ -78,7 +78,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { FolderOutlined, FileOutlined, CalculatorOutlined, BulbOutlined, SearchOutlined } from '@ant-design/icons-vue';
 import MapTreeList from './lists/MapTreeList.vue';
 import ScriptList from './lists/ScriptList.vue';
@@ -384,12 +384,16 @@ onMounted(() => {
 
 .search-section {
   height: 60px;
-  padding: 12px 16px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 16px;
+  padding-right: 16px;
   border-bottom: 1px solid #ececec;
 }
 
 .script-search {
   width: 100%;
+  height: 100%;
 }
 
 .script-list {

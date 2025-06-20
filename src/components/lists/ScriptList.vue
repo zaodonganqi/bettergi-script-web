@@ -22,14 +22,19 @@
 
 <script setup>
 import { ref, computed } from 'vue';
-import repoData from '@/assets/repo.json';
 
 const props = defineProps({
   searchKey: {
     type: String,
     default: ''
+  },
+  repoData: {
+    type: Object,
+    required: true,
+    default: null
   }
 });
+const { repoData } = props;
 
 const emit = defineEmits(['select', 'scriptCount']);
 
@@ -57,11 +62,11 @@ const scripts = ref(
   getJsScriptsFromRepo(repoData).map((item, idx) => ({
     id: idx + 1,
     title: item.name,
-    author: item.author || '',
-    desc: item.description || '',
+    author: item.author || '无',
+    desc: item.description || '无',
     tags: item.tags || [],
-    time: item.lastUpdated || '',
-    unread: false, // 可根据需要自定义
+    time: item.lastUpdated || '无',
+    unread: false, 
     hash: item.hash,
     version: item.version,
   }))
