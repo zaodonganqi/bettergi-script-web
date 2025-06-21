@@ -243,7 +243,7 @@ watch(
 }
 
 .readme-content {
-  color: #333;
+  color: #000;
   font-size: 15px;
   line-height: 1.8;
 }
