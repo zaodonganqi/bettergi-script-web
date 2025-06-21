@@ -9,13 +9,13 @@
         </span>
         <span v-else class="empty-switcher"></span>
       </template>
-      <template #title="{ title, key, dataRef }">
+      <template #title="{ title, dataRef }">
         <div class="tree-node-container">
           <div class="tree-node-title">
             <a-image v-if="dataRef.showIcon" :src="dataRef.icon" :width="22" :placeholder="false" @error="dataRef.showIcon=false"/>
             <span>{{ title }}</span>
           </div>
-          <a-button class="subscribe-btn" type="text" size="small" @click.stop="handleSubscribe({ key, title })">
+          <a-button class="subscribe-btn" type="text" size="small" @click.stop="handleSubscribe(dataRef)">
             订阅
           </a-button>
         </div>
@@ -28,6 +28,8 @@
 import { ref, computed, onMounted } from 'vue';
 import { match } from 'pinyin-pro';
 import { CaretRightOutlined, CaretDownOutlined } from '@ant-design/icons-vue';
+import { useClipboard } from '@vueuse/core';
+import { message as Message } from 'ant-design-vue';
 
 const props = defineProps({
   searchKey: {
@@ -41,7 +43,9 @@ const props = defineProps({
   }
 });
 const { repoData } = props;
-
+const { copy } = useClipboard();
+const mode = import.meta.env.VITE_MODE;
+const selectedRepo = ref({ value: 'local' });
 const emit = defineEmits(['select', 'leafCount']);
 const expandedKeys = ref([]);
 const selectedKeys = ref([]);
@@ -78,15 +82,62 @@ const handleSelect = (selectedKeysList) => {
     description: selectedNode.description || '',
     tags: selectedNode.tags || [],
     lastUpdated: selectedNode.lastUpdated || '',
-    path: getNodePath(treeData.value, selectedNode.key),
+    path: selectedNode.path || '',
   });
   selectedKeys.value = selectedNode.key ? [selectedNode.key] : [];
-  console.log("已选择节点", selectedNode)
+  console.log("已选择节点", selectedNode);
 };
 
 // 处理订阅
 const handleSubscribe = (nodeData) => {
-  // TODO: 实现订阅功能
+  if (!nodeData || !nodeData.key) {
+    Message.error('请选择一个有效的节点进行订阅');
+    return;
+  }
+  downloadScript(nodeData)
+};
+
+const downloadScript = async (script) => {
+  // 创建一个包含脚本路径的数组
+  const subscriptionData = [script.path];
+
+  // 将数组转换为 JSON 字串
+  const jsonString = JSON.stringify(subscriptionData);
+  const base64String = btoa(encodeURIComponent(jsonString));
+
+  // 创建完整的 URL
+  const fullUrl = `bettergi://script?import=${base64String}`;
+
+  if (mode.value === 'single') {
+    if (selectedRepo.value === 'local') {
+      try {
+        await subscribeToLocal(fullUrl);
+      } catch (error) {
+        console.error('订阅失败:', error);
+        Message.error(`订阅失败: ${error.message}`);
+      }
+    } else {
+      copy(fullUrl).then(() => {
+        Message.success(`订阅链接已复制，回到地图追踪页面以继续导入`);
+      }).catch((error) => {
+        console.error('复制到剪贴板失败:', error);
+        Message.error(`复制 ${script.name} 的订阅链接失败`);
+      });
+    }
+  } else {
+    // 将完整的 URL 复制到剪贴板
+    copy(fullUrl).then(() => {
+      Message.success(`已将 ${script.name} 的订阅链接复制到剪贴板`);
+    }).catch((error) => {
+      console.error('复制到剪贴板失败:', error);
+      Message.error(`复制 ${script.name} 的订阅链接失败`);
+    });
+  }
+};
+
+const subscribeToLocal = async (url) => {
+  const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
+  await repoWebBridge.ImportUri(url);
 };
 
 // 查找节点
@@ -100,28 +151,6 @@ const findNodeByKey = (nodes, key) => {
     if (node.children) stack.push(...node.children);
   }
   return null;
-};
-
-// 获取节点路径
-const getNodePath = (nodes, key) => {
-  if (!nodes) return null;
-
-  const path = [];
-  const findPath = (nodeList, targetKey) => {
-    for (const node of nodeList) {
-      if (node.key === targetKey) {
-        path.unshift(node.title);
-        return true;
-      }
-      if (node.children && findPath(node.children, targetKey)) {
-        path.unshift(node.title);
-        return true;
-      }
-    }
-    return false;
-  };
-
-  return findPath(nodes, key) ? path : null;
 };
 
 // 获取节点图标
@@ -159,7 +188,8 @@ const processNode = (node, parentKey = '') => {
     rawChildren: node.children || [],
     children,
     icon: iconPath,
-    showIcon: node.showIcon || false
+    showIcon: node.showIcon || false,
+    path: `pathing/${currentKey}`,
   };
 };
 

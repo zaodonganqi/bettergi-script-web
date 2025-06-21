@@ -48,7 +48,8 @@ function getJsScriptsFromRepo(repo) {
         const [nameSuffix, newDescription] = child.description.split('~|~');
         child = {
           ...child,
-          name: `${child.name} - ${nameSuffix.trim()}`,
+          title: `${child.name} - ${nameSuffix.trim()}`,
+          name: child.name,
           description: newDescription.trim(),
         };
       }
@@ -61,14 +62,16 @@ function getJsScriptsFromRepo(repo) {
 const scripts = ref(
   getJsScriptsFromRepo(repoData).map((item, idx) => ({
     id: idx + 1,
-    title: item.name,
-    author: item.author || '无',
-    desc: item.description || '无',
+    title: item.title,
+    name: item.name,
+    author: item.author || '',
+    desc: item.description || '',
     tags: item.tags || [],
-    time: item.lastUpdated || '无',
+    time: item.lastUpdated || '',
     unread: false, 
     hash: item.hash,
     version: item.version,
+    path: 'js/' + item.name,
   }))
 );
 

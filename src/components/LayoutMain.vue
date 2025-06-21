@@ -155,7 +155,7 @@ const handleScriptSelect = (script) => {
 // 地图追踪板块
 const handleMapSelect = (location) => {
   selectedLocation.value = location;
-  selectedScript.value = location; // 使用同一个详情组件
+  selectedScript.value = location;
 };
 
 const mapTreeRef = ref(null);
