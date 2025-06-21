@@ -59,7 +59,7 @@ const { copy } = useClipboard();
 
 // 获取readme文件内容
 const getReadmeContent = (tag) => {
-  const baseReadmeUrl = "https://raw.githubusercontent.com/babalae/bettergi-scripts-list/refs/heads/main/repo/pathing/";
+  const baseReadmeUrl = "https://raw.githubusercontent.com/babalae/bettergi-scripts-list/refs/heads/main/repo/";
   const encodedTag = tag
   return `${baseReadmeUrl}${encodedTag}/README.md`;
 };
@@ -88,7 +88,7 @@ const fetchAndRenderReadme = async (path) => {
   readmeContent.value = '';
 
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 5000);
+  const timeoutId = setTimeout(() => controller.abort(), 10000);
 
   try {
     const readmeUrl = getReadmeContent(path);
