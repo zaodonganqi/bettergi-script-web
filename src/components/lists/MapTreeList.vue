@@ -25,7 +25,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { match } from 'pinyin-pro';
 import { CaretRightOutlined, CaretDownOutlined } from '@ant-design/icons-vue';
 import { useClipboard } from '@vueuse/core';
@@ -227,7 +227,40 @@ const generateTreeData = (data) => {
 // 获取过滤后的树形数据
 const filteredTreeData = computed(() =>
   filterTreeNodes(treeData.value, props.searchKey)
+);
 
+const updateExpandedKeysForSearch = (newSearchKey) => {
+  if (!newSearchKey) {
+    expandedKeys.value = [];
+    return;
+  }
+
+  const newExpandedKeys = new Set();
+  const searchText = newSearchKey.toLowerCase();
+
+  const findPaths = (nodes, currentPath) => {
+    for (const node of nodes) {
+      if (match(node.title.toLowerCase(), searchText)) {
+        currentPath.forEach(parentNode => {
+          if (hasExpandableChildren(parentNode)) {
+            newExpandedKeys.add(parentNode.key);
+          }
+        });
+      }
+      if (node.children && node.children.length > 0) {
+        findPaths(node.children, [...currentPath, node]);
+      }
+    }
+  };
+  findPaths(treeData.value, []);
+  expandedKeys.value = [...newExpandedKeys];
+}
+
+watch(
+  () => props.searchKey,
+  (newSearchKey) => {
+    updateExpandedKeysForSearch(newSearchKey);
+  }
 );
 
 // 初始化

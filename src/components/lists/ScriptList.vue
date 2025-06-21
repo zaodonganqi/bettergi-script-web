@@ -92,7 +92,6 @@ const filteredScripts = computed(() => {
       script.title.toLowerCase().includes(searchLower) ||
       script.author.toLowerCase().includes(searchLower) ||
       script.desc.toLowerCase().includes(searchLower) ||
-      script.detail.toLowerCase().includes(searchLower) ||
       script.tags.some(tag => tag.toLowerCase().includes(searchLower))
     );
   });

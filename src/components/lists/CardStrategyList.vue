@@ -101,7 +101,6 @@ const filteredStrategies = computed(() => {
       strategy.title.toLowerCase().includes(searchLower) ||
       strategy.author.toLowerCase().includes(searchLower) ||
       strategy.desc.toLowerCase().includes(searchLower) ||
-      strategy.detail.toLowerCase().includes(searchLower) ||
       strategy.tags.some(tag => tag.toLowerCase().includes(searchLower))
     );
   });
