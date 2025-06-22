@@ -14,8 +14,14 @@
           <a-button type="primary" @click="handleSubscribe">订阅</a-button>
         </div>
       </div>
-      <div v-if="script.desc" class="detail-desc">{{ script.desc }}</div>
-      <div v-else class="detail-desc">暂无描述</div>
+      <div class="detail-readme">
+        <div v-if="isLoading" class="readme-loading">
+          <a-spin />
+        </div>
+        <div v-else-if="readmeContent" v-html="readmeContent" class="readme-content"></div>
+        <div v-else-if="script.desc" class="detail-desc">{{ '简介：\n' + script.desc }}</div>
+        <div v-else class="readme-empty">暂无描述</div>
+      </div>
       <!-- 输入区 -->
       <div class="detail-input-wrap">
         <a-input v-model:value="input" placeholder="评论..." class="detail-input" />
@@ -29,7 +35,11 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
+import MarkdownIt from 'markdown-it';
+import markdownItAnchor from 'markdown-it-anchor';
+import hljs from 'highlight.js';
+import 'highlight.js/styles/github.css';
 import { useClipboard } from '@vueuse/core';
 import { message as Message } from 'ant-design-vue';
 
@@ -44,7 +54,65 @@ const mode = import.meta.env.VITE_MODE;
 const selectedRepo = ref({ value: 'local' });
 
 const input = ref('');
+const readmeContent = ref('');
+const isLoading = ref(false);
+const error = ref(null);
 const { copy } = useClipboard();
+
+const md = new MarkdownIt({
+  html: true,
+  linkify: true,
+  typographer: true,
+  highlight: function (str, lang) {
+    if (lang && hljs.getLanguage(lang)) {
+      try {
+        return '<pre class="hljs"><code>' +
+               hljs.highlight(str, { language: lang, ignoreIllegals: true }).value +
+               '</code></pre>';
+      } catch (__) {}
+    }
+    return '<pre class="hljs"><code>' + md.utils.escapeHtml(str) + '</code></pre>';
+  }
+}).use(markdownItAnchor, {
+  level: [1, 2, 3, 4, 5, 6]
+});
+
+// 获取readme文件内容
+const getReadmeContent = (tag) => {
+  const baseReadmeUrl = "https://raw.githubusercontent.com/babalae/bettergi-scripts-list/refs/heads/main/repo/";
+  const encodedTag = tag
+  return `${baseReadmeUrl}${encodedTag}/README.md`;
+};
+
+const fetchAndRenderReadme = async (path) => {
+  if (!path) {
+    readmeContent.value = '';
+    return;
+  }
+  isLoading.value = true;
+  error.value = null;
+  readmeContent.value = '';
+
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+  try {
+    const readmeUrl = getReadmeContent(path);
+    const response = await fetch(readmeUrl, { signal: controller.signal });
+    if (response.ok) {
+      const markdown = await response.text();
+      readmeContent.value = md.render(markdown);
+    } else {
+      readmeContent.value = '';
+    }
+  } catch (e) {
+    readmeContent.value = '';
+    console.error('Failed to fetch README:', e);
+  } finally {
+    clearTimeout(timeoutId);
+    isLoading.value = false;
+  }
+};
 
 const handleSubscribe = () => {
   if (props.script) {
@@ -94,6 +162,20 @@ const subscribeToLocal = async (url) => {
   const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
   await repoWebBridge.ImportUri(url);
 };
+
+watch(
+  () => props.script,
+  (newScript) => {
+    if (newScript && newScript.path) {
+      fetchAndRenderReadme(newScript.path);
+    } else {
+      readmeContent.value = '';
+      isLoading.value = false;
+      error.value = null;
+    }
+  },
+  { immediate: true }
+);
 </script>
 
 <style scoped>
@@ -109,6 +191,8 @@ const subscribeToLocal = async (url) => {
 
 .detail-header {
   margin-bottom: 8px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #ddd;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -149,7 +233,6 @@ const subscribeToLocal = async (url) => {
 }
 
 .detail-desc {
-  border-top: 1px solid #eee;
   padding-top: 16px;
   color: #000;
   font-size: 15px;
@@ -157,6 +240,10 @@ const subscribeToLocal = async (url) => {
 }
 
 .detail-empty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
   color: #bbb;
   text-align: center;
   margin-top: 80px;
@@ -189,5 +276,97 @@ const subscribeToLocal = async (url) => {
   font-size: 15px;
   background: #1677ff !important;
   border: none !important;
+}
+
+.detail-readme {
+  flex-grow: 1;
+  overflow-y: auto;
+  min-height: 100px;
+  padding-top: 16px;
+}
+
+.readme-content {
+  color: #000;
+  font-size: 15px;
+  line-height: 1.8;
+}
+
+.readme-content :deep(h1),
+.readme-content :deep(h2),
+.readme-content :deep(h3),
+.readme-content :deep(h4),
+.readme-content :deep(h5),
+.readme-content :deep(h6) {
+  margin-top: 24px;
+  margin-bottom: 16px;
+  font-weight: 600;
+}
+
+.readme-content :deep(h1) { font-size: 2em; }
+.readme-content :deep(h2) { font-size: 1.5em; }
+.readme-content :deep(h3) { font-size: 1.25em; }
+.readme-content :deep(h4) { font-size: 1em; }
+.readme-content :deep(h5) { font-size: 0.875em; }
+.readme-content :deep(h6) { font-size: 0.85em; }
+
+.readme-content :deep(p) {
+  margin-bottom: 16px;
+}
+
+.readme-content :deep(ul),
+.readme-content :deep(ol) {
+  padding-left: 20px;
+}
+
+.readme-content :deep(pre) {
+  background-color: #f6f8fa;
+  border-radius: 6px;
+  padding: 16px;
+  overflow: auto;
+}
+
+.readme-content :deep(code) {
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+}
+
+.readme-content :deep(blockquote) {
+  border-left: 0.25em solid #dfe2e5;
+  color: #6a737d;
+  padding: 0 1em;
+  margin-left: 0;
+}
+
+.readme-content :deep(table) {
+  border-collapse: collapse;
+  margin: 1rem 0;
+  display: block;
+  overflow-x: auto;
+}
+
+.readme-content :deep(tr) {
+  border-top: 1px solid #c6cbd1;
+}
+
+.readme-content :deep(tr:nth-child(2n)) {
+  background-color: #f6f8fa;
+}
+
+.readme-content :deep(th),
+.readme-content :deep(td) {
+  border: 1px solid #dfe2e5;
+  padding: 0.6em 1em;
+}
+
+.readme-loading {
+  text-align: center;
+  margin-top: 40px;
+}
+
+.readme-empty,
+.readme-error {
+  color: #bbb;
+  text-align: center;
+  margin-top: 40px;
+  font-size: 16px;
 }
 </style> 

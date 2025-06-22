@@ -7,7 +7,10 @@
       @click="selectScript(item.id)"
     >
       <div class="item-header">
-        <span class="item-title">{{ item.title }}</span>
+        <div class="item-title-wrap">
+          <span class="item-title-main">{{ item.name1 }}</span>
+          <span v-if="item.name1 !== item.name2" class="item-title-sub">{{ item.name2 }}</span>
+        </div>
         <span v-if="item.unread" class="item-dot"></span>
       </div>
       <div class="item-author">{{ item.author }}</div>
@@ -41,21 +44,28 @@ const emit = defineEmits(['select', 'scriptCount']);
 function getJsScriptsFromRepo(repo) {
   const jsNode = repo.indexes.find(item => item.name === 'js');
   if (!jsNode || !jsNode.children) return [];
-  // 处理children
+
   return jsNode.children.map(child => {
-    if (child.type === 'directory') {
-      if (child.description && child.description.includes('~|~')) {
-        const [nameSuffix, newDescription] = child.description.split('~|~');
-        child = {
-          ...child,
-          title: `${child.name} - ${nameSuffix.trim()}`,
-          name: child.name,
-          description: newDescription.trim(),
-        };
-      }
-      return child;
+    // 应@秋云 需求，改成了第一行name第二行nameSuffix的样式
+    let name1 = child.name;
+    let name2 = child.name;
+    let title = child.name;
+    let description = child.description || '';
+
+    if (child.type === 'directory' && child.description && child.description.includes('~|~')) {
+      const [nameSuffix, newDescription] = child.description.split('~|~');
+      name2 = nameSuffix.trim();
+      title = `${name1} - ${name2}`;
+      description = newDescription.trim();
     }
-    return child;
+
+    return {
+      ...child,
+      name1: name1,
+      name2: name2,
+      title: title,
+      description: description,
+    };
   });
 }
 
@@ -64,8 +74,10 @@ const scripts = ref(
     id: idx + 1,
     title: item.title,
     name: item.name,
+    name1: item.name1,
+    name2: item.name2,
     author: item.author || '',
-    desc: item.description || '',
+    desc: item.description,
     tags: item.tags || [],
     time: item.lastUpdated || '',
     unread: false, 
@@ -144,11 +156,23 @@ defineExpose({
   margin-bottom: 2px;
 }
 
-.item-title {
-  font-size: 16px;
+.item-title-wrap {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  margin-right: 8px;
+}
+
+.item-title-main,
+.item-title-sub {
+  font-size: 15px;
   font-weight: 700;
   color: #222;
-  margin-bottom: 4px;
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .item-dot {

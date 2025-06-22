@@ -139,6 +139,7 @@ const handleSearch = (value) => {
 const handleMenuSelect = ({ key }) => {
   selectedMenu.value = [key];
   search.value = '';
+  selectedScript.value = null;
 };
 
 const openExternalLink = () => {

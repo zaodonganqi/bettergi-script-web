@@ -17,9 +17,8 @@
         <div v-if="isLoading" class="readme-loading">
           <a-spin />
         </div>
-        <div v-else-if="error" class="readme-error">{{ error }}</div>
-        <!-- <div v-else-if="readmeContent" v-html="readmeContent" class="readme-content"></div> -->
-        <vue-markdown v-else-if="readmeContent" :source="readmeContent" />
+        <div v-else-if="readmeContent" v-html="readmeContent" class="readme-content"></div>
+        <div v-else-if="script.desc" class="detail-desc">{{ script.desc }}</div>
         <div v-else class="readme-empty">暂无描述</div>
       </div>
       <!-- 输入区 -->
@@ -36,12 +35,12 @@
 
 <script setup>
 import { ref, watch } from 'vue';
-import { marked } from 'marked';
+import MarkdownIt from 'markdown-it';
+import markdownItAnchor from 'markdown-it-anchor';
 import hljs from 'highlight.js';
 import 'highlight.js/styles/github.css';
 import { useClipboard } from '@vueuse/core';
 import { message as Message } from 'ant-design-vue';
-import VueMarkdown from 'vue-markdown-render';
 
 const props = defineProps({
   script: {
@@ -59,26 +58,30 @@ const isLoading = ref(false);
 const error = ref(null);
 const { copy } = useClipboard();
 
+const md = new MarkdownIt({
+  html: true,
+  linkify: true,
+  typographer: true,
+  highlight: function (str, lang) {
+    if (lang && hljs.getLanguage(lang)) {
+      try {
+        return '<pre class="hljs"><code>' +
+               hljs.highlight(str, { language: lang, ignoreIllegals: true }).value +
+               '</code></pre>';
+      } catch (__) {}
+    }
+    return '<pre class="hljs"><code>' + md.utils.escapeHtml(str) + '</code></pre>';
+  }
+}).use(markdownItAnchor, {
+  level: [1, 2, 3, 4, 5, 6]
+});
+
 // 获取readme文件内容
 const getReadmeContent = (tag) => {
   const baseReadmeUrl = "https://raw.githubusercontent.com/babalae/bettergi-scripts-list/refs/heads/main/repo/";
   const encodedTag = tag
   return `${baseReadmeUrl}${encodedTag}/README.md`;
 };
-
-marked.setOptions({
-  highlight: function (code, lang) {
-    const language = hljs.getLanguage(lang) ? lang : 'plaintext';
-    return hljs.highlight(code, { language }).value;
-  },
-  langPrefix: 'hljs language-',
-  pedantic: false,
-  gfm: true,
-  breaks: false,
-  sanitize: false,
-  smartypants: false,
-  xhtml: false
-});
 
 const fetchAndRenderReadme = async (path) => {
   if (!path) {
@@ -97,21 +100,13 @@ const fetchAndRenderReadme = async (path) => {
     const response = await fetch(readmeUrl, { signal: controller.signal });
     if (response.ok) {
       const markdown = await response.text();
-      // readmeContent.value = marked(markdown);
-      readmeContent.value = markdown;
-    } else if (response.status === 404) {
-      readmeContent.value = '';
+      readmeContent.value = md.render(markdown);
     } else {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      readmeContent.value = '';
     }
   } catch (e) {
-    if (e.name === 'AbortError') {
-      console.error('Fetch request timed out');
-      error.value = '获取详情超时，请重试';
-    } else {
-      console.error('Failed to fetch README:', e);
-      error.value = '获取详情失败，请重试';
-    }
+    readmeContent.value = '';
+    console.error('Failed to fetch README:', e);
   } finally {
     clearTimeout(timeoutId);
     isLoading.value = false;
@@ -198,7 +193,7 @@ watch(
 .detail-header {
   margin-bottom: 8px;
   padding-bottom: 16px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid #ddd;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -262,6 +257,13 @@ watch(
   font-weight: 600;
 }
 
+.readme-content :deep(h1) { font-size: 2em; }
+.readme-content :deep(h2) { font-size: 1.5em; }
+.readme-content :deep(h3) { font-size: 1.25em; }
+.readme-content :deep(h4) { font-size: 1em; }
+.readme-content :deep(h5) { font-size: 0.875em; }
+.readme-content :deep(h6) { font-size: 0.85em; }
+
 .readme-content :deep(p) {
   margin-bottom: 16px;
 }
@@ -289,6 +291,27 @@ watch(
   margin-left: 0;
 }
 
+.readme-content :deep(table) {
+  border-collapse: collapse;
+  margin: 1rem 0;
+  display: block;
+  overflow-x: auto;
+}
+
+.readme-content :deep(tr) {
+  border-top: 1px solid #c6cbd1;
+}
+
+.readme-content :deep(tr:nth-child(2n)) {
+  background-color: #f6f8fa;
+}
+
+.readme-content :deep(th),
+.readme-content :deep(td) {
+  border: 1px solid #dfe2e5;
+  padding: 0.6em 1em;
+}
+
 .readme-loading {
   text-align: center;
   margin-top: 40px;
@@ -303,14 +326,17 @@ watch(
 }
 
 .detail-desc {
-  border-top: 1px solid #eee;
   padding-top: 16px;
-  color: #555;
+  color: #000;
   font-size: 15px;
   white-space: pre-line;
 }
 
 .detail-empty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
   color: #bbb;
   text-align: center;
   margin-top: 80px;

@@ -149,6 +149,9 @@ const filteredStrategies = computed(() => {
   font-weight: 700;
   color: #222;
   margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .item-dot {
