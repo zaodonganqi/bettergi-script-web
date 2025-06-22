@@ -18,7 +18,8 @@
           <a-spin />
         </div>
         <div v-else-if="error" class="readme-error">{{ error }}</div>
-        <div v-else-if="readmeContent" v-html="readmeContent" class="readme-content"></div>
+        <!-- <div v-else-if="readmeContent" v-html="readmeContent" class="readme-content"></div> -->
+        <vue-markdown v-else-if="readmeContent" :source="readmeContent" />
         <div v-else class="readme-empty">暂无描述</div>
       </div>
       <!-- 输入区 -->
@@ -40,6 +41,7 @@ import hljs from 'highlight.js';
 import 'highlight.js/styles/github.css';
 import { useClipboard } from '@vueuse/core';
 import { message as Message } from 'ant-design-vue';
+import VueMarkdown from 'vue-markdown-render';
 
 const props = defineProps({
   script: {
@@ -95,7 +97,8 @@ const fetchAndRenderReadme = async (path) => {
     const response = await fetch(readmeUrl, { signal: controller.signal });
     if (response.ok) {
       const markdown = await response.text();
-      readmeContent.value = marked(markdown);
+      // readmeContent.value = marked(markdown);
+      readmeContent.value = markdown;
     } else if (response.status === 404) {
       readmeContent.value = '';
     } else {
