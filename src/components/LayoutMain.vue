@@ -4,11 +4,7 @@
     <a-layout-sider class="custom-sider">
       <div class="sider-header">
         <div class="sider-logo" title="访问 BetterGI 官网" @click="openExternalLink"></div>
-        <a-select v-model:value="selectedValue" class="repo-select" @change="handleChange">
-          <a-select-option v-for="option in options" :key="option.value" :value="option.value">
-            {{ option.label }}
-          </a-select-option>
-        </a-select>
+        <span class="repo-title">脚本仓库</span>
       </div>
       <div class="sider-menu-wrap">
         <div>
@@ -98,14 +94,6 @@ const menuList = ref([
   { key: '4', label: '七圣召唤策略', icon: BulbOutlined, count: 0 },
 ]);
 
-const options = ref([
-  { value: 1, label: '本地仓库' },
-  { value: 2, label: '中央仓库' },
-  { value: 3, label: '镜像仓库' },
-]);
-
-const selectedValue = ref(1);
-
 // 计算当前菜单标题
 const currentMenuTitle = computed(() => {
   const current = menuList.value.find(item => item.key === selectedMenu.value[0]);
@@ -127,10 +115,6 @@ const searchPlaceholder = computed(() => {
       return '输入关键词查询';
   }
 });
-
-const handleChange = (value) => {
-  console.log('选择仓库变化: ', value);
-};
 
 const handleSearch = (value) => {
   search.value = value;
@@ -218,11 +202,9 @@ onMounted(() => {
 
 <style scoped>
 .main-layout {
-  height: calc(100vh - 20px);
-  width: calc(100% - 20px);
-  margin: 10px;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  height: 100vh;
+  width: 100%;
+  margin: 0;
   background: #fff;
   display: flex;
 }
@@ -266,8 +248,11 @@ onMounted(() => {
   opacity: 0.8;
 }
 
-.sider-title {
-  letter-spacing: 1px;
+.repo-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #222;
+  margin-left: 10px;
 }
 
 .sider-menu-wrap {
@@ -275,21 +260,6 @@ onMounted(() => {
   width: 100%;
   overflow-y: auto;
   overflow-x: hidden;
-}
-
-.repo-select {
-  width: 100%;
-  margin-left: 10px;
-}
-
-.repo-select :deep(.ant-select-selector) {
-  height: 36px !important;
-  padding: 4px 12px !important;
-  font-size: 15px !important;
-}
-
-.repo-select :deep(.ant-select-selection-item) {
-  line-height: 28px !important;
 }
 
 .custom-menu {
