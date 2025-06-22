@@ -188,7 +188,7 @@ const processNode = (node, parentKey = '') => {
     rawChildren: node.children || [],
     children,
     icon: iconPath,
-    showIcon: node.showIcon || false,
+    showIcon: node.showIcon || true,
     path: `pathing/${currentKey}`,
   };
 };
