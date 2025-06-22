@@ -51,9 +51,11 @@ const expandedKeys = ref([]);
 const selectedKeys = ref([]);
 const treeData = ref([]);
 
-// 判断节点是否有可展开的子节点
+// 判断节点是否有可展开的子节点（只允许有子目录的节点可展开，若children全为file则不可展开）
 const hasExpandableChildren = (dataRef) => {
-  return dataRef?.children?.some(child => child.children?.length > 0);
+  if (!dataRef?.children || dataRef.children.length === 0) return false;
+  // 只要有一个子节点是目录即可展开
+  return dataRef.children.some(child => child.type === 'directory');
 };
 
 // 处理节点展开
@@ -83,6 +85,9 @@ const handleSelect = (selectedKeysList) => {
     tags: selectedNode.tags || [],
     lastUpdated: selectedNode.lastUpdated || '',
     path: selectedNode.path || '',
+    files: selectedNode.files || [],
+    authors: selectedNode.authors || '',
+    dirLastUpdated: selectedNode.lastUpdated || '',
   });
   selectedKeys.value = selectedNode.key ? [selectedNode.key] : [];
   console.log("已选择节点", selectedNode);
@@ -158,21 +163,41 @@ const getIconUrl = (tag) => {
   const baseIconUrl = "https://raw.githubusercontent.com/babalae/bettergi-scripts-list/refs/heads/main/repo/pathing/";
   const encodedTag = tag
   const iconPath = `${baseIconUrl}${encodedTag}/icon.ico`;
-
-  // // 使用当前选中的镜像URL格式
-  // if (selectedRepo.value && selectedRepo.value !== 'local') {
-  //   const mirrorFormat = selectedRepo.value.split(baseRepo)[0];
-  //   return mirrorFormat + iconPath;
-  // }
-
   return iconPath;
 };
+
+// 递归收集所有 file 节点
+function collectFiles(node) {
+  let files = [];
+  if (node.type === 'file') {
+    files.push(node);
+  } else if (node.children) {
+    node.children.forEach(child => {
+      files = files.concat(collectFiles(child));
+    });
+  }
+  return files;
+}
 
 // 处理节点数据
 const processNode = (node, parentKey = '') => {
   const currentKey = parentKey ? `${parentKey}/${node.name}` : node.name;
   const children = node.children?.map(child => processNode(child, currentKey)) || [];
   const iconPath = getIconUrl(currentKey);
+
+  let files = [];
+  let authors = '';
+  let lastUpdated = '';
+  if (node.type === 'directory') {
+    files = collectFiles(node);
+    // 合并作者
+    const authorSet = new Set(files.map(f => f.author).filter(Boolean));
+    authors = Array.from(authorSet).join('，');
+    // 取最新更新时间
+    lastUpdated = files.reduce((latest, f) => {
+      return (!latest || new Date(f.lastUpdated) > new Date(latest)) ? f.lastUpdated : latest;
+    }, '');
+  }
 
   return {
     key: currentKey,
@@ -181,15 +206,18 @@ const processNode = (node, parentKey = '') => {
     type: node.type || '',
     hash: node.hash || '',
     version: node.version,
-    author: node.author || '无',
+    author: node.author || '',
     description: node.description || '无',
     tags: node.tags || [],
-    lastUpdated: node.lastUpdated || '无',
+    lastUpdated: node.lastUpdated || '',
     rawChildren: node.children || [],
     children,
     icon: iconPath,
     showIcon: node.showIcon || false,
     path: `pathing/${currentKey}`,
+    files, // 该目录下所有file节点
+    authors, // 该目录下所有file的作者合并
+    lastUpdated, // 该目录下所有file的最新更新时间
   };
 };
 

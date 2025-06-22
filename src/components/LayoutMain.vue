@@ -104,13 +104,13 @@ const currentMenuTitle = computed(() => {
 const searchPlaceholder = computed(() => {
   switch (selectedMenu.value[0]) {
     case '1':
-      return '搜索地图位置';
+      return '搜索资源（支持搜索名称、作者、tag）';
     case '2':
-      return '搜索脚本';
+      return '搜索脚本（支持搜索名称、作者、tag）';
     case '3':
-      return '搜索战斗策略';
+      return '搜索战斗策略（支持搜索名称、作者、tag）';
     case '4':
-      return '搜索七圣召唤策略';
+      return '搜索七圣召唤策略（支持搜索名称、作者、tag）';
     default:
       return '输入关键词查询';
   }
@@ -210,9 +210,9 @@ onMounted(() => {
 }
 
 .custom-sider {
-  width: 320px !important;
-  min-width: 320px !important;
-  max-width: 320px !important;
+  width: 280px !important;
+  min-width: 280px !important;
+  max-width: 280px !important;
   background: #f7f8fa !important;
   border-right: 1px solid #e5e7eb;
   display: flex;
@@ -252,7 +252,8 @@ onMounted(() => {
   font-size: 16px;
   font-weight: 600;
   color: #222;
-  margin-left: 10px;
+  margin-left: 15px;
+  align-items: center;
 }
 
 .sider-menu-wrap {
@@ -313,9 +314,9 @@ onMounted(() => {
 }
 
 .script-sider {
-  width: 400px !important;
-  min-width: 400px !important;
-  max-width: 400px !important;
+  width: 360px !important;
+  min-width: 360px !important;
+  max-width: 360px !important;
   background: #f7f8fa !important;
   border-right: 1px solid #e5e7eb;
   height: 100%;

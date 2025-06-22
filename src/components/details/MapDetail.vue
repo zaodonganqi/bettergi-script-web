@@ -1,30 +1,123 @@
 <template>
   <div class="map-detail">
     <template v-if="script">
-      <div class="detail-header">
-        <div class="header-left">
-          <div class="detail-title">{{ script.title }}</div>
-          <div class="detail-meta">
-            <span class="detail-author">作者：{{ script.author }}</span>
+      <div v-if="detailLoading" class="detail-global-loading">
+        <a-spin size="large" />
+      </div>
+      <div v-else>
+        <div class="detail-header">
+          <div class="header-left">
+            <div class="detail-title">{{ script.title }}</div>
+            <div class="detail-meta">
+              <span v-if="script.type === 'directory' && script.authors">作者：{{ script.authors }}</span>
+              <span v-else-if="script.author">作者：{{ script.author }}</span>
+              <span v-else class="detail-author">暂无作者信息</span>
+            </div>
+            <div class="detail-time">{{ script.type === 'directory' && script.dirLastUpdated ? script.dirLastUpdated : script.time }}</div>
           </div>
-          <div class="detail-time">{{ script.time }}</div>
+          <div class="header-right">
+            <a-button type="primary" @click="handleSubscribe">订阅</a-button>
+          </div>
         </div>
-        <div class="header-right">
-          <a-button type="primary" @click="handleSubscribe">订阅</a-button>
+        <div v-if="hasReadme" class="detail-tabs">
+          <a-segmented v-model:value="activeTab" :options="tabOptions" size="large" class="detail-tab-btns" />
         </div>
-      </div>
-      <div class="detail-readme">
-        <div v-if="isLoading" class="readme-loading">
-          <a-spin />
+        <div class="tab-content-slider">
+          <transition :name="tabTransitionName">
+            <template v-if="hasReadme">
+              <div v-if="activeTab === 'readme'" key="readme" class="tab-pane">
+                <div v-if="isLoading" class="readme-loading">
+                  <a-spin />
+                </div>
+                <div v-else-if="readmeContent" v-html="readmeContent" class="readme-content"></div>
+                <div v-else-if="script.desc" class="detail-desc">{{ script.desc }}</div>
+                <div v-else class="readme-empty">暂无描述</div>
+              </div>
+              <div v-else-if="activeTab === 'files' && script.type === 'directory' && files && files.length > 0" key="files" class="tab-pane">
+                <a-table :columns="columns" :data-source="files" :pagination="false" row-key="hash" size="small">
+                  <template #bodyCell="{ column, record }">
+                    <template v-if="column.dataIndex === 'name'">
+                      <a-popover v-if="record.description" :content="record.description">
+                        <span>{{ record.name }}</span>
+                      </a-popover>
+                      <span v-else>{{ record.name }}</span>
+                    </template>
+                    <template v-else-if="column.dataIndex === 'tags'">
+                      <a-space>
+                        <a-tag v-for="tag in record.tags" :key="tag" :color="getTagColor(tag)">{{ tag }}</a-tag>
+                      </a-space>
+                    </template>
+                    <template v-else-if="column.key === 'operations'">
+                      <a-space>
+                        <a-button type="primary" size="small" @click="downloadScript(record)">订阅</a-button>
+                        <a-button size="small" @click="showDetails(record)">详情</a-button>
+                      </a-space>
+                    </template>
+                    <template v-else>
+                      {{ record[column.dataIndex] }}
+                    </template>
+                  </template>
+                </a-table>
+              </div>
+            </template>
+            <template v-else>
+              <div v-if="script.type === 'directory' && files && files.length > 0" key="files-only" class="tab-pane">
+                <a-table :columns="columns" :data-source="files" :pagination="false" row-key="hash" size="small">
+                  <template #bodyCell="{ column, record }">
+                    <template v-if="column.dataIndex === 'name'">
+                      <a-popover v-if="record.description" :content="record.description">
+                        <span>{{ record.name }}</span>
+                      </a-popover>
+                      <span v-else>{{ record.name }}</span>
+                    </template>
+                    <template v-else-if="column.dataIndex === 'tags'">
+                      <a-space>
+                        <a-tag v-for="tag in record.tags" :key="tag" :color="getTagColor(tag)">{{ tag }}</a-tag>
+                      </a-space>
+                    </template>
+                    <template v-else-if="column.key === 'operations'">
+                      <a-space>
+                        <a-button type="primary" size="small" @click="downloadScript(record)">订阅</a-button>
+                        <a-button size="small" @click="showDetails(record)">详情</a-button>
+                      </a-space>
+                    </template>
+                    <template v-else>
+                      {{ record[column.dataIndex] }}
+                    </template>
+                  </template>
+                </a-table>
+              </div>
+            </template>
+          </transition>
         </div>
-        <div v-else-if="readmeContent" v-html="readmeContent" class="readme-content"></div>
-        <div v-else-if="script.desc" class="detail-desc">{{ script.desc }}</div>
-        <div v-else class="readme-empty">暂无描述</div>
-      </div>
-      <!-- 输入区 -->
-      <div class="detail-input-wrap">
-        <a-input v-model:value="input" placeholder="评论..." class="detail-input" />
-        <a-button type="primary" class="detail-send">Send</a-button>
+        <!-- 评论按钮 -->
+        <a-button class="comment-float-btn comment-round-btn" @click="commentModalOpen = true">
+          <i class="iconfont icon-comment" style="margin-right: 6px;" >评论</i>
+        </a-button>
+        <!-- 评论悬浮窗 -->
+        <a-modal v-model:open="commentModalOpen" title="发表评论" :footer="null" centered width="400">
+          <div class="comment-modal-content">
+            <a-input v-model:value="input" placeholder="评论..." class="detail-input" />
+            <a-button type="primary" class="detail-send">发送</a-button>
+          </div>
+        </a-modal>
+        <!-- 详情弹窗 -->
+        <a-modal v-model:open="modalOpen" title="文件详情" :footer="null" width="480" centered>
+          <a-descriptions bordered size="small" :column="1">
+            <a-descriptions-item label="名称">{{ modalRecord.name }}</a-descriptions-item>
+            <a-descriptions-item label="作者">{{ modalRecord.author }}</a-descriptions-item>
+            <a-descriptions-item label="标签">
+              <a-space>
+                <a-tag v-for="tag in modalRecord.tags" :key="tag" :color="getTagColor(tag)">{{ tag }}</a-tag>
+              </a-space>
+            </a-descriptions-item>
+            <a-descriptions-item label="更新时间">{{ modalRecord.lastUpdated }}</a-descriptions-item>
+            <a-descriptions-item label="hash">{{ modalRecord.hash }}</a-descriptions-item>
+            <a-descriptions-item label="描述">{{ modalRecord.description }}</a-descriptions-item>
+            <a-descriptions-item label="版本">{{ modalRecord.version }}</a-descriptions-item>
+            <a-descriptions-item label="路径">{{ modalRecord.path }}</a-descriptions-item>
+          </a-descriptions>
+        </a-modal>
       </div>
     </template>
     <template v-else>
@@ -34,13 +127,14 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, watch, computed } from 'vue';
 import MarkdownIt from 'markdown-it';
 import markdownItAnchor from 'markdown-it-anchor';
 import hljs from 'highlight.js';
 import 'highlight.js/styles/github.css';
 import { useClipboard } from '@vueuse/core';
 import { message as Message } from 'ant-design-vue';
+import { Table as ATable, Tag as ATag, Popover as APopover, Space as ASpace, Button as AButton, Input as AInput, Spin as ASpin, Modal as AModal, Descriptions as ADescriptions, DescriptionsItem as ADescriptionsItem, Segmented as ASegmented } from 'ant-design-vue';
 
 const props = defineProps({
   script: {
@@ -57,6 +151,53 @@ const readmeContent = ref('');
 const isLoading = ref(false);
 const error = ref(null);
 const { copy } = useClipboard();
+
+const columns = [
+  { title: '名称', dataIndex: 'name' },
+  { title: '作者', dataIndex: 'author' },
+  { title: '标签', dataIndex: 'tags' },
+  { title: '更新时间', dataIndex: 'lastUpdated' },
+  { title: '操作', key: 'operations' }
+];
+
+// tab切换，默认readme优先
+const tabOptions = [
+  { label: 'README', value: 'readme' },
+  { label: '文件列表', value: 'files' }
+];
+const hasReadme = computed(() => !!readmeContent.value);
+const activeTab = ref('readme');
+
+// 预加载readme和files数据
+const files = ref([]);
+
+// 详情弹窗
+const modalOpen = ref(false);
+const modalRecord = ref({});
+function showDetails(record) {
+  modalRecord.value = { ...record };
+  modalOpen.value = true;
+}
+
+// 评论悬浮窗
+const commentModalOpen = ref(false);
+
+// 随机颜色缓存，保证同一tag颜色一致
+const tagColorMap = ref({});
+function getRandomColor() {
+  const letters = '0123456789ABCDEF';
+  let color = '#';
+  for (let i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
+}
+function getTagColor(tag) {
+  if (!tagColorMap.value[tag]) {
+    tagColorMap.value[tag] = getRandomColor();
+  }
+  return tagColorMap.value[tag];
+}
 
 const md = new MarkdownIt({
   html: true,
@@ -162,15 +303,34 @@ const subscribeToLocal = async (url) => {
   await repoWebBridge.ImportUri(url);
 };
 
+// tab切换动画
+const tabTransitionName = computed(() => {
+  return activeTab.value === 'readme' ? 'slide-right' : 'slide-left';
+});
+
+// detail整体加载动画
+const detailLoading = ref(false);
+
 watch(
   () => props.script,
-  (newScript) => {
-    if (newScript && newScript.path) {
-      fetchAndRenderReadme(newScript.path);
+  async (newScript) => {
+    if (newScript) {
+      detailLoading.value = true;
+      // 预加载files
+      files.value = Array.isArray(newScript.files) ? newScript.files : [];
+      // 预加载readme
+      if (newScript.path) {
+        await fetchAndRenderReadme(newScript.path);
+      } else {
+        readmeContent.value = '';
+        isLoading.value = false;
+      }
+      detailLoading.value = false;
     } else {
+      files.value = [];
       readmeContent.value = '';
       isLoading.value = false;
-      error.value = null;
+      detailLoading.value = false;
     }
   },
   { immediate: true }
@@ -187,7 +347,7 @@ watch(
   display: flex;
   flex-direction: column;
   min-width: 0;
-  overflow: auto;
+  overflow: hidden;
 }
 
 .detail-header {
@@ -233,13 +393,60 @@ watch(
   margin-bottom: 10px;
 }
 
-.detail-readme {
-  flex-grow: 1;
-  overflow-y: auto;
-  min-height: 100px;
-  padding-top: 16px;
+.detail-tabs {
+  margin: 12px 0 0 0;
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 2px;
+  margin-bottom: 10px;
+  margin-left: 5px;
 }
 
+:deep(.ant-segmented-item-selected) {
+  background: #1677ff;
+  color: #fff;
+}
+
+.tab-content-slider {
+  min-height: 200px;
+  position: relative;
+}
+.tab-pane {
+  width: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  padding: 5px;
+  overflow-y: auto;
+  max-height: calc(100vh - 220px);
+  margin-right: 20px;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+.slide-left-enter-active, .slide-left-leave-active,
+.slide-right-enter-active, .slide-right-leave-active {
+  transition: all 0.3s cubic-bezier(.55,0,.1,1);
+}
+.slide-left-enter-from {
+  transform: translateX(100%);
+  opacity: 1;
+  z-index: 2;
+}
+.slide-left-leave-to {
+  transform: translateX(-100%);
+  opacity: 1;
+  z-index: 1;
+}
+.slide-right-enter-from {
+  transform: translateX(-100%);
+  opacity: 1;
+  z-index: 2;
+}
+.slide-right-leave-to {
+  transform: translateX(100%);
+  opacity: 1;
+  z-index: 1;
+}
 .readme-content {
   color: #000;
   font-size: 15px;
@@ -344,15 +551,18 @@ watch(
 
 .detail-input-wrap {
   position: absolute;
-  bottom: 24px;
-  left: 36px;
-  right: 36px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: 0 0 0 0;
+  width: 100%;
   display: flex;
   align-items: center;
   background: #f7f8fa;
   border-radius: 8px;
   padding: 10px 16px;
   box-shadow: 0 2px 8px #f2f3f5;
+  z-index: 10;
 }
 
 .detail-input {
@@ -369,5 +579,105 @@ watch(
   font-size: 15px;
   background: #1677ff !important;
   border: none !important;
+}
+
+.detail-table-wrap {
+  margin-bottom: 16px;
+  /* 预留评论条空间，防止被遮挡 */
+  padding-bottom: 80px;
+}
+
+/* :deep(.ant-table) {
+  border: 1px solid #d9d9d9;
+  table-layout: fixed !important;
+  width: 100% !important;
+  max-width: 100% !important;
+} */
+:deep(.ant-table-thead > tr > th),
+:deep(.ant-table-tbody > tr > td) {
+  border: 1px solid #d9d9d9 !important;
+  word-break: break-all;
+  white-space: normal;
+  text-align: left;
+}
+:deep(.ant-table-thead > tr > th[data-col="name"]),
+:deep(.ant-table-tbody > tr > td[data-col="name"]) {
+  width: 25%;
+  max-width: 25%;
+}
+:deep(.ant-table-thead > tr > th[data-col="author"]),
+:deep(.ant-table-tbody > tr > td[data-col="author"]) {
+  width: 10%;
+  max-width: 10%;
+}
+:deep(.ant-table-thead > tr > th[data-col="tags"]),
+:deep(.ant-table-tbody > tr > td[data-col="tags"]) {
+  width: 10%;
+  max-width: 10%;
+}
+:deep(.ant-table-thead > tr > th[data-col="lastUpdated"]),
+:deep(.ant-table-tbody > tr > td[data-col="lastUpdated"]) {
+  width: 20%;
+  max-width: 20%;
+}
+:deep(.ant-table-thead > tr > th[data-col="operations"]),
+:deep(.ant-table-tbody > tr > td[data-col="operations"]) {
+  width: 25%;
+  max-width: 25%;
+}
+
+.comment-float-btn {
+  position: fixed;
+  right: 60px;
+  bottom: 60px;
+  z-index: 1001;
+  box-shadow: 0 2px 8px #e6e6e6;
+  padding: 0 22px 0 18px;
+  height: 48px;
+  border-radius: 24px;
+  background: #e6f0ff;
+  color: #1677ff;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  border: none;
+  transition: background 0.2s, color 0.2s;
+}
+.comment-float-btn:hover {
+  background: #1677ff;
+  color: #fff;
+}
+.comment-round-btn {
+  border-radius: 24px !important;
+}
+
+.comment-modal-content {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 0;
+}
+
+.detail-input {
+  flex: 1;
+  border-radius: 6px;
+  height: 36px;
+  font-size: 15px;
+}
+
+.detail-send {
+  height: 36px;
+  border-radius: 6px;
+  font-size: 15px;
+  background: #1677ff !important;
+  border: none !important;
+}
+
+.detail-global-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 320px;
+  width: 100%;
 }
 </style> 
