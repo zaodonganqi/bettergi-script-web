@@ -305,7 +305,7 @@ onMounted(() => {
   height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 8px;
+  padding: 4px;
   scrollbar-gutter: stable both-edges;
 }
 

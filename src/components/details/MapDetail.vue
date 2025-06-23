@@ -38,7 +38,7 @@
                 <div class="table-pagination-outer" v-if="script.type === 'directory' && files && files.length > 0">
                   <div class="table-scroll-container" ref="tableScrollRef">
                     <a-table :columns="columns" :data-source="pagedData" row-key="hash" :bordered="true"
-                      :scroll="{ y: tableScrollY }" :pagination="false">
+                       :pagination="false">
                       <template #bodyCell="{ column, record }">
                         <template v-if="column.dataIndex === 'name'">
                           <a-popover v-if="record.description" :content="record.description">
@@ -151,14 +151,14 @@ const onPageSizeChange = (current, size) => {
 };
 
 const tableScrollRef = ref(null);
-const tableScrollY = ref(450);
+const tableScrollY = ref('70%');
 
 const columns = [
-  { title: '名称', dataIndex: 'name', width: 30 },
-  { title: '作者', dataIndex: 'author', width: 10 },
-  { title: '标签', dataIndex: 'tags', width: 25 },
-  { title: '更新时间', dataIndex: 'lastUpdated', width: 15 },
-  { title: '操作', key: 'operations', width: 20 }
+  { title: '名称', dataIndex: 'name', width: '30%' },
+  { title: '作者', dataIndex: 'author', width: '10%' },
+  { title: '标签', dataIndex: 'tags', width: '20%' },
+  { title: '更新时间', dataIndex: 'lastUpdated', width: '20%' },
+  { title: '操作', key: 'operations', width: '20%' }
 ];
 
 // tab切换，默认readme优先
@@ -430,6 +430,7 @@ watch(
   min-height: 0;
   position: relative;
   overflow: hidden;
+  margin-right: 5px;
 }
 
 .tab-content-inner {
@@ -644,30 +645,9 @@ watch(
   white-space: normal;
   text-align: left;
 }
-:deep(.ant-table-thead > tr > th[data-col="name"]),
-:deep(.ant-table-tbody > tr > td[data-col="name"]) {
-  width: 25%;
-  max-width: 25%;
-}
-:deep(.ant-table-thead > tr > th[data-col="author"]),
-:deep(.ant-table-tbody > tr > td[data-col="author"]) {
-  width: 10%;
-  max-width: 10%;
-}
-:deep(.ant-table-thead > tr > th[data-col="tags"]),
-:deep(.ant-table-tbody > tr > td[data-col="tags"]) {
-  width: 10%;
-  max-width: 10%;
-}
-:deep(.ant-table-thead > tr > th[data-col="lastUpdated"]),
-:deep(.ant-table-tbody > tr > td[data-col="lastUpdated"]) {
-  width: 20%;
-  max-width: 20%;
-}
-:deep(.ant-table-thead > tr > th[data-col="operations"]),
-:deep(.ant-table-tbody > tr > td[data-col="operations"]) {
-  width: 25%;
-  max-width: 25%;
+
+:deep(.ant-table-thead > tr > th) {
+  background: #e6f4ff;
 }
 
 .comment-float-btn {
@@ -736,7 +716,8 @@ watch(
 .table-scroll-container {
   flex: 1 1 auto;
   min-height: 0;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 .tags-container {
   display: flex;
@@ -755,7 +736,7 @@ watch(
   justify-content: flex-end;
   background: #fff;
   z-index: 10;
-  margin-top: 5px;
+  margin-top: 10px;
   padding: 6px 12px 0 0;
 }
 .ant-table-cell {
