@@ -168,11 +168,18 @@ function getJsCount(repo) {
 }
 function getMapCount(repo) {
   const mapNode = repo.indexes.find(item => item.name === 'pathing');
+
+  const hasExpandableChildren = (dataRef) => {
+    if (!dataRef?.children || dataRef.children.length === 0) return false;
+    // 只要有一个子节点是目录即可展开
+    return dataRef.children.some(child => child.type === 'directory');
+  };
+
   function countLeaf(nodes) {
     if (!nodes) return 0;
     let count = 0;
     for (const node of nodes) {
-      if (!node.children || node.children.length === 0) {
+      if (!hasExpandableChildren(node)) {
         count++;
       } else {
         count += countLeaf(node.children);
@@ -210,9 +217,9 @@ onMounted(() => {
 }
 
 .custom-sider {
-  width: 280px !important;
-  min-width: 280px !important;
-  max-width: 280px !important;
+  width: 18% !important;
+  min-width: 18% !important;
+  max-width: 18% !important;
   background: #f7f8fa !important;
   border-right: 1px solid #e5e7eb;
   display: flex;
@@ -314,9 +321,9 @@ onMounted(() => {
 }
 
 .script-sider {
-  width: 360px !important;
-  min-width: 360px !important;
-  max-width: 360px !important;
+  width: 20% !important;
+  min-width: 20% !important;
+  max-width: 20% !important;
   background: #f7f8fa !important;
   border-right: 1px solid #e5e7eb;
   height: 100%;

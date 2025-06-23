@@ -4,7 +4,7 @@
       <div v-if="detailLoading" class="detail-global-loading">
         <a-spin size="large" />
       </div>
-      <div v-else>
+      <div v-else class="detail-content-wrapper">
         <div class="detail-header">
           <div class="header-left">
             <div class="detail-title">{{ script.title }}</div>
@@ -13,7 +13,8 @@
               <span v-else-if="script.author">作者：{{ script.author }}</span>
               <span v-else class="detail-author">暂无作者信息</span>
             </div>
-            <div class="detail-time">{{ script.type === 'directory' && script.dirLastUpdated ? script.dirLastUpdated : script.time }}</div>
+            <div class="detail-time">{{ script.type === 'directory' && script.dirLastUpdated ? script.dirLastUpdated :
+              script.time }}</div>
           </div>
           <div class="header-right">
             <a-button type="primary" @click="handleSubscribe">订阅</a-button>
@@ -24,8 +25,8 @@
         </div>
         <div class="tab-content-slider">
           <transition :name="tabTransitionName">
-            <template v-if="hasReadme">
-              <div v-if="activeTab === 'readme'" key="readme" class="tab-pane">
+            <div :key="activeTab" class="tab-content-inner">
+              <div v-if="hasReadme && activeTab === 'readme'" class="tab-pane readme-pane">
                 <div v-if="isLoading" class="readme-loading">
                   <a-spin />
                 </div>
@@ -33,67 +34,50 @@
                 <div v-else-if="script.desc" class="detail-desc">{{ script.desc }}</div>
                 <div v-else class="readme-empty">暂无描述</div>
               </div>
-              <div v-else-if="activeTab === 'files' && script.type === 'directory' && files && files.length > 0" key="files" class="tab-pane">
-                <a-table :columns="columns" :data-source="files" :pagination="false" row-key="hash" size="small">
-                  <template #bodyCell="{ column, record }">
-                    <template v-if="column.dataIndex === 'name'">
-                      <a-popover v-if="record.description" :content="record.description">
-                        <span>{{ record.name }}</span>
-                      </a-popover>
-                      <span v-else>{{ record.name }}</span>
-                    </template>
-                    <template v-else-if="column.dataIndex === 'tags'">
-                      <a-space>
-                        <a-tag v-for="tag in record.tags" :key="tag" :color="getTagColor(tag)">{{ tag }}</a-tag>
-                      </a-space>
-                    </template>
-                    <template v-else-if="column.key === 'operations'">
-                      <a-space>
-                        <a-button type="primary" size="small" @click="downloadScript(record)">订阅</a-button>
-                        <a-button size="small" @click="showDetails(record)">详情</a-button>
-                      </a-space>
-                    </template>
-                    <template v-else>
-                      {{ record[column.dataIndex] }}
-                    </template>
-                  </template>
-                </a-table>
+              <div v-else class="tab-pane files-pane">
+                <div class="table-pagination-outer" v-if="script.type === 'directory' && files && files.length > 0">
+                  <div class="table-scroll-container" ref="tableScrollRef">
+                    <a-table :columns="columns" :data-source="pagedData" row-key="hash" :bordered="true"
+                      :scroll="{ y: tableScrollY }" :pagination="false">
+                      <template #bodyCell="{ column, record }">
+                        <template v-if="column.dataIndex === 'name'">
+                          <a-popover v-if="record.description" :content="record.description">
+                            <span style="word-break: break-all; white-space: normal;">{{ record.name }}</span>
+                          </a-popover>
+                          <span v-else style="word-break: break-all; white-space: normal;">{{ record.name }}</span>
+                        </template>
+                        <template v-else-if="column.dataIndex === 'tags'">
+                          <div class="tags-container">
+                            <a-tag v-for="tag in record.tags" :key="tag" :color="getTagColor(tag)" class="tag-item">{{ tag }}</a-tag>
+                          </div>
+                        </template>
+                        <template v-else-if="column.key === 'operations'">
+                          <a-space>
+                            <a-button type="primary" size="small" @click="downloadScript(record)">订阅</a-button>
+                            <a-button size="small" @click="showDetails(record)">详情</a-button>
+                          </a-space>
+                        </template>
+                        <template v-else>
+                          {{ record[column.dataIndex] }}
+                        </template>
+                      </template>
+                    </a-table>
+                  </div>
+                  <div class="custom-pagination">
+                    <a-pagination :current="currentPage" :page-size="pageSize" :total="files.length"
+                      @change="onPageChange" @showSizeChange="onPageSizeChange" :show-size-changer="true"
+                      :page-size-options="['10', '20', '50', '100']" />
+                  </div>
+                </div>
+                <div v-else class="no-files">暂无文件数据</div>
               </div>
-            </template>
-            <template v-else>
-              <div v-if="script.type === 'directory' && files && files.length > 0" key="files-only" class="tab-pane">
-                <a-table :columns="columns" :data-source="files" :pagination="false" row-key="hash" size="small">
-                  <template #bodyCell="{ column, record }">
-                    <template v-if="column.dataIndex === 'name'">
-                      <a-popover v-if="record.description" :content="record.description">
-                        <span>{{ record.name }}</span>
-                      </a-popover>
-                      <span v-else>{{ record.name }}</span>
-                    </template>
-                    <template v-else-if="column.dataIndex === 'tags'">
-                      <a-space>
-                        <a-tag v-for="tag in record.tags" :key="tag" :color="getTagColor(tag)">{{ tag }}</a-tag>
-                      </a-space>
-                    </template>
-                    <template v-else-if="column.key === 'operations'">
-                      <a-space>
-                        <a-button type="primary" size="small" @click="downloadScript(record)">订阅</a-button>
-                        <a-button size="small" @click="showDetails(record)">详情</a-button>
-                      </a-space>
-                    </template>
-                    <template v-else>
-                      {{ record[column.dataIndex] }}
-                    </template>
-                  </template>
-                </a-table>
-              </div>
-            </template>
+            </div>
           </transition>
         </div>
         <!-- 评论按钮 -->
-        <a-button class="comment-float-btn comment-round-btn" @click="commentModalOpen = true">
+        <!-- <a-button class="comment-float-btn comment-round-btn" @click="commentModalOpen = true">
           <i class="iconfont icon-comment" style="margin-right: 6px;" >评论</i>
-        </a-button>
+        </a-button> -->
         <!-- 评论悬浮窗 -->
         <a-modal v-model:open="commentModalOpen" title="发表评论" :footer="null" centered width="400">
           <div class="comment-modal-content">
@@ -127,7 +111,7 @@
 </template>
 
 <script setup>
-import { ref, watch, computed } from 'vue';
+import { ref, watch, computed, onMounted } from 'vue';
 import MarkdownIt from 'markdown-it';
 import markdownItAnchor from 'markdown-it-anchor';
 import hljs from 'highlight.js';
@@ -152,12 +136,36 @@ const isLoading = ref(false);
 const error = ref(null);
 const { copy } = useClipboard();
 
+const currentPage = ref(1);
+const pageSize = ref(10);
+const pagedData = computed(() => {
+  const start = (currentPage.value - 1) * pageSize.value;
+  return files.value.slice(start, start + pageSize.value);
+});
+const onPageChange = (page) => {
+  currentPage.value = page;
+};
+const onPageSizeChange = (current, size) => {
+  pageSize.value = size;
+  currentPage.value = 1;
+};
+
+const tableScrollRef = ref(null);
+const tableScrollY = ref(400);
+onMounted(() => {
+  // updateTableScrollY();
+  // window.addEventListener('resize', updateTableScrollY);
+});
+// onBeforeUnmount(() => {
+//   window.removeEventListener('resize', updateTableScrollY);
+// });
+
 const columns = [
-  { title: '名称', dataIndex: 'name' },
-  { title: '作者', dataIndex: 'author' },
-  { title: '标签', dataIndex: 'tags' },
-  { title: '更新时间', dataIndex: 'lastUpdated' },
-  { title: '操作', key: 'operations' }
+  { title: '名称', dataIndex: 'name', width: 160 },
+  { title: '作者', dataIndex: 'author', width: 60 },
+  { title: '标签', dataIndex: 'tags', width: 150 },
+  { title: '更新时间', dataIndex: 'lastUpdated', width: 110 },
+  { title: '操作', key: 'operations', width: 100 }
 ];
 
 // tab切换，默认readme优先
@@ -234,7 +242,7 @@ const fetchAndRenderReadme = async (path) => {
   readmeContent.value = '';
 
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 10000);
+  const timeoutId = setTimeout(() => controller.abort(), 5000);
 
   try {
     const readmeUrl = getReadmeContent(path);
@@ -251,6 +259,11 @@ const fetchAndRenderReadme = async (path) => {
   } finally {
     clearTimeout(timeoutId);
     isLoading.value = false;
+    
+    // 如果没有README内容，默认切换到文件列表
+    if (!readmeContent.value && activeTab.value === 'readme') {
+      activeTab.value = 'files';
+    }
   }
 };
 
@@ -350,6 +363,13 @@ watch(
   overflow: hidden;
 }
 
+.detail-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
 .detail-header {
   margin-bottom: 8px;
   padding-bottom: 16px;
@@ -357,6 +377,7 @@ watch(
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-shrink: 0;
 }
 
 .header-left {
@@ -374,6 +395,7 @@ watch(
   font-weight: 700;
   color: #222;
   margin-bottom: 4px;
+  word-break: break-word;
 }
 
 .detail-meta {
@@ -381,6 +403,7 @@ watch(
   font-size: 14px;
   margin-top: 10px;
   margin-bottom: 10px;
+  word-break: break-word;
 }
 
 .detail-author {
@@ -391,6 +414,7 @@ watch(
   color: #aaa;
   font-size: 13px;
   margin-bottom: 10px;
+  word-break: break-word;
 }
 
 .detail-tabs {
@@ -400,6 +424,7 @@ watch(
   margin-top: 2px;
   margin-bottom: 10px;
   margin-left: 5px;
+  flex-shrink: 0;
 }
 
 :deep(.ant-segmented-item-selected) {
@@ -408,21 +433,51 @@ watch(
 }
 
 .tab-content-slider {
-  min-height: 200px;
+  flex: 1;
+  min-height: 0;
   position: relative;
+  overflow: hidden;
 }
+
+.tab-content-inner {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
 .tab-pane {
   width: 100%;
+  height: 100%;
   position: absolute;
   left: 0;
   top: 0;
-  padding: 5px;
+  display: flex;
+  flex-direction: column;
+}
+
+.readme-pane {
   overflow-y: auto;
-  max-height: calc(100vh - 220px);
-  margin-right: 20px;
+  padding: 5px;
+  margin-right: 40px;
+  margin-bottom: 10px;
   max-width: 100%;
   overflow-x: hidden;
 }
+
+.files-pane {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.no-files {
+  text-align: center;
+  padding: 40px 0;
+  color: #999;
+}
+
 .slide-left-enter-active, .slide-left-leave-active,
 .slide-right-enter-active, .slide-right-leave-active {
   transition: all 0.3s cubic-bezier(.55,0,.1,1);
@@ -451,6 +506,7 @@ watch(
   color: #000;
   font-size: 15px;
   line-height: 1.8;
+  word-break: break-word;
 }
 
 .readme-content :deep(h1),
@@ -537,6 +593,7 @@ watch(
   color: #000;
   font-size: 15px;
   white-space: pre-line;
+  word-break: break-word;
 }
 
 .detail-empty {
@@ -587,12 +644,6 @@ watch(
   padding-bottom: 80px;
 }
 
-/* :deep(.ant-table) {
-  border: 1px solid #d9d9d9;
-  table-layout: fixed !important;
-  width: 100% !important;
-  max-width: 100% !important;
-} */
 :deep(.ant-table-thead > tr > th),
 :deep(.ant-table-tbody > tr > td) {
   border: 1px solid #d9d9d9 !important;
@@ -680,4 +731,46 @@ watch(
   min-height: 320px;
   width: 100%;
 }
-</style> 
+
+.table-pagination-outer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  flex: 1;
+}
+.table-scroll-container {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+.tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.tag-item {
+  margin-bottom: 4px;
+  word-break: break-word;
+  white-space: normal;
+}
+.custom-pagination {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  background: #fff;
+  z-index: 10;
+  padding: 8px 16px 0 0;
+}
+.ant-table-cell {
+  word-break: break-all !important;
+  white-space: normal !important;
+  vertical-align: top !important;
+}
+.ant-table-thead > tr > th {
+  word-break: break-all !important;
+  white-space: normal !important;
+}
+</style>
