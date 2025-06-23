@@ -75,9 +75,9 @@
           </transition>
         </div>
         <!-- 评论按钮 -->
-        <!-- <a-button class="comment-float-btn comment-round-btn" @click="commentModalOpen = true">
+        <a-button class="comment-float-btn comment-round-btn" @click="commentModalOpen = true">
           <i class="iconfont icon-comment" style="margin-right: 6px;" >评论</i>
-        </a-button> -->
+        </a-button>
         <!-- 评论悬浮窗 -->
         <a-modal v-model:open="commentModalOpen" title="发表评论" :footer="null" centered width="400">
           <div class="comment-modal-content">
@@ -111,7 +111,7 @@
 </template>
 
 <script setup>
-import { ref, watch, computed, onMounted } from 'vue';
+import { ref, watch, computed } from 'vue';
 import MarkdownIt from 'markdown-it';
 import markdownItAnchor from 'markdown-it-anchor';
 import hljs from 'highlight.js';
@@ -151,21 +151,14 @@ const onPageSizeChange = (current, size) => {
 };
 
 const tableScrollRef = ref(null);
-const tableScrollY = ref(400);
-onMounted(() => {
-  // updateTableScrollY();
-  // window.addEventListener('resize', updateTableScrollY);
-});
-// onBeforeUnmount(() => {
-//   window.removeEventListener('resize', updateTableScrollY);
-// });
+const tableScrollY = ref(450);
 
 const columns = [
-  { title: '名称', dataIndex: 'name', width: 160 },
-  { title: '作者', dataIndex: 'author', width: 60 },
-  { title: '标签', dataIndex: 'tags', width: 150 },
-  { title: '更新时间', dataIndex: 'lastUpdated', width: 110 },
-  { title: '操作', key: 'operations', width: 100 }
+  { title: '名称', dataIndex: 'name', width: 30 },
+  { title: '作者', dataIndex: 'author', width: 10 },
+  { title: '标签', dataIndex: 'tags', width: 25 },
+  { title: '更新时间', dataIndex: 'lastUpdated', width: 15 },
+  { title: '操作', key: 'operations', width: 20 }
 ];
 
 // tab切换，默认readme优先
@@ -748,10 +741,10 @@ watch(
 .tags-container {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
+  gap: 2px;
 }
 .tag-item {
-  margin-bottom: 4px;
+  margin-bottom: 3px;
   word-break: break-word;
   white-space: normal;
 }
@@ -762,7 +755,8 @@ watch(
   justify-content: flex-end;
   background: #fff;
   z-index: 10;
-  padding: 8px 16px 0 0;
+  margin-top: 5px;
+  padding: 6px 12px 0 0;
 }
 .ant-table-cell {
   word-break: break-all !important;
