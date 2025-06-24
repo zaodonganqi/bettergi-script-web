@@ -18,6 +18,14 @@
           </div>
           <div class="header-right">
             <a-button type="primary" @click="handleSubscribe">订阅</a-button>
+            <a-button type="primary" @click="commentModalOpen = true">评论</a-button>
+            <!-- 评论悬浮窗 -->
+            <a-modal v-model:open="commentModalOpen" title="发表评论" :footer="null" centered width="400">
+              <div class="comment-modal-content">
+                <a-input v-model:value="input" placeholder="评论..." class="detail-input" />
+                <a-button type="primary" class="detail-send">发送</a-button>
+              </div>
+            </a-modal>
           </div>
         </div>
         <div v-if="hasReadme" class="detail-tabs">
@@ -38,7 +46,7 @@
                 <div class="table-pagination-outer" v-if="script.type === 'directory' && files && files.length > 0">
                   <div class="table-scroll-container" ref="tableScrollRef">
                     <a-table :columns="columns" :data-source="pagedData" row-key="hash" :bordered="true"
-                       :pagination="false">
+                      :pagination="false">
                       <template #bodyCell="{ column, record }">
                         <template v-if="column.dataIndex === 'name'">
                           <a-popover v-if="record.description" :content="record.description">
@@ -48,7 +56,8 @@
                         </template>
                         <template v-else-if="column.dataIndex === 'tags'">
                           <div class="tags-container">
-                            <a-tag v-for="tag in record.tags" :key="tag" :color="getTagColor(tag)" class="tag-item">{{ tag }}</a-tag>
+                            <a-tag v-for="tag in record.tags" :key="tag" :color="getTagColor(tag)" class="tag-item">{{
+                              tag }}</a-tag>
                           </div>
                         </template>
                         <template v-else-if="column.key === 'operations'">
@@ -74,17 +83,6 @@
             </div>
           </transition>
         </div>
-        <!-- 评论按钮 -->
-        <a-button class="comment-float-btn comment-round-btn" @click="commentModalOpen = true">
-          <i class="iconfont icon-comment" style="margin-right: 6px;" >评论</i>
-        </a-button>
-        <!-- 评论悬浮窗 -->
-        <a-modal v-model:open="commentModalOpen" title="发表评论" :footer="null" centered width="400">
-          <div class="comment-modal-content">
-            <a-input v-model:value="input" placeholder="评论..." class="detail-input" />
-            <a-button type="primary" class="detail-send">发送</a-button>
-          </div>
-        </a-modal>
         <!-- 详情弹窗 -->
         <a-modal v-model:open="modalOpen" title="文件详情" :footer="null" width="480" centered>
           <a-descriptions bordered size="small" :column="1">
@@ -111,7 +109,7 @@
 </template>
 
 <script setup>
-import { ref, watch, computed } from 'vue';
+import { ref, watch, computed, onMounted } from 'vue';
 import MarkdownIt from 'markdown-it';
 import markdownItAnchor from 'markdown-it-anchor';
 import hljs from 'highlight.js';
@@ -151,13 +149,12 @@ const onPageSizeChange = (current, size) => {
 };
 
 const tableScrollRef = ref(null);
-const tableScrollY = ref('70%');
 
 const columns = [
   { title: '名称', dataIndex: 'name', width: '30%' },
   { title: '作者', dataIndex: 'author', width: '10%' },
-  { title: '标签', dataIndex: 'tags', width: '20%' },
-  { title: '更新时间', dataIndex: 'lastUpdated', width: '20%' },
+  { title: '标签', dataIndex: 'tags', width: '24%' },
+  { title: '更新时间', dataIndex: 'lastUpdated', width: '16%' },
   { title: '操作', key: 'operations', width: '20%' }
 ];
 
@@ -235,7 +232,7 @@ const fetchAndRenderReadme = async (path) => {
   readmeContent.value = '';
 
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 5000);
+  const timeoutId = setTimeout(() => controller.abort(), 6000);
 
   try {
     const readmeUrl = getReadmeContent(path);
@@ -348,7 +345,7 @@ watch(
 .map-detail {
   height: 100%;
   background: #fff;
-  padding: 32px 36px 80px 36px;
+  padding: 30px;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -379,8 +376,8 @@ watch(
 }
 
 .header-right {
-  flex-shrink: 0;
-  margin-left: 16px;
+  display: flex;
+  gap: 8px;
 }
 
 .detail-title {
@@ -447,6 +444,7 @@ watch(
   position: absolute;
   left: 0;
   top: 0;
+  padding-bottom: 5px;
   display: flex;
   flex-direction: column;
 }

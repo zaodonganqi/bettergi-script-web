@@ -1,16 +1,15 @@
 <script setup>
 import { ref } from 'vue';
 import LayoutMain from './components/LayoutMain.vue';
+import zhCN from 'ant-design-vue/es/locale/zh_CN';
 
-const selectedScript = ref(null);
-
-const handleScriptSelect = (script) => {
-  selectedScript.value = script;
-};
+const locale = ref(zhCN);
 </script>
 
 <template>
-  <LayoutMain/>
+  <a-config-provider :locale="locale">
+    <LayoutMain />
+  </a-config-provider>
 </template>
 
 <style>
@@ -43,5 +42,4 @@ body {
   display: block;
   margin: 0 auto 2rem;
 }
-
 </style>

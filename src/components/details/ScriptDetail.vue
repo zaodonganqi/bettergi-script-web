@@ -94,7 +94,7 @@ const fetchAndRenderReadme = async (path) => {
   readmeContent.value = '';
 
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 10000);
+  const timeoutId = setTimeout(() => controller.abort(), 6000);
 
   try {
     const readmeUrl = getReadmeContent(path);
