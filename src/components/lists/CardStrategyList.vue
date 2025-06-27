@@ -21,7 +21,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 
 const props = defineProps({
   searchKey: {
@@ -82,6 +82,27 @@ const strategies = ref(
     hash: item.hash,
     version: item.version,
   }))
+);
+
+// 监听 repoData 变化，重新生成 strategies
+watch(
+  () => props.repoData,
+  (newVal) => {
+    if (newVal && newVal.indexes) {
+      strategies.value = getTcgStrategiesFromRepo(newVal).map((item, idx) => ({
+        id: idx + 1,
+        title: removeFileSuffix(item.name),
+        author: item.author || '无',
+        desc: item.description || '',
+        tags: item.tags || [],
+        time: item.lastUpdated || '',
+        unread: false,
+        hash: item.hash,
+        version: item.version,
+      }));
+    }
+  },
+  { immediate: true, deep: true }
 );
 
 const selectedId = ref(1);

@@ -24,7 +24,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 
 const props = defineProps({
   searchKey: {
@@ -85,6 +85,31 @@ const scripts = ref(
     version: item.version,
     path: 'js/' + item.name,
   }))
+);
+
+// 监听 repoData 变化，重新生成 scripts
+watch(
+  () => props.repoData,
+  (newVal) => {
+    if (newVal && newVal.indexes) {
+      scripts.value = getJsScriptsFromRepo(newVal).map((item, idx) => ({
+        id: idx + 1,
+        title: item.title,
+        name: item.name,
+        name1: item.name1,
+        name2: item.name2,
+        author: item.author || '',
+        desc: item.description,
+        tags: item.tags || [],
+        time: item.lastUpdated || '',
+        unread: false, 
+        hash: item.hash,
+        version: item.version,
+        path: 'js/' + item.name,
+      }));
+    }
+  },
+  { immediate: true, deep: true }
 );
 
 const selectedId = ref(scripts.value.length > 0 ? scripts.value[0].id : null);

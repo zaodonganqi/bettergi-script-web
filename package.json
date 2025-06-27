@@ -6,7 +6,8 @@
     "scripts": {
         "dev": "vite",
         "build": "vite build",
-        "serve": "vite preview"
+        "serve": "vite preview",
+        "build:single": "vite build --config vite.config.single.js --mode single"
     },
     "dependencies": {
         "@vueuse/core": "^13.4.0",

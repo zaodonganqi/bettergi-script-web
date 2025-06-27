@@ -273,8 +273,7 @@ const downloadScript = async (script) => {
 
   // 创建完整的 URL
   const fullUrl = `bettergi://script?import=${base64String}`;
-
-  if (mode.value === 'single') {
+  if (mode === 'single') {
     if (selectedRepo.value === 'local') {
       try {
         await subscribeToLocal(fullUrl);

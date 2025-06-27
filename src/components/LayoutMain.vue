@@ -44,7 +44,8 @@
       </div>
       <!-- 地图追踪的树状结构 -->
       <div v-if="selectedMenu[0] === '1'" class="script-list">
-        <MapTreeList ref="mapTreeRef" :search-key="search" :repo-data="repoData" @select="handleMapSelect" @leaf-count="handleLeafCount" />
+        <MapTreeList ref="mapTreeRef" :search-key="search" :repo-data="repoData" @select="handleMapSelect"
+          @leaf-count="handleLeafCount" />
       </div>
       <!-- Javascript脚本列表 -->
       <div v-else-if="selectedMenu[0] === '2'" class="script-list">
@@ -53,11 +54,13 @@
       </div>
       <!-- 战斗策略列表 -->
       <div v-else-if="selectedMenu[0] === '3'" class="script-list">
-        <CombatStrategyList :search-key="search" :repo-data="repoData" ref="combatStrategyRef" @select="handleScriptSelect" />
+        <CombatStrategyList :search-key="search" :repo-data="repoData" ref="combatStrategyRef"
+          @select="handleScriptSelect" />
       </div>
       <!-- 七圣召唤策略列表 -->
       <div v-else-if="selectedMenu[0] === '4'" class="script-list">
-        <CardStrategyList :search-key="search" :repo-data="repoData" ref="cardStrategyRef" @select="handleScriptSelect" />
+        <CardStrategyList :search-key="search" :repo-data="repoData" ref="cardStrategyRef"
+          @select="handleScriptSelect" />
       </div>
     </a-layout-sider>
 
@@ -82,8 +85,8 @@ import CombatStrategyList from './lists/CombatStrategyList.vue';
 import CardStrategyList from './lists/CardStrategyList.vue';
 import ScriptDetail from './details/ScriptDetail.vue';
 import MapDetail from './details/MapDetail.vue';
-import repoData from '@/assets/repo.json';
 
+const mode = import.meta.env.VITE_MODE;
 const selectedMenu = ref(['1']);
 const search = ref('');
 
@@ -93,6 +96,25 @@ const menuList = ref([
   { key: '3', label: '战斗策略', icon: CalculatorOutlined, count: 0 },
   { key: '4', label: '七圣召唤策略', icon: BulbOutlined, count: 0 },
 ]);
+
+const repoData = ref({});
+
+async function getRepoJson () {
+  console.log("当前模式：", mode)
+  if (mode === 'web') {
+    const data = (await import('@/assets/repo.json')).default;
+    repoData.value = data;
+  } else {
+    const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
+    const json = await repoWebBridge.GetRepoJson();
+    repoData.value = typeof json === 'string' ? JSON.parse(json) : json;
+  }
+  console.log("json信息：", repoData.value)
+  menuList.value[0].count = getMapCount(repoData.value);
+  menuList.value[1].count = getJsCount(repoData.value);
+  menuList.value[2].count = getCombatCount(repoData.value);
+  menuList.value[3].count = getCardCount(repoData.value);
+}
 
 // 计算当前菜单标题
 const currentMenuTitle = computed(() => {
@@ -127,7 +149,7 @@ const handleMenuSelect = ({ key }) => {
 };
 
 const openExternalLink = () => {
-  window.open('https://bettergi.com/', '_blank', 'fullscreen=yes,width=1920,height=1080');
+  window.open('https://bettergi.com/', '_blank');
 };
 
 const selectedScript = ref(null);
@@ -199,11 +221,7 @@ function getCardCount(repo) {
 }
 
 onMounted(() => {
-  // 页面初始化时统计数量
-  menuList.value[0].count = getMapCount(repoData);
-  menuList.value[1].count = getJsCount(repoData);
-  menuList.value[2].count = getCombatCount(repoData);
-  menuList.value[3].count = getCardCount(repoData);
+  getRepoJson();
 });
 </script>
 

@@ -291,6 +291,19 @@ watch(
   }
 );
 
+// 监听 repoData 变化，重新处理 treeData
+watch(
+  () => props.repoData,
+  (newVal) => {
+    if (newVal && newVal.indexes) {
+      treeData.value = generateTreeData(newVal);
+    } else {
+      treeData.value = [];
+    }
+  },
+  { immediate: true, deep: true }
+);
+
 // 初始化
 onMounted(() => {
   if (repoData) {
