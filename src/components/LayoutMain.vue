@@ -89,11 +89,16 @@
         <button class="repo-error-btn" @click="refreshPage">刷新页面</button>
       </div>
     </div>
+
+    <!-- 全局加载弹窗 -->
+    <div v-if="globalLoading" class="global-loading-modal">
+      <a-spin size="large" tip="加载中，请稍候..." />
+    </div>
   </a-layout>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { FolderOutlined, FileOutlined, CalculatorOutlined, BulbOutlined, SearchOutlined } from '@ant-design/icons-vue';
 import MapTreeList from './lists/MapTreeList.vue';
 import ScriptList from './lists/ScriptList.vue';
@@ -115,15 +120,39 @@ const menuList = ref([
 
 const repoData = ref({});
 const repoError = ref(false);
+const globalLoading = ref(false);
+let fetchTimeoutId = null;
 
 async function getRepoJson () {
   repoError.value = false;
+  globalLoading.value = true;
   try {
     console.log("当前模式：", mode)
     if (mode === 'web') {
-      const response = await fetch('https://raw.githubusercontent.com/babalae/bettergi-scripts-list/refs/heads/main/repo.json');
-      if (!response.ok) throw new Error('网络请求失败');
-      repoData.value = await response.json();
+      const controller = new AbortController();
+      let didTimeout = false;
+      if (fetchTimeoutId) clearTimeout(fetchTimeoutId);
+      fetchTimeoutId = setTimeout(() => {
+        didTimeout = true;
+        controller.abort();
+      }, 10000);
+      try {
+        const response = await fetch('https://raw.githubusercontent.com/babalae/bettergi-scripts-list/refs/heads/main/repo.json', {
+          signal: controller.signal
+        });
+        clearTimeout(fetchTimeoutId);
+        fetchTimeoutId = null;
+        if (!response.ok) throw new Error('网络请求失败');
+        repoData.value = await response.json();
+      } catch (err) {
+        clearTimeout(fetchTimeoutId);
+        fetchTimeoutId = null;
+        if (didTimeout) {
+          throw new Error('请求超时');
+        } else {
+          throw err;
+        }
+      }
     } else {
       const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
       const json = await repoWebBridge.GetRepoJson();
@@ -138,6 +167,7 @@ async function getRepoJson () {
     console.error('获取仓库信息失败', e);
     repoError.value = true;
   }
+  globalLoading.value = false;
 }
 
 // 计算当前菜单标题
@@ -250,6 +280,13 @@ function refreshPage() {
 
 onMounted(() => {
   getRepoJson();
+});
+
+onUnmounted(() => {
+  if (fetchTimeoutId) {
+    clearTimeout(fetchTimeoutId);
+    fetchTimeoutId = null;
+  }
 });
 </script>
 
@@ -572,5 +609,16 @@ onMounted(() => {
 .repo-error-btn:hover {
   background: linear-gradient(90deg, #f44336 0%, #ff6a6a 100%);
   box-shadow: 0 4px 16px rgba(244,67,54,0.18);
+}
+
+/* 全局加载弹窗样式 */
+.global-loading-modal {
+  position: fixed;
+  left: 0; top: 0; right: 0; bottom: 0;
+  z-index: 99999;
+  background: rgba(255,255,255,0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>

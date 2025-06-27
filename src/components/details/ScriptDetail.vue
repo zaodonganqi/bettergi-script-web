@@ -77,6 +77,21 @@ const md = new MarkdownIt({
   level: [1, 2, 3, 4, 5, 6]
 });
 
+// 添加 target="_blank" 属性到所有链接，以外链形式打开
+md.renderer.rules.link_open = function (tokens, idx, options, env, self) {
+  const aIndex = tokens[idx].attrIndex('target');
+ 
+  if (aIndex !== -1) {
+    return self.renderToken(tokens, idx, options);
+  }
+ 
+  // 添加 target="_blank" 属性
+  tokens[idx].attrPush(['target', '_blank']);
+  tokens[idx].attrPush(['rel', 'noopener noreferrer']);
+ 
+  return self.renderToken(tokens, idx, options);
+};
+
 // 获取readme文件内容
 const getReadmeContent = (tag) => {
   const baseReadmeUrl = "https://raw.githubusercontent.com/babalae/bettergi-scripts-list/refs/heads/main/repo/";
