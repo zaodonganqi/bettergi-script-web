@@ -73,6 +73,22 @@
         <ScriptDetail :script="selectedScript" />
       </div>
     </a-layout>
+
+    <!-- 错误弹窗 -->
+    <div v-if="repoError" class="repo-error-modal">
+      <div class="repo-error-content">
+        <div class="repo-error-icon">
+          <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+            <circle cx="24" cy="24" r="24" fill="#fdecea"/>
+            <path d="M24 14v12" stroke="#f44336" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="24" cy="32" r="2.5" fill="#f44336"/>
+          </svg>
+        </div>
+        <div class="repo-error-title">获取仓库信息失败</div>
+        <div class="repo-error-desc">请检查网络或稍后刷新页面重试</div>
+        <button class="repo-error-btn" @click="refreshPage">刷新页面</button>
+      </div>
+    </div>
   </a-layout>
 </template>
 
@@ -98,22 +114,30 @@ const menuList = ref([
 ]);
 
 const repoData = ref({});
+const repoError = ref(false);
 
 async function getRepoJson () {
-  console.log("当前模式：", mode)
-  if (mode === 'web') {
-    const data = (await import('@/assets/repo.json')).default;
-    repoData.value = data;
-  } else {
-    const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
-    const json = await repoWebBridge.GetRepoJson();
-    repoData.value = typeof json === 'string' ? JSON.parse(json) : json;
+  repoError.value = false;
+  try {
+    console.log("当前模式：", mode)
+    if (mode === 'web') {
+      const response = await fetch('https://raw.githubusercontent.com/babalae/bettergi-scripts-list/refs/heads/main/repo.json');
+      if (!response.ok) throw new Error('网络请求失败');
+      repoData.value = await response.json();
+    } else {
+      const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
+      const json = await repoWebBridge.GetRepoJson();
+      repoData.value = typeof json === 'string' ? JSON.parse(json) : json;
+    }
+    console.log("json信息：", repoData.value)
+    menuList.value[0].count = getMapCount(repoData.value);
+    menuList.value[1].count = getJsCount(repoData.value);
+    menuList.value[2].count = getCombatCount(repoData.value);
+    menuList.value[3].count = getCardCount(repoData.value);
+  } catch (e) {
+    console.error('获取仓库信息失败', e);
+    repoError.value = true;
   }
-  console.log("json信息：", repoData.value)
-  menuList.value[0].count = getMapCount(repoData.value);
-  menuList.value[1].count = getJsCount(repoData.value);
-  menuList.value[2].count = getCombatCount(repoData.value);
-  menuList.value[3].count = getCardCount(repoData.value);
 }
 
 // 计算当前菜单标题
@@ -218,6 +242,10 @@ function getCombatCount(repo) {
 function getCardCount(repo) {
   const cardNode = repo.indexes.find(item => item.name === 'tcg');
   return cardNode?.children?.length || 0;
+}
+
+function refreshPage() {
+  window.location.reload();
 }
 
 onMounted(() => {
@@ -484,5 +512,65 @@ onMounted(() => {
 
 .strategy-date {
   color: #999;
+}
+
+.repo-error-modal {
+  position: fixed;
+  left: 0; top: 0; right: 0; bottom: 0;
+  z-index: 9999;
+  background: rgba(0,0,0,0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s;
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.repo-error-content {
+  background: #fff;
+  color: #d32f2f;
+  font-size: 18px;
+  padding: 36px 48px 32px 48px;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  text-align: center;
+  min-width: 320px;
+  max-width: 90vw;
+  animation: popIn 0.3s;
+}
+@keyframes popIn {
+  from { transform: scale(0.9); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+.repo-error-icon {
+  margin-bottom: 16px;
+}
+.repo-error-title {
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #f44336;
+}
+.repo-error-desc {
+  font-size: 15px;
+  color: #666;
+  margin-bottom: 24px;
+}
+.repo-error-btn {
+  background: linear-gradient(90deg, #ff6a6a 0%, #f44336 100%);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 32px;
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(244,67,54,0.12);
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.repo-error-btn:hover {
+  background: linear-gradient(90deg, #f44336 0%, #ff6a6a 100%);
+  box-shadow: 0 4px 16px rgba(244,67,54,0.18);
 }
 </style>
