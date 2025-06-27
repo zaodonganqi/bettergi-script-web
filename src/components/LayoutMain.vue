@@ -86,7 +86,7 @@
         </div>
         <div class="repo-error-title">获取仓库信息失败</div>
         <div class="repo-error-desc">请检查网络或稍后刷新页面重试</div>
-        <button class="repo-error-btn" @click="refreshPage">刷新页面</button>
+        <button class="repo-error-btn" @click="getRepoJson">刷新页面</button>
       </div>
     </div>
 
@@ -272,10 +272,6 @@ function getCombatCount(repo) {
 function getCardCount(repo) {
   const cardNode = repo.indexes.find(item => item.name === 'tcg');
   return cardNode?.children?.length || 0;
-}
-
-function refreshPage() {
-  window.location.reload();
 }
 
 onMounted(() => {

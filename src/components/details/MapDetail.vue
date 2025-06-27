@@ -216,18 +216,41 @@ const md = new MarkdownIt({
 });
 
 // 添加 target="_blank" 属性到所有链接，以外链形式打开
-md.renderer.rules.link_open = function (tokens, idx, options, env, self) {
-  const aIndex = tokens[idx].attrIndex('target');
- 
-  if (aIndex !== -1) {
-    return self.renderToken(tokens, idx, options);
-  }
- 
-  // 添加 target="_blank" 属性
-  tokens[idx].attrPush(['target', '_blank']);
-  tokens[idx].attrPush(['rel', 'noopener noreferrer']);
- 
+const originalLinkRender = md.renderer.rules.link_open || function(tokens, idx, options, env, self) {
   return self.renderToken(tokens, idx, options);
+};
+
+md.renderer.rules.link_open = function (tokens, idx, options, env, self) {
+  const token = tokens[idx];
+  const hrefIndex = token.attrIndex('href');
+  
+  if (hrefIndex >= 0) {
+    const href = token.attrs[hrefIndex][1];
+    
+    // 判断是否是有效链接
+    const isValidHttpLink = /^https?:\/\/[^\s/$.?#].[^\s]*$/i.test(href);
+    const isPotentialLink = /^[a-z0-9-]+\.[a-z]{2,}\b/i.test(href);
+
+    if (isValidHttpLink) {
+      // 有效链接：添加新窗口打开属性
+      token.attrPush(['target', '_blank']);
+      token.attrPush(['rel', 'noopener noreferrer']);
+    } 
+    else if (isPotentialLink) {
+      // 无效链接处理
+      token.attrPush(['class', 'invalid-link']); // 添加无效链接class
+      token.attrPush(['onclick', 'return false;']); // 阻止点击
+      token.attrPush(['style', 'cursor: default;']);
+      
+      // 添加提示文本
+      const textToken = tokens[idx + 1];
+      if (textToken && textToken.type === 'text') {
+        textToken.content += '（这个作者很笨，把链接写错了，去提醒ta修改吧）';
+      }
+    }
+  }
+
+  return originalLinkRender(tokens, idx, options, env, self);
 };
 
 // 获取readme文件内容
@@ -535,6 +558,25 @@ watch(
 
 .readme-content :deep(p) {
   margin-bottom: 16px;
+}
+
+.readme-content :deep(.invalid-link) {
+  color: #ff4d4f;
+  text-decoration: line-through;
+  pointer-events: none;
+  cursor: default;
+}
+
+.readme-content :deep(.link-hint) {
+  color: #ff4d4f !important;
+  font-size: 0.85em;
+  font-style: italic;
+  margin-left: 4px;
+  display: inline-block;
+}
+
+.readme-content :deep(.link-hint *) {
+  color: #ff4d4f !important;
 }
 
 .readme-content :deep(ul),
