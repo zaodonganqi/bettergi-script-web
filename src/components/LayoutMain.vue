@@ -377,8 +377,28 @@ const handleScriptCount = (count) => {
 
 function getJsCount(repo) {
   const jsNode = repo.indexes.find(item => item.name === 'js');
-  return jsNode?.children?.length || 0;
+  
+  const hasExpandableChildren = (dataRef) => {
+    if (!dataRef?.children || dataRef.children.length === 0) return false;
+    // 只要有一个子节点是目录即可展开
+    return dataRef.children.some(child => child.type === 'directory');
+  };
+
+  function countLeaf(nodes) {
+    if (!nodes) return 0;
+    let count = 0;
+    for (const node of nodes) {
+      if (!hasExpandableChildren(node)) {
+        count++;
+      } else {
+        count += countLeaf(node.children);
+      }
+    }
+    return count;
+  }
+  return countLeaf(jsNode?.children);
 }
+
 function getMapCount(repo) {
   const mapNode = repo.indexes.find(item => item.name === 'pathing');
 
@@ -402,13 +422,53 @@ function getMapCount(repo) {
   }
   return countLeaf(mapNode?.children);
 }
+
 function getCombatCount(repo) {
   const combatNode = repo.indexes.find(item => item.name === 'combat');
-  return combatNode?.children?.length || 0;
+  
+  const hasExpandableChildren = (dataRef) => {
+    if (!dataRef?.children || dataRef.children.length === 0) return false;
+    // 只要有一个子节点是目录即可展开
+    return dataRef.children.some(child => child.type === 'directory');
+  };
+
+  function countLeaf(nodes) {
+    if (!nodes) return 0;
+    let count = 0;
+    for (const node of nodes) {
+      if (!hasExpandableChildren(node)) {
+        count++;
+      } else {
+        count += countLeaf(node.children);
+      }
+    }
+    return count;
+  }
+  return countLeaf(combatNode?.children);
 }
+
 function getCardCount(repo) {
   const cardNode = repo.indexes.find(item => item.name === 'tcg');
-  return cardNode?.children?.length || 0;
+  
+  const hasExpandableChildren = (dataRef) => {
+    if (!dataRef?.children || dataRef.children.length === 0) return false;
+    // 只要有一个子节点是目录即可展开
+    return dataRef.children.some(child => child.type === 'directory');
+  };
+
+  function countLeaf(nodes) {
+    if (!nodes) return 0;
+    let count = 0;
+    for (const node of nodes) {
+      if (!hasExpandableChildren(node)) {
+        count++;
+      } else {
+        count += countLeaf(node.children);
+      }
+    }
+    return count;
+  }
+  return countLeaf(cardNode?.children);
 }
 
 onMounted(() => {
