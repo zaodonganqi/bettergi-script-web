@@ -186,7 +186,9 @@ const giscusConfig = {
 
 [BetterGI官网](https://bettergi.com/)
 
-[BetterGI GitHub仓库](https://github.com/babalae/better-genshin-impact)
+[BetterGI 主仓库](https://github.com/babalae/better-genshin-impact/)
+
+[BetterGI 脚本仓库](https://github.com/babalae/bettergi-scripts-list/)
 
 ---
 
