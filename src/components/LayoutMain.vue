@@ -450,24 +450,21 @@ function getCombatCount(repo) {
 function getCardCount(repo) {
   const cardNode = repo.indexes.find(item => item.name === 'tcg');
   
-  const hasExpandableChildren = (dataRef) => {
-    if (!dataRef?.children || dataRef.children.length === 0) return false;
-    // 只要有一个子节点是目录即可展开
-    return dataRef.children.some(child => child.type === 'directory');
-  };
-
   function countLeaf(nodes) {
     if (!nodes) return 0;
     let count = 0;
     for (const node of nodes) {
-      if (!hasExpandableChildren(node)) {
+      if (node.type === 'file') {
+        // 直接判断是否为文件节点
         count++;
-      } else {
+      } else if (node.type === 'directory' && node.children) {
+        // 如果是目录且有子节点，递归计算
         count += countLeaf(node.children);
       }
     }
     return count;
   }
+  
   return countLeaf(cardNode?.children);
 }
 
