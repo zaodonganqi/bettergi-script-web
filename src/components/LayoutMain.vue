@@ -3,11 +3,11 @@
     <!-- 左侧菜单 -->
     <a-layout-sider class="custom-sider">
       <div class="sider-header">
-        <div class="sider-logo" title="访问 BetterGI 官网" @click="openExternalLink"></div>
+        <div class="sider-logo" title="访问 BetterGI 官网" @click="openExternalLink('https://bettergi.com/')"></div>
         <span class="repo-title">脚本仓库</span>
       </div>
       <div class="sider-menu-wrap">
-        <div>
+        <div class="menu-content">
           <a-menu v-model:selectedKeys="selectedMenu" mode="vertical" class="custom-menu" @select="handleMenuSelect">
             <a-menu-item v-for="item in menuList" :key="item.key" class="custom-menu-item">
               <span class="menu-icon">
@@ -19,9 +19,13 @@
           </a-menu>
         </div>
         <div class="sider-footer">
-          <div class="sider-link">外链1</div>
+          <div class="sider-link" @click="openExternalLink('https://github.com/babalae/better-genshin-impact')">访问BGI github仓库</div>
           <div class="sider-link">外链2</div>
         </div>
+      </div>
+      <!-- 最后更新时间 -->
+      <div v-if="lastUpdateTime" class="last-update-time">
+        <span>{{ lastUpdateTime }}</span>
       </div>
     </a-layout-sider>
 
@@ -67,9 +71,73 @@
     <!-- 右侧内容区域 -->
     <a-layout>
       <div v-if="selectedMenu[0] === '1'" class="main-right">
+        <!-- 顶部操作栏 -->
+        <div v-if="selectedScript" class="detail-top-bar">
+          <div class="top-bar-left">
+            <a-tooltip title="刷新">
+              <a-button type="text" size="small" class="action-btn">
+                <ReloadOutlined />
+              </a-button>
+            </a-tooltip>
+            <a-tooltip title="导出">
+              <a-button type="text" size="small" class="action-btn">
+                <ExportOutlined />
+              </a-button>
+            </a-tooltip>
+          </div>
+          <div class="top-bar-right">
+            <a-tooltip title="评论">
+              <a-button type="text" size="small" class="action-btn" @click="commentModalOpen = true">
+                <MessageOutlined />
+              </a-button>
+            </a-tooltip>
+            <a-tooltip title="设置">
+              <a-button type="text" size="small" class="action-btn">
+                <SettingOutlined />
+              </a-button>
+            </a-tooltip>
+            <a-tooltip title="帮助">
+              <a-button type="text" size="small" class="action-btn">
+                <QuestionCircleOutlined />
+              </a-button>
+            </a-tooltip>
+          </div>
+        </div>
         <MapDetail :script="selectedScript" />
       </div>
       <div v-else class="main-right">
+        <!-- 顶部操作栏 -->
+        <div v-if="selectedScript" class="detail-top-bar">
+          <div class="top-bar-left">
+            <a-tooltip title="刷新">
+              <a-button type="text" size="small" class="action-btn">
+                <ReloadOutlined />
+              </a-button>
+            </a-tooltip>
+            <a-tooltip title="导出">
+              <a-button type="text" size="small" class="action-btn">
+                <ExportOutlined />
+              </a-button>
+            </a-tooltip>
+          </div>
+          <div class="top-bar-right">
+            <a-tooltip title="评论">
+              <a-button type="text" size="small" class="action-btn" @click="commentModalOpen = true">
+                <MessageOutlined />
+              </a-button>
+            </a-tooltip>
+            <a-tooltip title="设置">
+              <a-button type="text" size="small" class="action-btn">
+                <SettingOutlined />
+              </a-button>
+            </a-tooltip>
+            <a-tooltip title="帮助">
+              <a-button type="text" size="small" class="action-btn">
+                <QuestionCircleOutlined />
+              </a-button>
+            </a-tooltip>
+          </div>
+        </div>
         <ScriptDetail :script="selectedScript" />
       </div>
     </a-layout>
@@ -92,14 +160,58 @@
 
     <!-- 全局加载弹窗 -->
     <div v-if="globalLoading" class="global-loading-modal">
-      <a-spin size="large" tip="加载中，请稍候..." />
+      <a-spin size="large" tip="仓库数据加载中，请稍候..." />
     </div>
+
+    <!-- 评论弹窗 -->
+    <a-modal 
+      v-model:open="commentModalOpen" 
+      title="评论" 
+      :footer="null" 
+      centered 
+      width="90%"
+      :style="{ maxWidth: '1200px' }"
+      @cancel="handleCommentModalCancel"
+      class="comment-modal"
+    >
+      <div class="comment-modal-content">
+        <div class="comment-header">
+          <div class="script-title-simple">
+            {{ selectedScript?.title || '未知脚本' }}
+            <span v-if="selectedScript?.author || selectedScript?.authors" class="script-author">
+              · {{ selectedScript?.authors || selectedScript?.author }}
+            </span>
+          </div>
+        </div>
+        
+        <!-- 可滚动的评论容器 -->
+        <div class="comments-container">
+          <Giscus
+            id="comments"
+            :repo="giscusConfig.repo"
+            :repoId="giscusConfig.repoId"
+            :category="giscusConfig.category"
+            :categoryId="giscusConfig.categoryId"
+            :mapping="giscusConfig.mapping"
+            :term="giscusTerm"
+            :strict="giscusConfig.strict"
+            :reactionsEnabled="giscusConfig.reactionsEnabled"
+            :emitMetadata="giscusConfig.emitMetadata"
+            :inputPosition="giscusConfig.inputPosition"
+            :theme="giscusConfig.theme"
+            :lang="giscusConfig.lang"
+            loading="lazy"
+          />
+        </div>
+      </div>
+    </a-modal>
   </a-layout>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue';
-import { FolderOutlined, FileOutlined, CalculatorOutlined, BulbOutlined, SearchOutlined } from '@ant-design/icons-vue';
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
+import { FolderOutlined, FileOutlined, CalculatorOutlined, BulbOutlined, SearchOutlined, ReloadOutlined, ExportOutlined, SettingOutlined, QuestionCircleOutlined, MessageOutlined } from '@ant-design/icons-vue';
+import Giscus from '@giscus/vue';
 import MapTreeList from './lists/MapTreeList.vue';
 import ScriptList from './lists/ScriptList.vue';
 import CombatStrategyList from './lists/CombatStrategyList.vue';
@@ -122,6 +234,31 @@ const repoData = ref({});
 const repoError = ref(false);
 const globalLoading = ref(false);
 let fetchTimeoutId = null;
+
+// 格式化时间
+const formatTime = (timeString) => {
+  if (!timeString) return '';
+  const year = timeString.substring(0, 4);
+  const month = timeString.substring(4, 6);
+  const day = timeString.substring(6, 8);
+  const hour = timeString.substring(8, 10);
+  const minute = timeString.substring(10, 12);
+  const second = timeString.substring(12, 14);
+  
+  return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
+};
+
+// 计算最后更新时间
+const lastUpdateTime = computed(() => {
+  if (repoData.value && repoData.value.time) {
+    // 区分本地与web模式，如需更改最后更新时间格式请更改此处
+    if (mode === 'web') {
+      return `最后更新时间：${formatTime(repoData.value.time)}`;
+    }
+    return `最后更新时间：${formatTime(repoData.value.time)}`;
+  }
+  return '';
+});
 
 async function getRepoJson () {
   repoError.value = false;
@@ -202,8 +339,8 @@ const handleMenuSelect = ({ key }) => {
   selectedScript.value = null;
 };
 
-const openExternalLink = () => {
-  window.open('https://bettergi.com/', '_blank');
+const openExternalLink = (link) => {
+  window.open(link, '_blank');
 };
 
 const selectedScript = ref(null);
@@ -284,6 +421,41 @@ onUnmounted(() => {
     fetchTimeoutId = null;
   }
 });
+
+const commentModalOpen = ref(false);
+
+// giscus 配置
+const giscusConfig = {
+  repo: 'zaodonganqi/bettergi-scripts-web',
+  repoId: 'R_kgDOOdJNqw',
+  category: 'Q&A',
+  categoryId: 'DIC_kwDOOdJNq84CsJV4',
+  mapping: 'specific',
+  strict: '0',
+  reactionsEnabled: '1',
+  emitMetadata: '0',
+  inputPosition: 'top',
+  theme: 'light',
+  lang: 'zh-CN'
+};
+
+// 计算 giscus term，用于区分不同脚本的评论
+const giscusTerm = computed(() => {
+  if (!selectedScript.value) return 'default';
+  return selectedScript.value.path || selectedScript.value.title || 'default';
+});
+
+// 监听评论弹窗打开
+watch(commentModalOpen, (newVal) => {
+  if (newVal) {
+    // 弹窗打开时的处理逻辑
+    console.log('评论弹窗打开，当前脚本:', selectedScript.value);
+  }
+});
+
+const handleCommentModalCancel = () => {
+  commentModalOpen.value = false;
+};
 </script>
 
 <style scoped>
@@ -347,6 +519,14 @@ onUnmounted(() => {
   width: 100%;
   overflow-y: auto;
   overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  height: calc(100% - 60px - 60px);
+}
+
+.menu-content {
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .custom-menu {
@@ -397,6 +577,24 @@ onUnmounted(() => {
 .sider-link {
   margin-bottom: 8px;
   cursor: pointer;
+}
+
+.last-update-time {
+  padding: 12px 16px;
+  color: #999;
+  font-size: 12px;
+  border-top: 1px solid #ececec;
+  width: 100%;
+  flex-shrink: 0;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.last-update-time span {
+  color: #666;
+  font-size: 15px;
 }
 
 .script-sider {
@@ -470,9 +668,51 @@ onUnmounted(() => {
   flex: 1;
   height: 100%;
   background: #f5f6fa;
-  padding: 24px;
+  padding: 0;
   overflow-y: auto;
   overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.detail-top-bar {
+  height: 60px;
+  background: #f7f8fa;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 16px;
+  flex-shrink: 0;
+}
+
+.top-bar-left {
+  display: flex;
+  gap: 8px;
+}
+
+.top-bar-right {
+  display: flex;
+  gap: 8px;
+}
+
+.action-btn {
+  color: #666;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.action-btn:hover {
+  color: #1890ff;
+  background: rgba(24, 144, 255, 0.1);
+}
+
+/* 调整详情组件容器样式 */
+.main-right > div:last-child {
+  flex: 1;
+  overflow: hidden;
 }
 
 .strategy-tabs {
@@ -607,7 +847,6 @@ onUnmounted(() => {
   box-shadow: 0 4px 16px rgba(244,67,54,0.18);
 }
 
-/* 全局加载弹窗样式 */
 .global-loading-modal {
   position: fixed;
   left: 0; top: 0; right: 0; bottom: 0;
@@ -616,5 +855,128 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+/* 评论弹窗样式 */
+.comment-modal {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.comment-modal :deep(.ant-modal-content) {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+}
+
+.comment-modal :deep(.ant-modal-header) {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-bottom: 1px solid #e5e7eb;
+  padding: 20px 24px;
+}
+
+.comment-modal :deep(.ant-modal-title) {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.comment-modal :deep(.ant-modal-body) {
+  padding: 0;
+  max-height: 90vh;
+  overflow: hidden;
+}
+
+.comment-modal-content {
+  padding: 0;
+  max-width: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.comment-header {
+  margin: 0;
+  padding: 16px 24px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e5e7eb;
+  flex-shrink: 0;
+}
+
+.script-title-simple {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1a1a1a;
+  line-height: 1.4;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.script-author {
+  font-size: 14px;
+  font-weight: 400;
+  color: #666;
+  opacity: 0.8;
+}
+
+/* 可滚动的评论容器 - 按照官方文档设计 */
+.comments-container {
+  flex: 1;
+  max-height: calc(90vh - 60px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0;
+  position: relative;
+  width: 100%;
+}
+
+/* Giscus 组件样式调整 - 按照官方文档 */
+.comments-container :deep(.giscus) {
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  width: 100%;
+  min-width: 100%;
+}
+
+/* 响应式设计 */
+@media (max-width: 1400px) {
+  .comment-modal {
+    width: 95% !important;
+    margin: 10px;
+  }
+  
+  .comment-modal :deep(.ant-modal-body) {
+    max-height: 85vh;
+  }
+  
+  .comments-container {
+    max-height: calc(85vh - 60px);
+  }
+}
+
+@media (max-width: 768px) {
+  .comment-modal {
+    width: 98% !important;
+    margin: 5px;
+  }
+  
+  .comment-modal :deep(.ant-modal-body) {
+    max-height: 90vh;
+  }
+  
+  .comments-container {
+    max-height: calc(90vh - 60px);
+  }
+  
+  .comment-header {
+    padding: 12px 16px;
+  }
+  
+  .script-title-simple {
+    font-size: 16px;
+  }
 }
 </style>

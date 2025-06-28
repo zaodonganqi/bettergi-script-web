@@ -18,14 +18,6 @@
           </div>
           <div class="header-right">
             <a-button type="primary" @click="handleSubscribe">订阅</a-button>
-            <a-button type="primary" @click="commentModalOpen = true">评论</a-button>
-            <!-- 评论悬浮窗 -->
-            <a-modal v-model:open="commentModalOpen" title="发表评论" :footer="null" centered width="400">
-              <div class="comment-modal-content">
-                <a-input v-model:value="input" placeholder="评论..." class="detail-input" />
-                <a-button type="primary" class="detail-send">发送</a-button>
-              </div>
-            </a-modal>
           </div>
         </div>
         <div v-if="hasReadme" class="detail-tabs">
@@ -128,7 +120,6 @@ const props = defineProps({
 const mode = import.meta.env.VITE_MODE;
 const selectedRepo = ref({ value: 'local' });
 
-const input = ref('');
 const readmeContent = ref('');
 const isLoading = ref(false);
 const error = ref(null);
@@ -176,9 +167,6 @@ function showDetails(record) {
   modalRecord.value = { ...record };
   modalOpen.value = true;
 }
-
-// 评论悬浮窗
-const commentModalOpen = ref(false);
 
 // 随机颜色缓存，保证同一tag颜色一致
 const tagColorMap = ref({});
@@ -382,7 +370,7 @@ watch(
 .map-detail {
   height: 100%;
   background: #fff;
-  padding: 30px;
+  padding: 16px 30px 30px 30px;
   position: relative;
   display: flex;
   flex-direction: column;

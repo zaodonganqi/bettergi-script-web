@@ -22,11 +22,6 @@
         <div v-else-if="script.desc" class="detail-desc">{{ '简介：\n' + script.desc }}</div>
         <div v-else class="readme-empty">暂无描述</div>
       </div>
-      <!-- 输入区 -->
-      <div class="detail-input-wrap">
-        <a-input v-model:value="input" placeholder="评论..." class="detail-input" />
-        <a-button type="primary" class="detail-send">Send</a-button>
-      </div>
     </template>
     <template v-else>
       <div class="detail-empty">请选择左侧脚本查看详情</div>
@@ -53,7 +48,6 @@ const props = defineProps({
 const mode = import.meta.env.VITE_MODE;
 const selectedRepo = ref({ value: 'local' });
 
-const input = ref('');
 const readmeContent = ref('');
 const isLoading = ref(false);
 const error = ref(null);
@@ -220,7 +214,7 @@ watch(
 .script-detail {
   height: 100%;
   background: #fff;
-  padding: 32px 36px 80px 36px;
+  padding: 16px 36px 80px 36px;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -285,19 +279,6 @@ watch(
   color: #bbb;
   text-align: center;
   margin-top: 80px;
-}
-
-.detail-input-wrap {
-  position: absolute;
-  bottom: 24px;
-  left: 36px;
-  right: 36px;
-  display: flex;
-  align-items: center;
-  background: #f7f8fa;
-  border-radius: 8px;
-  padding: 10px 16px;
-  box-shadow: 0 2px 8px #f2f3f5;
 }
 
 .detail-input {
