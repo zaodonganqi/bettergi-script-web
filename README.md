@@ -1,6 +1,6 @@
 # 🎮 BGI-BSW 脚本仓库
 
-> **BetterGI ScriptsList Web** - BetterGi脚本仓库Web界面
+> **BetterGI ScriptsList Web** - BetterGI脚本仓库Web界面
 
 [![Vue](https://img.shields.io/badge/Vue-3.4.0-4FC08D?style=flat-square&logo=vue.js)](https://vuejs.org/)
 [![Vite](https://img.shields.io/badge/Vite-5.0.0-646CFF?style=flat-square&logo=vite)](https://vitejs.dev/)
@@ -165,7 +165,8 @@ const giscusConfig = {
 2. **查看评论**: 自动加载对应脚本的讨论
 3. **发表评论**: 需要GitHub账号授权
 4. **互动功能**: 支持点赞、回复、引用
-```
+
+---
 
 ## 📄 许可证
 
@@ -177,15 +178,16 @@ const giscusConfig = {
 
 ## 🙏 致谢
 
-感谢 [@huiyadanli](https://github.com/huiyadanli) 的旧版仓库参考，为本项目提供了宝贵的开发思路和架构参考。
+感谢 [huiyadanli](https://github.com/huiyadanli) 的旧版仓库参考，为本项目提供了宝贵的开发思路和架构参考。
 
 ---
 
 ## 🌟 相关链接
 
-[![BetterGI官网](https://img.shields.io/badge/BetterGI-官网-1890FF?style=for-the-badge&logo=game-controller)](https://bettergi.com/)
-[![GitHub仓库](https://img.shields.io/badge/GitHub-主仓库-181717?style=for-the-badge&logo=github)](https://github.com/babalae/better-genshin-impact)
+[BetterGI官网](https://bettergi.com/)
+
+[BetterGI GitHub仓库](https://github.com/babalae/better-genshin-impact)
 
 ---
 
-**⭐ 如果这个项目对您有帮助，请给我们一个 Star！** 
+**⭐ 如果这个项目对您有帮助，请给我们一个 Star！**
