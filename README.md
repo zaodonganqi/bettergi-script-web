@@ -175,10 +175,17 @@ const giscusConfig = {
 
 欢迎提交 Issue 和 Pull Request！
 
+## 🙏 致谢
+
+感谢 [@huiyadanli](https://github.com/huiyadanli) 的旧版仓库参考，为本项目提供了宝贵的开发思路和架构参考。
+
 ---
 
-<div align="center">
+## 🌟 相关链接
 
-[BetterGI官网](https://bettergi.com/) | [GitHub仓库](https://github.com/babalae/better-genshin-impact)
+[![BetterGI官网](https://img.shields.io/badge/BetterGI-官网-1890FF?style=for-the-badge&logo=game-controller)](https://bettergi.com/)
+[![GitHub仓库](https://img.shields.io/badge/GitHub-主仓库-181717?style=for-the-badge&logo=github)](https://github.com/babalae/better-genshin-impact)
 
-</div> 
+---
+
+**⭐ 如果这个项目对您有帮助，请给我们一个 Star！** 
