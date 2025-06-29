@@ -186,7 +186,23 @@
         
         <!-- 可滚动的评论容器 -->
         <div class="comments-container">
+          <!-- 本地模式显示提示信息 -->
+          <div v-if="mode === 'single'" class="local-mode-notice">
+            <div class="notice-icon">
+              <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                <circle cx="24" cy="24" r="24" fill="#e3f2fd"/>
+                <path d="M24 12v16" stroke="#2196f3" stroke-width="3" stroke-linecap="round"/>
+                <circle cx="24" cy="36" r="2.5" fill="#2196f3"/>
+              </svg>
+            </div>
+            <div class="notice-title">本地模式暂不支持评论功能</div>
+            <div class="notice-desc">请移步在线仓库进行评论</div>
+            <button class="notice-btn" @click="openExternalLink('https://bgi.sh')">访问在线仓库</button>
+          </div>
+          
+          <!-- Web模式显示giscus评论 -->
           <Giscus
+            v-else
             id="comments"
             :repo="giscusConfig.repo"
             :repoId="giscusConfig.repoId"
@@ -1035,5 +1051,58 @@ const handleCommentModalCancel = () => {
   .script-title-simple {
     font-size: 16px;
   }
+}
+
+/* 本地模式提示样式 */
+.local-mode-notice {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+  height: 100%;
+  min-height: 400px;
+}
+
+.notice-icon {
+  margin-bottom: 24px;
+}
+
+.notice-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 12px;
+}
+
+.notice-desc {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 32px;
+  line-height: 1.5;
+}
+
+.notice-btn {
+  background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 32px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(24, 144, 255, 0.3);
+  transition: all 0.3s ease;
+}
+
+.notice-btn:hover {
+  background: linear-gradient(135deg, #096dd9 0%, #0050b3 100%);
+  box-shadow: 0 6px 16px rgba(24, 144, 255, 0.4);
+  transform: translateY(-1px);
+}
+
+.notice-btn:active {
+  transform: translateY(0);
 }
 </style>
