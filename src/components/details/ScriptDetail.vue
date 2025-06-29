@@ -163,21 +163,12 @@ const downloadScript = async (script) => {
   // 创建完整的 URL
   const fullUrl = `bettergi://script?import=${base64String}`;
 
-  if (mode.value === 'single') {
-    if (selectedRepo.value === 'local') {
-      try {
-        await subscribeToLocal(fullUrl);
-      } catch (error) {
-        console.error('订阅失败:', error);
-        Message.error(`订阅失败: ${error.message}`);
-      }
-    } else {
-      copy(fullUrl).then(() => {
-        Message.success(`订阅链接已复制，回到地图追踪页面以继续导入`);
-      }).catch((error) => {
-        console.error('复制到剪贴板失败:', error);
-        Message.error(`复制 ${script.name} 的订阅链接失败`);
-      });
+  if (mode === 'single') {
+    try {
+      await subscribeToLocal(fullUrl);
+    } catch (error) {
+      console.error('订阅失败:', error);
+      Message.error(`订阅失败: ${error.message}`);
     }
   } else {
     // 将完整的 URL 复制到剪贴板

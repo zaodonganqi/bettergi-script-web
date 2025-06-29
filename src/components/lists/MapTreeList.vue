@@ -12,7 +12,8 @@
       <template #title="{ title, dataRef }">
         <div class="tree-node-container">
           <div class="tree-node-title">
-            <a-image v-if="dataRef.showIcon" :src="dataRef.icon" :width="22" :placeholder="false" @error="dataRef.showIcon=false"/>
+            <a-image v-if="dataRef.showIcon" :src="dataRef.icon" :width="22" :placeholder="false"
+              @error="dataRef.showIcon = false" />
             <span>{{ title }}</span>
           </div>
           <a-button class="subscribe-btn" type="text" size="small" @click.stop="handleSubscribe(dataRef)">
@@ -45,7 +46,6 @@ const props = defineProps({
 const { repoData } = props;
 const { copy } = useClipboard();
 const mode = import.meta.env.VITE_MODE;
-const selectedRepo = ref({ value: 'local' });
 const emit = defineEmits(['select', 'leafCount']);
 const expandedKeys = ref([]);
 const selectedKeys = ref([]);
@@ -113,21 +113,12 @@ const downloadScript = async (script) => {
   // 创建完整的 URL
   const fullUrl = `bettergi://script?import=${base64String}`;
 
-  if (mode.value === 'single') {
-    if (selectedRepo.value === 'local') {
-      try {
-        await subscribeToLocal(fullUrl);
-      } catch (error) {
-        console.error('订阅失败:', error);
-        Message.error(`订阅失败: ${error.message}`);
-      }
-    } else {
-      copy(fullUrl).then(() => {
-        Message.success(`订阅链接已复制，回到地图追踪页面以继续导入`);
-      }).catch((error) => {
-        console.error('复制到剪贴板失败:', error);
-        Message.error(`复制 ${script.name} 的订阅链接失败`);
-      });
+  if (mode === 'single') {
+    try {
+      await subscribeToLocal(fullUrl);
+    } catch (error) {
+      console.error('订阅失败:', error);
+      Message.error(`订阅失败: ${error.message}`);
     }
   } else {
     // 将完整的 URL 复制到剪贴板
