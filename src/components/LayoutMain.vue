@@ -25,6 +25,7 @@
       </div>
       <!-- 最后更新时间 -->
       <div v-if="lastUpdateTime" class="last-update-time">
+        <span>最后更新时间：</span>
         <span>{{ lastUpdateTime }}</span>
       </div>
     </a-layout-sider>
@@ -269,9 +270,9 @@ const lastUpdateTime = computed(() => {
   if (repoData.value && repoData.value.time) {
     // 区分本地与web模式，如需更改最后更新时间格式请更改此处
     if (mode === 'web') {
-      return `最后更新时间：${formatTime(repoData.value.time)}`;
+      return `${formatTime(repoData.value.time)}`;
     }
-    return `最后更新时间：${formatTime(repoData.value.time)}`;
+    return `${formatTime(repoData.value.time)}`;
   }
   return '';
 });
@@ -653,7 +654,7 @@ const handleCommentModalCancel = () => {
 }
 
 .last-update-time {
-  padding: 12px 16px;
+  padding: 12px 25px;
   color: #999;
   font-size: 12px;
   border-top: 1px solid #ececec;
@@ -661,8 +662,9 @@ const handleCommentModalCancel = () => {
   flex-shrink: 0;
   height: 60px;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-wrap: wrap;
+  align-content: center;
+  gap: 0 4px;
 }
 
 .last-update-time span {
