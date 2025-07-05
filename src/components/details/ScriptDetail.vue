@@ -56,7 +56,6 @@ const props = defineProps({
 });
 
 const mode = import.meta.env.VITE_MODE;
-const selectedRepo = ref({ value: 'local' });
 
 const readmeContent = ref('');
 const isLoading = ref(false);
