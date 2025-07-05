@@ -1,11 +1,7 @@
 <template>
   <div class="list-container">
-    <div
-      v-for="item in filteredStrategies"
-      :key="item.id"
-      :class="['script-item', { active: item.id === selectedId }]"
-      @click="selectStrategy(item.id)"
-    >
+    <div v-for="item in filteredStrategies" :key="item.id" :class="['script-item', { active: item.id === selectedId }]"
+      @click="selectStrategy(item.id)">
       <div class="item-header">
         <span class="item-title">{{ item.title }}</span>
         <span v-if="item.unread" class="item-dot"></span>
@@ -43,10 +39,11 @@ function getCombatStrategiesFromRepo(repo) {
   if (!combatNode || !combatNode.children) return [];
   // 递归收集所有叶子节点
   const result = [];
-  function traverse(nodes) {
+  function traverse(nodes, currentPath = 'combat') {
     for (let child of nodes) {
       if (child.children && child.children.length > 0) {
-        traverse(child.children);
+        const childPath = `${currentPath}/${child.name}`;
+        traverse(child.children, childPath);
       } else {
         if (child.type === 'directory') {
           if (child.description && child.description.includes('~|~')) {
@@ -58,6 +55,7 @@ function getCombatStrategiesFromRepo(repo) {
             };
           }
         }
+        child.fullPath = `${currentPath}/${child.name}`;
         result.push(child);
       }
     }
@@ -74,6 +72,7 @@ const strategies = ref(
   getCombatStrategiesFromRepo(repoData).map((item, idx) => ({
     id: idx + 1,
     title: removeFileSuffix(item.name),
+    name: item.name,
     author: item.author || '无',
     desc: item.description || '',
     tags: item.tags || [],
@@ -81,6 +80,7 @@ const strategies = ref(
     unread: false,
     hash: item.hash,
     version: item.version,
+    path: item.fullPath || `combat/${item.name}`
   }))
 );
 
@@ -92,6 +92,7 @@ watch(
       strategies.value = getCombatStrategiesFromRepo(newVal).map((item, idx) => ({
         id: idx + 1,
         title: removeFileSuffix(item.name),
+        name: item.name,
         author: item.author || '无',
         desc: item.description || '',
         tags: item.tags || [],
@@ -99,6 +100,7 @@ watch(
         unread: false,
         hash: item.hash,
         version: item.version,
+        path: item.fullPath || `combat/${item.name}`
       }));
     }
   },
@@ -115,7 +117,7 @@ const selectStrategy = (id) => {
 
 const filteredStrategies = computed(() => {
   if (!props.searchKey) return strategies.value;
-  
+
   const searchLower = props.searchKey.toLowerCase();
   return strategies.value.filter(strategy => {
     return (
@@ -218,5 +220,4 @@ const filteredStrategies = computed(() => {
   font-size: 12px;
   margin-top: 2px;
 }
-
-</style> 
+</style>

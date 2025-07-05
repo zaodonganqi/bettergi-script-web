@@ -1,10 +1,7 @@
 <template>
   <div class="map-detail">
     <template v-if="script">
-      <div v-if="detailLoading" class="detail-global-loading">
-        <a-spin size="large" />
-      </div>
-      <div v-else class="detail-content-wrapper">
+      <div class="detail-content-wrapper">
         <div class="detail-header">
           <div class="header-left">
             <div class="detail-title">{{ script.title }}</div>
@@ -20,17 +17,26 @@
             <a-button type="primary" @click="handleSubscribe">订阅</a-button>
           </div>
         </div>
-        <div v-if="hasReadme" class="detail-tabs">
+        <div class="detail-tabs">
           <a-segmented v-model:value="activeTab" :options="tabOptions" size="large" class="detail-tab-btns" />
+          <div v-if="isLoading" class="readme-loading-indicator">
+            <a-spin size="small" />
+            <span>正在加载readme文件</span>
+          </div>
+          <div v-else-if="loadError" class="readme-loading-indicator">
+            <a-button type="text" size="small" @click="retryLoadReadme">
+              <template #icon>
+                <ReloadOutlined />
+              </template>
+            </a-button>
+            <span>readme文件加载失败，请重试</span>
+          </div>
         </div>
         <div class="tab-content-slider">
           <transition :name="tabTransitionName">
             <div :key="activeTab" class="tab-content-inner">
-              <div v-if="hasReadme && activeTab === 'readme'" class="tab-pane readme-pane">
-                <div v-if="isLoading" class="readme-loading">
-                  <a-spin />
-                </div>
-                <div v-else-if="readmeContent" v-html="readmeContent" class="readme-content"></div>
+              <div v-if="activeTab === 'readme'" class="tab-pane readme-pane">
+                <div v-if="readmeContent" v-html="readmeContent" class="readme-content"></div>
                 <div v-else-if="script.desc" class="detail-desc">{{ script.desc }}</div>
                 <div v-else class="readme-empty">暂无描述</div>
               </div>
@@ -109,6 +115,7 @@ import 'highlight.js/styles/github.css';
 import { useClipboard } from '@vueuse/core';
 import { message as Message } from 'ant-design-vue';
 import { Table as ATable, Tag as ATag, Popover as APopover, Space as ASpace, Button as AButton, Input as AInput, Spin as ASpin, Modal as AModal, Descriptions as ADescriptions, DescriptionsItem as ADescriptionsItem, Segmented as ASegmented } from 'ant-design-vue';
+import { ReloadOutlined } from '@ant-design/icons-vue';
 
 const props = defineProps({
   script: {
@@ -120,7 +127,7 @@ const props = defineProps({
 const mode = import.meta.env.VITE_MODE;
 const readmeContent = ref('');
 const isLoading = ref(false);
-const error = ref(null);
+const loadError = ref(null);
 const { copy } = useClipboard();
 
 const currentPage = ref(1);
@@ -147,11 +154,11 @@ const columns = [
   { title: '操作', key: 'operations', width: '20%' }
 ];
 
-// tab切换，默认readme优先
-const tabOptions = [
-  { label: 'README', value: 'readme' },
+// tab切换，默认简介优先
+const tabOptions = ref([
+  { label: '简介', value: 'readme' },
   { label: '文件列表', value: 'files' }
-];
+]);
 const hasReadme = computed(() => !!readmeContent.value);
 const activeTab = ref('readme');
 
@@ -162,9 +169,23 @@ const files = ref([]);
 const modalOpen = ref(false);
 const modalRecord = ref({});
 function showDetails(record) {
-  modalRecord.value = { ...record };
+  const fullPath = props.script && props.script.path ? 
+    `${props.script.path}/${record.name}` : 
+    record.path || record.name;
+  
+  modalRecord.value = { 
+    ...record, 
+    path: fullPath 
+  };
   modalOpen.value = true;
 }
+
+// 重试加载readme
+const retryLoadReadme = () => {
+  if (props.script && props.script.path) {
+    fetchAndRenderReadme(props.script.path);
+  }
+};
 
 // 随机颜色缓存，保证同一tag颜色一致
 const tagColorMap = ref({});
@@ -252,7 +273,7 @@ const fetchAndRenderReadme = async (path) => {
     return;
   }
   isLoading.value = true;
-  error.value = null;
+  loadError.value = null;
   readmeContent.value = '';
 
   const controller = new AbortController();
@@ -264,20 +285,29 @@ const fetchAndRenderReadme = async (path) => {
     if (response.ok) {
       const markdown = await response.text();
       readmeContent.value = md.render(markdown);
+      // 加载成功后更新tab标签为README
+      const readmeOption = tabOptions.value.find(option => option.value === 'readme');
+      if (readmeOption) {
+        readmeOption.label = 'README';
+      }
+    } else if (response.status === 404) {
+      // 只有404才消失加载框，直接保持desc显示
+      readmeContent.value = '';
     } else {
       readmeContent.value = '';
+      loadError.value = '加载失败';
     }
   } catch (e) {
     readmeContent.value = '';
-    console.error('Failed to fetch README:', e);
+    if (e.name === 'AbortError') {
+      loadError.value = '加载超时';
+    } else {
+      loadError.value = '加载失败';
+      console.error('Failed to fetch README:', e);
+    }
   } finally {
     clearTimeout(timeoutId);
     isLoading.value = false;
-    
-    // 如果没有README内容，默认切换到文件列表
-    if (!readmeContent.value && activeTab.value === 'readme') {
-      activeTab.value = 'files';
-    }
   }
 };
 
@@ -326,29 +356,29 @@ const tabTransitionName = computed(() => {
   return activeTab.value === 'readme' ? 'slide-right' : 'slide-left';
 });
 
-// detail整体加载动画
-const detailLoading = ref(false);
-
 watch(
   () => props.script,
   async (newScript) => {
     if (newScript) {
-      detailLoading.value = true;
-      // 预加载files
       files.value = Array.isArray(newScript.files) ? newScript.files : [];
-      // 预加载readme
-      if (newScript.path) {
-        await fetchAndRenderReadme(newScript.path);
-      } else {
-        readmeContent.value = '';
-        isLoading.value = false;
+      // 重置状态
+      readmeContent.value = '';
+      loadError.value = null;
+      isLoading.value = false;
+      // 重置tab标签为简介
+      const readmeOption = tabOptions.value.find(option => option.value === 'readme');
+      if (readmeOption) {
+        readmeOption.label = '简介';
       }
-      detailLoading.value = false;
+      activeTab.value = 'readme';
+      if (newScript.path) {
+        fetchAndRenderReadme(newScript.path);
+      }
     } else {
       files.value = [];
       readmeContent.value = '';
+      loadError.value = null;
       isLoading.value = false;
-      detailLoading.value = false;
     }
   },
   { immediate: true }
@@ -425,16 +455,33 @@ watch(
 .detail-tabs {
   margin: 12px 0 0 0;
   display: flex;
-  justify-content: flex-start;
+  justify-content: space-between;
+  align-items: center;
   margin-top: 2px;
   margin-bottom: 10px;
   margin-left: 5px;
   flex-shrink: 0;
 }
 
+.detail-tab-btns {
+  flex-shrink: 0;
+}
+
 :deep(.ant-segmented-item-selected) {
   background: #1677ff;
   color: #fff;
+}
+
+.readme-loading-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #666;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
 }
 
 .tab-content-slider {
@@ -471,6 +518,7 @@ watch(
   margin-bottom: 10px;
   max-width: 100%;
   overflow-x: hidden;
+  position: relative;
 }
 
 .files-pane {
@@ -601,11 +649,6 @@ watch(
   padding: 0.6em 1em;
 }
 
-.readme-loading {
-  text-align: center;
-  margin-top: 40px;
-}
-
 .readme-empty,
 .readme-error {
   color: #bbb;
@@ -727,14 +770,6 @@ watch(
   font-size: 15px;
   background: #1677ff !important;
   border: none !important;
-}
-
-.detail-global-loading {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 320px;
-  width: 100%;
 }
 
 .table-pagination-outer {

@@ -15,10 +15,19 @@
         </div>
       </div>
       <div class="detail-readme">
-        <div v-if="isLoading" class="readme-loading">
-          <a-spin />
+        <div v-if="isLoading" class="readme-loading-indicator">
+          <a-spin size="small" />
+          <span>正在加载readme文件</span>
         </div>
-        <div v-else-if="readmeContent" v-html="readmeContent" class="readme-content"></div>
+        <div v-else-if="loadError" class="readme-loading-indicator">
+          <a-button type="text" size="small" @click="retryLoadReadme">
+            <template #icon>
+              <ReloadOutlined />
+            </template>
+          </a-button>
+          <span>readme文件加载失败，请重试</span>
+        </div>
+        <div v-if="readmeContent" v-html="readmeContent" class="readme-content"></div>
         <div v-else-if="script.desc" class="detail-desc">{{ '简介：\n' + script.desc }}</div>
         <div v-else class="readme-empty">暂无描述</div>
       </div>
@@ -37,6 +46,7 @@ import hljs from 'highlight.js';
 import 'highlight.js/styles/github.css';
 import { useClipboard } from '@vueuse/core';
 import { message as Message } from 'ant-design-vue';
+import { ReloadOutlined } from '@ant-design/icons-vue';
 
 const props = defineProps({
   script: {
@@ -50,7 +60,7 @@ const selectedRepo = ref({ value: 'local' });
 
 const readmeContent = ref('');
 const isLoading = ref(false);
-const error = ref(null);
+const loadError = ref(null);
 const { copy } = useClipboard();
 
 const md = new MarkdownIt({
@@ -122,7 +132,7 @@ const fetchAndRenderReadme = async (path) => {
     return;
   }
   isLoading.value = true;
-  error.value = null;
+  loadError.value = null;
   readmeContent.value = '';
 
   const controller = new AbortController();
@@ -134,12 +144,21 @@ const fetchAndRenderReadme = async (path) => {
     if (response.ok) {
       const markdown = await response.text();
       readmeContent.value = md.render(markdown);
+    } else if (response.status === 404) {
+      // 只有404才消失加载框，直接保持desc显示
+      readmeContent.value = '';
     } else {
       readmeContent.value = '';
+      loadError.value = '加载失败';
     }
   } catch (e) {
     readmeContent.value = '';
-    console.error('Failed to fetch README:', e);
+    if (e.name === 'AbortError') {
+      loadError.value = '加载超时';
+    } else {
+      loadError.value = '加载失败';
+      console.error('Failed to fetch README:', e);
+    }
   } finally {
     clearTimeout(timeoutId);
     isLoading.value = false;
@@ -186,15 +205,25 @@ const subscribeToLocal = async (url) => {
   await repoWebBridge.ImportUri(url);
 };
 
+const retryLoadReadme = () => {
+  if (props.script && props.script.path) {
+    fetchAndRenderReadme(props.script.path);
+  }
+};
+
 watch(
   () => props.script,
   (newScript) => {
     if (newScript && newScript.path) {
+      // 重置状态
+      readmeContent.value = '';
+      loadError.value = null;
+      isLoading.value = false;
       fetchAndRenderReadme(newScript.path);
     } else {
       readmeContent.value = '';
+      loadError.value = null;
       isLoading.value = false;
-      error.value = null;
     }
   },
   { immediate: true }
@@ -260,6 +289,7 @@ watch(
   color: #000;
   font-size: 15px;
   white-space: pre-line;
+  margin-top: 2px;
 }
 
 .detail-empty {
@@ -294,12 +324,14 @@ watch(
   min-height: 100px;
   padding-top: 16px;
   padding-right: 16px;
+  position: relative;
 }
 
 .readme-content {
   color: #000;
   font-size: 15px;
   line-height: 1.8;
+  margin-top: 4px;
 }
 
 .readme-content :deep(h1),
@@ -387,9 +419,20 @@ watch(
   padding: 0.6em 1em;
 }
 
-.readme-loading {
-  text-align: center;
-  margin-top: 40px;
+.readme-loading-indicator {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 8px 12px;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #666;
+  z-index: 10;
 }
 
 .readme-empty,

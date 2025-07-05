@@ -43,10 +43,11 @@ function getTcgStrategiesFromRepo(repo) {
   if (!tcgNode || !tcgNode.children) return [];
   // 递归收集所有叶子节点
   const result = [];
-  function traverse(nodes) {
+  function traverse(nodes, currentPath = 'tcg') {
     for (let child of nodes) {
       if (child.children && child.children.length > 0) {
-        traverse(child.children);
+        const childPath = `${currentPath}/${child.name}`;
+        traverse(child.children, childPath);
       } else {
         if (child.type === 'directory') {
           if (child.description && child.description.includes('~|~')) {
@@ -58,6 +59,7 @@ function getTcgStrategiesFromRepo(repo) {
             };
           }
         }
+        child.fullPath = `${currentPath}/${child.name}`;
         result.push(child);
       }
     }
@@ -74,6 +76,7 @@ const strategies = ref(
   getTcgStrategiesFromRepo(repoData).map((item, idx) => ({
     id: idx + 1,
     title: removeFileSuffix(item.name),
+    name: item.name,
     author: item.author || '无',
     desc: item.description || '',
     tags: item.tags || [],
@@ -81,6 +84,7 @@ const strategies = ref(
     unread: false,
     hash: item.hash,
     version: item.version,
+    path: item.fullPath || `tcg/${item.name}`
   }))
 );
 
@@ -92,6 +96,7 @@ watch(
       strategies.value = getTcgStrategiesFromRepo(newVal).map((item, idx) => ({
         id: idx + 1,
         title: removeFileSuffix(item.name),
+        name: item.name,
         author: item.author || '无',
         desc: item.description || '',
         tags: item.tags || [],
@@ -99,6 +104,7 @@ watch(
         unread: false,
         hash: item.hash,
         version: item.version,
+        path: item.fullPath || `tcg/${item.name}`
       }));
     }
   },
