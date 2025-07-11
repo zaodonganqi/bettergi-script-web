@@ -27,9 +27,13 @@
           </a-button>
           <span>readme文件加载失败，请重试</span>
         </div>
-        <div v-if="readmeContent" v-html="readmeContent" class="readme-content"></div>
-        <div v-else-if="script.desc" class="detail-desc">{{ '简介：\n' + script.desc }}</div>
-        <div v-else class="readme-empty">暂无描述</div>
+        <ReadmeViewer
+          :path="script.path"
+          :desc="script.desc"
+          :showDescTitle="true"
+          @loaded="isLoading = false"
+          @error="handleReadmeError"
+        />
       </div>
     </template>
     <template v-else>
@@ -40,13 +44,11 @@
 
 <script setup>
 import { ref, watch } from 'vue';
-import MarkdownIt from 'markdown-it';
-import markdownItAnchor from 'markdown-it-anchor';
-import hljs from 'highlight.js';
 import 'highlight.js/styles/github.css';
 import { useClipboard } from '@vueuse/core';
 import { message as Message } from 'ant-design-vue';
 import { ReloadOutlined } from '@ant-design/icons-vue';
+import ReadmeViewer from '../ReadmeViewer.vue';
 
 const props = defineProps({
   script: {
@@ -57,112 +59,22 @@ const props = defineProps({
 
 const mode = import.meta.env.VITE_MODE;
 
-const readmeContent = ref('');
-const isLoading = ref(false);
-const loadError = ref(null);
 const { copy } = useClipboard();
 
-const md = new MarkdownIt({
-  html: true,
-  linkify: true,
-  typographer: true,
-  highlight: function (str, lang) {
-    if (lang && hljs.getLanguage(lang)) {
-      try {
-        return '<pre class="hljs"><code>' +
-               hljs.highlight(str, { language: lang, ignoreIllegals: true }).value +
-               '</code></pre>';
-      } catch (__) {}
-    }
-    return '<pre class="hljs"><code>' + md.utils.escapeHtml(str) + '</code></pre>';
-  }
-}).use(markdownItAnchor, {
-  level: [1, 2, 3, 4, 5, 6]
-});
+const isLoading = ref(false);
+const loadError = ref(null);
 
-// 添加 target="_blank" 属性到所有链接，以外链形式打开
-const originalLinkRender = md.renderer.rules.link_open || function(tokens, idx, options, env, self) {
-  return self.renderToken(tokens, idx, options);
-};
+function handleReadmeError(msg) {
+  isLoading.value = false;
+  loadError.value = msg || '加载失败';
+}
 
-md.renderer.rules.link_open = function (tokens, idx, options, env, self) {
-  const token = tokens[idx];
-  const hrefIndex = token.attrIndex('href');
-  
-  if (hrefIndex >= 0) {
-    const href = token.attrs[hrefIndex][1];
-    
-    // 判断是否是有效链接
-    const isValidHttpLink = /^https?:\/\/[^\s/$.?#].[^\s]*$/i.test(href);
-    const isPotentialLink = /^[a-z0-9-]+\.[a-z]{2,}\b/i.test(href);
-
-    if (isValidHttpLink) {
-      // 有效链接：添加新窗口打开属性
-      token.attrPush(['target', '_blank']);
-      token.attrPush(['rel', 'noopener noreferrer']);
-    } 
-    else if (isPotentialLink) {
-      // 无效链接处理
-      token.attrPush(['class', 'invalid-link']); // 添加无效链接class
-      token.attrPush(['onclick', 'return false;']); // 阻止点击
-      token.attrPush(['style', 'cursor: default;']);
-      
-      // 添加提示文本
-      const textToken = tokens[idx + 1];
-      if (textToken && textToken.type === 'text') {
-        textToken.content += '（这个作者很笨，把链接写错了，去提醒ta修改吧）';
-      }
-    }
-  }
-
-  return originalLinkRender(tokens, idx, options, env, self);
-};
-
-// 获取readme文件内容
-const getReadmeContent = (tag) => {
-  const baseReadmeUrl = "https://raw.githubusercontent.com/babalae/bettergi-scripts-list/refs/heads/main/repo/";
-  const encodedTag = tag
-  return `${baseReadmeUrl}${encodedTag}/README.md`;
-};
-
-const fetchAndRenderReadme = async (path) => {
-  if (!path) {
-    readmeContent.value = '';
-    return;
-  }
-  isLoading.value = true;
+function retryLoadReadme() {
   loadError.value = null;
-  readmeContent.value = '';
-
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 6000);
-
-  try {
-    const readmeUrl = getReadmeContent(path);
-    const response = await fetch(readmeUrl, { signal: controller.signal });
-    if (response.ok) {
-      const markdown = await response.text();
-      readmeContent.value = md.render(markdown);
-    } else if (response.status === 404) {
-      // 只有404才消失加载框，直接保持desc显示
-      readmeContent.value = '';
-    } else {
-      readmeContent.value = '';
-      loadError.value = '加载失败';
-    }
-  } catch (e) {
-    readmeContent.value = '';
-    if (e.name === 'AbortError') {
-      loadError.value = '加载超时';
-    } else {
-      loadError.value = '加载失败';
-      console.error('Failed to fetch README:', e);
-    }
-  } finally {
-    clearTimeout(timeoutId);
-    isLoading.value = false;
-  }
-};
+  isLoading.value = true;
+  // 重新设置 path 触发 ReadmeViewer 重新加载
+  // 这里可以通过 key 强制刷新，如果需要
+}
 
 const handleSubscribe = () => {
   if (props.script) {
@@ -204,25 +116,12 @@ const subscribeToLocal = async (url) => {
   await repoWebBridge.ImportUri(url);
 };
 
-const retryLoadReadme = () => {
-  if (props.script && props.script.path) {
-    fetchAndRenderReadme(props.script.path);
-  }
-};
-
 watch(
   () => props.script,
   (newScript) => {
     if (newScript && newScript.path) {
-      // 重置状态
-      readmeContent.value = '';
+      isLoading.value = true;
       loadError.value = null;
-      isLoading.value = false;
-      fetchAndRenderReadme(newScript.path);
-    } else {
-      readmeContent.value = '';
-      loadError.value = null;
-      isLoading.value = false;
     }
   },
   { immediate: true }
@@ -283,14 +182,6 @@ watch(
   margin-bottom: 10px;
 }
 
-.detail-desc {
-  padding-top: 16px;
-  color: #000;
-  font-size: 15px;
-  white-space: pre-line;
-  margin-top: 2px;
-}
-
 .detail-empty {
   display: flex;
   justify-content: center;
@@ -326,98 +217,6 @@ watch(
   position: relative;
 }
 
-.readme-content {
-  color: #000;
-  font-size: 15px;
-  line-height: 1.8;
-  margin-top: 4px;
-}
-
-.readme-content :deep(h1),
-.readme-content :deep(h2),
-.readme-content :deep(h3),
-.readme-content :deep(h4),
-.readme-content :deep(h5),
-.readme-content :deep(h6) {
-  margin-top: 24px;
-  margin-bottom: 16px;
-  font-weight: 600;
-}
-
-.readme-content :deep(h1) { font-size: 2em; }
-.readme-content :deep(h2) { font-size: 1.5em; }
-.readme-content :deep(h3) { font-size: 1.25em; }
-.readme-content :deep(h4) { font-size: 1em; }
-.readme-content :deep(h5) { font-size: 0.875em; }
-.readme-content :deep(h6) { font-size: 0.85em; }
-
-.readme-content :deep(p) {
-  margin-bottom: 16px;
-}
-
-.readme-content :deep(.invalid-link) {
-  color: #ff4d4f;
-  text-decoration: line-through;
-  pointer-events: none;
-  cursor: default;
-}
-
-.readme-content :deep(.link-hint) {
-  color: #ff4d4f !important;
-  font-size: 0.85em;
-  font-style: italic;
-  margin-left: 4px;
-  display: inline-block;
-}
-
-.readme-content :deep(.link-hint *) {
-  color: #ff4d4f !important;
-}
-
-.readme-content :deep(ul),
-.readme-content :deep(ol) {
-  padding-left: 20px;
-}
-
-.readme-content :deep(pre) {
-  background-color: #f6f8fa;
-  border-radius: 6px;
-  padding: 16px;
-  overflow: auto;
-}
-
-.readme-content :deep(code) {
-  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
-}
-
-.readme-content :deep(blockquote) {
-  border-left: 0.25em solid #dfe2e5;
-  color: #6a737d;
-  padding: 0 1em;
-  margin-left: 0;
-}
-
-.readme-content :deep(table) {
-  border-collapse: collapse;
-  margin: 1rem 0;
-  display: block;
-  overflow-x: auto;
-}
-
-.readme-content :deep(tr) {
-  border-top: 1px solid #c6cbd1;
-}
-
-.readme-content :deep(tr:nth-child(2n)) {
-  background-color: #f6f8fa;
-}
-
-.readme-content :deep(th),
-.readme-content :deep(td) {
-  border: 1px solid #dfe2e5;
-  padding: 0.6em 1em;
-}
-
 .readme-loading-indicator {
   position: absolute;
   top: 5px;
@@ -434,7 +233,6 @@ watch(
   z-index: 10;
 }
 
-.readme-empty,
 .readme-error {
   color: #bbb;
   text-align: center;

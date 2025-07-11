@@ -36,9 +36,7 @@
           <transition :name="tabTransitionName">
             <div :key="activeTab" class="tab-content-inner">
               <div v-if="activeTab === 'readme'" class="tab-pane readme-pane">
-                <div v-if="readmeContent" v-html="readmeContent" class="readme-content"></div>
-                <div v-else-if="script.desc" class="detail-desc">{{ script.desc }}</div>
-                <div v-else class="readme-empty">暂无描述</div>
+                <ReadmeViewer :path="script.path" :desc="script.desc" />
               </div>
               <div v-else class="tab-pane files-pane">
                 <div class="table-pagination-outer" v-if="script.type === 'directory' && files && files.length > 0">
@@ -107,15 +105,13 @@
 </template>
 
 <script setup>
-import { ref, watch, computed, onMounted } from 'vue';
-import MarkdownIt from 'markdown-it';
-import markdownItAnchor from 'markdown-it-anchor';
-import hljs from 'highlight.js';
+import { ref, watch, computed } from 'vue';
 import 'highlight.js/styles/github.css';
 import { useClipboard } from '@vueuse/core';
 import { message as Message } from 'ant-design-vue';
 import { Table as ATable, Tag as ATag, Popover as APopover, Space as ASpace, Button as AButton, Input as AInput, Spin as ASpin, Modal as AModal, Descriptions as ADescriptions, DescriptionsItem as ADescriptionsItem, Segmented as ASegmented } from 'ant-design-vue';
 import { ReloadOutlined } from '@ant-design/icons-vue';
+import ReadmeViewer from '../ReadmeViewer.vue';
 
 const props = defineProps({
   script: {
@@ -125,7 +121,6 @@ const props = defineProps({
 });
 
 const mode = import.meta.env.VITE_MODE;
-const readmeContent = ref('');
 const isLoading = ref(false);
 const loadError = ref(null);
 const { copy } = useClipboard();
@@ -159,10 +154,9 @@ const tabOptions = ref([
   { label: '简介', value: 'readme' },
   { label: '文件列表', value: 'files' }
 ]);
-const hasReadme = computed(() => !!readmeContent.value);
 const activeTab = ref('readme');
 
-// 预加载readme和files数据
+// 预加载files数据
 const files = ref([]);
 
 // 详情弹窗
@@ -183,7 +177,7 @@ function showDetails(record) {
 // 重试加载readme
 const retryLoadReadme = () => {
   if (props.script && props.script.path) {
-    fetchAndRenderReadme(props.script.path);
+    
   }
 };
 
@@ -204,112 +198,7 @@ function getTagColor(tag) {
   return tagColorMap.value[tag];
 }
 
-const md = new MarkdownIt({
-  html: true,
-  linkify: true,
-  typographer: true,
-  highlight: function (str, lang) {
-    if (lang && hljs.getLanguage(lang)) {
-      try {
-        return '<pre class="hljs"><code>' +
-               hljs.highlight(str, { language: lang, ignoreIllegals: true }).value +
-               '</code></pre>';
-      } catch (__) {}
-    }
-    return '<pre class="hljs"><code>' + md.utils.escapeHtml(str) + '</code></pre>';
-  }
-}).use(markdownItAnchor, {
-  level: [1, 2, 3, 4, 5, 6]
-});
-
-// 添加 target="_blank" 属性到所有链接，以外链形式打开
-const originalLinkRender = md.renderer.rules.link_open || function(tokens, idx, options, env, self) {
-  return self.renderToken(tokens, idx, options);
-};
-
-md.renderer.rules.link_open = function (tokens, idx, options, env, self) {
-  const token = tokens[idx];
-  const hrefIndex = token.attrIndex('href');
-  
-  if (hrefIndex >= 0) {
-    const href = token.attrs[hrefIndex][1];
-    
-    // 判断是否是有效链接
-    const isValidHttpLink = /^https?:\/\/[^\s/$.?#].[^\s]*$/i.test(href);
-    const isPotentialLink = /^[a-z0-9-]+\.[a-z]{2,}\b/i.test(href);
-
-    if (isValidHttpLink) {
-      // 有效链接：添加新窗口打开属性
-      token.attrPush(['target', '_blank']);
-      token.attrPush(['rel', 'noopener noreferrer']);
-    } 
-    else if (isPotentialLink) {
-      // 无效链接处理
-      token.attrPush(['class', 'invalid-link']); // 添加无效链接class
-      token.attrPush(['onclick', 'return false;']); // 阻止点击
-      token.attrPush(['style', 'cursor: default;']);
-      
-      // 添加提示文本
-      const textToken = tokens[idx + 1];
-      if (textToken && textToken.type === 'text') {
-        textToken.content += '（这个作者很笨，把链接写错了，去提醒ta修改吧）';
-      }
-    }
-  }
-
-  return originalLinkRender(tokens, idx, options, env, self);
-};
-
-// 获取readme文件内容
-const getReadmeContent = (tag) => {
-  const baseReadmeUrl = "https://raw.githubusercontent.com/babalae/bettergi-scripts-list/refs/heads/main/repo/";
-  const encodedTag = tag
-  return `${baseReadmeUrl}${encodedTag}/README.md`;
-};
-
-const fetchAndRenderReadme = async (path) => {
-  if (!path) {
-    readmeContent.value = '';
-    return;
-  }
-  isLoading.value = true;
-  loadError.value = null;
-  readmeContent.value = '';
-
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 6000);
-
-  try {
-    const readmeUrl = getReadmeContent(path);
-    const response = await fetch(readmeUrl, { signal: controller.signal });
-    if (response.ok) {
-      const markdown = await response.text();
-      readmeContent.value = md.render(markdown);
-      // 加载成功后更新tab标签为README
-      const readmeOption = tabOptions.value.find(option => option.value === 'readme');
-      if (readmeOption) {
-        readmeOption.label = 'README';
-      }
-    } else if (response.status === 404) {
-      // 只有404才消失加载框，直接保持desc显示
-      readmeContent.value = '';
-    } else {
-      readmeContent.value = '';
-      loadError.value = '加载失败';
-    }
-  } catch (e) {
-    readmeContent.value = '';
-    if (e.name === 'AbortError') {
-      loadError.value = '加载超时';
-    } else {
-      loadError.value = '加载失败';
-      console.error('Failed to fetch README:', e);
-    }
-  } finally {
-    clearTimeout(timeoutId);
-    isLoading.value = false;
-  }
-};
+// Removed md, originalLinkRender, getReadmeContent, fetchAndRenderReadme
 
 const handleSubscribe = () => {
   if (props.script) {
@@ -356,33 +245,20 @@ const tabTransitionName = computed(() => {
   return activeTab.value === 'readme' ? 'slide-right' : 'slide-left';
 });
 
-watch(
+// 保证 watch 里每次切换 script 或 tab 时 fetch readme，并赋值文件列表
+watch([
   () => props.script,
-  async (newScript) => {
-    if (newScript) {
-      files.value = Array.isArray(newScript.files) ? newScript.files : [];
-      // 重置状态
-      readmeContent.value = '';
-      loadError.value = null;
-      isLoading.value = false;
-      // 重置tab标签为简介
-      const readmeOption = tabOptions.value.find(option => option.value === 'readme');
-      if (readmeOption) {
-        readmeOption.label = '简介';
-      }
-      activeTab.value = 'readme';
-      if (newScript.path) {
-        fetchAndRenderReadme(newScript.path);
-      }
-    } else {
-      files.value = [];
-      readmeContent.value = '';
-      loadError.value = null;
-      isLoading.value = false;
-    }
-  },
-  { immediate: true }
-);
+  () => activeTab.value
+], async ([newScript, newTab]) => {
+  if (newScript) {
+    files.value = Array.isArray(newScript.files) ? newScript.files : [];
+  } else {
+    files.value = [];
+  }
+  if (newScript && newTab === 'readme' && newScript.path) {
+    // Removed readme fetching logic
+  }
+}, { immediate: true });
 
 </script>
 
@@ -557,123 +433,6 @@ watch(
   opacity: 1;
   z-index: 1;
 }
-.readme-content {
-  color: #000;
-  font-size: 15px;
-  line-height: 1.8;
-  word-break: break-word;
-}
-
-.readme-content :deep(h1),
-.readme-content :deep(h2),
-.readme-content :deep(h3),
-.readme-content :deep(h4),
-.readme-content :deep(h5),
-.readme-content :deep(h6) {
-  margin-top: 24px;
-  margin-bottom: 16px;
-  font-weight: 600;
-}
-
-.readme-content :deep(h1) { font-size: 2em; }
-.readme-content :deep(h2) { font-size: 1.5em; }
-.readme-content :deep(h3) { font-size: 1.25em; }
-.readme-content :deep(h4) { font-size: 1em; }
-.readme-content :deep(h5) { font-size: 0.875em; }
-.readme-content :deep(h6) { font-size: 0.85em; }
-
-.readme-content :deep(p) {
-  margin-bottom: 16px;
-}
-
-.readme-content :deep(.invalid-link) {
-  color: #ff4d4f;
-  text-decoration: line-through;
-  pointer-events: none;
-  cursor: default;
-}
-
-.readme-content :deep(.link-hint) {
-  color: #ff4d4f !important;
-  font-size: 0.85em;
-  font-style: italic;
-  margin-left: 4px;
-  display: inline-block;
-}
-
-.readme-content :deep(.link-hint *) {
-  color: #ff4d4f !important;
-}
-
-.readme-content :deep(ul),
-.readme-content :deep(ol) {
-  padding-left: 20px;
-}
-
-.readme-content :deep(pre) {
-  background-color: #f6f8fa;
-  border-radius: 6px;
-  padding: 16px;
-  overflow: auto;
-}
-
-.readme-content :deep(code) {
-  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
-}
-
-.readme-content :deep(blockquote) {
-  border-left: 0.25em solid #dfe2e5;
-  color: #6a737d;
-  padding: 0 1em;
-  margin-left: 0;
-}
-
-.readme-content :deep(table) {
-  border-collapse: collapse;
-  margin: 1rem 0;
-  display: block;
-  overflow-x: auto;
-}
-
-.readme-content :deep(tr) {
-  border-top: 1px solid #c6cbd1;
-}
-
-.readme-content :deep(tr:nth-child(2n)) {
-  background-color: #f6f8fa;
-}
-
-.readme-content :deep(th),
-.readme-content :deep(td) {
-  border: 1px solid #dfe2e5;
-  padding: 0.6em 1em;
-}
-
-.readme-empty,
-.readme-error {
-  color: #bbb;
-  text-align: center;
-  margin-top: 40px;
-  font-size: 16px;
-}
-
-.detail-desc {
-  padding-top: 16px;
-  color: #000;
-  font-size: 15px;
-  white-space: pre-line;
-  word-break: break-word;
-}
-
-.detail-empty {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  color: #bbb;
-  text-align: center;
-  margin-top: 80px;
-}
 
 .detail-input-wrap {
   position: absolute;
@@ -814,5 +573,14 @@ watch(
 .ant-table-thead > tr > th {
   word-break: break-all !important;
   white-space: normal !important;
+}
+.detail-empty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  color: #bbb;
+  text-align: center;
+  margin-top: 80px;
 }
 </style>
