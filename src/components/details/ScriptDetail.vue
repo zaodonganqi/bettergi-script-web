@@ -14,24 +14,30 @@
           <a-button type="primary" @click="handleSubscribe">订阅</a-button>
         </div>
       </div>
+      <!-- 加载状态显示 -->
       <div class="detail-readme">
-        <div v-if="isLoading" class="readme-loading-indicator">
-          <a-spin size="small" />
-          <span>正在加载readme文件</span>
-        </div>
-        <div v-else-if="loadError" class="readme-loading-indicator">
-          <a-button type="text" size="small" @click="retryLoadReadme">
-            <template #icon>
-              <ReloadOutlined />
-            </template>
-          </a-button>
-          <span>readme文件加载失败，请重试</span>
-        </div>
+        <transition name="fade-slide-up">
+          <div v-if="isLoadingReadme" class="readme-loading-indicator">
+            <a-spin size="small" />
+            <span>正在加载readme文件</span>
+          </div>
+        </transition>
+        <transition name="fade-slide-up">
+          <div v-if="loadError" class="readme-loading-indicator">
+            <a-button type="text" size="small" @click="retryLoadReadme">
+              <template #icon>
+                <ReloadOutlined />
+              </template>
+            </a-button>
+            <span>readme文件加载失败，请重试</span>
+          </div>
+        </transition>
         <ReadmeViewer
+          :key="readmeKey"
           :path="script.path"
           :desc="script.desc"
           :showDescTitle="true"
-          @loaded="isLoading = false"
+          @loaded="handleReadmeLoaded"
           @error="handleReadmeError"
         />
       </div>
@@ -44,11 +50,10 @@
 
 <script setup>
 import { ref, watch } from 'vue';
-import 'highlight.js/styles/github.css';
 import { useClipboard } from '@vueuse/core';
-import { message as Message } from 'ant-design-vue';
-import { ReloadOutlined } from '@ant-design/icons-vue';
+import { message as Message, Spin as ASpin } from 'ant-design-vue';
 import ReadmeViewer from '../ReadmeViewer.vue';
+import { ReloadOutlined } from '@ant-design/icons-vue';
 
 const props = defineProps({
   script: {
@@ -58,23 +63,28 @@ const props = defineProps({
 });
 
 const mode = import.meta.env.VITE_MODE;
-
 const { copy } = useClipboard();
 
-const isLoading = ref(false);
-const loadError = ref(null);
+// 加载状态
+const isLoadingReadme = ref(false);
+const loadError = ref(false);
+const readmeKey = ref(0);
 
-function handleReadmeError(msg) {
-  isLoading.value = false;
-  loadError.value = msg || '加载失败';
-}
+const handleReadmeLoaded = () => {
+  isLoadingReadme.value = false;
+  loadError.value = false;
+};
 
-function retryLoadReadme() {
-  loadError.value = null;
-  isLoading.value = true;
-  // 重新设置 path 触发 ReadmeViewer 重新加载
-  // 这里可以通过 key 强制刷新，如果需要
-}
+const handleReadmeError = () => {
+  isLoadingReadme.value = false;
+  loadError.value = true;
+};
+
+const retryLoadReadme = () => {
+  isLoadingReadme.value = true;
+  loadError.value = false;
+  readmeKey.value++;
+};
 
 const handleSubscribe = () => {
   if (props.script) {
@@ -116,16 +126,14 @@ const subscribeToLocal = async (url) => {
   await repoWebBridge.ImportUri(url);
 };
 
-watch(
-  () => props.script,
-  (newScript) => {
-    if (newScript && newScript.path) {
-      isLoading.value = true;
-      loadError.value = null;
-    }
-  },
-  { immediate: true }
-);
+// 监听脚本变化，设置加载状态
+watch(() => props.script, (newScript) => {
+  if (newScript && newScript.path) {
+    isLoadingReadme.value = true;
+    loadError.value = false;
+    readmeKey.value++;
+  }
+}, { immediate: true });
 </script>
 
 <style scoped>
@@ -212,24 +220,23 @@ watch(
   flex-grow: 1;
   overflow-y: auto;
   min-height: 100px;
-  padding-top: 16px;
   padding-right: 16px;
   position: relative;
 }
 
 .readme-loading-indicator {
   position: absolute;
-  top: 5px;
-  right: 10px;
-  background: rgba(255, 255, 255, 0.9);
-  padding: 8px 12px;
-  border-radius: 6px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  top: 0;
+  right: 0;
   display: flex;
   align-items: center;
   gap: 8px;
   font-size: 12px;
   color: #666;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
   z-index: 10;
 }
 
@@ -238,5 +245,13 @@ watch(
   text-align: center;
   margin-top: 40px;
   font-size: 16px;
+}
+
+.fade-slide-up-enter-active, .fade-slide-up-leave-active {
+  transition: all 0.3s cubic-bezier(.55,0,.1,1);
+}
+.fade-slide-up-enter-from, .fade-slide-up-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
 }
 </style> 
