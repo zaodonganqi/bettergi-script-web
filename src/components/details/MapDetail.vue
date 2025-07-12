@@ -156,13 +156,12 @@ const activeTab = ref('readme');
 // 文件数据
 const files = ref([]);
 
-// 加载状态
+// readme加载状态
 const isLoadingReadme = ref(false);
 const loadError = ref(false);
 const readmeKey = ref(0);
-const hasReadmeContent = ref(false); // 新增：跟踪是否有 README 内容
+const hasReadmeContent = ref(false);
 
-// 处理 ReadmeViewer 事件
 const handleReadmeLoaded = () => {
   isLoadingReadme.value = false;
   loadError.value = false;
@@ -172,17 +171,14 @@ const handleReadmeError = () => {
   isLoadingReadme.value = false;
   loadError.value = true;
   hasReadmeContent.value = false;
-  // 更新切换器标签
   updateTabLabel();
 };
 
 const handleReadmeHasContent = (hasContent) => {
   hasReadmeContent.value = hasContent;
-  // 更新切换器标签
   updateTabLabel();
 };
 
-// 更新切换器标签
 const updateTabLabel = () => {
   const readmeOption = tabOptions.value.find(option => option.value === 'readme');
   if (readmeOption) {
@@ -195,7 +191,6 @@ const modalOpen = ref(false);
 const modalRecord = ref({});
 
 function showDetails(record) {
-  // 构建完整的路径信息
   const fullPath = props.script && props.script.path ? 
     `${props.script.path}/${record.name}` : 
     record.path || record.name;
@@ -226,8 +221,6 @@ function getTagColor(tag) {
   return tagColorMap.value[tag];
 }
 
-// Removed md, originalLinkRender, getReadmeContent, fetchAndRenderReadme
-
 const handleSubscribe = () => {
   if (props.script) {
     downloadScript({ name: props.script.title, path: props.script.path });
@@ -242,7 +235,6 @@ const downloadScript = async (script) => {
   const jsonString = JSON.stringify(subscriptionData);
   const base64String = btoa(encodeURIComponent(jsonString));
 
-  // 创建完整的 URL
   const fullUrl = `bettergi://script?import=${base64String}`;
 
   if (mode === 'single') {
@@ -253,7 +245,6 @@ const downloadScript = async (script) => {
       Message.error(`订阅失败: ${error.message}`);
     }
   } else {
-    // 将完整的 URL 复制到剪贴板
     copy(fullUrl).then(() => {
       Message.success(`已将 ${script.name} 的订阅链接复制到剪贴板`);
     }).catch((error) => {
@@ -290,7 +281,7 @@ watch([
     // 设置加载状态
     isLoadingReadme.value = true;
     loadError.value = false;
-    readmeKey.value++; // 重置 key 强制重新加载
+    readmeKey.value++;
   }
 }, { immediate: true });
 
@@ -299,7 +290,7 @@ const retryLoadReadme = () => {
   loadError.value = false;
   hasReadmeContent.value = false;
   updateTabLabel();
-  readmeKey.value++; // 强制重新渲染 ReadmeViewer
+  readmeKey.value++;
 };
 
 </script>
@@ -512,7 +503,6 @@ const retryLoadReadme = () => {
 
 .detail-table-wrap {
   margin-bottom: 16px;
-  /* 预留评论条空间，防止被遮挡 */
   padding-bottom: 80px;
 }
 

@@ -8,12 +8,11 @@
 </template>
 
 <script setup>
-import { ref, watch, defineEmits } from 'vue';
+import { ref, watch, defineEmits, onUnmounted, onMounted } from 'vue';
 import MarkdownIt from 'markdown-it';
 import markdownItAnchor from 'markdown-it-anchor';
 import hljs from 'highlight.js';
 import 'highlight.js/styles/github.css';
-import { message } from 'ant-design-vue';
 
 const props = defineProps({
   path: String,
@@ -58,9 +57,68 @@ md.renderer.rules.link_open = function (tokens, idx, options, env, self) {
     const href = token.attrs[hrefIndex][1];
     const isValidHttpLink = /^https?:\/\/[\S]+$/i.test(href);
     const isPotentialLink = /^[a-z0-9-]+\.[a-z]{2,}\b/i.test(href);
+    const isRelativePath = /^\.\.?\//.test(href) || /^[^:]+(?:\/[^:]+)*$/i.test(href);
+    
     if (isValidHttpLink) {
       token.attrPush(['target', '_blank']);
       token.attrPush(['rel', 'noopener noreferrer']);
+    } else if (isRelativePath) {
+      // 处理相对路径链接，转换为GitHub web界面链接
+      const baseUrl = 'https://github.com/babalae/bettergi-scripts-list/tree/main/repo/';
+      const currentPath = props.path || '';
+      
+      // 解析相对路径
+      let targetPath = href;
+      
+      // 处理相对路径
+      if (href.startsWith('../') || href.startsWith('./')) {
+        // 标准化当前路径（移除末尾的斜杠）
+        const normalizedCurrentPath = currentPath.replace(/\/$/, '');
+        
+        // 分割路径部分
+        const currentParts = normalizedCurrentPath.split('/').filter(Boolean);
+        const relativeParts = href.split('/').filter(part => part !== '.' && part !== '');
+        
+        // 计算需要回退的层级
+        let backLevels = 0;
+        for (const part of relativeParts) {
+          if (part === '..') backLevels++;
+          else break;
+        }
+        
+        // 构建目标路径
+        if (backLevels <= currentParts.length) {
+          targetPath = [
+            ...currentParts.slice(0, -backLevels),
+            ...relativeParts.slice(backLevels)
+          ].join('/');
+        } else {
+          // 如果回退层级超过当前路径深度，从仓库根目录开始
+          targetPath = relativeParts.slice(backLevels).join('/');
+        }
+      } else {
+        // 非标准相对路径（如直接写路径的情况）
+        targetPath = currentPath ? `${currentPath}/${href}` : href;
+      }
+      
+      // 移除路径中的多余斜杠和点
+      targetPath = targetPath
+        .replace(/\/+/g, '/') // 多个斜杠变单个
+        .replace(/^\/|\/$/g, '') // 移除开头和结尾的斜杠
+        .replace(/\/\.(?=\/|$)/g, ''); // 移除路径中的/.
+      
+      // 保留原始路径中的特殊字符（如括号），不进行URI编码
+      // 因为GitHub可以正确处理这些字符
+      
+      // 判断是否为文件（有扩展名）还是目录
+      const isFile = /\.[a-zA-Z0-9]+$/.test(targetPath);
+      const githubUrl = baseUrl + targetPath;
+      
+      token.attrs[hrefIndex][1] = githubUrl;
+      token.attrPush(['target', '_blank']);
+      token.attrPush(['rel', 'noopener noreferrer']);
+      token.attrPush(['class', 'internal-link']);
+      token.attrPush(['title', isFile ? '点击查看GitHub仓库中的文件' : '点击查看GitHub仓库中的目录']);
     } else if (isPotentialLink) {
       token.attrPush(['class', 'invalid-link']);
       token.attrPush(['onclick', 'return false;']);
@@ -194,6 +252,19 @@ watch(
   text-decoration: line-through;
   pointer-events: none;
   cursor: default;
+}
+
+.readme-content :deep(.internal-link) {
+  color: #1890ff;
+  text-decoration: none;
+  border-bottom: 1px dashed #1890ff;
+  transition: all 0.3s ease;
+}
+
+.readme-content :deep(.internal-link:hover) {
+  color: #40a9ff;
+  border-bottom-color: #40a9ff;
+  text-decoration: none;
 }
 
 .readme-content :deep(.link-hint) {

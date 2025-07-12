@@ -14,7 +14,6 @@
           <a-button type="primary" @click="handleSubscribe">订阅</a-button>
         </div>
       </div>
-      <!-- 加载状态显示 -->
       <div class="detail-readme">
         <transition name="fade-slide-up">
           <div v-if="isLoadingReadme" class="readme-loading-indicator">
@@ -62,10 +61,12 @@ const props = defineProps({
   }
 });
 
+const emit = defineEmits([]);
+
 const mode = import.meta.env.VITE_MODE;
 const { copy } = useClipboard();
 
-// 加载状态
+// readme加载状态
 const isLoadingReadme = ref(false);
 const loadError = ref(false);
 const readmeKey = ref(0);
@@ -100,7 +101,6 @@ const downloadScript = async (script) => {
   const jsonString = JSON.stringify(subscriptionData);
   const base64String = btoa(encodeURIComponent(jsonString));
 
-  // 创建完整的 URL
   const fullUrl = `bettergi://script?import=${base64String}`;
 
   if (mode === 'single') {
@@ -111,7 +111,6 @@ const downloadScript = async (script) => {
       Message.error(`订阅失败: ${error.message}`);
     }
   } else {
-    // 将完整的 URL 复制到剪贴板
     copy(fullUrl).then(() => {
       Message.success(`已将 ${script.name} 的订阅链接复制到剪贴板`);
     }).catch((error) => {
