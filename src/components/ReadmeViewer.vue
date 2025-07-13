@@ -139,6 +139,12 @@ md.renderer.rules.link_open = function (tokens, idx, options, env, self) {
 
 // 获取readme文件URL
 function getReadmeContent(path) {
+  
+  // 检查是否已经是外链（以 http:// 或 https:// 开头）
+  if (/^https?:\/\//i.test(path)) {
+    return path;
+  }
+  // 否则拼接 GitHub Raw URL
   return `https://raw.githubusercontent.com/babalae/bettergi-scripts-list/refs/heads/main/repo/${path.replace(/\\/g, '/')}/README.md`;
 }
 

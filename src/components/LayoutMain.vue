@@ -19,13 +19,13 @@
           </a-menu>
         </div>
         <div class="sider-footer">
-          <div class="sider-link" @click="openExternalLink('https://github.com/babalae/better-genshin-impact')">访问BGI github仓库</div>
-          <div class="sider-link" @click="openExternalLink('https://github.com/babalae/bettergi-scripts-list')">访问BGI脚本仓库</div>
+          <div class="sider-link" @click="openExternalLink('https://github.com/babalae/better-genshin-impact')">访问BetterGI主仓库</div>
+          <div class="sider-link" @click="openExternalLink('https://github.com/babalae/bettergi-scripts-list')">访问BetterGI脚本仓库</div>
           <div class="sider-link">外链3</div>
         </div>
       </div>
       <!-- 最后更新时间 -->
-      <div v-if="lastUpdateTime" class="last-update-time">
+      <div v-if="lastUpdateTime" class="last-update-time" @click="showEggModal = true" style="cursor:pointer;">
         <span>最后更新时间：</span>
         <span>{{ lastUpdateTime }}</span>
       </div>
@@ -223,12 +223,27 @@
         </div>
       </div>
     </a-modal>
+
+    <!-- 彩蛋弹窗 -->
+    <a-modal
+      v-model:open="showEggModal"
+      title="小彩蛋"
+      :footer="null"
+      centered
+      width="80%"
+      :style="{ maxWidth: '900px' }"
+      @cancel="showEggModal = false"
+    >
+      <div class="egg-modal-content">
+        <EggReadmeViewer />
+      </div>
+    </a-modal>
   </a-layout>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
-import { FolderOutlined, FileOutlined, CalculatorOutlined, BulbOutlined, SearchOutlined, ReloadOutlined, ExportOutlined, SettingOutlined, QuestionCircleOutlined, MessageOutlined, LinkOutlined } from '@ant-design/icons-vue';
+import { FolderOutlined, FileOutlined, CalculatorOutlined, BulbOutlined, SearchOutlined, ExportOutlined, SettingOutlined, QuestionCircleOutlined, MessageOutlined, LinkOutlined } from '@ant-design/icons-vue';
 import Giscus from '@giscus/vue';
 import MapTreeList from './lists/MapTreeList.vue';
 import ScriptList from './lists/ScriptList.vue';
@@ -236,6 +251,7 @@ import CombatStrategyList from './lists/CombatStrategyList.vue';
 import CardStrategyList from './lists/CardStrategyList.vue';
 import ScriptDetail from './details/ScriptDetail.vue';
 import MapDetail from './details/MapDetail.vue';
+import ReadmeViewer from './ReadmeViewer.vue';
 
 const mode = import.meta.env.VITE_MODE;
 const selectedMenu = ref(['1']);
@@ -577,6 +593,50 @@ watch(commentModalOpen, (newVal) => {
 
 const handleCommentModalCancel = () => {
   commentModalOpen.value = false;
+};
+
+const showEggModal = ref(false);
+
+// 彩蛋 ReadmeViewer 包装，带加载/错误/重试
+import { h } from 'vue';
+const eggReadmeLoading = ref(false);
+const eggReadmeError = ref(false);
+const eggReadmeKey = ref(0);
+
+function reloadEggReadme() {
+  eggReadmeKey.value++;
+  eggReadmeLoading.value = false;
+  eggReadmeError.value = false;
+}
+
+const EggReadmeViewer = {
+  name: 'EggReadmeViewer',
+  setup() {
+    const loading = eggReadmeLoading;
+    const error = eggReadmeError;
+    const key = eggReadmeKey;
+    function onLoadStart() { loading.value = true; error.value = false; }
+    function onLoadEnd(success) { loading.value = false; error.value = !success; }
+    return () => {
+      if (loading.value) {
+        return h('div', { class: 'egg-readme-loading' }, [
+          h('a-spin', { size: 'large', tip: 'README 加载中…' })
+        ]);
+      }
+      if (error.value) {
+        return h('div', { class: 'egg-readme-error' }, [
+          h('div', { class: 'egg-readme-error-title' }, 'README 加载失败'),
+          h('a-button', { type: 'primary', onClick: reloadEggReadme }, '重试')
+        ]);
+      }
+      return h(ReadmeViewer, {
+        key: key.value,
+        path: 'https://raw.githubusercontent.com/zaodonganqi/BGI-bsw-egg/main/README.md',
+        onLoadstart: onLoadStart,
+        onLoadend: onLoadEnd
+      });
+    };
+  }
 };
 </script>
 
@@ -1154,5 +1214,26 @@ const handleCommentModalCancel = () => {
 
 .notice-btn:active {
   transform: translateY(0);
+}
+
+.egg-modal-content {
+  max-height: 65vh;
+  overflow-y: overlay;
+  padding-left: 15px;
+  padding-right: 15px;
+  font-size: clamp(14px, 1.5vw, 16px);
+}
+.egg-readme-loading {
+  text-align: center;
+  padding: 48px 0;
+}
+.egg-readme-error {
+  text-align: center;
+  padding: 48px 0;
+}
+.egg-readme-error-title {
+  color: #f44336;
+  font-size: 18px;
+  margin-bottom: 12px;
 }
 </style>
