@@ -109,15 +109,11 @@ md.renderer.rules.link_open = function (tokens, idx, options, env, self) {
         // 非标准相对路径（如直接写路径的情况）
         targetPath = currentPath ? `${currentPath}/${href}` : href;
       }
-      
       // 移除路径中的多余斜杠和点
       targetPath = targetPath
-        .replace(/\/+/g, '/') // 多个斜杠变单个
-        .replace(/^\/|\/$/g, '') // 移除开头和结尾的斜杠
-        .replace(/\/\.(?=\/|$)/g, ''); // 移除路径中的/.
-      
-      // 保留原始路径中的特殊字符（如括号），不进行URI编码
-      // 因为GitHub可以正确处理这些字符
+        .replace(/\/+/g, '/')
+        .replace(/^\/|\/$/g, '')
+        .replace(/\/\.(?=\/|$)/g, '');
       
       // 判断是否为文件（有扩展名）还是目录
       const isFile = /\.[a-zA-Z0-9]+$/.test(targetPath);

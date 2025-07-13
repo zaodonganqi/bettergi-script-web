@@ -75,9 +75,9 @@
         <!-- 顶部操作栏 -->
         <div v-if="selectedScript" class="detail-top-bar">
           <div class="top-bar-left">
-            <a-tooltip title="刷新">
-              <a-button type="text" size="small" class="action-btn">
-                <ReloadOutlined />
+            <a-tooltip title="跳转到GitHub">
+              <a-button type="text" size="small" class="action-btn" @click="jumpToGitHub">
+                <LinkOutlined />
               </a-button>
             </a-tooltip>
             <a-tooltip title="导出">
@@ -110,9 +110,9 @@
         <!-- 顶部操作栏 -->
         <div v-if="selectedScript" class="detail-top-bar">
           <div class="top-bar-left">
-            <a-tooltip title="刷新">
-              <a-button type="text" size="small" class="action-btn">
-                <ReloadOutlined />
+            <a-tooltip title="跳转到GitHub该脚本处">
+              <a-button type="text" size="small" class="action-btn" @click="jumpToGitHub">
+                <LinkOutlined />
               </a-button>
             </a-tooltip>
             <a-tooltip title="导出">
@@ -227,7 +227,7 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue';
-import { FolderOutlined, FileOutlined, CalculatorOutlined, BulbOutlined, SearchOutlined, ReloadOutlined, ExportOutlined, SettingOutlined, QuestionCircleOutlined, MessageOutlined } from '@ant-design/icons-vue';
+import { FolderOutlined, FileOutlined, CalculatorOutlined, BulbOutlined, SearchOutlined, ReloadOutlined, ExportOutlined, SettingOutlined, QuestionCircleOutlined, MessageOutlined, LinkOutlined } from '@ant-design/icons-vue';
 import Giscus from '@giscus/vue';
 import MapTreeList from './lists/MapTreeList.vue';
 import ScriptList from './lists/ScriptList.vue';
@@ -358,6 +358,48 @@ const handleMenuSelect = ({ key }) => {
 
 const openExternalLink = (link) => {
   window.open(link, '_blank');
+};
+
+// 跳转到GitHub仓库指定位置
+const jumpToGitHub = () => {
+  if (!selectedScript.value) return;
+  const baseUrl = 'https://github.com/babalae/bettergi-scripts-list/tree/main/repo/';
+  let targetPath = '';
+  
+  // 优先使用脚本的path属性
+  if (selectedScript.value.path) {
+    targetPath = selectedScript.value.path;
+  } else {
+    // 如果没有path属性，则根据脚本名称和菜单类型构建路径
+    const scriptName = selectedScript.value.name1 || selectedScript.value.name || selectedScript.value.title;
+    if (!scriptName) return;
+    
+    // 根据当前选中的菜单类型构建不同的路径
+    switch (selectedMenu.value[0]) {
+      case '1': // 地图追踪
+        targetPath = `pathing/${scriptName}`;
+        break;
+      case '2': // Javascript脚本
+        targetPath = `js/${scriptName}`;
+        break;
+      case '3': // 战斗策略
+        targetPath = `combat/${scriptName}`;
+        break;
+      case '4': // 七圣召唤策略
+        targetPath = `tcg/${scriptName}`;
+        break;
+      default:
+        targetPath = scriptName;
+    }
+  }
+  
+  // 清理路径，移除多余斜杠和点
+  targetPath = targetPath
+    .replace(/\/+/g, '/')
+    .replace(/^\/|\/$/g, '');
+  
+  const githubUrl = baseUrl + targetPath;
+  openExternalLink(githubUrl);
 };
 
 const selectedScript = ref(null);

@@ -44,29 +44,42 @@ const emit = defineEmits(['select', 'scriptCount']);
 function getJsScriptsFromRepo(repo) {
   const jsNode = repo.indexes.find(item => item.name === 'js');
   if (!jsNode || !jsNode.children) return [];
+  
+  // 递归收集所有叶子节点
+  const result = [];
+  function traverse(nodes, currentPath = 'js') {
+    for (let child of nodes) {
+      if (child.children && child.children.length > 0) {
+        const childPath = `${currentPath}/${child.name}`;
+        traverse(child.children, childPath);
+      } else {
+        // 应@秋云 需求，改成了第一行name第二行nameSuffix的样式
+        let name1 = child.name;
+        let name2 = child.name;
+        let title = child.name;
+        let description = child.description || '';
 
-  return jsNode.children.map(child => {
-    // 应@秋云 需求，改成了第一行name第二行nameSuffix的样式
-    let name1 = child.name;
-    let name2 = child.name;
-    let title = child.name;
-    let description = child.description || '';
+        if (child.type === 'directory' && child.description && child.description.includes('~|~')) {
+          const [nameSuffix, newDescription] = child.description.split('~|~');
+          name2 = nameSuffix.trim();
+          title = `${name1} - ${name2}`;
+          description = newDescription.trim();
+        }
 
-    if (child.type === 'directory' && child.description && child.description.includes('~|~')) {
-      const [nameSuffix, newDescription] = child.description.split('~|~');
-      name2 = nameSuffix.trim();
-      title = `${name1} - ${name2}`;
-      description = newDescription.trim();
+        child = {
+          ...child,
+          name1: name1,
+          name2: name2,
+          title: title,
+          description: description,
+          fullPath: `${currentPath}/${child.name}`
+        };
+        result.push(child);
+      }
     }
-
-    return {
-      ...child,
-      name1: name1,
-      name2: name2,
-      title: title,
-      description: description,
-    };
-  });
+  }
+  traverse(jsNode.children);
+  return result;
 }
 
 const scripts = ref(
@@ -83,7 +96,7 @@ const scripts = ref(
     unread: false, 
     hash: item.hash,
     version: item.version,
-    path: 'js/' + item.name,
+    path: item.fullPath || `js/${item.name}`,
   }))
 );
 
@@ -105,7 +118,7 @@ watch(
         unread: false, 
         hash: item.hash,
         version: item.version,
-        path: 'js/' + item.name,
+        path: item.fullPath || `js/${item.name}`,
       }));
     }
   },
