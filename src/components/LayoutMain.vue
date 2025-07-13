@@ -20,7 +20,8 @@
         </div>
         <div class="sider-footer">
           <div class="sider-link" @click="openExternalLink('https://github.com/babalae/better-genshin-impact')">访问BGI github仓库</div>
-          <div class="sider-link">外链2</div>
+          <div class="sider-link" @click="openExternalLink('https://github.com/babalae/bettergi-scripts-list')">访问BGI脚本仓库</div>
+          <div class="sider-link">外链3</div>
         </div>
       </div>
       <!-- 最后更新时间 -->
@@ -110,7 +111,7 @@
         <!-- 顶部操作栏 -->
         <div v-if="selectedScript" class="detail-top-bar">
           <div class="top-bar-left">
-            <a-tooltip title="跳转到GitHub该脚本处">
+            <a-tooltip title="跳转到该脚本的GitHub仓库">
               <a-button type="text" size="small" class="action-btn" @click="jumpToGitHub">
                 <LinkOutlined />
               </a-button>
@@ -226,7 +227,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue';
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
 import { FolderOutlined, FileOutlined, CalculatorOutlined, BulbOutlined, SearchOutlined, ReloadOutlined, ExportOutlined, SettingOutlined, QuestionCircleOutlined, MessageOutlined, LinkOutlined } from '@ant-design/icons-vue';
 import Giscus from '@giscus/vue';
 import MapTreeList from './lists/MapTreeList.vue';
@@ -363,7 +364,7 @@ const openExternalLink = (link) => {
 // 跳转到GitHub仓库指定位置
 const jumpToGitHub = () => {
   if (!selectedScript.value) return;
-  const baseUrl = 'https://github.com/babalae/bettergi-scripts-list/tree/main/repo/';
+  const baseUrl = 'https://github.com/babalae/bettergi-scripts-list/blob/main/repo/';
   let targetPath = '';
   
   // 优先使用脚本的path属性
@@ -398,7 +399,12 @@ const jumpToGitHub = () => {
     .replace(/\/+/g, '/')
     .replace(/^\/|\/$/g, '');
   
-  const githubUrl = baseUrl + targetPath;
+  // 对路径进行编码，特别注意编码方括号等特殊字符
+  const encodedPath = encodeURI(targetPath)
+    .replace(/\[/g, '%5B')
+    .replace(/\]/g, '%5D');
+  
+  const githubUrl = baseUrl + encodedPath;
   openExternalLink(githubUrl);
 };
 
