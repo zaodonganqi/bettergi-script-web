@@ -56,13 +56,22 @@ md.renderer.rules.link_open = function (tokens, idx, options, env, self) {
   if (hrefIndex >= 0) {
     const href = token.attrs[hrefIndex][1];
     const isValidHttpLink = /^https?:\/\/[\S]+$/i.test(href);
+    const isRelativePath = /^\.\.?\//.test(href) || /^[^\/]*\/[^\/]+(?:\/[^\/]+)*$/i.test(href);
     const isPotentialLink = /^[a-z0-9-]+\.[a-z]{2,}\b/i.test(href);
-    const isRelativePath = /^\.\.?\//.test(href) || /^[^:]+(?:\/[^:]+)*$/i.test(href);
+    
+    // 更精确的相对路径判断：排除明显不是路径的情况
+    const isActuallyRelativePath = isRelativePath && 
+      !href.includes('://') && 
+      !href.includes('mailto:') && 
+      !href.includes('tel:') && 
+      !href.includes('javascript:') &&
+      !/^[a-z0-9-]+\.[a-z]{2,}\b/i.test(href) && // 排除域名形式的链接
+      !/\.(png|jpg|jpeg|gif|webp|svg|ico|bmp|tiff)$/i.test(href); // 排除图片文件路径
     
     if (isValidHttpLink) {
       token.attrPush(['target', '_blank']);
       token.attrPush(['rel', 'noopener noreferrer']);
-    } else if (isRelativePath) {
+    } else if (isActuallyRelativePath) {
       // 处理相对路径链接，转换为GitHub web界面链接
       const baseUrl = 'https://github.com/babalae/bettergi-scripts-list/tree/main/repo/';
       const currentPath = props.path || '';
@@ -158,21 +167,48 @@ const fetchAndRenderReadme = async (path) => {
     if (response.ok) {
       let markdown = await response.text();
       // 处理图片路径，将相对路径转换为绝对路径
-      markdown = markdown.replace(/!\[([^\]]*)\]\((?!https?:\/\/|data:)((assets[\/\\][^)]+))\)/gi, (match, alt, imgPath) => {
+      const baseImageUrl = readmeUrl.replace('README.md', '');
+      
+      // 处理markdown图片语法 ![alt](path)
+      markdown = markdown.replace(/!\[([^\]]*)\]\((?!https?:\/\/|data:)([^)]+)\)/gi, (match, alt, imgPath) => {
         let cleanPath = imgPath.trim().replace(/\\/g, '/');
-        return `![${alt}](${readmeUrl.replace('README.md', '')}${cleanPath})`;
+        // 如果路径不是以assets/开头，则添加当前目录路径
+        if (!cleanPath.startsWith('assets/') && !cleanPath.startsWith('http')) {
+          const currentDir = props.path ? props.path.replace(/\\/g, '/') : '';
+          cleanPath = currentDir ? `${currentDir}/${cleanPath}` : cleanPath;
+        }
+        return `![${alt}](${baseImageUrl}${cleanPath})`;
       });
-      markdown = markdown.replace(/<img\s+[^>]*src=["']((assets[\/\\][^"'>]+))["'][^>]*>/gi, (match, imgPath) => {
+      
+      // 处理HTML img标签
+      markdown = markdown.replace(/<img\s+[^>]*src=["']([^"']+)["'][^>]*>/gi, (match, imgPath) => {
         let cleanPath = imgPath.trim().replace(/\\/g, '/');
-        return match.replace(imgPath, readmeUrl.replace('README.md', '') + cleanPath);
+        // 如果路径不是以assets/开头且不是绝对URL，则添加当前目录路径
+        if (!cleanPath.startsWith('assets/') && !cleanPath.startsWith('http') && !cleanPath.startsWith('data:')) {
+          const currentDir = props.path ? props.path.replace(/\\/g, '/') : '';
+          cleanPath = currentDir ? `${currentDir}/${cleanPath}` : cleanPath;
+        }
+        return match.replace(imgPath, baseImageUrl + cleanPath);
       });
-      markdown = markdown.replace(/`((assets[\/\\][^`\n]+\.(?:png|jpg|jpeg|gif|webp|svg)))`/gi, (match, imgPath) => {
+      
+      // 处理代码块中的图片路径
+      markdown = markdown.replace(/`([^`\n]+\.(?:png|jpg|jpeg|gif|webp|svg))`/gi, (match, imgPath) => {
         let cleanPath = imgPath.trim().replace(/\\/g, '/');
-        return `![](${readmeUrl.replace('README.md', '')}${cleanPath})`;
+        if (!cleanPath.startsWith('assets/') && !cleanPath.startsWith('http')) {
+          const currentDir = props.path ? props.path.replace(/\\/g, '/') : '';
+          cleanPath = currentDir ? `${currentDir}/${cleanPath}` : cleanPath;
+        }
+        return `![](${baseImageUrl}${cleanPath})`;
       });
-      markdown = markdown.replace(/```\s*((assets[\/\\][^`\n]+\.(?:png|jpg|jpeg|gif|webp|svg)))\s*```/gi, (match, imgPath) => {
+      
+      // 处理代码块中的图片路径
+      markdown = markdown.replace(/```\s*([^`\n]+\.(?:png|jpg|jpeg|gif|webp|svg))\s*```/gi, (match, imgPath) => {
         let cleanPath = imgPath.trim().replace(/\\/g, '/');
-        return `![](${readmeUrl.replace('README.md', '')}${cleanPath})`;
+        if (!cleanPath.startsWith('assets/') && !cleanPath.startsWith('http')) {
+          const currentDir = props.path ? props.path.replace(/\\/g, '/') : '';
+          cleanPath = currentDir ? `${currentDir}/${cleanPath}` : cleanPath;
+        }
+        return `![](${baseImageUrl}${cleanPath})`;
       });
       readmeContent.value = md.render(markdown);
       emit('loaded');
