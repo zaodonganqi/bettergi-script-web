@@ -3,12 +3,12 @@
   <div class="readme-viewer">
     <div v-if="readmeContent" v-html="readmeContent" class="readme-content"></div>
     <div v-else-if="desc" class="detail-desc">{{ showDescTitle ? '简介：\n' + desc : desc }}</div>
-    <div v-else class="readme-empty">暂无描述</div>
+    <div v-else-if="!isHttpUrl" class="readme-empty">暂无描述</div>
   </div>
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, watch, computed } from 'vue';
 import MarkdownIt from 'markdown-it';
 import markdownItAnchor from 'markdown-it-anchor';
 import hljs from 'highlight.js';
@@ -27,6 +27,11 @@ const emit = defineEmits(['loaded', 'error', 'hasContent']);
 const readmeContent = ref('');
 const isLoading = ref(false);
 const loadError = ref(null);
+
+// 计算属性：判断是否为 HTTP URL
+const isHttpUrl = computed(() => {
+  return props.path && /^https?:\/\//i.test(props.path);
+});
 
 const md = new MarkdownIt({
   html: true,

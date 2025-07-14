@@ -235,7 +235,28 @@
       @cancel="showEggModal = false"
     >
       <div class="egg-modal-content">
-        <EggReadmeViewer />
+        <div class="egg-readme-tabs">
+          <div v-if="isLoadingEggReadme" class="egg-readme-loading-indicator">
+            <a-spin size="small" />
+            <span>彩蛋正在拼尽全力加载…</span>
+          </div>
+          <div v-else-if="eggReadmeError" class="egg-readme-loading-indicator">
+            <a-button type="text" size="small" @click="retryLoadEggReadme">
+              <template #icon>
+                <ReloadOutlined />
+              </template>
+            </a-button>
+            <span>拼尽全力无法战胜，加载失败，请重试</span>
+          </div>
+        </div>
+        <div class="egg-readme-content">
+          <ReadmeViewer
+            :key="eggReadmeKey"
+            :path="'https://raw.githubusercontent.com/zaodonganqi/BGI-bsw-egg/main/README.md'"
+            @loaded="handleEggReadmeLoaded"
+            @error="handleEggReadmeError"
+          />
+        </div>
       </div>
     </a-modal>
   </a-layout>
@@ -243,7 +264,7 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
-import { FolderOutlined, FileOutlined, CalculatorOutlined, BulbOutlined, SearchOutlined, ExportOutlined, SettingOutlined, QuestionCircleOutlined, MessageOutlined, LinkOutlined } from '@ant-design/icons-vue';
+import { FolderOutlined, FileOutlined, CalculatorOutlined, BulbOutlined, SearchOutlined, ExportOutlined, SettingOutlined, QuestionCircleOutlined, MessageOutlined, LinkOutlined, ReloadOutlined } from '@ant-design/icons-vue';
 import Giscus from '@giscus/vue';
 import MapTreeList from './lists/MapTreeList.vue';
 import ScriptList from './lists/ScriptList.vue';
@@ -597,47 +618,38 @@ const handleCommentModalCancel = () => {
 
 const showEggModal = ref(false);
 
-// 彩蛋 ReadmeViewer 包装，带加载/错误/重试
-import { h } from 'vue';
-const eggReadmeLoading = ref(false);
+// 彩蛋 README 加载状态
+const isLoadingEggReadme = ref(false);
 const eggReadmeError = ref(false);
 const eggReadmeKey = ref(0);
 
-function reloadEggReadme() {
-  eggReadmeKey.value++;
-  eggReadmeLoading.value = false;
+const handleEggReadmeLoaded = () => {
+  isLoadingEggReadme.value = false;
   eggReadmeError.value = false;
-}
-
-const EggReadmeViewer = {
-  name: 'EggReadmeViewer',
-  setup() {
-    const loading = eggReadmeLoading;
-    const error = eggReadmeError;
-    const key = eggReadmeKey;
-    function onLoadStart() { loading.value = true; error.value = false; }
-    function onLoadEnd(success) { loading.value = false; error.value = !success; }
-    return () => {
-      if (loading.value) {
-        return h('div', { class: 'egg-readme-loading' }, [
-          h('a-spin', { size: 'large', tip: 'README 加载中…' })
-        ]);
-      }
-      if (error.value) {
-        return h('div', { class: 'egg-readme-error' }, [
-          h('div', { class: 'egg-readme-error-title' }, 'README 加载失败'),
-          h('a-button', { type: 'primary', onClick: reloadEggReadme }, '重试')
-        ]);
-      }
-      return h(ReadmeViewer, {
-        key: key.value,
-        path: 'https://raw.githubusercontent.com/zaodonganqi/BGI-bsw-egg/main/README.md',
-        onLoadstart: onLoadStart,
-        onLoadend: onLoadEnd
-      });
-    };
-  }
 };
+
+const handleEggReadmeError = () => {
+  console.log('彩蛋 README 加载失败');
+  isLoadingEggReadme.value = false;
+  eggReadmeError.value = true;
+};
+
+const retryLoadEggReadme = () => {
+  console.log('重试加载彩蛋 README');
+  isLoadingEggReadme.value = true;
+  eggReadmeError.value = false;
+  eggReadmeKey.value++;
+};
+
+// 监听彩蛋弹窗打开，重置加载状态
+watch(showEggModal, (newVal) => {
+  if (newVal) {
+    // 重置状态
+    isLoadingEggReadme.value = true;
+    eggReadmeError.value = false;
+    eggReadmeKey.value++;
+  }
+});
 </script>
 
 <style scoped>
@@ -1222,18 +1234,73 @@ const EggReadmeViewer = {
   padding-left: 15px;
   padding-right: 15px;
   font-size: clamp(14px, 1.5vw, 16px);
+  position: relative;
 }
+
 .egg-readme-loading {
   text-align: center;
   padding: 48px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
 }
+
 .egg-readme-error {
   text-align: center;
   padding: 48px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
 }
+
 .egg-readme-error-title {
   color: #f44336;
   font-size: 18px;
   margin-bottom: 12px;
+}
+
+.egg-readme-viewer-container {
+  width: 100%;
+  height: 100%;
+}
+
+.egg-readme-tabs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  gap: 10px;
+}
+
+.egg-readme-loading-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #666;
+  font-size: 14px;
+}
+
+.egg-readme-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* 过渡动画 */
+.fade-slide-up-enter-active,
+.fade-slide-up-leave-active {
+  transition: all 0.3s ease;
+}
+
+.fade-slide-up-enter-from {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.fade-slide-up-leave-to {
+  opacity: 0;
+  transform: translateY(-20px);
 }
 </style>
