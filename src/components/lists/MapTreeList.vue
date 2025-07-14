@@ -157,14 +157,17 @@ const getIconUrl = (tag) => {
   return iconPath;
 };
 
-// 递归收集所有 file 节点
-function collectFiles(node) {
+// 递归收集所有 file 节点，并补全 path 字段
+function collectFiles(node, parentPath = '') {
   let files = [];
   if (node.type === 'file') {
-    files.push(node);
+    // 递归时传入完整路径
+    const fullPath = parentPath ? `${parentPath}/${node.name}` : node.name;
+    files.push({ ...node, path: `pathing/${fullPath}` });
   } else if (node.children) {
     node.children.forEach(child => {
-      files = files.concat(collectFiles(child));
+      const currentPath = parentPath ? `${parentPath}/${node.name}` : node.name;
+      files = files.concat(collectFiles(child, currentPath));
     });
   }
   return files;
@@ -205,7 +208,7 @@ const processNode = (node, parentKey = '') => {
   let files = [];
   let lastUpdated = '';
   if (node.type === 'directory') {
-    files = collectFiles(node);
+    files = collectFiles(node, parentKey); // 传 parentKey 递归补全 path
     // 取最新更新时间
     lastUpdated = files.reduce((latest, f) => {
       return (!latest || new Date(f.lastUpdated) > new Date(latest)) ? f.lastUpdated : latest;
