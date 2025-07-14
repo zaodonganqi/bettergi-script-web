@@ -81,12 +81,12 @@ const handleSelect = (selectedKeysList) => {
     hash: selectedNode.hash,
     version: selectedNode.version,
     author: selectedNode.author || '',
+    authors: selectedNode.authors || [],
     description: selectedNode.description || '',
     tags: selectedNode.tags || [],
     lastUpdated: selectedNode.lastUpdated || '',
     path: selectedNode.path || '',
     files: selectedNode.files || [],
-    authors: selectedNode.authors || '',
     dirLastUpdated: selectedNode.lastUpdated || '',
   });
   selectedKeys.value = selectedNode.key ? [selectedNode.key] : [];
@@ -170,6 +170,32 @@ function collectFiles(node) {
   return files;
 }
 
+// 递归收集 authors
+function collectAuthors(node) {
+  // 优先用 node.authors
+  if (Array.isArray(node.authors) && node.authors.length > 0) {
+    return node.authors;
+  }
+  // 文件节点
+  if (node.type === 'file') {
+    if (node.author) {
+      return [{ name: node.author }];
+    }
+    return [];
+  }
+  // 目录节点递归
+  if (Array.isArray(node.children)) {
+    const all = node.children.flatMap(collectAuthors);
+    // 去重（按 name）
+    const map = new Map();
+    all.forEach(a => {
+      if (a && a.name) map.set(a.name, a);
+    });
+    return Array.from(map.values());
+  }
+  return [];
+}
+
 // 处理节点数据
 const processNode = (node, parentKey = '') => {
   const currentKey = parentKey ? `${parentKey}/${node.name}` : node.name;
@@ -177,18 +203,16 @@ const processNode = (node, parentKey = '') => {
   const iconPath = getIconUrl(currentKey);
 
   let files = [];
-  let authors = '';
   let lastUpdated = '';
   if (node.type === 'directory') {
     files = collectFiles(node);
-    // 合并作者
-    const authorSet = new Set(files.map(f => f.author).filter(Boolean));
-    authors = Array.from(authorSet).join('，');
     // 取最新更新时间
     lastUpdated = files.reduce((latest, f) => {
       return (!latest || new Date(f.lastUpdated) > new Date(latest)) ? f.lastUpdated : latest;
     }, '');
   }
+
+  const authors = collectAuthors(node);
 
   return {
     key: currentKey,
@@ -198,6 +222,7 @@ const processNode = (node, parentKey = '') => {
     hash: node.hash || '',
     version: node.version,
     author: node.author || '',
+    authors: authors,
     description: node.description || '无',
     tags: node.tags || [],
     lastUpdated: node.lastUpdated || '',
@@ -207,7 +232,6 @@ const processNode = (node, parentKey = '') => {
     showIcon: node.showIcon || false,
     path: `pathing/${currentKey}`,
     files, // 该目录下所有file节点
-    authors, // 该目录下所有file的作者合并
     lastUpdated, // 该目录下所有file的最新更新时间
   };
 };

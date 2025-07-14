@@ -13,7 +13,14 @@
         </div>
         <span v-if="item.unread" class="item-dot"></span>
       </div>
-      <div class="item-author">{{ item.author }}</div>
+      <div class="item-author">
+        <template v-if="item.authors && item.authors.length">
+          {{ item.authors.map(a => a.name).join('，') }}
+        </template>
+        <template v-else>
+          {{ item.author }}
+        </template>
+      </div>
       <div class="item-desc">{{ item.desc }}</div>
       <div class="item-tags">
         <a-tag v-for="tag in item.tags" :key="tag" color="#e6f0ff" class="item-tag">{{ tag }}</a-tag>
@@ -65,14 +72,20 @@ function getJsScriptsFromRepo(repo) {
           title = `${name1} - ${name2}`;
           description = newDescription.trim();
         }
-
+        let authors = [];
+        if (Array.isArray(child.authors) && child.authors.length > 0) {
+          authors = child.authors;
+        } else if (child.author) {
+          authors = [{ name: child.author }];
+        }
         child = {
           ...child,
           name1: name1,
           name2: name2,
           title: title,
           description: description,
-          fullPath: `${currentPath}/${child.name}`
+          fullPath: `${currentPath}/${child.name}`,
+          authors: authors
         };
         result.push(child);
       }
@@ -90,6 +103,7 @@ const scripts = ref(
     name1: item.name1,
     name2: item.name2,
     author: item.author || '',
+    authors: item.authors || [],
     desc: item.description,
     tags: item.tags || [],
     time: item.lastUpdated || '',
@@ -112,6 +126,7 @@ watch(
         name1: item.name1,
         name2: item.name2,
         author: item.author || '',
+        authors: item.authors || [],
         desc: item.description,
         tags: item.tags || [],
         time: item.lastUpdated || '',

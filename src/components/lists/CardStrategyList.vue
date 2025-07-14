@@ -10,7 +10,14 @@
         <span class="item-title">{{ item.title }}</span>
         <span v-if="item.unread" class="item-dot"></span>
       </div>
-      <div class="item-author">{{ item.author }}</div>
+      <div class="item-author">
+        <template v-if="item.authors && item.authors.length">
+          {{ item.authors.map(a => a.name).join('，') }}
+        </template>
+        <template v-else>
+          {{ item.author }}
+        </template>
+      </div>
       <div class="item-desc">{{ item.desc }}</div>
       <div class="item-tags">
         <a-tag v-for="tag in item.tags" :key="tag" color="#e6f0ff" class="item-tag">{{ tag }}</a-tag>
@@ -60,6 +67,13 @@ function getTcgStrategiesFromRepo(repo) {
           }
         }
         child.fullPath = `${currentPath}/${child.name}`;
+        let authors = [];
+        if (Array.isArray(child.authors) && child.authors.length > 0) {
+          authors = child.authors;
+        } else if (child.author) {
+          authors = [{ name: child.author }];
+        }
+        child.authors = authors;
         result.push(child);
       }
     }
@@ -78,6 +92,7 @@ const strategies = ref(
     title: removeFileSuffix(item.name),
     name: item.name,
     author: item.author || '无',
+    authors: item.authors || [],
     desc: item.description || '',
     tags: item.tags || [],
     time: item.lastUpdated || '',
@@ -98,6 +113,7 @@ watch(
         title: removeFileSuffix(item.name),
         name: item.name,
         author: item.author || '无',
+        authors: item.authors || [],
         desc: item.description || '',
         tags: item.tags || [],
         time: item.lastUpdated || '',

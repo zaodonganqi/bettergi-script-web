@@ -769,7 +769,7 @@ watch(showEggModal, (newVal) => {
 }
 
 .sider-link {
-  margin-bottom: 8px;
+  margin-bottom: 12px;
   cursor: pointer;
 }
 

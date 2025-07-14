@@ -5,7 +5,20 @@
         <div class="header-left">
           <div class="detail-title">{{ script.title }}</div>
           <div class="detail-meta">
-            <span v-if="script.author" class="detail-author">作者：{{ script.author }}</span>
+            <template v-if="script.authors && Array.isArray(script.authors) && script.authors.length">
+              <span class="detail-author">
+                作者：
+                <template v-for="(author, idx) in script.authors" :key="author.name">
+                  <template v-if="author.link">
+                    <a :href="author.link" class="author-link" target="_blank" rel="noopener noreferrer">{{ author.name }}</a>
+                  </template>
+                  <template v-else>
+                    <span>{{ author.name }}</span>
+                  </template>
+                  <span v-if="idx < script.authors.length - 1">，</span>
+                </template>
+              </span>
+            </template>
             <span v-else class="detail-author">暂无作者信息</span>
           </div>
           <div class="detail-time">{{ script.time }}</div>
@@ -252,5 +265,10 @@ watch(() => props.script, (newScript) => {
 .fade-slide-up-enter-from, .fade-slide-up-leave-to {
   opacity: 0;
   transform: translateY(-10px);
+}
+.author-link {
+  text-decoration: underline;
+  color: #888;
+  cursor: pointer;
 }
 </style> 

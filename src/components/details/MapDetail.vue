@@ -6,8 +6,20 @@
           <div class="header-left">
             <div class="detail-title">{{ script.title }}</div>
             <div class="detail-meta">
-              <span v-if="script.type === 'directory' && script.authors">作者：{{ script.authors }}</span>
-              <span v-else-if="script.author">作者：{{ script.author }}</span>
+              <template v-if="script.authors && Array.isArray(script.authors) && script.authors.length">
+                <span class="detail-author">
+                  作者：
+                  <template v-for="(author, idx) in script.authors" :key="author.name">
+                    <template v-if="author.link">
+                      <a :href="author.link" class="author-link" target="_blank" rel="noopener noreferrer">{{ author.name }}</a>
+                    </template>
+                    <template v-else>
+                      <span>{{ author.name }}</span>
+                    </template>
+                    <span v-if="idx < script.authors.length - 1">，</span>
+                  </template>
+                </span>
+              </template>
               <span v-else class="detail-author">暂无作者信息</span>
             </div>
             <div class="detail-time">{{ script.type === 'directory' && script.dirLastUpdated ? script.dirLastUpdated :
@@ -110,6 +122,7 @@ import { message as Message } from 'ant-design-vue';
 import { Table as ATable, Tag as ATag, Popover as APopover, Space as ASpace, Button as AButton, Modal as AModal, Descriptions as ADescriptions, DescriptionsItem as ADescriptionsItem, Segmented as ASegmented, Spin as ASpin } from 'ant-design-vue';
 import { ReloadOutlined } from '@ant-design/icons-vue';
 import ReadmeViewer from '../ReadmeViewer.vue';
+import { useClipboard } from '@vueuse/core';
 
 const props = defineProps({
   script: {
@@ -119,7 +132,7 @@ const props = defineProps({
 });
 
 const mode = import.meta.env.VITE_MODE;
-
+const { copy } = useClipboard();
 const currentPage = ref(1);
 const pageSize = ref(10);
 const pagedData = computed(() => {
@@ -228,8 +241,12 @@ const handleSubscribe = () => {
 };
 
 const downloadScript = async (script) => {
+  let scriptPath = script.path;
+  if (!scriptPath && script.type === 'file' && props.script && props.script.path) {
+    scriptPath = `${props.script.path}/${script.name}`;
+  }
   // 创建一个包含脚本路径的数组
-  const subscriptionData = [script.path];
+  const subscriptionData = [scriptPath];
 
   // 将数组转换为 JSON 字串
   const jsonString = JSON.stringify(subscriptionData);
@@ -264,7 +281,14 @@ const tabTransitionName = computed(() => {
   return activeTab.value === 'readme' ? 'slide-right' : 'slide-left';
 });
 
-// 保证 watch 里每次切换 script 或 tab 时 fetch readme，并赋值文件列表
+// 切换节点时重置 tab
+watch(() => props.script, (newScript) => {
+  if (newScript) {
+    activeTab.value = 'readme';
+  }
+});
+
+// 每次切换 script时 fetch readme，并赋值文件列表
 watch([
   () => props.script,
   () => activeTab.value
@@ -616,5 +640,10 @@ const retryLoadReadme = () => {
   color: #bbb;
   text-align: center;
   margin-top: 80px;
+}
+.author-link {
+  text-decoration: underline;
+  color: #888;
+  cursor: pointer;
 }
 </style>
