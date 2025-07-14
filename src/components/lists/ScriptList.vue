@@ -1,32 +1,34 @@
 <template>
   <div class="list-container">
-    <div
-      v-for="item in filteredScripts"
-      :key="item.id"
-      :class="['script-item', { active: item.id === selectedId }]"
-      @click="selectScript(item.id)"
-    >
-      <div class="item-header">
-        <div class="item-title-wrap">
-          <span class="item-title-main">{{ item.name1 }}</span>
-          <span v-if="item.name1 !== item.name2" class="item-title-sub">{{ item.name2 }}</span>
+    <a-list :data-source="filteredScripts">
+      <template #renderItem="{ item }">
+        <div
+          :class="['script-item', { active: item.id === selectedId }]"
+          @click="selectScript(item.id)"
+        >
+          <div class="item-header">
+            <div class="item-title-wrap">
+              <span class="item-title-main">{{ item.name1 }}</span>
+              <span v-if="item.name1 !== item.name2" class="item-title-sub">{{ item.name2 }}</span>
+            </div>
+            <span v-if="item.unread" class="item-dot"></span>
+          </div>
+          <div class="item-author">
+            <template v-if="item.authors && item.authors.length">
+              {{ item.authors.map(a => a.name).join('，') }}
+            </template>
+            <template v-else>
+              {{ item.author }}
+            </template>
+          </div>
+          <div class="item-desc">{{ item.desc }}</div>
+          <div class="item-tags">
+            <a-tag v-for="tag in item.tags" :key="tag" color="#e6f0ff" class="item-tag">{{ tag }}</a-tag>
+          </div>
+          <div class="item-time">{{ item.time }}</div>
         </div>
-        <span v-if="item.unread" class="item-dot"></span>
-      </div>
-      <div class="item-author">
-        <template v-if="item.authors && item.authors.length">
-          {{ item.authors.map(a => a.name).join('，') }}
-        </template>
-        <template v-else>
-          {{ item.author }}
-        </template>
-      </div>
-      <div class="item-desc">{{ item.desc }}</div>
-      <div class="item-tags">
-        <a-tag v-for="tag in item.tags" :key="tag" color="#e6f0ff" class="item-tag">{{ tag }}</a-tag>
-      </div>
-      <div class="item-time">{{ item.time }}</div>
-    </div>
+      </template>
+    </a-list>
   </div>
 </template>
 

@@ -1,25 +1,31 @@
 <template>
   <div class="list-container">
-    <div v-for="item in filteredStrategies" :key="item.id" :class="['script-item', { active: item.id === selectedId }]"
-      @click="selectStrategy(item.id)">
-      <div class="item-header">
-        <span class="item-title">{{ item.title }}</span>
-        <span v-if="item.unread" class="item-dot"></span>
-      </div>
-      <div class="item-author">
-        <template v-if="item.authors && item.authors.length">
-          {{ item.authors.map(a => a.name).join('，') }}
-        </template>
-        <template v-else>
-          {{ item.author }}
-        </template>
-      </div>
-      <div class="item-desc">{{ item.desc }}</div>
-      <div class="item-tags">
-        <a-tag v-for="tag in item.tags" :key="tag" color="#e6f0ff" class="item-tag">{{ tag }}</a-tag>
-      </div>
-      <div class="item-time">{{ item.time }}</div>
-    </div>
+    <a-list :data-source="filteredStrategies">
+      <template #renderItem="{ item }">
+        <div
+          :class="['script-item', { active: item.id === selectedId }]"
+          @click="selectStrategy(item.id)"
+        >
+          <div class="item-header">
+            <span class="item-title">{{ item.title }}</span>
+            <span v-if="item.unread" class="item-dot"></span>
+          </div>
+          <div class="item-author">
+            <template v-if="item.authors && item.authors.length">
+              {{ item.authors.map(a => a.name).join('，') }}
+            </template>
+            <template v-else>
+              {{ item.author }}
+            </template>
+          </div>
+          <div class="item-desc">{{ item.desc }}</div>
+          <div class="item-tags">
+            <a-tag v-for="tag in item.tags" :key="tag" color="#e6f0ff" class="item-tag">{{ tag }}</a-tag>
+          </div>
+          <div class="item-time">{{ item.time }}</div>
+        </div>
+      </template>
+    </a-list>
   </div>
 </template>
 
