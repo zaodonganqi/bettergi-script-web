@@ -327,7 +327,17 @@ const lastUpdateTime = computed(() => {
   return '';
 });
 
+// 清理所有readme404缓存
+function clearReadme404Cache() {
+  Object.keys(localStorage).forEach(key => {
+    if (key.startsWith('readme404:')) {
+      localStorage.removeItem(key);
+    }
+  });
+}
+
 async function getRepoJson () {
+  clearReadme404Cache();
   repoError.value = false;
   globalLoading.value = true;
   try {
