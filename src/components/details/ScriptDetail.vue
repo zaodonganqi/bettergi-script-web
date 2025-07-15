@@ -169,6 +169,7 @@ watch(() => props.script, (newScript) => {
   height: 100%;
   background: #fff;
   position: relative;
+  padding: 16px 36px 16px 36px;
   display: flex;
   flex-direction: column;
   min-width: 0;
