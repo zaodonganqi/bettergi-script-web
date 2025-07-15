@@ -3,7 +3,7 @@
   <div class="readme-viewer">
     <div v-if="readmeContent" v-html="readmeContent" class="readme-content"></div>
     <div v-else-if="desc" class="detail-desc">{{ showDescTitle ? '简介：\n' + desc : desc }}</div>
-    <div v-else-if="!isHttpUrl" class="readme-empty">暂无描述</div>
+    <div v-else-if="!isHttpUrl" class="readme-empty">暂无简介</div>
   </div>
 </template>
 

@@ -187,7 +187,6 @@ const handleReadmeLoaded = (payload) => {
   loadError.value = false;
   if (payload && payload.status === '404' && props.script && props.script.path) {
     setReadme404(props.script.path);
-    // 404时不设置loadError，页面只显示暂无简介
   } else if (payload && payload.status === 'error') {
     loadError.value = true;
   }
@@ -199,12 +198,13 @@ function setReadme404(path) {
     localStorage.setItem('readme404:' + path, '1');
   }
 }
+
 function isReadme404(path) {
   return !!localStorage.getItem('readme404:' + path);
 }
 
 const handleReadmeError = (error) => {
-  console.log('handleReadmeError error参数:', error);
+  console.log(error);
   isLoadingReadme.value = false;
   loadError.value = true;
   hasReadmeContent.value = false;

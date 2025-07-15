@@ -21,7 +21,7 @@
         <div class="sider-footer">
           <div class="sider-link" @click="openExternalLink('https://github.com/babalae/better-genshin-impact')">访问BetterGI主仓库</div>
           <div class="sider-link" @click="openExternalLink('https://github.com/babalae/bettergi-scripts-list')">访问BetterGI脚本仓库</div>
-          <div class="sider-link">外链3</div>
+          <div class="sider-link" @click="openExternalLink('https://bgi.sh')">访问在线仓库</div>
         </div>
       </div>
       <!-- 最后更新时间 -->
@@ -81,25 +81,15 @@
                 <LinkOutlined />
               </a-button>
             </a-tooltip>
-            <a-tooltip title="导出">
-              <a-button type="text" size="small" class="action-btn">
-                <ExportOutlined />
-              </a-button>
-            </a-tooltip>
-          </div>
-          <div class="top-bar-right">
             <a-tooltip title="评论">
               <a-button type="text" size="small" class="action-btn" @click="commentModalOpen = true">
                 <MessageOutlined />
               </a-button>
             </a-tooltip>
-            <a-tooltip title="设置">
-              <a-button type="text" size="small" class="action-btn">
-                <SettingOutlined />
-              </a-button>
-            </a-tooltip>
+          </div>
+          <div class="top-bar-right">
             <a-tooltip title="帮助">
-              <a-button type="text" size="small" class="action-btn">
+              <a-button type="text" size="small" class="action-btn" @click="showHelpModal = true">
                 <QuestionCircleOutlined />
               </a-button>
             </a-tooltip>
@@ -116,25 +106,15 @@
                 <LinkOutlined />
               </a-button>
             </a-tooltip>
-            <a-tooltip title="导出">
-              <a-button type="text" size="small" class="action-btn">
-                <ExportOutlined />
-              </a-button>
-            </a-tooltip>
-          </div>
-          <div class="top-bar-right">
             <a-tooltip title="评论">
               <a-button type="text" size="small" class="action-btn" @click="commentModalOpen = true">
                 <MessageOutlined />
               </a-button>
             </a-tooltip>
-            <a-tooltip title="设置">
-              <a-button type="text" size="small" class="action-btn">
-                <SettingOutlined />
-              </a-button>
-            </a-tooltip>
+          </div>
+          <div class="top-bar-right">
             <a-tooltip title="帮助">
-              <a-button type="text" size="small" class="action-btn">
+              <a-button type="text" size="small" class="action-btn" @click="showHelpModal = true">
                 <QuestionCircleOutlined />
               </a-button>
             </a-tooltip>
@@ -156,7 +136,10 @@
         </div>
         <div class="repo-error-title">获取仓库信息失败</div>
         <div class="repo-error-desc">请检查网络或稍后刷新页面重试</div>
-        <button class="repo-error-btn" @click="getRepoJson">刷新页面</button>
+        <div class="repo-error-btn-group">
+          <button class="repo-error-btn" @click="getRepoJson">刷新页面</button>
+          <button class="repo-help-btn" @click="showHelpModal = true">查看帮助</button>
+        </div>
       </div>
     </div>
 
@@ -271,6 +254,19 @@
         </div>
       </div>
     </a-modal>
+
+    <!-- 帮助弹窗 -->
+    <a-modal
+      v-model:open="showHelpModal"
+      title="常见问题 Q&A"
+      :footer="null"
+      centered
+      width="80%"
+      :style="{ maxWidth: '900px' }"
+      @cancel="showHelpModal = false"
+    >
+      <Help />
+    </a-modal>
   </a-layout>
 </template>
 
@@ -285,6 +281,7 @@ import CardStrategyList from './lists/CardStrategyList.vue';
 import ScriptDetail from './details/ScriptDetail.vue';
 import MapDetail from './details/MapDetail.vue';
 import ReadmeViewer from './ReadmeViewer.vue';
+import Help from './Help.vue';
 
 const mode = import.meta.env.VITE_MODE;
 const selectedMenu = ref(['1']);
@@ -666,6 +663,9 @@ watch(showEggModal, (newVal) => {
     eggReadmeKey.value++;
   }
 });
+
+const showHelpModal = ref(false);
+
 </script>
 
 <style scoped>
@@ -908,7 +908,7 @@ watch(showEggModal, (newVal) => {
 }
 
 .action-btn {
-  color: #666;
+  color: #444;
   border: none;
   padding: 4px 8px;
   border-radius: 4px;
@@ -1310,5 +1310,27 @@ watch(showEggModal, (newVal) => {
 .fade-slide-up-leave-to {
   opacity: 0;
   transform: translateY(-20px);
+}
+.repo-error-btn-group {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  justify-content: center;
+  margin-top: 8px;
+}
+.repo-help-btn {
+  background: linear-gradient(90deg, #1890ff 0%, #40a9ff 100%);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 32px;
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(24,144,255,0.12);
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.repo-help-btn:hover {
+  background: linear-gradient(90deg, #40a9ff 0%, #1890ff 100%);
+  box-shadow: 0 4px 16px rgba(24,144,255,0.18);
 }
 </style>
