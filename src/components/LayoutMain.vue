@@ -1274,25 +1274,6 @@ watch(showEggModal, (newVal) => {
   gap: 16px;
 }
 
-.egg-readme-error-title {
-  color: #f44336;
-  font-size: 18px;
-  margin-bottom: 12px;
-}
-
-.egg-readme-viewer-container {
-  width: 100%;
-  height: 100%;
-}
-
-.egg-readme-tabs {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 16px;
-  gap: 10px;
-}
-
 .egg-readme-loading-indicator {
   display: flex;
   align-items: center;
