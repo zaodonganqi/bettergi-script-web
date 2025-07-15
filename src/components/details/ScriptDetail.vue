@@ -84,9 +84,18 @@ const isLoadingReadme = ref(false);
 const loadError = ref(false);
 const readmeKey = ref(0);
 
-const handleReadmeLoaded = () => {
+const isReadme404 = (path) => !!localStorage.getItem('readme404:' + path);
+const setReadme404 = (path) => { if (path) localStorage.setItem('readme404:' + path, '1'); };
+
+const handleReadmeLoaded = (payload) => {
   isLoadingReadme.value = false;
   loadError.value = false;
+  if (payload && payload.status === '404' && props.script && props.script.path) {
+    setReadme404(props.script.path);
+    // 404时不显示弹窗，ReadmeViewer内部会优先显示desc
+  } else if (payload && payload.status === 'error') {
+    loadError.value = true;
+  }
 };
 
 const handleReadmeError = () => {
@@ -141,6 +150,13 @@ const subscribeToLocal = async (url) => {
 // 监听脚本变化，设置加载状态
 watch(() => props.script, (newScript) => {
   if (newScript && newScript.path) {
+    if (isReadme404(newScript.path)) {
+      // 已知404，不再加载
+      isLoadingReadme.value = false;
+      loadError.value = false;
+      readmeKey.value++;
+      return;
+    }
     isLoadingReadme.value = true;
     loadError.value = false;
     readmeKey.value++;

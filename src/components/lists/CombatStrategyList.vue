@@ -2,17 +2,14 @@
   <div class="list-container">
     <a-list :data-source="filteredStrategies">
       <template #renderItem="{ item }">
-        <div
-          :class="['script-item', { active: item.id === selectedId }]"
-          @click="selectStrategy(item.id)"
-        >
+        <div :class="['script-item', { active: item.id === selectedId }]" @click="selectStrategy(item.id)">
           <div class="item-header">
             <span class="item-title">{{ item.title }}</span>
             <span v-if="item.unread" class="item-dot"></span>
           </div>
           <div class="item-author">
             <template v-if="item.authors && item.authors.length">
-              {{ item.authors.map(a => a.name).join('，') }}
+              {{item.authors.map(a => a.name).join('，')}}
             </template>
             <template v-else>
               {{ item.author }}
@@ -30,7 +27,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, nextTick } from 'vue';
 
 const props = defineProps({
   searchKey: {
@@ -110,23 +107,32 @@ watch(
   () => props.repoData,
   (newVal) => {
     if (newVal && newVal.indexes) {
-      strategies.value = getCombatStrategiesFromRepo(newVal).map((item, idx) => ({
-        id: idx + 1,
-        title: removeFileSuffix(item.name),
-        name: item.name,
-        author: item.author || '无',
-        authors: item.authors || [],
-        desc: item.description || '',
-        tags: item.tags || [],
-        time: item.lastUpdated || '',
-        unread: false,
-        hash: item.hash,
-        version: item.version,
-        path: item.fullPath || `combat/${item.name}`
-      }));
+      nextTick(() => {
+        strategies.value = getCombatStrategiesFromRepo(newVal).map((item, idx) => ({
+          id: idx + 1,
+          title: removeFileSuffix(item.name),
+          name: item.name,
+          author: item.author || '无',
+          authors: item.authors || [],
+          desc: item.description || '',
+          tags: item.tags || [],
+          time: item.lastUpdated || '',
+          unread: false,
+          hash: item.hash,
+          version: item.version,
+          path: item.fullPath || `combat/${item.name}`
+        }));
+        
+        if (strategies.value.length > 0) {
+          const prevSelected = selectedId.value;
+          const stillExists = strategies.value.some(s => s.id === prevSelected);
+          selectedId.value = stillExists ? prevSelected : strategies.value[0].id;
+        } else {
+          selectedId.value = null;
+        }
+      });
     }
-  },
-  { immediate: true, deep: true }
+  }
 );
 
 const selectedId = ref(1);

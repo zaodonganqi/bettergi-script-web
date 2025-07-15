@@ -2,10 +2,7 @@
   <div class="list-container">
     <a-list :data-source="filteredScripts">
       <template #renderItem="{ item }">
-        <div
-          :class="['script-item', { active: item.id === selectedId }]"
-          @click="selectScript(item.id)"
-        >
+        <div :class="['script-item', { active: item.id === selectedId }]" @click="selectScript(item.id)">
           <div class="item-header">
             <div class="item-title-wrap">
               <span class="item-title-main">{{ item.name1 }}</span>
@@ -15,7 +12,7 @@
           </div>
           <div class="item-author">
             <template v-if="item.authors && item.authors.length">
-              {{ item.authors.map(a => a.name).join('，') }}
+              {{item.authors.map(a => a.name).join('，')}}
             </template>
             <template v-else>
               {{ item.author }}
@@ -33,7 +30,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, nextTick } from 'vue';
 
 const props = defineProps({
   searchKey: {
@@ -53,7 +50,7 @@ const emit = defineEmits(['select', 'scriptCount']);
 function getJsScriptsFromRepo(repo) {
   const jsNode = repo.indexes.find(item => item.name === 'js');
   if (!jsNode || !jsNode.children) return [];
-  
+
   // 递归收集所有叶子节点
   const result = [];
   function traverse(nodes, currentPath = 'js') {
@@ -109,7 +106,7 @@ const scripts = ref(
     desc: item.description,
     tags: item.tags || [],
     time: item.lastUpdated || '',
-    unread: false, 
+    unread: false,
     hash: item.hash,
     version: item.version,
     path: item.fullPath || `js/${item.name}`,
@@ -121,25 +118,34 @@ watch(
   () => props.repoData,
   (newVal) => {
     if (newVal && newVal.indexes) {
-      scripts.value = getJsScriptsFromRepo(newVal).map((item, idx) => ({
-        id: idx + 1,
-        title: item.title,
-        name: item.name,
-        name1: item.name1,
-        name2: item.name2,
-        author: item.author || '',
-        authors: item.authors || [],
-        desc: item.description,
-        tags: item.tags || [],
-        time: item.lastUpdated || '',
-        unread: false, 
-        hash: item.hash,
-        version: item.version,
-        path: item.fullPath || `js/${item.name}`,
-      }));
+      nextTick(() => {
+        scripts.value = getJsScriptsFromRepo(newVal).map((item, idx) => ({
+          id: idx + 1,
+          title: item.title,
+          name: item.name,
+          name1: item.name1,
+          name2: item.name2,
+          author: item.author || '',
+          authors: item.authors || [],
+          desc: item.description,
+          tags: item.tags || [],
+          time: item.lastUpdated || '',
+          unread: false,
+          hash: item.hash,
+          version: item.version,
+          path: item.fullPath || `js/${item.name}`,
+        }));
+        
+        if (scripts.value.length > 0) {
+          const prevSelected = selectedId.value;
+          const stillExists = scripts.value.some(s => s.id === prevSelected);
+          selectedId.value = stillExists ? prevSelected : scripts.value[0].id;
+        } else {
+          selectedId.value = null;
+        }
+      });
     }
-  },
-  { immediate: true, deep: true }
+  }
 );
 
 const selectedId = ref(scripts.value.length > 0 ? scripts.value[0].id : null);
@@ -152,7 +158,7 @@ const selectScript = (id) => {
 
 const filteredScripts = computed(() => {
   if (!props.searchKey) return scripts.value;
-  
+
   const searchLower = props.searchKey.toLowerCase();
   return scripts.value.filter(script => {
     return (
@@ -273,5 +279,4 @@ defineExpose({
   font-size: 12px;
   margin-top: 2px;
 }
-
-</style> 
+</style>

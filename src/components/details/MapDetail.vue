@@ -48,7 +48,14 @@
           <transition :name="tabTransitionName">
             <div :key="activeTab" class="tab-content-inner">
               <div v-if="activeTab === 'readme'" class="tab-pane readme-pane">
-                <ReadmeViewer :key="readmeKey" :path="script.path" :desc="script.desc" @loaded="handleReadmeLoaded" @error="handleReadmeError" @hasContent="handleReadmeHasContent" />
+                <ReadmeViewer
+                  :key="readmeKey"
+                  :path="script.path"
+                  :desc="script.desc"
+                  @loaded="handleReadmeLoaded"
+                  @error="handleReadmeError"
+                  @hasContent="handleReadmeHasContent"
+                />
               </div>
               <div v-else class="tab-pane files-pane">
                 <div class="table-pagination-outer" v-if="script.type === 'directory' && files && files.length > 0">
@@ -175,16 +182,42 @@ const loadError = ref(false);
 const readmeKey = ref(0);
 const hasReadmeContent = ref(false);
 
-const handleReadmeLoaded = () => {
+const handleReadmeLoaded = (payload) => {
   isLoadingReadme.value = false;
   loadError.value = false;
+  if (payload && payload.status === '404' && props.script && props.script.path) {
+    setReadme404(props.script.path);
+    // 404时不设置loadError，页面只显示暂无简介
+  } else if (payload && payload.status === 'error') {
+    loadError.value = true;
+  }
 };
 
-const handleReadmeError = () => {
+// 记录404
+function setReadme404(path) {
+  if (path) {
+    localStorage.setItem('readme404:' + path, '1');
+  }
+}
+function isReadme404(path) {
+  return !!localStorage.getItem('readme404:' + path);
+}
+
+const handleReadmeError = (error) => {
+  console.log('handleReadmeError error参数:', error);
   isLoadingReadme.value = false;
   loadError.value = true;
   hasReadmeContent.value = false;
   updateTabLabel();
+  let is404 = false;
+  if (typeof error === 'string' && error.includes('404')) is404 = true;
+  if (error && typeof error === 'object') {
+    if (error.status === 404) is404 = true;
+    if (error.message && error.message.includes('404')) is404 = true;
+  }
+  if (props.script && props.script.path && is404) {
+    setReadme404(props.script.path);
+  }
 };
 
 const handleReadmeHasContent = (hasContent) => {
@@ -299,15 +332,26 @@ watch([
     files.value = [];
   }
   if (newScript && newTab === 'readme' && newScript.path) {
-    // 重置状态
+    if (isReadme404(newScript.path)) {
+      // 已知404，不再加载
+      isLoadingReadme.value = false;
+      loadError.value = false;
+      hasReadmeContent.value = false;
+      updateTabLabel();
+      return;
+    }
+    // 未知404，正常加载
     hasReadmeContent.value = false;
     updateTabLabel();
-    // 设置加载状态
     isLoadingReadme.value = true;
     loadError.value = false;
     readmeKey.value++;
   }
-}, { immediate: true });
+  if (newTab !== 'readme') {
+    isLoadingReadme.value = false;
+    loadError.value = false;
+  }
+});
 
 const retryLoadReadme = () => {
   isLoadingReadme.value = true;

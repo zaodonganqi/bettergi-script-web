@@ -318,8 +318,7 @@ watch(
     } else {
       treeData.value = [];
     }
-  },
-  { immediate: true, deep: true }
+  }
 );
 
 // 初始化

@@ -28,7 +28,7 @@ const readmeContent = ref('');
 const isLoading = ref(false);
 const loadError = ref(null);
 
-// 计算属性：判断是否为 HTTP URL
+// 判断是否为 HTTP URL
 const isHttpUrl = computed(() => {
   return props.path && /^https?:\/\//i.test(props.path);
 });
@@ -153,11 +153,22 @@ function getReadmeContent(path) {
   return `https://raw.githubusercontent.com/babalae/bettergi-scripts-list/refs/heads/main/repo/${path.replace(/\\/g, '/')}/README.md`;
 }
 
+function isReadme404(path) {
+  return !!localStorage.getItem('readme404:' + path);
+}
+
 // 获取并渲染readme内容
 const fetchAndRenderReadme = async (path) => {
   if (!path) {
     readmeContent.value = '';
     emit('loaded');
+    emit('hasContent', false);
+    return;
+  }
+  // 如果已被标记为404，不再fetch
+  if (isReadme404(path)) {
+    readmeContent.value = '';
+    emit('loaded', { status: '404' });
     emit('hasContent', false);
     return;
   }
@@ -218,15 +229,16 @@ const fetchAndRenderReadme = async (path) => {
         return `![](${baseImageUrl}${cleanPath})`;
       });
       readmeContent.value = md.render(markdown);
-      emit('loaded');
+      emit('loaded', { status: 'ok' });
       emit('hasContent', true);
     } else if (response.status === 404) {
       readmeContent.value = '';
-      emit('loaded');
+      emit('loaded', { status: '404' });
       emit('hasContent', false);
     } else {
       readmeContent.value = '';
       loadError.value = '加载失败';
+      emit('loaded', { status: 'error', message: '加载失败' });
       emit('error', '加载失败');
       emit('hasContent', false);
     }
@@ -234,9 +246,11 @@ const fetchAndRenderReadme = async (path) => {
     readmeContent.value = '';
     if (e.name === 'AbortError') {
       loadError.value = '加载超时';
+      emit('loaded', { status: 'error', message: '加载超时' });
       emit('error', '加载超时');
     } else {
       loadError.value = '加载失败';
+      emit('loaded', { status: 'error', message: '加载失败' });
       emit('error', '加载失败');
     }
     emit('hasContent', false);
