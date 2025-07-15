@@ -687,7 +687,7 @@ const retryLoadReadme = () => {
 }
 .author-link {
   text-decoration: underline;
-  color: #888;
+  color: #1890ff;
   cursor: pointer;
 }
 </style>

@@ -180,13 +180,25 @@
         <div class="comment-header">
           <div class="script-title-simple">
             {{ selectedScript?.title || '未知脚本' }}
-            <span v-if="selectedScript?.author || selectedScript?.authors" class="script-author">
-              · {{ selectedScript?.authors || selectedScript?.author }}
-            </span>
+            <template v-if="selectedScript?.authors && Array.isArray(selectedScript.authors) && selectedScript.authors.length">
+              <span class="script-author">
+                · 作者：
+                <template v-for="(author, idx) in selectedScript.authors" :key="author.name">
+                  <template v-if="author.link">
+                    <a :href="author.link" class="author-link" target="_blank" rel="noopener noreferrer">{{ author.name }}</a>
+                  </template>
+                  <template v-else>
+                    <span>{{ author.name }}</span>
+                  </template>
+                  <span v-if="idx < selectedScript.authors.length - 1">，</span>
+                </template>
+              </span>
+            </template>
+            <span v-else-if="selectedScript?.author" class="script-author">· 作者：{{ selectedScript.author }}</span>
+            <span v-else class="script-author">· 暂无作者信息</span>
           </div>
         </div>
         
-        <!-- 可滚动的评论容器 -->
         <div class="comments-container">
           <!-- 本地模式显示提示信息 -->
           <div v-if="mode === 'single'" class="local-mode-notice">
@@ -482,7 +494,6 @@ function getJsCount(repo) {
   
   const hasExpandableChildren = (dataRef) => {
     if (!dataRef?.children || dataRef.children.length === 0) return false;
-    // 只要有一个子节点是目录即可展开
     return dataRef.children.some(child => child.type === 'directory');
   };
 
@@ -506,7 +517,6 @@ function getMapCount(repo) {
 
   const hasExpandableChildren = (dataRef) => {
     if (!dataRef?.children || dataRef.children.length === 0) return false;
-    // 只要有一个子节点是目录即可展开
     return dataRef.children.some(child => child.type === 'directory');
   };
 
@@ -530,7 +540,6 @@ function getCombatCount(repo) {
   
   const hasExpandableChildren = (dataRef) => {
     if (!dataRef?.children || dataRef.children.length === 0) return false;
-    // 只要有一个子节点是目录即可展开
     return dataRef.children.some(child => child.type === 'directory');
   };
 
@@ -557,10 +566,8 @@ function getCardCount(repo) {
     let count = 0;
     for (const node of nodes) {
       if (node.type === 'file') {
-        // 直接判断是否为文件节点
         count++;
       } else if (node.type === 'directory' && node.children) {
-        // 如果是目录且有子节点，递归计算
         count += countLeaf(node.children);
       }
     }
@@ -607,7 +614,6 @@ const giscusTerm = computed(() => {
 // 监听评论弹窗打开
 watch(commentModalOpen, (newVal) => {
   if (newVal) {
-    // 弹窗打开时的处理逻辑
     console.log('评论弹窗打开，当前脚本:', selectedScript.value);
   }
 });
@@ -904,7 +910,6 @@ watch(showEggModal, (newVal) => {
   background: rgba(24, 144, 255, 0.1);
 }
 
-/* 调整详情组件容器样式 */
 .main-right > div:last-child {
   flex: 1;
   overflow: hidden;
@@ -1052,7 +1057,6 @@ watch(showEggModal, (newVal) => {
   justify-content: center;
 }
 
-/* 评论弹窗样式 */
 .comment-modal {
   border-radius: 12px;
   overflow: hidden;
@@ -1116,7 +1120,15 @@ watch(showEggModal, (newVal) => {
   opacity: 0.8;
 }
 
-/* 可滚动的评论容器 - 按照官方文档设计 */
+.author-link {
+  color: #1890ff;
+  text-decoration: none;
+}
+
+.author-link:hover {
+  text-decoration: underline;
+}
+
 .comments-container {
   flex: 1;
   max-height: calc(90vh - 60px);
@@ -1127,7 +1139,6 @@ watch(showEggModal, (newVal) => {
   width: 100%;
 }
 
-/* Giscus 组件样式调整 - 按照官方文档 */
 .comments-container :deep(.giscus) {
   border: none;
   border-radius: 0;
@@ -1136,7 +1147,6 @@ watch(showEggModal, (newVal) => {
   min-width: 100%;
 }
 
-/* 响应式设计 */
 @media (max-width: 1400px) {
   .comment-modal {
     width: 95% !important;
@@ -1175,7 +1185,6 @@ watch(showEggModal, (newVal) => {
   }
 }
 
-/* 本地模式提示样式 */
 .local-mode-notice {
   display: flex;
   flex-direction: column;
@@ -1288,7 +1297,6 @@ watch(showEggModal, (newVal) => {
   overflow-x: hidden;
 }
 
-/* 过渡动画 */
 .fade-slide-up-enter-active,
 .fade-slide-up-leave-active {
   transition: all 0.3s ease;
