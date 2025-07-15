@@ -97,7 +97,7 @@
         </div>
         <MapDetail :script="selectedScript" />
       </div>
-      <div v-else class="main-right">
+      <div v-else-if="selectedMenu[0] === '2'" class="main-right">
         <!-- 顶部操作栏 -->
         <div v-if="selectedScript" class="detail-top-bar">
           <div class="top-bar-left">
@@ -121,6 +121,31 @@
           </div>
         </div>
         <ScriptDetail :script="selectedScript" />
+      </div>
+      <div v-else-if="selectedMenu[0] === '3' || selectedMenu[0] === '4'" class="main-right">
+        <!-- 顶部操作栏 -->
+        <div v-if="selectedScript" class="detail-top-bar">
+          <div class="top-bar-left">
+            <a-tooltip title="跳转到该脚本的GitHub仓库">
+              <a-button type="text" size="small" class="action-btn" @click="jumpToGitHub">
+                <LinkOutlined />
+              </a-button>
+            </a-tooltip>
+            <a-tooltip title="评论">
+              <a-button type="text" size="small" class="action-btn" @click="commentModalOpen = true">
+                <MessageOutlined />
+              </a-button>
+            </a-tooltip>
+          </div>
+          <div class="top-bar-right">
+            <a-tooltip title="帮助">
+              <a-button type="text" size="small" class="action-btn" @click="showHelpModal = true">
+                <QuestionCircleOutlined />
+              </a-button>
+            </a-tooltip>
+          </div>
+        </div>
+        <StrategyDetail :script="selectedScript" />
       </div>
     </a-layout>
 
@@ -279,6 +304,7 @@ import ScriptList from './lists/ScriptList.vue';
 import CombatStrategyList from './lists/CombatStrategyList.vue';
 import CardStrategyList from './lists/CardStrategyList.vue';
 import ScriptDetail from './details/ScriptDetail.vue';
+import StrategyDetail from './details/StrategyDetail.vue';
 import MapDetail from './details/MapDetail.vue';
 import ReadmeViewer from './ReadmeViewer.vue';
 import Help from './Help.vue';
