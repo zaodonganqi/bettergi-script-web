@@ -1256,6 +1256,15 @@ watch(showEggModal, (newVal) => {
   position: relative;
 }
 
+.egg-readme-tabs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  gap: 10px;
+}
+
+
 .egg-readme-loading {
   text-align: center;
   padding: 48px 0;
