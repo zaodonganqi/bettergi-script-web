@@ -19,8 +19,10 @@
           </a-menu>
         </div>
         <div class="sider-footer">
-          <div class="sider-link" @click="openExternalLink('https://github.com/babalae/better-genshin-impact')">访问BetterGI主仓库</div>
-          <div class="sider-link" @click="openExternalLink('https://github.com/babalae/bettergi-scripts-list')">访问BetterGI脚本仓库</div>
+          <div class="sider-link" @click="openExternalLink('https://github.com/babalae/better-genshin-impact')">
+            访问BetterGI主仓库</div>
+          <div class="sider-link" @click="openExternalLink('https://github.com/babalae/bettergi-scripts-list')">
+            访问BetterGI脚本仓库</div>
           <div class="sider-link" @click="openExternalLink('https://bgi.sh')">访问在线仓库</div>
         </div>
       </div>
@@ -154,9 +156,9 @@
       <div class="repo-error-content">
         <div class="repo-error-icon">
           <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-            <circle cx="24" cy="24" r="24" fill="#fdecea"/>
-            <path d="M24 14v12" stroke="#f44336" stroke-width="3" stroke-linecap="round"/>
-            <circle cx="24" cy="32" r="2.5" fill="#f44336"/>
+            <circle cx="24" cy="24" r="24" fill="#fdecea" />
+            <path d="M24 14v12" stroke="#f44336" stroke-width="3" stroke-linecap="round" />
+            <circle cx="24" cy="32" r="2.5" fill="#f44336" />
           </svg>
         </div>
         <div class="repo-error-title">获取仓库信息失败</div>
@@ -174,26 +176,20 @@
     </div>
 
     <!-- 评论弹窗 -->
-    <a-modal 
-      v-model:open="commentModalOpen" 
-      title="评论" 
-      :footer="null" 
-      centered 
-      width="90%"
-      :style="{ maxWidth: '1200px' }"
-      @cancel="handleCommentModalCancel"
-      class="comment-modal"
-    >
+    <a-modal v-model:open="commentModalOpen" title="评论" :footer="null" centered width="90%"
+      :style="{ maxWidth: '1200px' }" @cancel="handleCommentModalCancel" class="comment-modal">
       <div class="comment-modal-content">
         <div class="comment-header">
           <div class="script-title-simple">
             {{ selectedScript?.title || '未知脚本' }}
-            <template v-if="selectedScript?.authors && Array.isArray(selectedScript.authors) && selectedScript.authors.length">
+            <template
+              v-if="selectedScript?.authors && Array.isArray(selectedScript.authors) && selectedScript.authors.length">
               <span class="script-author">
                 · 作者：
                 <template v-for="(author, idx) in selectedScript.authors" :key="author.name">
                   <template v-if="author.link">
-                    <a :href="author.link" class="author-link" target="_blank" rel="noopener noreferrer">{{ author.name }}</a>
+                    <a :href="author.link" class="author-link" target="_blank" rel="noopener noreferrer">{{ author.name
+                    }}</a>
                   </template>
                   <template v-else>
                     <span>{{ author.name }}</span>
@@ -206,54 +202,35 @@
             <span v-else class="script-author">· 暂无作者信息</span>
           </div>
         </div>
-        
+
         <div class="comments-container">
           <!-- 本地模式显示提示信息 -->
           <div v-if="mode === 'single'" class="local-mode-notice">
             <div class="notice-icon">
               <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-                <circle cx="24" cy="24" r="24" fill="#e3f2fd"/>
-                <path d="M24 12v16" stroke="#2196f3" stroke-width="3" stroke-linecap="round"/>
-                <circle cx="24" cy="36" r="2.5" fill="#2196f3"/>
+                <circle cx="24" cy="24" r="24" fill="#e3f2fd" />
+                <path d="M24 12v16" stroke="#2196f3" stroke-width="3" stroke-linecap="round" />
+                <circle cx="24" cy="36" r="2.5" fill="#2196f3" />
               </svg>
             </div>
             <div class="notice-title">本地模式暂不支持评论功能</div>
             <div class="notice-desc">请移步在线仓库进行评论</div>
             <button class="notice-btn" @click="openExternalLink('https://bgi.sh')">访问在线仓库</button>
           </div>
-          
+
           <!-- Web模式显示giscus评论 -->
-          <Giscus
-            v-else
-            id="comments"
-            :repo="giscusConfig.repo"
-            :repoId="giscusConfig.repoId"
-            :category="giscusConfig.category"
-            :categoryId="giscusConfig.categoryId"
-            :mapping="giscusConfig.mapping"
-            :term="giscusTerm"
-            :strict="giscusConfig.strict"
-            :reactionsEnabled="giscusConfig.reactionsEnabled"
-            :emitMetadata="giscusConfig.emitMetadata"
-            :inputPosition="giscusConfig.inputPosition"
-            :theme="giscusConfig.theme"
-            :lang="giscusConfig.lang"
-            loading="lazy"
-          />
+          <Giscus v-else id="comments" :repo="giscusConfig.repo" :repoId="giscusConfig.repoId"
+            :category="giscusConfig.category" :categoryId="giscusConfig.categoryId" :mapping="giscusConfig.mapping"
+            :term="giscusTerm" :strict="giscusConfig.strict" :reactionsEnabled="giscusConfig.reactionsEnabled"
+            :emitMetadata="giscusConfig.emitMetadata" :inputPosition="giscusConfig.inputPosition"
+            :theme="giscusConfig.theme" :lang="giscusConfig.lang" loading="lazy" />
         </div>
       </div>
     </a-modal>
 
     <!-- 彩蛋弹窗 -->
-    <a-modal
-      v-model:open="showEggModal"
-      title="小彩蛋"
-      :footer="null"
-      centered
-      width="80%"
-      :style="{ maxWidth: '900px' }"
-      @cancel="showEggModal = false"
-    >
+    <a-modal v-model:open="showEggModal" title="小彩蛋" :footer="null" centered width="80%" :style="{ maxWidth: '900px' }"
+      @cancel="showEggModal = false">
       <div class="egg-modal-content">
         <div class="egg-readme-tabs">
           <div v-if="isLoadingEggReadme" class="egg-readme-loading-indicator">
@@ -270,26 +247,16 @@
           </div>
         </div>
         <div class="egg-readme-content">
-          <ReadmeViewer
-            :key="eggReadmeKey"
+          <ReadmeViewer :key="eggReadmeKey"
             :path="'https://raw.githubusercontent.com/zaodonganqi/BGI-bsw-egg/main/README.md'"
-            @loaded="handleEggReadmeLoaded"
-            @error="handleEggReadmeError"
-          />
+            @loaded="handleEggReadmeLoaded" @error="handleEggReadmeError" />
         </div>
       </div>
     </a-modal>
 
     <!-- 帮助弹窗 -->
-    <a-modal
-      v-model:open="showHelpModal"
-      title="常见问题 Q&A"
-      :footer="null"
-      centered
-      width="80%"
-      :style="{ maxWidth: '900px' }"
-      @cancel="showHelpModal = false"
-    >
+    <a-modal v-model:open="showHelpModal" title="常见问题 Q&A" :footer="null" centered width="80%"
+      :style="{ maxWidth: '900px' }" @cancel="showHelpModal = false">
       <Help />
     </a-modal>
   </a-layout>
@@ -334,7 +301,7 @@ const formatTime = (timeString) => {
   const hour = timeString.substring(8, 10);
   const minute = timeString.substring(10, 12);
   const second = timeString.substring(12, 14);
-  
+
   return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
 };
 
@@ -359,7 +326,16 @@ function clearReadme404Cache() {
   });
 }
 
-async function getRepoJson () {
+async function getRepoJson() {
+  //这只是一个尝试获取本地配置文件的代码，需开启BGI的http服务才能使用
+  // try {
+  //   const response1 = await fetch('http://localhost:30648/api/config');
+  //   if (!response1.ok) throw new Error('网络请求失败');
+  //   const data = await response1.json();
+  //   console.log('获取到的配置数据:', data);
+  // } catch (err) {
+  //   throw err;
+  // }
   clearReadme404Cache();
   repoError.value = false;
   globalLoading.value = true;
@@ -448,7 +424,7 @@ const jumpToGitHub = () => {
   if (!selectedScript.value) return;
   const baseUrl = 'https://github.com/babalae/bettergi-scripts-list/blob/main/repo/';
   let targetPath = '';
-  
+
   // 优先使用脚本的path属性
   if (selectedScript.value.path) {
     targetPath = selectedScript.value.path;
@@ -456,7 +432,7 @@ const jumpToGitHub = () => {
     // 如果没有path属性，则根据脚本名称和菜单类型构建路径
     const scriptName = selectedScript.value.name1 || selectedScript.value.name || selectedScript.value.title;
     if (!scriptName) return;
-    
+
     // 根据当前选中的菜单类型构建不同的路径
     switch (selectedMenu.value[0]) {
       case '1': // 地图追踪
@@ -475,17 +451,17 @@ const jumpToGitHub = () => {
         targetPath = scriptName;
     }
   }
-  
+
   // 清理路径，移除多余斜杠和点
   targetPath = targetPath
     .replace(/\/+/g, '/')
     .replace(/^\/|\/$/g, '');
-  
+
   // 对路径进行编码，特别注意编码方括号等特殊字符
   const encodedPath = encodeURI(targetPath)
     .replace(/\[/g, '%5B')
     .replace(/\]/g, '%5D');
-  
+
   const githubUrl = baseUrl + encodedPath;
   openExternalLink(githubUrl);
 };
@@ -524,7 +500,7 @@ const handleScriptCount = (count) => {
 
 function getJsCount(repo) {
   const jsNode = repo.indexes.find(item => item.name === 'js');
-  
+
   const hasExpandableChildren = (dataRef) => {
     if (!dataRef?.children || dataRef.children.length === 0) return false;
     return dataRef.children.some(child => child.type === 'directory');
@@ -570,7 +546,7 @@ function getMapCount(repo) {
 
 function getCombatCount(repo) {
   const combatNode = repo.indexes.find(item => item.name === 'combat');
-  
+
   const hasExpandableChildren = (dataRef) => {
     if (!dataRef?.children || dataRef.children.length === 0) return false;
     return dataRef.children.some(child => child.type === 'directory');
@@ -593,7 +569,7 @@ function getCombatCount(repo) {
 
 function getCardCount(repo) {
   const cardNode = repo.indexes.find(item => item.name === 'tcg');
-  
+
   function countLeaf(nodes) {
     if (!nodes) return 0;
     let count = 0;
@@ -606,7 +582,7 @@ function getCardCount(repo) {
     }
     return count;
   }
-  
+
   return countLeaf(cardNode?.children);
 }
 
@@ -946,7 +922,7 @@ const showHelpModal = ref(false);
   background: rgba(24, 144, 255, 0.1);
 }
 
-.main-right > div:last-child {
+.main-right>div:last-child {
   flex: 1;
   overflow: hidden;
 }
@@ -1025,48 +1001,70 @@ const showHelpModal = ref(false);
 
 .repo-error-modal {
   position: fixed;
-  left: 0; top: 0; right: 0; bottom: 0;
-  z-index: 9999;
-  background: rgba(0,0,0,0.18);
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 999;
+  background: rgba(0, 0, 0, 0.18);
   display: flex;
   align-items: center;
   justify-content: center;
   animation: fadeIn 0.3s;
 }
+
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
+
 .repo-error-content {
   background: #fff;
   color: #d32f2f;
   font-size: 18px;
   padding: 36px 48px 32px 48px;
   border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
   text-align: center;
   min-width: 320px;
   max-width: 90vw;
   animation: popIn 0.3s;
 }
+
 @keyframes popIn {
-  from { transform: scale(0.9); opacity: 0; }
-  to   { transform: scale(1); opacity: 1; }
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
+
 .repo-error-icon {
   margin-bottom: 16px;
 }
+
 .repo-error-title {
   font-size: 22px;
   font-weight: bold;
   margin-bottom: 8px;
   color: #f44336;
 }
+
 .repo-error-desc {
   font-size: 15px;
   color: #666;
   margin-bottom: 24px;
 }
+
 .repo-error-btn {
   background: linear-gradient(90deg, #ff6a6a 0%, #f44336 100%);
   color: #fff;
@@ -1075,19 +1073,23 @@ const showHelpModal = ref(false);
   padding: 10px 32px;
   font-size: 16px;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(244,67,54,0.12);
+  box-shadow: 0 2px 8px rgba(244, 67, 54, 0.12);
   transition: background 0.2s, box-shadow 0.2s;
 }
+
 .repo-error-btn:hover {
   background: linear-gradient(90deg, #f44336 0%, #ff6a6a 100%);
-  box-shadow: 0 4px 16px rgba(244,67,54,0.18);
+  box-shadow: 0 4px 16px rgba(244, 67, 54, 0.18);
 }
 
 .global-loading-modal {
   position: fixed;
-  left: 0; top: 0; right: 0; bottom: 0;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
   z-index: 99999;
-  background: rgba(255,255,255,0.65);
+  background: rgba(255, 255, 255, 0.65);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1188,11 +1190,11 @@ const showHelpModal = ref(false);
     width: 95% !important;
     margin: 10px;
   }
-  
+
   .comment-modal :deep(.ant-modal-body) {
     max-height: 85vh;
   }
-  
+
   .comments-container {
     max-height: calc(85vh - 60px);
   }
@@ -1203,19 +1205,19 @@ const showHelpModal = ref(false);
     width: 98% !important;
     margin: 5px;
   }
-  
+
   .comment-modal :deep(.ant-modal-body) {
     max-height: 90vh;
   }
-  
+
   .comments-container {
     max-height: calc(90vh - 60px);
   }
-  
+
   .comment-header {
     padding: 12px 16px;
   }
-  
+
   .script-title-simple {
     font-size: 16px;
   }
@@ -1337,6 +1339,7 @@ const showHelpModal = ref(false);
   opacity: 0;
   transform: translateY(-20px);
 }
+
 .repo-error-btn-group {
   display: flex;
   flex-direction: row;
@@ -1344,6 +1347,7 @@ const showHelpModal = ref(false);
   justify-content: center;
   margin-top: 8px;
 }
+
 .repo-help-btn {
   background: linear-gradient(90deg, #1890ff 0%, #40a9ff 100%);
   color: #fff;
@@ -1352,11 +1356,12 @@ const showHelpModal = ref(false);
   padding: 10px 32px;
   font-size: 16px;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(24,144,255,0.12);
+  box-shadow: 0 2px 8px rgba(24, 144, 255, 0.12);
   transition: background 0.2s, box-shadow 0.2s;
 }
+
 .repo-help-btn:hover {
   background: linear-gradient(90deg, #40a9ff 0%, #1890ff 100%);
-  box-shadow: 0 4px 16px rgba(24,144,255,0.18);
+  box-shadow: 0 4px 16px rgba(24, 144, 255, 0.18);
 }
 </style>

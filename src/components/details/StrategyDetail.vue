@@ -192,7 +192,6 @@
   .script-detail {
     height: 100%;
     background: #fff;
-    padding: 16px 36px 16px 36px;
     position: relative;
     display: flex;
     flex-direction: column;

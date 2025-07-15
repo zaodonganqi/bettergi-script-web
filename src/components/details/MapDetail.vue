@@ -367,7 +367,6 @@ const retryLoadReadme = () => {
 .map-detail {
   height: 100%;
   background: #fff;
-  padding: 16px 30px 30px 30px;
   position: relative;
   display: flex;
   flex-direction: column;
