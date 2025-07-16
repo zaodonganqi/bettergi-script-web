@@ -10,7 +10,8 @@
                 作者：
                 <template v-for="(author, idx) in script.authors" :key="author.name">
                   <template v-if="author.link">
-                    <a :href="author.link" class="author-link" target="_blank" rel="noopener noreferrer">{{ author.name }}</a>
+                    <a :href="author.link" class="author-link" target="_blank" rel="noopener noreferrer">{{ author.name
+                      }}</a>
                   </template>
                   <template v-else>
                     <span>{{ author.name }}</span>
@@ -23,9 +24,12 @@
           </div>
           <div class="detail-time">{{ script.time }}</div>
         </div>
-        <div class="header-right">
-          <a-button type="primary" @click="handleSubscribe">订阅</a-button>
-        </div>
+        <div class="header-right" style="display: flex; align-items: center; gap: 8px;">
+            <a-button type="primary" v-if="!script.isSubscribed" @click="handleSubscribe(script)">订阅</a-button>
+            <a-button type="primary" v-if="script.isSubscribed" :disabled="script.isSubscribed"
+              class="subscribed-btn">已订阅</a-button>
+            <a-button type="primary" v-if="script.isSubscribed" @click="handleSubscribe(script)">再次订阅</a-button>
+          </div>
       </div>
       <div class="detail-readme">
         <transition name="fade-slide-up">
@@ -44,14 +48,8 @@
             <span>readme文件加载失败，请重试</span>
           </div>
         </transition>
-        <ReadmeViewer
-          :key="readmeKey"
-          :path="script.path"
-          :desc="script.desc"
-          :showDescTitle="true"
-          @loaded="handleReadmeLoaded"
-          @error="handleReadmeError"
-        />
+        <ReadmeViewer :key="readmeKey" :path="script.path" :desc="script.desc" :showDescTitle="true"
+          @loaded="handleReadmeLoaded" @error="handleReadmeError" />
       </div>
     </template>
     <template v-else>
@@ -84,6 +82,8 @@ const isLoadingReadme = ref(false);
 const loadError = ref(false);
 const readmeKey = ref(0);
 
+const headerHover = ref(false);
+
 const isReadme404 = (path) => !!localStorage.getItem('readme404:' + path);
 const setReadme404 = (path) => { if (path) localStorage.setItem('readme404:' + path, '1'); };
 
@@ -109,9 +109,9 @@ const retryLoadReadme = () => {
   readmeKey.value++;
 };
 
-const handleSubscribe = () => {
-  if (props.script) {
-    downloadScript({ name: props.script.title, path: props.script.path });
+const handleSubscribe = (item) => {
+  if (item.path) {
+    downloadScript(item);
   }
 };
 
@@ -192,6 +192,12 @@ watch(() => props.script, (newScript) => {
 .header-right {
   flex-shrink: 0;
   margin-left: 16px;
+}
+
+.subscribed-btn {
+  background: #f6ffed;
+  color: #52c41a;
+  border-color: #52c41a;
 }
 
 .detail-title {
@@ -275,16 +281,40 @@ watch(() => props.script, (newScript) => {
   font-size: 16px;
 }
 
-.fade-slide-up-enter-active, .fade-slide-up-leave-active {
-  transition: all 0.3s cubic-bezier(.55,0,.1,1);
+.fade-slide-up-enter-active,
+.fade-slide-up-leave-active {
+  transition: all 0.3s cubic-bezier(.55, 0, .1, 1);
 }
-.fade-slide-up-enter-from, .fade-slide-up-leave-to {
+
+.fade-slide-up-enter-from,
+.fade-slide-up-leave-to {
   opacity: 0;
   transform: translateY(-10px);
 }
+
 .author-link {
   text-decoration: underline;
   color: #1890ff;
   cursor: pointer;
 }
-</style> 
+
+.subscribe-btn {
+  color: #1677ff;
+  background: none;
+  border: none;
+  width: 72px;
+  text-align: center;
+}
+
+.subscribe-btn.subscribed {
+  color: #52c41a !important;
+  background: #f6ffed !important;
+  border: 1px solid #52c41a !important;
+}
+
+.subscribe-btn:hover {
+  color: #1677ff;
+  border: 1px solid #1677ff;
+  background: #fff;
+}
+</style>

@@ -58,7 +58,6 @@ const props = defineProps({
     default: false
   }
 });
-const { repoData } = props;
 const { copy } = useClipboard();
 const mode = import.meta.env.VITE_MODE;
 const emit = defineEmits(['select', 'leafCount']);
@@ -231,9 +230,8 @@ const processNode = (node, parentKey = '') => {
   let files = [];
   let lastUpdated = '';
   if (node.type === 'directory') {
-    files = collectFiles(node, parentKey); // 传 parentKey 递归补全 path
-    files = markFilesSubscribed(files, props.subscribedPaths); // 递归赋 isSubscribed
-    // 取最新更新时间
+    files = collectFiles(node, parentKey);
+    files = markFilesSubscribed(files, props.subscribedPaths);
     lastUpdated = files.reduce((latest, f) => {
       return (!latest || new Date(f.lastUpdated) > new Date(latest)) ? f.lastUpdated : latest;
     }, '');
@@ -258,7 +256,7 @@ const processNode = (node, parentKey = '') => {
     icon: iconPath,
     showIcon: node.showIcon || false,
     path: `pathing/${currentKey}`,
-    files, // 该目录下所有file节点，已递归赋 isSubscribed
+    files,
     lastUpdated, // 该目录下所有file的最新更新时间
     isSubscribed: props.subscribedPaths.some(sub => (`pathing/${currentKey}`).startsWith(sub)),
   };
@@ -301,7 +299,6 @@ const filteredTreeData = computed(() => {
   // 只保留订阅路径中属于pathing/的
   const pathingSubs = props.subscribedPaths.filter(p => p.startsWith('pathing/'));
 
-  // 递归为每个节点打上isSubscribed字段
   const markSubscribed = (nodes, subscribedPaths) => {
     if (!nodes) return [];
     return nodes.map(node => {
@@ -342,8 +339,6 @@ const filteredTreeData = computed(() => {
   return tree;
 });
 
-// 移除自动展开根节点的watch
-
 const updateExpandedKeysForSearch = (newSearchKey) => {
   if (!newSearchKey) {
     expandedKeys.value = [];
@@ -378,16 +373,6 @@ watch(
   }
 );
 
-watch(() => props.repoData, (val) => {
-});
-
-// 移除对repoData的watch和onMounted
-function onSubscribeBtnHover(node) {
-  node._hover = true;
-}
-function onSubscribeBtnLeave(node) {
-  node._hover = false;
-}
 </script>
 
 <style scoped>

@@ -28,12 +28,10 @@
             }}</div>
           </div>
           <div class="header-right" style="display: flex; align-items: center; gap: 8px;">
-            <a-button type="primary" :disabled="script.isSubscribed"
-              :style="script.isSubscribed ? 'background: #f6ffed; color: #52c41a; border-color: #52c41a;' : ''">
-              <template v-if="script.isSubscribed">已订阅</template>
-              <template v-else>订阅</template>
-            </a-button>
-            <a-button type="primary" v-if="script.isSubscribed">再次订阅</a-button>
+            <a-button type="primary" v-if="!script.isSubscribed" @click="handleSubscribe(script)">订阅</a-button>
+            <a-button type="primary" v-if="script.isSubscribed" :disabled="script.isSubscribed"
+              class="subscribed-btn">已订阅</a-button>
+            <a-button type="primary" v-if="script.isSubscribed" @click="handleSubscribe(script)">再次订阅</a-button>
           </div>
         </div>
         <div class="detail-tabs">
@@ -81,7 +79,7 @@
                             <a-button class="subscribe-btn-bordered" type="default" size="small"
                               :disabled="record.isSubscribed && !record._hover"
                               @mouseenter="onSubscribeBtnHover(record)" @mouseleave="onSubscribeBtnLeave(record)"
-                              @click="(record.isSubscribed && record._hover) || !record.isSubscribed ? downloadScript(record) : null">
+                              @click="handleSubscribe(record)">
                               <template v-if="record.isSubscribed">
                                 <span v-if="!record._hover">已订阅</span>
                                 <span v-else class="subscribe-btn-hover">再次订阅</span>
@@ -138,7 +136,7 @@
 <script setup>
 import { ref, watch, computed } from 'vue';
 import { message as Message } from 'ant-design-vue';
-import { Table as ATable, Tag as ATag, Popover as APopover, Space as ASpace, Button as AButton, Modal as AModal, Descriptions as ADescriptions, DescriptionsItem as ADescriptionsItem, Segmented as ASegmented, Spin as ASpin } from 'ant-design-vue';
+import { Table as ATable, Tag as ATag, Popover as APopover, Space as ASpace, Modal as AModal, Descriptions as ADescriptions, DescriptionsItem as ADescriptionsItem, Segmented as ASegmented, Spin as ASpin } from 'ant-design-vue';
 import { ReloadOutlined } from '@ant-design/icons-vue';
 import ReadmeViewer from '../ReadmeViewer.vue';
 import { useClipboard } from '@vueuse/core';
@@ -291,9 +289,9 @@ function getTagColor(tag) {
   return tagColorMap.value[tag];
 }
 
-const handleSubscribe = () => {
-  if (props.script) {
-    downloadScript({ name: props.script.title, path: props.script.path });
+const handleSubscribe = (item) => {
+  if (item.path) {
+    downloadScript(item);
   }
 };
 
@@ -764,6 +762,12 @@ function onSubscribeBtnLeave(node) {
 
 .subscribe-btn-hover {
   color: #1677ff;
+}
+
+.subscribed-btn {
+  background: #f6ffed;
+  color: #52c41a;
+  border-color: #52c41a;
 }
 
 .subscribe-btn-bordered {

@@ -38,17 +38,10 @@
       <div class="script-header">
         <span class="script-title">{{ currentMenuTitle }}</span>
         <div class="script-actions" style="position:relative;">
-          <a-button
-            type="primary"
-            class="script-btn script-btn-all"
-            :class="{ 'script-btn-active': scriptTab === 'all' }"
-            @click="onClickShowAll"
-            >全部</a-button>
-          <a-button
-            class="script-btn"
-            :class="{ 'script-btn-active': scriptTab === 'subscribed' }"
-            @click="onClickShowSubscribed"
-            >已订阅</a-button>
+          <a-button type="primary" class="script-btn script-btn-all"
+            :class="{ 'script-btn-active': scriptTab === 'all' }" @click="onClickShowAll">全部</a-button>
+          <a-button class="script-btn" :class="{ 'script-btn-active': scriptTab === 'subscribed' }"
+            @click="onClickShowSubscribed">已订阅</a-button>
           <div v-if="mode === 'web'" class="script-actions-mask">
             <span>仅本地页面可用</span>
           </div>
@@ -64,23 +57,25 @@
       </div>
       <!-- 地图追踪的树状结构 -->
       <div v-if="selectedMenu[0] === '1'" class="script-list">
-        <MapTreeList ref="mapTreeRef" :search-key="search" :repo-data="repoData" :subscribed-paths="subscribedScriptPaths" :show-subscribed-only="scriptTab === 'subscribed'" @select="handleMapSelect"
-          @leaf-count="handleLeafCount" />
+        <MapTreeList ref="mapTreeRef" :search-key="search" :repo-data="repoData"
+          :subscribed-paths="subscribedScriptPaths" :show-subscribed-only="scriptTab === 'subscribed'"
+          @select="handleMapSelect" @leaf-count="handleLeafCount" />
       </div>
       <!-- Javascript脚本列表 -->
       <div v-else-if="selectedMenu[0] === '2'" class="script-list">
-        <ScriptList :search-key="search" :repo-data="repoData" :subscribed-paths="subscribedScriptPaths" :show-subscribed-only="scriptTab === 'subscribed'" ref="scriptListRef" @select="handleScriptSelect"
+        <ScriptList :search-key="search" :repo-data="repoData" :subscribed-paths="subscribedScriptPaths"
+          :show-subscribed-only="scriptTab === 'subscribed'" ref="scriptListRef" @select="handleScriptSelect"
           @script-count="handleScriptCount" />
       </div>
       <!-- 战斗策略列表 -->
       <div v-else-if="selectedMenu[0] === '3'" class="script-list">
-        <CombatStrategyList :search-key="search" :repo-data="repoData" :subscribed-paths="subscribedScriptPaths" :show-subscribed-only="scriptTab === 'subscribed'" ref="combatStrategyRef"
-          @select="handleScriptSelect" />
+        <CombatStrategyList :search-key="search" :repo-data="repoData" :subscribed-paths="subscribedScriptPaths"
+          :show-subscribed-only="scriptTab === 'subscribed'" ref="combatStrategyRef" @select="handleScriptSelect" />
       </div>
       <!-- 七圣召唤策略列表 -->
       <div v-else-if="selectedMenu[0] === '4'" class="script-list">
-        <CardStrategyList :search-key="search" :repo-data="repoData" :subscribed-paths="subscribedScriptPaths" :show-subscribed-only="scriptTab === 'subscribed'" ref="cardStrategyRef"
-          @select="handleScriptSelect" />
+        <CardStrategyList :search-key="search" :repo-data="repoData" :subscribed-paths="subscribedScriptPaths"
+          :show-subscribed-only="scriptTab === 'subscribed'" ref="cardStrategyRef" @select="handleScriptSelect" />
       </div>
     </a-layout-sider>
 
@@ -271,6 +266,16 @@
       :style="{ maxWidth: '900px' }" @cancel="showHelpModal = false">
       <Help />
     </a-modal>
+
+    <!-- 订阅信息获取失败弹窗 -->
+    <a-modal v-model:open="subscribedErrorModalOpen" title="已订阅信息获取失败" :footer="null" centered width="400px"
+      @cancel="subscribedErrorModalOpen = false">
+      <div class="subscribed-error-msg">
+        　　已订阅信息获取失败。<br />
+        　　请检查相关设置：“BetterGI → 设置 → BetterGI Http 服务器设置”，确保该项已开启且端口号设置为 30648。<br />
+        　　完成后请关闭此页面并重启BetterGI再次尝试，仍有问题请联系作者解决。
+      </div>
+    </a-modal>
   </a-layout>
 </template>
 
@@ -339,15 +344,6 @@ function clearReadme404Cache() {
 }
 
 async function getRepoJson() {
-  //这只是一个尝试获取本地配置文件的代码，需开启BGI的http服务才能使用
-  // try {
-  //   const response1 = await fetch('http://localhost:30648/api/config');
-  //   if (!response1.ok) throw new Error('网络请求失败');
-  //   const data = await response1.json();
-  //   console.log('获取到的配置数据:', data);
-  // } catch (err) {
-  //   throw err;
-  // }
   clearReadme404Cache();
   repoError.value = false;
   globalLoading.value = true;
@@ -379,6 +375,8 @@ async function getRepoJson() {
         }
       }
     } else {
+      // 获取订阅信息
+      await fetchSubscribedConfig();
       const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
       const json = await repoWebBridge.GetRepoJson();
       repoData.value = typeof json === 'string' ? JSON.parse(json) : json;
@@ -599,24 +597,36 @@ function getCardCount(repo) {
 }
 
 const subscribedScriptPaths = ref([]);
+// 新增：订阅信息获取失败弹窗控制变量
+const subscribedErrorModalOpen = ref(false);
+// 新增：订阅信息获取失败标志
+const subscribedConfigError = ref(false);
 
+// 只在初始化时获取订阅信息
 async function fetchSubscribedConfig() {
   if (mode !== 'single') return;
+  globalLoading.value = true;
   try {
     const response = await fetch('http://localhost:30648/api/config');
     if (!response.ok) throw new Error('网络请求失败');
     const config = await response.json();
-    // 去重
-    subscribedScriptPaths.value = Array.from(new Set(config.scriptConfig?.subscribedScriptPaths || []));
+    const paths = Array.from(new Set(config.scriptConfig?.subscribedScriptPaths || []));
+    if (!paths.length) {
+      subscribedConfigError.value = true;
+      subscribedScriptPaths.value = [];
+    } else {
+      subscribedScriptPaths.value = paths;
+      subscribedConfigError.value = false;
+    }
   } catch (e) {
+    subscribedConfigError.value = true;
     subscribedScriptPaths.value = [];
-    // 可选：可在此处添加错误提示
   }
+  globalLoading.value = false;
 }
 
 onMounted(() => {
   getRepoJson();
-  fetchSubscribedConfig();
 });
 
 onUnmounted(() => {
@@ -704,8 +714,13 @@ const onClickShowAll = () => {
   scriptTab.value = 'all';
   handleShowAll(); // 预留方法
 };
+// 点击“已订阅”按钮时只根据标志弹窗，不再重新请求
 const onClickShowSubscribed = () => {
   if (mode === 'web') return;
+  if (subscribedConfigError.value) {
+    subscribedErrorModalOpen.value = true;
+    return;
+  }
   scriptTab.value = 'subscribed';
   handleShowSubscribed(); // 预留方法
 };
@@ -1434,7 +1449,7 @@ watch(selectedMenu, () => {
   top: -8px;
   width: calc(100% + 16px);
   height: calc(100% + 16px);
-  background: rgba(255,255,255,0.88);
+  background: rgba(255, 255, 255, 0.88);
   z-index: 2;
   display: flex;
   align-items: center;
@@ -1445,5 +1460,9 @@ watch(selectedMenu, () => {
   pointer-events: all;
   box-sizing: border-box;
   padding: 8px 0;
+}
+
+.subscribed-error-msg {
+  font-size: 15px;
 }
 </style>
