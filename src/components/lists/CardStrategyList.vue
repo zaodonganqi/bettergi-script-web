@@ -52,16 +52,17 @@ const { repoData } = props;
 
 const emit = defineEmits(['select']);
 
-function getTcgStrategiesFromRepo(repo) {
+function getTcgStrategiesFromRepo(repo, subscribedPaths = [], parentSubscribed = false, currentPath = 'tcg') {
   const tcgNode = repo.indexes.find(item => item.name === 'tcg');
   if (!tcgNode || !tcgNode.children) return [];
-  // 递归收集所有叶子节点
   const result = [];
-  function traverse(nodes, currentPath = 'tcg') {
+  function traverse(nodes, parentSubscribed, currentPath) {
     for (let child of nodes) {
+      const selfSubscribed = subscribedPaths.some(sub => `${currentPath}/${child.name}` === sub || `${currentPath}/${child.name}`.startsWith(sub + '/'));
+      const isSubscribed = parentSubscribed || selfSubscribed;
       if (child.children && child.children.length > 0) {
         const childPath = `${currentPath}/${child.name}`;
-        traverse(child.children, childPath);
+        traverse(child.children, isSubscribed, childPath);
       } else {
         if (child.type === 'directory') {
           if (child.description && child.description.includes('~|~')) {
@@ -81,11 +82,14 @@ function getTcgStrategiesFromRepo(repo) {
           authors = [{ name: child.author }];
         }
         child.authors = authors;
-        result.push(child);
+        result.push({
+          ...child,
+          isSubscribed: isSubscribed
+        });
       }
     }
   }
-  traverse(tcgNode.children);
+  traverse(tcgNode.children, parentSubscribed, currentPath);
   return result;
 }
 
@@ -94,7 +98,7 @@ function removeFileSuffix(name) {
 }
 
 const strategies = ref(
-  getTcgStrategiesFromRepo(repoData).map((item, idx) => ({
+  getTcgStrategiesFromRepo(repoData, props.subscribedPaths).map((item, idx) => ({
     id: idx + 1,
     title: removeFileSuffix(item.name),
     name: item.name,
@@ -106,7 +110,8 @@ const strategies = ref(
     unread: false,
     hash: item.hash,
     version: item.version,
-    path: item.fullPath || `tcg/${item.name}`
+    path: item.fullPath || `tcg/${item.name}`,
+    isSubscribed: item.isSubscribed
   }))
 );
 
@@ -116,7 +121,7 @@ watch(
   (newVal) => {
     if (newVal && newVal.indexes) {
       nextTick(() => {
-        strategies.value = getTcgStrategiesFromRepo(newVal).map((item, idx) => ({
+        strategies.value = getTcgStrategiesFromRepo(newVal, props.subscribedPaths).map((item, idx) => ({
           id: idx + 1,
           title: removeFileSuffix(item.name),
           name: item.name,
@@ -128,7 +133,8 @@ watch(
           unread: false,
           hash: item.hash,
           version: item.version,
-          path: item.fullPath || `tcg/${item.name}`
+          path: item.fullPath || `tcg/${item.name}`,
+          isSubscribed: item.isSubscribed
         }));
 
         if (strategies.value.length > 0) {

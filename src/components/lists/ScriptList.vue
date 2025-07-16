@@ -55,24 +55,24 @@ const { repoData } = props;
 
 const emit = defineEmits(['select', 'scriptCount']);
 
-function getJsScriptsFromRepo(repo) {
+function getJsScriptsFromRepo(repo, subscribedPaths = [], parentSubscribed = false, currentPath = 'js') {
   const jsNode = repo.indexes.find(item => item.name === 'js');
   if (!jsNode || !jsNode.children) return [];
 
-  // 递归收集所有叶子节点
   const result = [];
-  function traverse(nodes, currentPath = 'js') {
+  function traverse(nodes, parentSubscribed, currentPath) {
     for (let child of nodes) {
+      const selfSubscribed = subscribedPaths.some(sub => `${currentPath}/${child.name}` === sub || `${currentPath}/${child.name}`.startsWith(sub + '/'));
+      const isSubscribed = parentSubscribed || selfSubscribed;
       if (child.children && child.children.length > 0) {
         const childPath = `${currentPath}/${child.name}`;
-        traverse(child.children, childPath);
+        traverse(child.children, isSubscribed, childPath);
       } else {
         // 应@秋云 需求，改成了第一行name第二行nameSuffix的样式
         let name1 = child.name;
         let name2 = child.name;
         let title = child.name;
         let description = child.description || '';
-
         if (child.type === 'directory' && child.description && child.description.includes('~|~')) {
           const [nameSuffix, newDescription] = child.description.split('~|~');
           name2 = nameSuffix.trim();
@@ -85,25 +85,25 @@ function getJsScriptsFromRepo(repo) {
         } else if (child.author) {
           authors = [{ name: child.author }];
         }
-        child = {
+        result.push({
           ...child,
           name1: name1,
           name2: name2,
           title: title,
           description: description,
           fullPath: `${currentPath}/${child.name}`,
-          authors: authors
-        };
-        result.push(child);
+          authors: authors,
+          isSubscribed: isSubscribed
+        });
       }
     }
   }
-  traverse(jsNode.children);
+  traverse(jsNode.children, parentSubscribed, currentPath);
   return result;
 }
 
 const scripts = ref(
-  getJsScriptsFromRepo(repoData).map((item, idx) => ({
+  getJsScriptsFromRepo(repoData, props.subscribedPaths).map((item, idx) => ({
     id: idx + 1,
     title: item.title,
     name: item.name,
@@ -118,6 +118,7 @@ const scripts = ref(
     hash: item.hash,
     version: item.version,
     path: item.fullPath || `js/${item.name}`,
+    isSubscribed: item.isSubscribed
   }))
 );
 
@@ -127,7 +128,7 @@ watch(
   (newVal) => {
     if (newVal && newVal.indexes) {
       nextTick(() => {
-        scripts.value = getJsScriptsFromRepo(newVal).map((item, idx) => ({
+        scripts.value = getJsScriptsFromRepo(newVal, props.subscribedPaths).map((item, idx) => ({
           id: idx + 1,
           title: item.title,
           name: item.name,
@@ -142,6 +143,7 @@ watch(
           hash: item.hash,
           version: item.version,
           path: item.fullPath || `js/${item.name}`,
+          isSubscribed: item.isSubscribed
         }));
         
         if (scripts.value.length > 0) {

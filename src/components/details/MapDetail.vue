@@ -424,6 +424,7 @@ function onSubscribeBtnLeave(node) {
 .header-left {
   flex: 1;
   min-width: 0;
+  margin-right: 5px;
 }
 
 .header-right {

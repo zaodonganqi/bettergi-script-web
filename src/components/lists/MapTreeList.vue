@@ -222,9 +222,13 @@ function markFilesSubscribed(files, subscribedPaths) {
 }
 
 // 处理节点数据
-const processNode = (node, parentKey = '') => {
+const processNode = (node, parentKey = '', parentSubscribed = false) => {
   const currentKey = parentKey ? `${parentKey}/${node.name}` : node.name;
-  const children = node.children?.map(child => processNode(child, currentKey)) || [];
+  // 先判断自身是否订阅
+  const selfSubscribed = props.subscribedPaths.some(sub => (`pathing/${currentKey}`).startsWith(sub));
+  // 如果父节点已订阅，自己也视为已订阅
+  const isSubscribed = parentSubscribed || selfSubscribed;
+  const children = node.children?.map(child => processNode(child, currentKey, isSubscribed)) || [];
   const iconPath = getIconUrl(currentKey);
 
   let files = [];
@@ -258,7 +262,7 @@ const processNode = (node, parentKey = '') => {
     path: `pathing/${currentKey}`,
     files,
     lastUpdated, // 该目录下所有file的最新更新时间
-    isSubscribed: props.subscribedPaths.some(sub => (`pathing/${currentKey}`).startsWith(sub)),
+    isSubscribed,
   };
 };
 
@@ -290,7 +294,7 @@ const generateTreeData = (data) => {
   if (!data?.indexes) return [];
 
   const mapCategory = data.indexes.find(c => c.name === 'pathing');
-  return mapCategory?.children?.map(node => processNode(node)) || [];
+  return mapCategory?.children?.map(node => processNode(node, '', false)) || [];
 };
 
 // 获取过滤后的树形数据
@@ -298,24 +302,6 @@ const filteredTreeData = computed(() => {
   let tree = treeData.value;
   // 只保留订阅路径中属于pathing/的
   const pathingSubs = props.subscribedPaths.filter(p => p.startsWith('pathing/'));
-
-  const markSubscribed = (nodes, subscribedPaths) => {
-    if (!nodes) return [];
-    return nodes.map(node => {
-      const isSubscribed = subscribedPaths.some(sub => node.path.startsWith(sub));
-      let children = node.children ? markSubscribed(node.children, subscribedPaths) : undefined;
-      // 如果自己已订阅，所有子节点都视为已订阅
-      if (isSubscribed && children) {
-        children = children.map(child => ({ ...child, isSubscribed: true }));
-      }
-      return {
-        ...node,
-        isSubscribed,
-        children
-      };
-    });
-  };
-  tree = markSubscribed(tree, pathingSubs);
 
   if (props.showSubscribedOnly && pathingSubs.length > 0) {
     // 递归保留所有能到达订阅路径的分支
