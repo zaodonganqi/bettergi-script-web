@@ -37,9 +37,21 @@
     <a-layout-sider class="script-sider">
       <div class="script-header">
         <span class="script-title">{{ currentMenuTitle }}</span>
-        <div class="script-actions">
-          <a-button type="primary" class="script-btn script-btn-all">全部</a-button>
-          <a-button class="script-btn">已订阅</a-button>
+        <div class="script-actions" style="position:relative;">
+          <a-button
+            type="primary"
+            class="script-btn script-btn-all"
+            :class="{ 'script-btn-active': scriptTab === 'all' }"
+            @click="onClickShowAll"
+            >全部</a-button>
+          <a-button
+            class="script-btn"
+            :class="{ 'script-btn-active': scriptTab === 'subscribed' }"
+            @click="onClickShowSubscribed"
+            >已订阅</a-button>
+          <div v-if="mode === 'web'" class="script-actions-mask">
+            <span>仅本地页面可用</span>
+          </div>
         </div>
       </div>
       <div class="search-section">
@@ -52,22 +64,22 @@
       </div>
       <!-- 地图追踪的树状结构 -->
       <div v-if="selectedMenu[0] === '1'" class="script-list">
-        <MapTreeList ref="mapTreeRef" :search-key="search" :repo-data="repoData" @select="handleMapSelect"
+        <MapTreeList ref="mapTreeRef" :search-key="search" :repo-data="repoData" :subscribed-paths="subscribedScriptPaths" :show-subscribed-only="scriptTab === 'subscribed'" @select="handleMapSelect"
           @leaf-count="handleLeafCount" />
       </div>
       <!-- Javascript脚本列表 -->
       <div v-else-if="selectedMenu[0] === '2'" class="script-list">
-        <ScriptList :search-key="search" :repo-data="repoData" ref="scriptListRef" @select="handleScriptSelect"
+        <ScriptList :search-key="search" :repo-data="repoData" :subscribed-paths="subscribedScriptPaths" :show-subscribed-only="scriptTab === 'subscribed'" ref="scriptListRef" @select="handleScriptSelect"
           @script-count="handleScriptCount" />
       </div>
       <!-- 战斗策略列表 -->
       <div v-else-if="selectedMenu[0] === '3'" class="script-list">
-        <CombatStrategyList :search-key="search" :repo-data="repoData" ref="combatStrategyRef"
+        <CombatStrategyList :search-key="search" :repo-data="repoData" :subscribed-paths="subscribedScriptPaths" :show-subscribed-only="scriptTab === 'subscribed'" ref="combatStrategyRef"
           @select="handleScriptSelect" />
       </div>
       <!-- 七圣召唤策略列表 -->
       <div v-else-if="selectedMenu[0] === '4'" class="script-list">
-        <CardStrategyList :search-key="search" :repo-data="repoData" ref="cardStrategyRef"
+        <CardStrategyList :search-key="search" :repo-data="repoData" :subscribed-paths="subscribedScriptPaths" :show-subscribed-only="scriptTab === 'subscribed'" ref="cardStrategyRef"
           @select="handleScriptSelect" />
       </div>
     </a-layout-sider>
@@ -586,8 +598,25 @@ function getCardCount(repo) {
   return countLeaf(cardNode?.children);
 }
 
+const subscribedScriptPaths = ref([]);
+
+async function fetchSubscribedConfig() {
+  if (mode !== 'single') return;
+  try {
+    const response = await fetch('http://localhost:30648/api/config');
+    if (!response.ok) throw new Error('网络请求失败');
+    const config = await response.json();
+    // 去重
+    subscribedScriptPaths.value = Array.from(new Set(config.scriptConfig?.subscribedScriptPaths || []));
+  } catch (e) {
+    subscribedScriptPaths.value = [];
+    // 可选：可在此处添加错误提示
+  }
+}
+
 onMounted(() => {
   getRepoJson();
+  fetchSubscribedConfig();
 });
 
 onUnmounted(() => {
@@ -667,6 +696,30 @@ watch(showEggModal, (newVal) => {
 });
 
 const showHelpModal = ref(false);
+
+const scriptTab = ref('all');
+
+const onClickShowAll = () => {
+  if (mode === 'web') return;
+  scriptTab.value = 'all';
+  handleShowAll(); // 预留方法
+};
+const onClickShowSubscribed = () => {
+  if (mode === 'web') return;
+  scriptTab.value = 'subscribed';
+  handleShowSubscribed(); // 预留方法
+};
+
+function handleShowAll() {
+  // 预留：切换到全部脚本
+}
+function handleShowSubscribed() {
+  // 预留：切换到已订阅脚本
+}
+
+watch(selectedMenu, () => {
+  scriptTab.value = 'all';
+});
 
 </script>
 
@@ -845,6 +898,10 @@ const showHelpModal = ref(false);
   padding: 0 12px;
   font-size: 14px;
   border-radius: 4px;
+  background: #fff !important;
+  color: #1677ff !important;
+  border: 1px solid #1677ff !important;
+  transition: background 0.2s, color 0.2s;
 }
 
 .script-btn-all {
@@ -1363,5 +1420,30 @@ const showHelpModal = ref(false);
 .repo-help-btn:hover {
   background: linear-gradient(90deg, #40a9ff 0%, #1890ff 100%);
   box-shadow: 0 4px 16px rgba(24, 144, 255, 0.18);
+}
+
+.script-btn-active {
+  background: #1890ff !important;
+  color: #fff !important;
+  border: 1px solid #1890ff !important;
+}
+
+.script-actions-mask {
+  position: absolute;
+  left: -8px;
+  top: -8px;
+  width: calc(100% + 16px);
+  height: calc(100% + 16px);
+  background: rgba(255,255,255,0.88);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  color: #888;
+  border-radius: 10px;
+  pointer-events: all;
+  box-sizing: border-box;
+  padding: 8px 0;
 }
 </style>

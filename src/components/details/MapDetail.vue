@@ -11,7 +11,8 @@
                   作者：
                   <template v-for="(author, idx) in script.authors" :key="author.name">
                     <template v-if="author.link">
-                      <a :href="author.link" class="author-link" target="_blank" rel="noopener noreferrer">{{ author.name }}</a>
+                      <a :href="author.link" class="author-link" target="_blank" rel="noopener noreferrer">{{
+                        author.name }}</a>
                     </template>
                     <template v-else>
                       <span>{{ author.name }}</span>
@@ -23,10 +24,16 @@
               <span v-else class="detail-author">暂无作者信息</span>
             </div>
             <div class="detail-time">{{ script.type === 'directory' && script.dirLastUpdated ? script.dirLastUpdated :
-              script.time }}</div>
+              script.time
+            }}</div>
           </div>
-          <div class="header-right">
-            <a-button type="primary" @click="handleSubscribe">订阅</a-button>
+          <div class="header-right" style="display: flex; align-items: center; gap: 8px;">
+            <a-button type="primary" :disabled="script.isSubscribed"
+              :style="script.isSubscribed ? 'background: #f6ffed; color: #52c41a; border-color: #52c41a;' : ''">
+              <template v-if="script.isSubscribed">已订阅</template>
+              <template v-else>订阅</template>
+            </a-button>
+            <a-button type="primary" v-if="script.isSubscribed">再次订阅</a-button>
           </div>
         </div>
         <div class="detail-tabs">
@@ -48,14 +55,8 @@
           <transition :name="tabTransitionName">
             <div :key="activeTab" class="tab-content-inner">
               <div v-if="activeTab === 'readme'" class="tab-pane readme-pane">
-                <ReadmeViewer
-                  :key="readmeKey"
-                  :path="script.path"
-                  :desc="script.desc"
-                  @loaded="handleReadmeLoaded"
-                  @error="handleReadmeError"
-                  @hasContent="handleReadmeHasContent"
-                />
+                <ReadmeViewer :key="readmeKey" :path="script.path" :desc="script.desc" @loaded="handleReadmeLoaded"
+                  @error="handleReadmeError" @hasContent="handleReadmeHasContent" />
               </div>
               <div v-else class="tab-pane files-pane">
                 <div class="table-pagination-outer" v-if="script.type === 'directory' && files && files.length > 0">
@@ -76,9 +77,20 @@
                           </div>
                         </template>
                         <template v-else-if="column.key === 'operations'">
-                          <a-space>
-                            <a-button type="primary" size="small" @click="downloadScript(record)">订阅</a-button>
-                            <a-button size="small" @click="showDetails(record)">详情</a-button>
+                          <a-space size="small" wrap>
+                            <a-button class="subscribe-btn-bordered" type="default" size="small"
+                              :disabled="record.isSubscribed && !record._hover"
+                              @mouseenter="onSubscribeBtnHover(record)" @mouseleave="onSubscribeBtnLeave(record)"
+                              @click="(record.isSubscribed && record._hover) || !record.isSubscribed ? downloadScript(record) : null">
+                              <template v-if="record.isSubscribed">
+                                <span v-if="!record._hover">已订阅</span>
+                                <span v-else class="subscribe-btn-hover">再次订阅</span>
+                              </template>
+                              <template v-else>
+                                订阅
+                              </template>
+                            </a-button>
+                            <a-button class="more-detail" size="small" @click="showDetails(record)">详情</a-button>
                           </a-space>
                         </template>
                         <template v-else>
@@ -158,13 +170,25 @@ const onPageSizeChange = (current, size) => {
 
 const tableScrollRef = ref(null);
 
-const columns = [
-  { title: '名称', dataIndex: 'name', width: '30%' },
-  { title: '作者', dataIndex: 'author', width: '10%' },
-  { title: '标签', dataIndex: 'tags', width: '24%' },
-  { title: '更新时间', dataIndex: 'lastUpdated', width: '16%' },
-  { title: '操作', key: 'operations', width: '20%' }
-];
+const columns = computed(() => {
+  if (mode === 'single') {
+    return [
+      { title: '名称', dataIndex: 'name', width: '30%' },
+      { title: '作者', dataIndex: 'author', width: '13%' },
+      { title: '标签', dataIndex: 'tags', width: '24%' },
+      { title: '更新时间', dataIndex: 'lastUpdated', width: '16%' },
+      { title: '操作', key: 'operations', width: '17%' }
+    ]
+  } else {
+    return [
+      { title: '名称', dataIndex: 'name', width: '30%' },
+      { title: '作者', dataIndex: 'author', width: '10%' },
+      { title: '标签', dataIndex: 'tags', width: '24%' },
+      { title: '更新时间', dataIndex: 'lastUpdated', width: '16%' },
+      { title: '操作', key: 'operations', width: '20%' }
+    ]
+  }
+});
 
 // tab切换选项
 const tabOptions = ref([
@@ -237,13 +261,13 @@ const modalOpen = ref(false);
 const modalRecord = ref({});
 
 function showDetails(record) {
-  const fullPath = props.script && props.script.path ? 
-    `${props.script.path}/${record.name}` : 
+  const fullPath = props.script && props.script.path ?
+    `${props.script.path}/${record.name}` :
     record.path || record.name;
-  
-  modalRecord.value = { 
-    ...record, 
-    path: fullPath 
+
+  modalRecord.value = {
+    ...record,
+    path: fullPath
   };
   modalOpen.value = true;
 }
@@ -360,6 +384,13 @@ const retryLoadReadme = () => {
   updateTabLabel();
   readmeKey.value++;
 };
+
+function onSubscribeBtnHover(node) {
+  node._hover = true;
+}
+function onSubscribeBtnLeave(node) {
+  node._hover = false;
+}
 
 </script>
 
@@ -512,25 +543,31 @@ const retryLoadReadme = () => {
   color: #999;
 }
 
-.slide-left-enter-active, .slide-left-leave-active,
-.slide-right-enter-active, .slide-right-leave-active {
-  transition: all 0.3s cubic-bezier(.55,0,.1,1);
+.slide-left-enter-active,
+.slide-left-leave-active,
+.slide-right-enter-active,
+.slide-right-leave-active {
+  transition: all 0.3s cubic-bezier(.55, 0, .1, 1);
 }
+
 .slide-left-enter-from {
   transform: translateX(100%);
   opacity: 1;
   z-index: 2;
 }
+
 .slide-left-leave-to {
   transform: translateX(-100%);
   opacity: 1;
   z-index: 1;
 }
+
 .slide-right-enter-from {
   transform: translateX(-100%);
   opacity: 1;
   z-index: 2;
 }
+
 .slide-right-leave-to {
   transform: translateX(100%);
   opacity: 1;
@@ -576,14 +613,14 @@ const retryLoadReadme = () => {
 
 :deep(.ant-table-thead > tr > th),
 :deep(.ant-table-tbody > tr > td) {
-  border: 1px solid #d9d9d9 !important;
+  border: 1px solid #c5c5c5 !important;
   word-break: break-all;
   white-space: normal;
   text-align: left;
 }
 
 :deep(.ant-table-thead > tr > th) {
-  background: #e6f4ff;
+  background: #f2f3f5;
 }
 
 .comment-float-btn {
@@ -603,10 +640,12 @@ const retryLoadReadme = () => {
   border: none;
   transition: background 0.2s, color 0.2s;
 }
+
 .comment-float-btn:hover {
   background: #1677ff;
   color: #fff;
 }
+
 .comment-round-btn {
   border-radius: 24px !important;
 }
@@ -641,22 +680,26 @@ const retryLoadReadme = () => {
   overflow: hidden;
   flex: 1;
 }
+
 .table-scroll-container {
   flex: 1 1 auto;
   min-height: 0;
   overflow-x: hidden;
   overflow-y: auto;
 }
+
 .tags-container {
   display: flex;
   flex-wrap: wrap;
   gap: 2px;
 }
+
 .tag-item {
   margin-bottom: 3px;
   word-break: break-word;
   white-space: normal;
 }
+
 .custom-pagination {
   flex-shrink: 0;
   display: flex;
@@ -667,15 +710,18 @@ const retryLoadReadme = () => {
   margin-top: 10px;
   padding: 6px 12px 0 0;
 }
+
 .ant-table-cell {
   word-break: break-all !important;
   white-space: normal !important;
   vertical-align: top !important;
 }
-.ant-table-thead > tr > th {
+
+.ant-table-thead>tr>th {
   word-break: break-all !important;
   white-space: normal !important;
 }
+
 .detail-empty {
   display: flex;
   justify-content: center;
@@ -685,9 +731,56 @@ const retryLoadReadme = () => {
   text-align: center;
   margin-top: 80px;
 }
+
 .author-link {
   text-decoration: underline;
   color: #1890ff;
   cursor: pointer;
+}
+
+.a-button[disabled],
+.subscribe-btn[disabled] {
+  background: #f6ffed !important;
+  color: #52c41a !important;
+  border-color: #52c41a !important;
+  cursor: default !important;
+}
+
+:deep(.ant-table-cell.operations-cell) {
+  white-space: nowrap;
+}
+
+.subscribe-btn {
+  color: #1677ff;
+  background: none;
+  border: none;
+  width: 72px;
+  text-align: center;
+}
+
+.subscribe-btn[disabled] {
+  color: #52c41a !important;
+}
+
+.subscribe-btn-hover {
+  color: #1677ff;
+}
+
+.subscribe-btn-bordered {
+  color: #1677ff;
+  border: 1px solid #1677ff;
+  background: #fff;
+  width: 72px;
+  text-align: center;
+}
+
+.subscribe-btn-bordered[disabled] {
+  color: #52c41a !important;
+  border-color: #52c41a !important;
+  background: #fff !important;
+}
+
+.more-detail {
+  width: 72px;
 }
 </style>

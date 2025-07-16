@@ -38,6 +38,14 @@ const props = defineProps({
     type: Object,
     required: true,
     default: null
+  },
+  subscribedPaths: {
+    type: Array,
+    default: () => []
+  },
+  showSubscribedOnly: {
+    type: Boolean,
+    default: false
   }
 });
 const { repoData } = props;
@@ -144,10 +152,14 @@ const selectStrategy = (id) => {
 };
 
 const filteredStrategies = computed(() => {
-  if (!props.searchKey) return strategies.value;
-
+  let baseList = strategies.value;
+  if (props.showSubscribedOnly && props.subscribedPaths.length > 0) {
+    // 只保留能在subscribedPaths找到的策略
+    baseList = baseList.filter(strategy => props.subscribedPaths.includes(strategy.path));
+  }
+  if (!props.searchKey) return baseList;
   const searchLower = props.searchKey.toLowerCase();
-  return strategies.value.filter(strategy => {
+  return baseList.filter(strategy => {
     return (
       strategy.title.toLowerCase().includes(searchLower) ||
       strategy.author.toLowerCase().includes(searchLower) ||

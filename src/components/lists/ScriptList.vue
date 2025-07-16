@@ -41,6 +41,14 @@ const props = defineProps({
     type: Object,
     required: true,
     default: null
+  },
+  subscribedPaths: {
+    type: Array,
+    default: () => []
+  },
+  showSubscribedOnly: {
+    type: Boolean,
+    default: false
   }
 });
 const { repoData } = props;
@@ -157,10 +165,14 @@ const selectScript = (id) => {
 };
 
 const filteredScripts = computed(() => {
-  if (!props.searchKey) return scripts.value;
-
+  let baseList = scripts.value;
+  if (props.showSubscribedOnly && props.subscribedPaths.length > 0) {
+    // 只保留能在subscribedPaths找到的脚本
+    baseList = baseList.filter(script => props.subscribedPaths.includes(script.path));
+  }
+  if (!props.searchKey) return baseList;
   const searchLower = props.searchKey.toLowerCase();
-  return scripts.value.filter(script => {
+  return baseList.filter(script => {
     return (
       script.title.toLowerCase().includes(searchLower) ||
       script.author.toLowerCase().includes(searchLower) ||

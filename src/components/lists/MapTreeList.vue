@@ -14,10 +14,17 @@
           <div class="tree-node-title">
             <a-image v-if="dataRef.showIcon" :src="dataRef.icon" :width="22" :placeholder="false"
               @error="dataRef.showIcon = false" />
-            <span>{{ title }}</span>
+            <span>
+              {{ title }}<span v-if="dataRef.isSubscribed"> （已订阅）</span>
+            </span>
           </div>
-          <a-button class="subscribe-btn" type="text" size="small" @click.stop="handleSubscribe(dataRef)">
-            订阅
+          <a-button
+            class="subscribe-btn"
+            type="text"
+            size="small"
+            @click.stop="handleSubscribe(dataRef)"
+          >
+            {{ dataRef.isSubscribed ? '再次订阅' : '订阅' }}
           </a-button>
         </div>
       </template>
@@ -41,6 +48,14 @@ const props = defineProps({
     type: Object,
     required: true,
     default: null
+  },
+  subscribedPaths: {
+    type: Array,
+    default: () => []
+  },
+  showSubscribedOnly: {
+    type: Boolean,
+    default: false
   }
 });
 const { repoData } = props;
@@ -50,6 +65,20 @@ const emit = defineEmits(['select', 'leafCount']);
 const expandedKeys = ref([]);
 const selectedKeys = ref([]);
 const treeData = ref([]);
+
+onMounted(() => {
+  treeData.value = generateTreeData(props.repoData);
+});
+
+watch(() => props.repoData, (val) => {
+  treeData.value = generateTreeData(val);
+});
+
+// 监听 showSubscribedOnly 变化，重置树展开状态
+watch(() => props.showSubscribedOnly, () => {
+  expandedKeys.value = [];
+  selectedKeys.value = [];
+});
 
 // 判断节点是否有可展开的子节点（只允许有子目录的节点可展开，若children全为file则不可展开）
 const hasExpandableChildren = (dataRef) => {
@@ -61,7 +90,7 @@ const hasExpandableChildren = (dataRef) => {
 // 处理节点展开
 const handleExpand = (keys) => {
   expandedKeys.value = keys.filter(key => {
-    const node = findNodeByKey(treeData.value, key);
+    const node = findNodeByKey(filteredTreeData.value, key);
     return hasExpandableChildren(node);
   });
 };
@@ -70,25 +99,10 @@ const handleExpand = (keys) => {
 const handleSelect = (selectedKeysList) => {
   if (selectedKeysList.length === 0) return;
 
-  const selectedNode = findNodeByKey(treeData.value, selectedKeysList[0]);
+  const selectedNode = findNodeByKey(filteredTreeData.value, selectedKeysList[0]);
   if (!selectedNode) return;
 
-  emit('select', {
-    id: selectedNode.key,
-    title: selectedNode.title,
-    name: selectedNode.name,
-    type: selectedNode.type,
-    hash: selectedNode.hash,
-    version: selectedNode.version,
-    author: selectedNode.author || '',
-    authors: selectedNode.authors || [],
-    description: selectedNode.description || '',
-    tags: selectedNode.tags || [],
-    lastUpdated: selectedNode.lastUpdated || '',
-    path: selectedNode.path || '',
-    files: selectedNode.files || [],
-    dirLastUpdated: selectedNode.lastUpdated || '',
-  });
+  emit('select', selectedNode);
   selectedKeys.value = selectedNode.key ? [selectedNode.key] : [];
   console.log("已选择节点", selectedNode);
 };
@@ -199,6 +213,15 @@ function collectAuthors(node) {
   return [];
 }
 
+// 递归给 files 节点赋 isSubscribed 字段
+function markFilesSubscribed(files, subscribedPaths) {
+  if (!Array.isArray(files)) return [];
+  return files.map(file => ({
+    ...file,
+    isSubscribed: subscribedPaths.some(sub => file.path && file.path.startsWith(sub))
+  }));
+}
+
 // 处理节点数据
 const processNode = (node, parentKey = '') => {
   const currentKey = parentKey ? `${parentKey}/${node.name}` : node.name;
@@ -209,6 +232,7 @@ const processNode = (node, parentKey = '') => {
   let lastUpdated = '';
   if (node.type === 'directory') {
     files = collectFiles(node, parentKey); // 传 parentKey 递归补全 path
+    files = markFilesSubscribed(files, props.subscribedPaths); // 递归赋 isSubscribed
     // 取最新更新时间
     lastUpdated = files.reduce((latest, f) => {
       return (!latest || new Date(f.lastUpdated) > new Date(latest)) ? f.lastUpdated : latest;
@@ -234,8 +258,9 @@ const processNode = (node, parentKey = '') => {
     icon: iconPath,
     showIcon: node.showIcon || false,
     path: `pathing/${currentKey}`,
-    files, // 该目录下所有file节点
+    files, // 该目录下所有file节点，已递归赋 isSubscribed
     lastUpdated, // 该目录下所有file的最新更新时间
+    isSubscribed: props.subscribedPaths.some(sub => (`pathing/${currentKey}`).startsWith(sub)),
   };
 };
 
@@ -271,9 +296,53 @@ const generateTreeData = (data) => {
 };
 
 // 获取过滤后的树形数据
-const filteredTreeData = computed(() =>
-  filterTreeNodes(treeData.value, props.searchKey)
-);
+const filteredTreeData = computed(() => {
+  let tree = treeData.value;
+  // 只保留订阅路径中属于pathing/的
+  const pathingSubs = props.subscribedPaths.filter(p => p.startsWith('pathing/'));
+
+  // 递归为每个节点打上isSubscribed字段
+  const markSubscribed = (nodes, subscribedPaths) => {
+    if (!nodes) return [];
+    return nodes.map(node => {
+      const isSubscribed = subscribedPaths.some(sub => node.path.startsWith(sub));
+      let children = node.children ? markSubscribed(node.children, subscribedPaths) : undefined;
+      // 如果自己已订阅，所有子节点都视为已订阅
+      if (isSubscribed && children) {
+        children = children.map(child => ({ ...child, isSubscribed: true }));
+      }
+      return {
+        ...node,
+        isSubscribed,
+        children
+      };
+    });
+  };
+  tree = markSubscribed(tree, pathingSubs);
+
+  if (props.showSubscribedOnly && pathingSubs.length > 0) {
+    // 递归保留所有能到达订阅路径的分支
+    const filterTreeBySubscribedPaths = (nodes, subscribedPaths) => {
+      if (!nodes) return [];
+      return nodes.map(node => {
+        if (subscribedPaths.some(sub => node.path.startsWith(sub))) {
+          return node;
+        }
+        if (node.children) {
+          const filteredChildren = filterTreeBySubscribedPaths(node.children, subscribedPaths);
+          if (filteredChildren.length > 0) {
+            return { ...node, children: filteredChildren };
+          }
+        }
+        return null;
+      }).filter(Boolean);
+    };
+    tree = filterTreeBySubscribedPaths(tree, pathingSubs);
+  }
+  return tree;
+});
+
+// 移除自动展开根节点的watch
 
 const updateExpandedKeysForSearch = (newSearchKey) => {
   if (!newSearchKey) {
@@ -298,7 +367,7 @@ const updateExpandedKeysForSearch = (newSearchKey) => {
       }
     }
   };
-  findPaths(treeData.value, []);
+  findPaths(filteredTreeData.value, []);
   expandedKeys.value = [...newExpandedKeys];
 }
 
@@ -309,24 +378,16 @@ watch(
   }
 );
 
-// 监听 repoData 变化，重新处理 treeData
-watch(
-  () => props.repoData,
-  (newVal) => {
-    if (newVal && newVal.indexes) {
-      treeData.value = generateTreeData(newVal);
-    } else {
-      treeData.value = [];
-    }
-  }
-);
-
-// 初始化
-onMounted(() => {
-  if (repoData) {
-    treeData.value = generateTreeData(repoData);
-  }
+watch(() => props.repoData, (val) => {
 });
+
+// 移除对repoData的watch和onMounted
+function onSubscribeBtnHover(node) {
+  node._hover = true;
+}
+function onSubscribeBtnLeave(node) {
+  node._hover = false;
+}
 </script>
 
 <style scoped>
@@ -354,7 +415,7 @@ onMounted(() => {
 
 .tree-node-title {
   flex: 1;
-  padding-right: 40px;
+  padding-right: 62px;
 }
 
 .subscribe-btn {
@@ -362,7 +423,15 @@ onMounted(() => {
   right: 0;
   top: 50%;
   transform: translateY(-50%);
-  color: #3370ff;
+  color: #1677ff;
+  background: none;
+  border: none;
+  width: 72px;
+  text-align: center;
+}
+
+.subscribed-tag {
+  color: #52c41a;
 }
 
 :deep(.ant-tree) {
@@ -378,5 +447,12 @@ onMounted(() => {
 :deep(.ant-tree-node-content-wrapper) {
   width: 100%;
   transition: all 0.2s ease;
+}
+
+.subscribe-btn[disabled] {
+  background: #f6ffed !important;
+  color: #52c41a !important;
+  border-color: #52c41a !important;
+  cursor: default !important;
 }
 </style>
