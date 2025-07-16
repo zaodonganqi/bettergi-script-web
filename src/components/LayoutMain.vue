@@ -375,7 +375,7 @@ async function getRepoJson() {
         }
       }
     } else {
-      // 获取订阅信息
+      // 先获取订阅信息
       await fetchSubscribedConfig();
       const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
       const json = await repoWebBridge.GetRepoJson();
@@ -622,7 +622,6 @@ async function fetchSubscribedConfig() {
     subscribedConfigError.value = true;
     subscribedScriptPaths.value = [];
   }
-  globalLoading.value = false;
 }
 
 onMounted(() => {
