@@ -6,8 +6,9 @@
           <div class="item-header">
             <div class="item-title-wrap">
               <span class="item-title-main">{{ item.name1 }}</span>
-              <span v-if="item.name1 !== item.name2" class="item-title-sub">{{ item.name2 }}</span>
+              <span v-if="item.isSubscribed" class="subscribed-badge">已订阅</span>
             </div>
+            <span v-if="item.name1 !== item.name2" class="item-title-main">{{ item.name2 }}</span>
             <span v-if="item.unread" class="item-dot"></span>
           </div>
           <div class="item-author">
@@ -145,7 +146,7 @@ watch(
           path: item.fullPath || `js/${item.name}`,
           isSubscribed: item.isSubscribed
         }));
-        
+
         if (scripts.value.length > 0) {
           const prevSelected = selectedId.value;
           const stillExists = scripts.value.some(s => s.id === prevSelected);
@@ -227,27 +228,41 @@ defineExpose({
 
 .item-header {
   display: flex;
-  align-items: center;
-  margin-bottom: 2px;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
 }
-
 .item-title-wrap {
   display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-width: 0;
+  align-items: baseline;
+  width: 100%;
+  white-space: nowrap;
   margin-right: 8px;
+  position: relative;
 }
-
-.item-title-main,
-.item-title-sub {
-  font-size: 15px;
+.item-title-main {
+  flex: 1 1 0%;
+  min-width: 0;
+  font-size: 16px;
   font-weight: 700;
   color: #222;
   line-height: 1.4;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.subscribed-badge {
+  display: inline-block;
+  margin-left: 4px;
+  transform: translateY(-2px);
+  background: #f0f0f0;
+  color: #777;
+  font-size: 10px;
+  padding: 1px 3px;
+  border-radius: 8px;
+  border: 1px solid #777;
+  vertical-align: middle;
 }
 
 .item-dot {
@@ -293,4 +308,5 @@ defineExpose({
   font-size: 12px;
   margin-top: 2px;
 }
+
 </style>

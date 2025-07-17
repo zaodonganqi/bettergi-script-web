@@ -38,7 +38,7 @@
       <div class="script-header">
         <span class="script-title">{{ currentMenuTitle }}</span>
         <div class="script-actions" style="position:relative;">
-          <a-button type="primary" class="script-btn script-btn-all"
+          <a-button type="primary" class="script-btn"
             :class="{ 'script-btn-active': scriptTab === 'all' }" @click="onClickShowAll">全部</a-button>
           <a-button class="script-btn" :class="{ 'script-btn-active': scriptTab === 'subscribed' }"
             @click="onClickShowSubscribed">已订阅</a-button>
@@ -597,9 +597,9 @@ function getCardCount(repo) {
 }
 
 const subscribedScriptPaths = ref([]);
-// 新增：订阅信息获取失败弹窗控制变量
+// 订阅信息获取失败弹窗控制变量
 const subscribedErrorModalOpen = ref(false);
-// 新增：订阅信息获取失败标志
+// 订阅信息获取失败标志
 const subscribedConfigError = ref(false);
 
 // 只在初始化时获取订阅信息
@@ -918,10 +918,6 @@ watch(selectedMenu, () => {
   transition: background 0.2s, color 0.2s;
 }
 
-.script-btn-all {
-  border: none !important;
-}
-
 .search-section {
   height: 60px;
   padding-top: 10px;
@@ -983,7 +979,7 @@ watch(selectedMenu, () => {
 .action-btn {
   color: #444;
   border: none;
-  padding: 4px 8px;
+  padding: 2px 4px;
   border-radius: 4px;
   transition: all 0.2s;
 }
