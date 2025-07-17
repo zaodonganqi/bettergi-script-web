@@ -402,7 +402,7 @@ watch(
 }
 
 .subscribed-tag {
-  color: #52c41a;
+  color: #1677ff;
 }
 
 :deep(.ant-tree) {
@@ -421,9 +421,9 @@ watch(
 }
 
 .subscribe-btn[disabled] {
-  background: #f6ffed !important;
-  color: #52c41a !important;
-  border-color: #52c41a !important;
+  background: #fff !important;
+  color: #1677ff !important;
+  border-color: #1677ff !important;
   cursor: default !important;
 }
 </style>

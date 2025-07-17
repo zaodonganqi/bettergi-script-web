@@ -272,7 +272,7 @@
       @cancel="subscribedErrorModalOpen = false">
       <div class="subscribed-error-msg">
         　　已订阅信息获取失败。<br />
-        　　请检查相关设置：“BetterGI → 设置 → BetterGI Http 服务器设置”，确保该项已开启且端口号设置为 30648。<br />
+        　　请检查相关设置：“BetterGI → 设置 → BetterGI Http 服务器设置”（如未找到该设置，请确保BGI已更新至最新版），确保该项已开启且端口号设置为30648。<br />
         　　完成后请关闭此页面并重启BetterGI再次尝试，仍有问题请联系作者解决。
       </div>
     </a-modal>
@@ -1226,7 +1226,7 @@ watch(selectedMenu, () => {
 }
 
 .author-link {
-  color: #1890ff;
+  color: #1677ff;
   text-decoration: none;
 }
 
@@ -1320,7 +1320,7 @@ watch(selectedMenu, () => {
 }
 
 .notice-btn {
-  background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
+  background: linear-gradient(135deg, #1677ff 0%, #096dd9 100%);
   color: #fff;
   border: none;
   border-radius: 8px;
@@ -1416,7 +1416,7 @@ watch(selectedMenu, () => {
 }
 
 .repo-help-btn {
-  background: linear-gradient(90deg, #1890ff 0%, #40a9ff 100%);
+  background: linear-gradient(90deg, #1677ff 0%, #40a9ff 100%);
   color: #fff;
   border: none;
   border-radius: 6px;
@@ -1428,14 +1428,14 @@ watch(selectedMenu, () => {
 }
 
 .repo-help-btn:hover {
-  background: linear-gradient(90deg, #40a9ff 0%, #1890ff 100%);
+  background: linear-gradient(90deg, #40a9ff 0%, #1677ff 100%);
   box-shadow: 0 4px 16px rgba(24, 144, 255, 0.18);
 }
 
 .script-btn-active {
-  background: #1890ff !important;
+  background: #1677ff !important;
   color: #fff !important;
-  border: 1px solid #1890ff !important;
+  border: 1px solid #1677ff !important;
 }
 
 .script-actions-mask {

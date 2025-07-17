@@ -196,9 +196,9 @@ watch(() => props.script, (newScript) => {
 }
 
 .subscribed-btn {
-  background: #f6ffed;
-  color: #52c41a;
-  border-color: #52c41a;
+  background: #fff;
+  color: #1677ff;
+  border-color: #1677ff;
 }
 
 .detail-title {
@@ -295,7 +295,7 @@ watch(() => props.script, (newScript) => {
 
 .author-link {
   text-decoration: underline;
-  color: #1890ff;
+  color: #1677ff;
   cursor: pointer;
 }
 
@@ -308,9 +308,9 @@ watch(() => props.script, (newScript) => {
 }
 
 .subscribe-btn.subscribed {
-  color: #52c41a !important;
-  background: #f6ffed !important;
-  border: 1px solid #52c41a !important;
+  color: #1677ff !important;
+  background: #fff !important;
+  border: 1px solid #1677ff !important;
 }
 
 .subscribe-btn:hover {

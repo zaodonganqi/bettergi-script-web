@@ -740,8 +740,8 @@ function onSubscribeBtnLeave(node) {
 .a-button[disabled],
 .subscribe-btn[disabled] {
   background: #f6ffed !important;
-  color: #52c41a !important;
-  border-color: #52c41a !important;
+  color: #1677ff !important;
+  border-color: #1677ff !important;
   cursor: default !important;
 }
 
@@ -758,7 +758,7 @@ function onSubscribeBtnLeave(node) {
 }
 
 .subscribe-btn[disabled] {
-  color: #52c41a !important;
+  color: #1677ff !important;
 }
 
 .subscribe-btn-hover {
@@ -766,9 +766,9 @@ function onSubscribeBtnLeave(node) {
 }
 
 .subscribed-btn {
-  background: #f6ffed;
-  color: #52c41a;
-  border-color: #52c41a;
+  background: #fff;
+  color: #1677ff;
+  border-color: #1677ff;
 }
 
 .subscribe-btn-bordered {
@@ -780,8 +780,8 @@ function onSubscribeBtnLeave(node) {
 }
 
 .subscribe-btn-bordered[disabled] {
-  color: #52c41a !important;
-  border-color: #52c41a !important;
+  color: #1677ff !important;
+  border-color: #1677ff !important;
   background: #fff !important;
 }
 

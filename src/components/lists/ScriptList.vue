@@ -256,12 +256,12 @@ defineExpose({
   display: inline-block;
   margin-left: 4px;
   transform: translateY(-2px);
-  background: #f0f0f0;
-  color: #777;
+  background: #fff;
+  color: #1677ff;
   font-size: 10px;
   padding: 1px 3px;
   border-radius: 8px;
-  border: 1px solid #777;
+  border: 1px solid #1677ff;
   vertical-align: middle;
 }
 
