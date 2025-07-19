@@ -9,12 +9,14 @@ export default defineConfig({
         vue(),
         viteSingleFile()
     ],
+    base: process.env.NODE_ENV === 'production' ? '/bettergi-script-web-new/' : '/bettergi-script-web-new/',
     resolve: {
         alias: {
             '@': fileURLToPath(new URL('./src', import.meta.url))
         },
     },
     build: {
+        outDir: 'dist',
         target: 'esnext',
         assetsInlineLimit: 100000000,
         chunkSizeWarningLimit: 100000000,
