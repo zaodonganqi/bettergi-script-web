@@ -211,6 +211,7 @@ watch(() => props.script, (newScript) => {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-shrink: 0;
 }
 
 .header-left {
@@ -220,8 +221,8 @@ watch(() => props.script, (newScript) => {
 }
 
 .header-right {
-  flex-shrink: 0;
-  margin-left: 16px;
+  display: flex;
+  gap: 8px;
 }
 
 .subscribed-btn {
@@ -249,8 +250,10 @@ watch(() => props.script, (newScript) => {
 }
 
 .detail-time {
-  color: #888;
+  color: #aaa;
   font-size: 13px;
+  margin-bottom: 10px;
+  word-break: break-word;
 }
 
 .detail-empty {
