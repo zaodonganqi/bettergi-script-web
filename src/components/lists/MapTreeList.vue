@@ -221,31 +221,6 @@ function markFilesSubscribed(files, subscribedPaths) {
   }));
 }
 
-// 格式化时间函数
-const formatTime = (timeString) => {
-  if (!timeString || typeof timeString !== 'string') return '';
-  
-  // 确保时间字符串长度至少为14位
-  if (timeString.length < 14) return '';
-  
-  try {
-    const year = timeString.substring(0, 4);
-    const month = timeString.substring(4, 6);
-    const day = timeString.substring(6, 8);
-    const hour = timeString.substring(8, 10);
-    const minute = timeString.substring(10, 12);
-    const second = timeString.substring(12, 14);
-
-    // 验证时间格式的有效性
-    if (!year || !month || !day || !hour || !minute || !second) return '';
-    
-    return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
-  } catch (error) {
-    console.error('时间格式化错误:', error, timeString);
-    return '';
-  }
-};
-
 // 获取最新更新时间
 const getLatestUpdateTime = (files) => {
   if (!Array.isArray(files) || files.length === 0) return '';
@@ -265,16 +240,15 @@ const processNode = (node, parentKey = '', parentSubscribed = false) => {
   const iconPath = getIconUrl(currentKey);
 
   let files = [];
-  let formattedLastUpdated = '';
+  let lastUpdated = '';
   if (node.type === 'directory') {
     files = collectFiles(node, parentKey);
     files = markFilesSubscribed(files, props.subscribedPaths);
     // 目录显示最新文件时间
-    const latestFileTime = getLatestUpdateTime(files);
-    formattedLastUpdated = formatTime(latestFileTime);
+    lastUpdated = getLatestUpdateTime(files);
   } else if (node.type === 'file') {
     // 文件显示自身时间
-    formattedLastUpdated = formatTime(node.lastUpdated || '');
+    lastUpdated = node.lastUpdated || '';
   }
 
   const authors = collectAuthors(node);
@@ -291,7 +265,7 @@ const processNode = (node, parentKey = '', parentSubscribed = false) => {
     description: node.description || '无',
     tags: node.tags || [],
     time: node.lastUpdated || '',
-    lastUpdated: formattedLastUpdated, // 使用格式化后的时间
+    lastUpdated: lastUpdated,
     rawChildren: node.children || [],
     children,
     icon: iconPath,

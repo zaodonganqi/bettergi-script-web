@@ -206,7 +206,7 @@ watch(() => props.script, (newScript) => {
 
 .detail-header {
   margin-bottom: 8px;
-  padding-bottom: 16px;
+  padding-bottom: 2px;
   border-bottom: 1px solid #ddd;
   display: flex;
   justify-content: space-between;

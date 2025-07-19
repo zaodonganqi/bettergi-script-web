@@ -30,9 +30,20 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Check if gh-pages branch exists
+        id: check-gh-pages
+        run: |
+          if git ls-remote --heads origin gh-pages | grep -q gh-pages; then
+            echo "gh-pages branch exists"
+            echo "gh_pages_exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "gh-pages branch does not exist"
+            echo "gh_pages_exists=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
-        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'  # 仅 main/master 分支部署
+        if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && steps.check-gh-pages.outputs.gh_pages_exists == 'false'
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
