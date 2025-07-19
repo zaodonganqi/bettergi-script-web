@@ -8,7 +8,9 @@
               <span class="item-title-main">{{ item.name1 }}</span>
               <span v-if="item.isSubscribed" class="subscribed-badge">已订阅</span>
             </div>
-            <span v-if="item.name1 !== item.name2" class="item-title-main">{{ item.name2 }}</span>
+            <div v-if="item.name1 !== item.name2" class="item-title-wrap">
+              <span class="item-title-main">{{ item.name2 }}</span>
+            </div>
             <span v-if="item.unread" class="item-dot"></span>
           </div>
           <div class="item-author">

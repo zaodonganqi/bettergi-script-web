@@ -397,11 +397,10 @@ function onSubscribeBtnLeave(node) {
   height: 100%;
   background: #fff;
   position: relative;
-  padding: 16px 36px 16px 36px;
+  padding: 16px 10px 16px 10px;
   display: flex;
   flex-direction: column;
   min-width: 0;
-  overflow: hidden;
 }
 
 .detail-content-wrapper {
@@ -413,7 +412,7 @@ function onSubscribeBtnLeave(node) {
 
 .detail-header {
   margin-bottom: 8px;
-  padding-bottom: 2px;
+  padding: 0px 26px 2px 26px;
   border-bottom: 1px solid #ddd;
   display: flex;
   justify-content: space-between;
@@ -467,6 +466,7 @@ function onSubscribeBtnLeave(node) {
   margin-top: 2px;
   margin-bottom: 10px;
   margin-left: 5px;
+  padding: 0px 10px 0px 10px;
   flex-shrink: 0;
 }
 
@@ -498,13 +498,14 @@ function onSubscribeBtnLeave(node) {
   min-height: 0;
   position: relative;
   overflow: hidden;
-  margin-right: 5px;
+  padding: 0px 16px 0px 10px;
 }
 
 .tab-content-inner {
   width: 100%;
   height: 100%;
   position: absolute;
+  padding: 0px 0px 0px 10px;
   top: 0;
   left: 0;
 }
@@ -523,8 +524,6 @@ function onSubscribeBtnLeave(node) {
 .readme-pane {
   overflow-y: auto;
   padding: 5px;
-  margin-right: 40px;
-  margin-bottom: 10px;
   max-width: 100%;
   overflow-x: hidden;
   position: relative;

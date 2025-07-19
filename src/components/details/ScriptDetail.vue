@@ -169,7 +169,7 @@ watch(() => props.script, (newScript) => {
   height: 100%;
   background: #fff;
   position: relative;
-  padding: 16px 36px 16px 36px;
+  padding: 16px 10px 16px 10px;
   display: flex;
   flex-direction: column;
   min-width: 0;
@@ -177,7 +177,7 @@ watch(() => props.script, (newScript) => {
 
 .detail-header {
   margin-bottom: 8px;
-  padding-bottom: 2px;
+  padding: 0px 26px 2px 26px;
   border-bottom: 1px solid #ddd;
   display: flex;
   justify-content: space-between;
@@ -257,7 +257,7 @@ watch(() => props.script, (newScript) => {
   flex-grow: 1;
   overflow-y: auto;
   min-height: 100px;
-  padding-right: 16px;
+  padding: 0px 16px 0px 10px;
   position: relative;
 }
 
