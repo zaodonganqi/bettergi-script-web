@@ -223,15 +223,27 @@ function markFilesSubscribed(files, subscribedPaths) {
 
 // 格式化时间函数
 const formatTime = (timeString) => {
-  if (!timeString) return '';
-  const year = timeString.substring(0, 4);
-  const month = timeString.substring(4, 6);
-  const day = timeString.substring(6, 8);
-  const hour = timeString.substring(8, 10);
-  const minute = timeString.substring(10, 12);
-  const second = timeString.substring(12, 14);
+  if (!timeString || typeof timeString !== 'string') return '';
+  
+  // 确保时间字符串长度至少为14位
+  if (timeString.length < 14) return '';
+  
+  try {
+    const year = timeString.substring(0, 4);
+    const month = timeString.substring(4, 6);
+    const day = timeString.substring(6, 8);
+    const hour = timeString.substring(8, 10);
+    const minute = timeString.substring(10, 12);
+    const second = timeString.substring(12, 14);
 
-  return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
+    // 验证时间格式的有效性
+    if (!year || !month || !day || !hour || !minute || !second) return '';
+    
+    return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
+  } catch (error) {
+    console.error('时间格式化错误:', error, timeString);
+    return '';
+  }
 };
 
 // 获取最新更新时间
@@ -278,6 +290,7 @@ const processNode = (node, parentKey = '', parentSubscribed = false) => {
     authors: authors,
     description: node.description || '无',
     tags: node.tags || [],
+    time: node.lastUpdated || '',
     lastUpdated: formattedLastUpdated, // 使用格式化后的时间
     rawChildren: node.children || [],
     children,

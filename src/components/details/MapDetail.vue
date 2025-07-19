@@ -23,7 +23,7 @@
               </template>
               <span v-else class="detail-author">暂无作者信息</span>
             </div>
-            <div class="detail-time">{{ script.type === 'directory' && script.dirLastUpdated ? script.dirLastUpdated :
+            <div class="detail-time">{{ script.type === 'directory' && script.lastUpdated ? script.lastUpdated :
               script.time
             }}</div>
           </div>
