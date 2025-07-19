@@ -20,31 +20,20 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'  # 缓存 npm 依赖
+          cache: 'npm'
 
       - name: Clean and install dependencies
         run: |
-          rm -rf node_modules package-lock.json  # 清除可能的缓存问题
-          npm install --force  # 强制安装（修复 Rollup 依赖）
+          rm -rf node_modules package-lock.json
+          npm install --force
 
       - name: Build
         run: npm run build
 
-      - name: Check if gh-pages branch exists
-        id: check-gh-pages
-        run: |
-          if git ls-remote --heads origin gh-pages | grep -q gh-pages; then
-            echo "gh-pages branch exists"
-            echo "gh_pages_exists=true" >> $GITHUB_OUTPUT
-          else
-            echo "gh-pages branch does not exist"
-            echo "gh_pages_exists=false" >> $GITHUB_OUTPUT
-          fi
-
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
-        if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && steps.check-gh-pages.outputs.gh_pages_exists == 'false'
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
-          keep_files: false  # 清空 gh-pages 历史（避免残留文件）
+          keep_files: false
