@@ -2,33 +2,36 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main, master ]  # 触发分支
   pull_request:
-    branches: [ main, master ]
+    branches: [ main, master ] # PR 触发（仅用于测试，不实际部署）
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-      
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20'
-        cache: 'npm'
-        
-    - name: Install dependencies
-      run: npm ci
-      
-    - name: Build
-      run: npm run build
-      
-    - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
-      if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./dist
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'  # 缓存 npm 依赖
+
+      - name: Clean and install dependencies
+        run: |
+          rm -rf node_modules package-lock.json  # 清除可能的缓存问题
+          npm install --force  # 强制安装（修复 Rollup 依赖）
+
+      - name: Build
+        run: npm run build
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'  # 仅 main/master 分支部署
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          keep_files: false  # 清空 gh-pages 历史（避免残留文件）
