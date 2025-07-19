@@ -251,7 +251,6 @@ watch(() => props.script, (newScript) => {
 .detail-time {
   color: #888;
   font-size: 13px;
-  margin-bottom: 10px;
 }
 
 .detail-empty {

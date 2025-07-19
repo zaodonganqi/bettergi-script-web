@@ -221,6 +221,27 @@ function markFilesSubscribed(files, subscribedPaths) {
   }));
 }
 
+// 格式化时间函数
+const formatTime = (timeString) => {
+  if (!timeString) return '';
+  const year = timeString.substring(0, 4);
+  const month = timeString.substring(4, 6);
+  const day = timeString.substring(6, 8);
+  const hour = timeString.substring(8, 10);
+  const minute = timeString.substring(10, 12);
+  const second = timeString.substring(12, 14);
+
+  return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
+};
+
+// 获取最新更新时间
+const getLatestUpdateTime = (files) => {
+  if (!Array.isArray(files) || files.length === 0) return '';
+  return files.reduce((latest, f) => {
+    return (!latest || new Date(f.lastUpdated) > new Date(latest)) ? f.lastUpdated : latest;
+  }, '');
+};
+
 // 处理节点数据
 const processNode = (node, parentKey = '', parentSubscribed = false) => {
   const currentKey = parentKey ? `${parentKey}/${node.name}` : node.name;
@@ -232,13 +253,16 @@ const processNode = (node, parentKey = '', parentSubscribed = false) => {
   const iconPath = getIconUrl(currentKey);
 
   let files = [];
-  let lastUpdated = '';
+  let formattedLastUpdated = '';
   if (node.type === 'directory') {
     files = collectFiles(node, parentKey);
     files = markFilesSubscribed(files, props.subscribedPaths);
-    lastUpdated = files.reduce((latest, f) => {
-      return (!latest || new Date(f.lastUpdated) > new Date(latest)) ? f.lastUpdated : latest;
-    }, '');
+    // 目录显示最新文件时间
+    const latestFileTime = getLatestUpdateTime(files);
+    formattedLastUpdated = formatTime(latestFileTime);
+  } else if (node.type === 'file') {
+    // 文件显示自身时间
+    formattedLastUpdated = formatTime(node.lastUpdated || '');
   }
 
   const authors = collectAuthors(node);
@@ -254,14 +278,13 @@ const processNode = (node, parentKey = '', parentSubscribed = false) => {
     authors: authors,
     description: node.description || '无',
     tags: node.tags || [],
-    lastUpdated: node.lastUpdated || '',
+    lastUpdated: formattedLastUpdated, // 使用格式化后的时间
     rawChildren: node.children || [],
     children,
     icon: iconPath,
     showIcon: node.showIcon || false,
     path: `pathing/${currentKey}`,
     files,
-    lastUpdated, // 该目录下所有file的最新更新时间
     isSubscribed,
   };
 };
