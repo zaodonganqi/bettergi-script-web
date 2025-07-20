@@ -59,7 +59,7 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, watch, inject } from 'vue';
 import { useClipboard } from '@vueuse/core';
 import { message as Message, Spin as ASpin } from 'ant-design-vue';
 import ReadmeViewer from '../ReadmeViewer.vue';
@@ -69,7 +69,8 @@ const props = defineProps({
   script: {
     type: Object,
     default: null
-  }
+  },
+  startPollingUserConfig: Function
 });
 
 const emit = defineEmits([]);
@@ -81,8 +82,6 @@ const { copy } = useClipboard();
 const isLoadingReadme = ref(false);
 const loadError = ref(false);
 const readmeKey = ref(0);
-
-const headerHover = ref(false);
 
 const isReadme404 = (path) => !!localStorage.getItem('readme404:' + path);
 const setReadme404 = (path) => { if (path) localStorage.setItem('readme404:' + path, '1'); };
@@ -112,6 +111,9 @@ const retryLoadReadme = () => {
 const handleSubscribe = (item) => {
   if (item.path) {
     downloadScript(item);
+    if (typeof props.startPollingUserConfig === 'function') {
+      props.startPollingUserConfig();
+    }
   }
 };
 

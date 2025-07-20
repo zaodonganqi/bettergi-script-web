@@ -161,11 +161,14 @@ const selectStrategy = (id) => {
 };
 
 const filteredStrategies = computed(() => {
-  let baseList = strategies.value;
-  if (props.showSubscribedOnly && props.subscribedPaths.length > 0) {
+  if (props.showSubscribedOnly) {
+    if (!props.subscribedPaths || props.subscribedPaths.length === 0) {
+      return [];
+    }
     // 只保留能在subscribedPaths找到的策略
-    baseList = baseList.filter(strategy => props.subscribedPaths.includes(strategy.path));
+    return strategies.value.filter(strategy => props.subscribedPaths.includes(strategy.path));
   }
+  let baseList = strategies.value;
   if (!props.searchKey) return baseList;
   const searchLower = props.searchKey.toLowerCase();
   return baseList.filter(strategy => {

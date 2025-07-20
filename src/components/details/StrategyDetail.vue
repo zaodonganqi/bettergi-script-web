@@ -71,7 +71,8 @@ const props = defineProps({
   script: {
     type: Object,
     default: null
-  }
+  },
+  startPollingUserConfig: Function
 });
 
 const emit = defineEmits([]);
@@ -146,6 +147,9 @@ const retryLoadTxt = () => {
 const handleSubscribe = (item) => {
   if (item.path) {
     downloadScript(item);
+    if (typeof props.startPollingUserConfig === 'function') {
+      props.startPollingUserConfig();
+    }
   }
 };
 

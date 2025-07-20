@@ -57,25 +57,54 @@
       </div>
       <!-- 地图追踪的树状结构 -->
       <div v-if="selectedMenu[0] === '1'" class="script-list">
-        <MapTreeList ref="mapTreeRef" :search-key="search" :repo-data="repoData"
-          :subscribed-paths="subscribedScriptPaths" :show-subscribed-only="scriptTab === 'subscribed'"
-          @select="handleMapSelect" @leaf-count="handleLeafCount" />
+        <MapTreeList
+          :key="listKey"
+          ref="mapTreeRef"
+          :search-key="search"
+          :repo-data="repoData"
+          :subscribed-paths="subscribedScriptPaths"
+          :show-subscribed-only="scriptTab === 'subscribed'"
+          :start-polling-user-config="startPollingUserConfig"
+          @select="handleMapSelect"
+          @leaf-count="handleLeafCount"
+        />
       </div>
       <!-- Javascript脚本列表 -->
       <div v-else-if="selectedMenu[0] === '2'" class="script-list">
-        <ScriptList :search-key="search" :repo-data="repoData" :subscribed-paths="subscribedScriptPaths"
-          :show-subscribed-only="scriptTab === 'subscribed'" ref="scriptListRef" @select="handleScriptSelect"
-          @script-count="handleScriptCount" />
+        <ScriptList
+          :key="listKey"
+          :search-key="search"
+          :repo-data="repoData"
+          :subscribed-paths="subscribedScriptPaths"
+          :show-subscribed-only="scriptTab === 'subscribed'"
+          ref="scriptListRef"
+          @select="handleScriptSelect"
+          @script-count="handleScriptCount"
+        />
       </div>
       <!-- 战斗策略列表 -->
       <div v-else-if="selectedMenu[0] === '3'" class="script-list">
-        <CombatStrategyList :search-key="search" :repo-data="repoData" :subscribed-paths="subscribedScriptPaths"
-          :show-subscribed-only="scriptTab === 'subscribed'" ref="combatStrategyRef" @select="handleScriptSelect" />
+        <CombatStrategyList
+          :key="listKey"
+          :search-key="search"
+          :repo-data="repoData"
+          :subscribed-paths="subscribedScriptPaths"
+          :show-subscribed-only="scriptTab === 'subscribed'"
+          ref="combatStrategyRef"
+          @select="handleScriptSelect"
+        />
       </div>
       <!-- 七圣召唤策略列表 -->
       <div v-else-if="selectedMenu[0] === '4'" class="script-list">
-        <CardStrategyList :search-key="search" :repo-data="repoData" :subscribed-paths="subscribedScriptPaths"
-          :show-subscribed-only="scriptTab === 'subscribed'" ref="cardStrategyRef" @select="handleScriptSelect" />
+        <CardStrategyList
+          :key="listKey"
+          :search-key="search"
+          :repo-data="repoData"
+          :subscribed-paths="subscribedScriptPaths"
+          :show-subscribed-only="scriptTab === 'subscribed'"
+          ref="cardStrategyRef"
+          @select="handleScriptSelect"
+        />
       </div>
     </a-layout-sider>
 
@@ -104,7 +133,7 @@
             </a-tooltip>
           </div>
         </div>
-        <MapDetail :script="selectedScript" />
+        <MapDetail :script="selectedScript" :start-polling-user-config="startPollingUserConfig" />
       </div>
       <div v-else-if="selectedMenu[0] === '2'" class="main-right">
         <!-- 顶部操作栏 -->
@@ -129,7 +158,7 @@
             </a-tooltip>
           </div>
         </div>
-        <ScriptDetail :script="selectedScript" />
+        <ScriptDetail :script="selectedScript" :start-polling-user-config="startPollingUserConfig" />
       </div>
       <div v-else-if="selectedMenu[0] === '3' || selectedMenu[0] === '4'" class="main-right">
         <!-- 顶部操作栏 -->
@@ -154,7 +183,7 @@
             </a-tooltip>
           </div>
         </div>
-        <StrategyDetail :script="selectedScript" />
+        <StrategyDetail :script="selectedScript" :start-polling-user-config="startPollingUserConfig" />
       </div>
     </a-layout>
 
@@ -265,16 +294,6 @@
     <a-modal v-model:open="showHelpModal" title="常见问题 Q&A" :footer="null" centered width="80%"
       :style="{ maxWidth: '900px' }" @cancel="showHelpModal = false">
       <Help />
-    </a-modal>
-
-    <!-- 订阅信息获取失败弹窗 -->
-    <a-modal v-model:open="subscribedErrorModalOpen" title="已订阅信息获取失败" :footer="null" centered width="400px"
-      @cancel="subscribedErrorModalOpen = false">
-      <div class="subscribed-error-msg">
-        　　已订阅信息获取失败。<br />
-        　　请检查相关设置：“BetterGI → 设置 → BetterGI Http 服务器设置”（如未找到该设置，请确保BGI已更新至最新版），确保该项已开启且端口号设置为30648。<br />
-        　　完成后请关闭此页面并重启BetterGI再次尝试，仍有问题请联系作者解决。
-      </div>
     </a-modal>
   </a-layout>
 </template>
@@ -597,19 +616,50 @@ function getCardCount(repo) {
 }
 
 const subscribedScriptPaths = ref([]);
-// 订阅信息获取失败弹窗控制变量
-const subscribedErrorModalOpen = ref(false);
 // 订阅信息获取失败标志
 const subscribedConfigError = ref(false);
 
-// 只在初始化时获取订阅信息
+// 获取订阅信息
 async function fetchSubscribedConfig() {
   if (mode !== 'single') return;
   globalLoading.value = true;
   try {
-    const response = await fetch('http://localhost:30648/api/config');
-    if (!response.ok) throw new Error('网络请求失败');
-    const config = await response.json();
+    const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
+    const json = await repoWebBridge.GetUserConfigJson();
+    let config = {};
+    try {
+      config = typeof json === 'string' ? JSON.parse(json) : json;
+    } catch (e) {
+      config = {};
+    }
+    const paths = Array.from(new Set(config.scriptConfig?.subscribedScriptPaths || []));
+    if (JSON.stringify(paths) !== JSON.stringify(subscribedScriptPaths.value)) {
+      if (!paths.length) {
+        subscribedConfigError.value = true;
+        subscribedScriptPaths.value = [];
+      } else {
+        subscribedScriptPaths.value = paths;
+        subscribedConfigError.value = false;
+      }
+    }
+  } catch (e) {
+    subscribedConfigError.value = true;
+    subscribedScriptPaths.value = [];
+  }
+  globalLoading.value = false;
+}
+
+// 静默刷新已订阅
+async function refreshSubscribedConfigSilently() {
+  try {
+    const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
+    const json = await repoWebBridge.GetUserConfigJson();
+    let config = {};
+    try {
+      config = typeof json === 'string' ? JSON.parse(json) : json;
+    } catch (e) {
+      config = {};
+    }
     const paths = Array.from(new Set(config.scriptConfig?.subscribedScriptPaths || []));
     if (!paths.length) {
       subscribedConfigError.value = true;
@@ -622,6 +672,43 @@ async function fetchSubscribedConfig() {
     subscribedConfigError.value = true;
     subscribedScriptPaths.value = [];
   }
+}
+
+let pollingTimer = null;
+let pollingTimeout = null;
+let lastConfigStr = '';
+
+function startPollingUserConfig() {
+  if (pollingTimer) clearInterval(pollingTimer);
+  if (pollingTimeout) clearTimeout(pollingTimeout);
+
+  lastConfigStr = JSON.stringify(subscribedScriptPaths.value);
+
+  pollingTimer = setInterval(async () => {
+    const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
+    const json = await repoWebBridge.GetUserConfigJson();
+    if (json) {
+      let config = {};
+      try {
+        config = typeof json === 'string' ? JSON.parse(json) : json;
+      } catch (e) {
+        config = {};
+      }
+      const paths = Array.from(new Set(config.scriptConfig?.subscribedScriptPaths || []));
+      const newConfigStr = JSON.stringify(paths);
+      if (newConfigStr !== lastConfigStr) {
+        // config有变化，静默刷新
+        await refreshSubscribedConfigSilently();
+        lastConfigStr = newConfigStr;
+      }
+    }
+  }, 1000);
+
+  pollingTimeout = setTimeout(() => {
+    if (pollingTimer) clearInterval(pollingTimer);
+    pollingTimer = null;
+    pollingTimeout = null;
+  }, 8000);
 }
 
 onMounted(() => {
@@ -711,28 +798,27 @@ const scriptTab = ref('all');
 const onClickShowAll = () => {
   if (mode === 'web') return;
   scriptTab.value = 'all';
-  handleShowAll(); // 预留方法
 };
-// 点击“已订阅”按钮时只根据标志弹窗，不再重新请求
 const onClickShowSubscribed = () => {
   if (mode === 'web') return;
-  if (subscribedConfigError.value) {
-    subscribedErrorModalOpen.value = true;
+  if (subscribedConfigError.value || subscribedScriptPaths.value.length === 0) {
+    scriptTab.value = 'subscribed';
     return;
   }
   scriptTab.value = 'subscribed';
-  handleShowSubscribed(); // 预留方法
 };
-
-function handleShowAll() {
-  // 预留：切换到全部脚本
-}
-function handleShowSubscribed() {
-  // 预留：切换到已订阅脚本
-}
 
 watch(selectedMenu, () => {
   scriptTab.value = 'all';
+});
+
+const listKey = ref(0);
+// 只在 subscribedScriptPaths 变化时刷新 repoData，并在拉到新数据后刷新列表
+watch(subscribedScriptPaths, async () => {
+  if (mode === 'single') {
+    await getRepoJson();
+    listKey.value++;
+  }
 });
 
 </script>

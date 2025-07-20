@@ -33,7 +33,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue';
+import { ref, computed, onMounted, watch, inject } from 'vue';
 import { match } from 'pinyin-pro';
 import { CaretRightOutlined, CaretDownOutlined } from '@ant-design/icons-vue';
 import { useClipboard } from '@vueuse/core';
@@ -56,7 +56,8 @@ const props = defineProps({
   showSubscribedOnly: {
     type: Boolean,
     default: false
-  }
+  },
+  startPollingUserConfig: Function
 });
 const { copy } = useClipboard();
 const mode = import.meta.env.VITE_MODE;
@@ -112,7 +113,10 @@ const handleSubscribe = (nodeData) => {
     Message.error('请选择一个有效的节点进行订阅');
     return;
   }
-  downloadScript(nodeData)
+  downloadScript(nodeData);
+  if (typeof props.startPollingUserConfig === 'function') {
+    props.startPollingUserConfig();
+  }
 };
 
 const downloadScript = async (script) => {
@@ -309,30 +313,34 @@ const generateTreeData = (data) => {
 
 // 获取过滤后的树形数据
 const filteredTreeData = computed(() => {
-  let tree = treeData.value;
-  // 只保留订阅路径中属于pathing/的
-  const pathingSubs = props.subscribedPaths.filter(p => p.startsWith('pathing/'));
+  if (props.showSubscribedOnly) {
+    if (!props.subscribedPaths || props.subscribedPaths.length === 0) {
+      return [];
+    }
+    // 只保留订阅路径下的节点（原有过滤逻辑）
+    const pathingSubs = props.subscribedPaths.filter(p => p.startsWith('pathing/'));
 
-  if (props.showSubscribedOnly && pathingSubs.length > 0) {
-    // 递归保留所有能到达订阅路径的分支
-    const filterTreeBySubscribedPaths = (nodes, subscribedPaths) => {
-      if (!nodes) return [];
-      return nodes.map(node => {
-        if (subscribedPaths.some(sub => node.path.startsWith(sub))) {
-          return node;
-        }
-        if (node.children) {
-          const filteredChildren = filterTreeBySubscribedPaths(node.children, subscribedPaths);
-          if (filteredChildren.length > 0) {
-            return { ...node, children: filteredChildren };
+    if (pathingSubs.length > 0) {
+      // 递归保留所有能到达订阅路径的分支
+      const filterTreeBySubscribedPaths = (nodes, subscribedPaths) => {
+        if (!nodes) return [];
+        return nodes.map(node => {
+          if (subscribedPaths.some(sub => node.path.startsWith(sub))) {
+            return node;
           }
-        }
-        return null;
-      }).filter(Boolean);
-    };
-    tree = filterTreeBySubscribedPaths(tree, pathingSubs);
+          if (node.children) {
+            const filteredChildren = filterTreeBySubscribedPaths(node.children, subscribedPaths);
+            if (filteredChildren.length > 0) {
+              return { ...node, children: filteredChildren };
+            }
+          }
+          return null;
+        }).filter(Boolean);
+      };
+      return filterTreeBySubscribedPaths(treeData.value, pathingSubs);
+    }
   }
-  return tree;
+  return treeData.value;
 });
 
 const updateExpandedKeysForSearch = (newSearchKey) => {

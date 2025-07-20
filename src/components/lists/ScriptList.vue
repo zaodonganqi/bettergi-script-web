@@ -170,11 +170,14 @@ const selectScript = (id) => {
 };
 
 const filteredScripts = computed(() => {
-  let baseList = scripts.value;
-  if (props.showSubscribedOnly && props.subscribedPaths.length > 0) {
+  if (props.showSubscribedOnly) {
+    if (!props.subscribedPaths || props.subscribedPaths.length === 0) {
+      return [];
+    }
     // 只保留能在subscribedPaths找到的脚本
-    baseList = baseList.filter(script => props.subscribedPaths.includes(script.path));
+    return scripts.value.filter(script => props.subscribedPaths.includes(script.path));
   }
+  let baseList = scripts.value;
   if (!props.searchKey) return baseList;
   const searchLower = props.searchKey.toLowerCase();
   return baseList.filter(script => {

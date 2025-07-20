@@ -145,7 +145,8 @@ const props = defineProps({
   script: {
     type: Object,
     default: null
-  }
+  },
+  startPollingUserConfig: Function
 });
 
 const mode = import.meta.env.VITE_MODE;
@@ -292,6 +293,9 @@ function getTagColor(tag) {
 const handleSubscribe = (item) => {
   if (item.path) {
     downloadScript(item);
+    if (typeof props.startPollingUserConfig === 'function') {
+      props.startPollingUserConfig();
+    }
   }
 };
 
