@@ -3,6 +3,7 @@
     "version": "1.0.0",
     "private": true,
     "type": "module",
+    "repository":"https://github.com/zaodonganqi/bettergi-script-web-new",
     "scripts": {
         "dev": "vite",
         "build": "vite build",
