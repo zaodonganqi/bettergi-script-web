@@ -58,11 +58,11 @@
       <!-- 地图追踪的树状结构 -->
       <div v-if="selectedMenu[0] === '1'" class="script-list">
         <MapTreeList
-          ref="mapTreeRef"
           :search-key="search"
           :repo-data="repoData"
           :subscribed-paths="subscribedScriptPaths"
           :show-subscribed-only="scriptTab === 'subscribed'"
+          ref="mapTreeRef"
           :start-polling-user-config="startPollingUserConfig"
           @select="handleMapSelect"
           @leaf-count="handleLeafCount"
@@ -643,17 +643,8 @@ async function fetchSubscribedConfig() {
 }
 
 // 静默刷新已订阅
-async function refreshSubscribedConfigSilently() {
+async function refreshSubscribedConfigSilently(paths) {
   try {
-    const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
-    const json = await repoWebBridge.GetUserConfigJson();
-    let config = {};
-    try {
-      config = typeof json === 'string' ? JSON.parse(json) : json;
-    } catch (e) {
-      config = {};
-    }
-    const paths = Array.from(new Set(config.scriptConfig?.subscribedScriptPaths || []));
     if (!paths.length) {
       subscribedConfigError.value = true;
       subscribedScriptPaths.value = [];
@@ -690,7 +681,7 @@ function startPollingUserConfig() {
       const newConfigStr = JSON.stringify(paths);
       if (newConfigStr !== lastConfigStr) {
         // config有变化，静默刷新
-        await refreshSubscribedConfigSilently();
+        await refreshSubscribedConfigSilently(paths);
         lastConfigStr = newConfigStr;
       }
     }

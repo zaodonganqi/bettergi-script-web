@@ -170,24 +170,35 @@ const selectScript = (id) => {
 };
 
 const filteredScripts = computed(() => {
+  let baseList = scripts.value;
   if (props.showSubscribedOnly) {
     if (!props.subscribedPaths || props.subscribedPaths.length === 0) {
       return [];
     }
-    // 只保留能在subscribedPaths找到的脚本
-    return scripts.value.filter(script => props.subscribedPaths.includes(script.path));
+    baseList = baseList.filter(script => props.subscribedPaths.includes(script.path));
   }
-  let baseList = scripts.value;
   if (!props.searchKey) return baseList;
-  const searchLower = props.searchKey.toLowerCase();
-  return baseList.filter(script => {
-    return (
-      script.title.toLowerCase().includes(searchLower) ||
-      script.author.toLowerCase().includes(searchLower) ||
-      script.desc.toLowerCase().includes(searchLower) ||
-      script.tags.some(tag => tag.toLowerCase().includes(searchLower))
-    );
-  });
+  const keyword = props.searchKey.trim().toLowerCase();
+  // 完全匹配优先
+  const nameMatches = baseList.filter(s => s.title && s.title.toLowerCase() === keyword);
+  if (nameMatches.length) return nameMatches;
+  const authorMatches = baseList.filter(s => (s.author || '').toLowerCase() === keyword);
+  if (authorMatches.length) return authorMatches;
+  const tagMatches = baseList.filter(s => (s.tags || []).some(tag => tag.toLowerCase() === keyword));
+  if (tagMatches.length) return tagMatches;
+  const descMatches = baseList.filter(s => (s.desc || '').toLowerCase() === keyword);
+  if (descMatches.length) return descMatches;
+  // 相关性分数排序
+  const scored = baseList.map(s => {
+    let score = 0;
+    if (s.title && s.title.toLowerCase().includes(keyword)) score += 3;
+    if (s.author && s.author.toLowerCase().includes(keyword)) score += 2;
+    if ((s.tags || []).some(tag => tag.toLowerCase().includes(keyword))) score += 2;
+    if (s.desc && s.desc.toLowerCase().includes(keyword)) score += 1;
+    return { ...s, _score: score };
+  }).filter(s => s._score > 0);
+  scored.sort((a, b) => b._score - a._score);
+  return scored;
 });
 
 const calculateScriptCount = () => {

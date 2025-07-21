@@ -74,6 +74,10 @@ watch(() => props.repoData, (val) => {
   treeData.value = generateTreeData(val);
 });
 
+watch(() => props.subscribedPaths, (newPaths) => {
+  treeData.value = generateTreeData(props.repoData);
+});
+
 // 监听 showSubscribedOnly 变化，重置树展开状态
 watch(() => props.showSubscribedOnly, () => {
   expandedKeys.value = [];
@@ -311,41 +315,192 @@ const generateTreeData = (data) => {
   return mapCategory?.children?.map(node => processNode(node, '', false)) || [];
 };
 
-// 获取过滤后的树形数据
+// 获取匹配数据
 const filteredTreeData = computed(() => {
+  // 只显示已订阅”
   if (props.showSubscribedOnly) {
     if (!props.subscribedPaths || props.subscribedPaths.length === 0) {
       return [];
     }
-    // 只保留订阅路径下的节点（原有过滤逻辑）
     const pathingSubs = props.subscribedPaths.filter(p => p.startsWith('pathing/'));
-
-    if (pathingSubs.length > 0) {
-      // 递归保留所有能到达订阅路径的分支
-      const filterTreeBySubscribedPaths = (nodes, subscribedPaths) => {
-        if (!nodes) return [];
-        return nodes.map(node => {
-          const isSubscribed = subscribedPaths.some(sub => node.path.startsWith(sub));
-          if (isSubscribed) {
-            // 如果节点本身就被订阅，则直接返回，其所有子节点也应保留
-            return {
-              ...node,
-              children: node.children ? filterTreeBySubscribedPaths(node.children, subscribedPaths) : []
-            };
+    function filterTreeBySubscribedPaths(nodes, subscribedPaths) {
+      if (!nodes) return [];
+      return nodes.map(node => {
+        const isSubscribed = subscribedPaths.some(sub => node.path.startsWith(sub));
+        if (isSubscribed) {
+          return {
+            ...node,
+            children: node.children ? filterTreeBySubscribedPaths(node.children, subscribedPaths) : []
+          };
+        }
+        if (node.children) {
+          const filteredChildren = filterTreeBySubscribedPaths(node.children, subscribedPaths);
+          if (filteredChildren.length > 0) {
+            return { ...node, children: filteredChildren };
           }
-          if (node.children) {
-            const filteredChildren = filterTreeBySubscribedPaths(node.children, subscribedPaths);
-            if (filteredChildren.length > 0) {
-              return { ...node, children: filteredChildren };
-            }
+        }
+        return null;
+      }).filter(Boolean);
+    }
+    // 只在已订阅节点中做搜索
+    let baseTree = filterTreeBySubscribedPaths(treeData.value, pathingSubs);
+    if (!props.searchKey) return baseTree;
+    const keyword = props.searchKey.trim().toLowerCase();
+    // 递归过滤并加分
+    function scoreNode(node) {
+      let isExact = false;
+      if (node.title && node.title.toLowerCase() === keyword) isExact = true;
+      if (node.author && node.author.toLowerCase() === keyword) isExact = true;
+      if ((node.tags || []).some(tag => tag.toLowerCase() === keyword)) isExact = true;
+      if (node.description && node.description.toLowerCase() === keyword) isExact = true;
+      let score = 0;
+      if (!isExact) {
+        if (node.title && node.title.toLowerCase().includes(keyword)) score += 3;
+        if (node.author && node.author.toLowerCase().includes(keyword)) score += 2;
+        if ((node.tags || []).some(tag => tag.toLowerCase().includes(keyword))) score += 2;
+        if (node.description && node.description.toLowerCase().includes(keyword)) score += 1;
+      }
+      return { ...node, _isExact: isExact, _score: score };
+    }
+    function filterAndScore(nodes) {
+      let result = [];
+      for (const node of nodes) {
+        if (node.children && node.children.length) {
+          const children = filterAndScore(node.children);
+          if (children.length) {
+            result.push({ ...scoreNode(node), children });
           }
-          return null;
-        }).filter(Boolean);
-      };
-      return filterTreeBySubscribedPaths(treeData.value, pathingSubs);
+        } else {
+          const scored = scoreNode(node);
+          if (scored._isExact || scored._score > 0) {
+            result.push(scored);
+          }
+        }
+      }
+      return result;
+    }
+    let filtered = filterAndScore(baseTree);
+    // 展平所有叶子节点，分为exact和others
+    function flatten(nodes, arr = []) {
+      for (const node of nodes) {
+        if (node.children && node.children.length) {
+          flatten(node.children, arr);
+        } else {
+          arr.push(node);
+        }
+      }
+      return arr;
+    }
+    const allLeaf = flatten(filtered);
+    const exactLeaf = allLeaf.filter(n => n._isExact);
+    const otherLeaf = allLeaf.filter(n => !n._isExact && n._score > 0);
+    otherLeaf.sort((a, b) => (b._score || 0) - (a._score || 0));
+    function filterByLeaf(nodes, leafSet) {
+      let result = [];
+      for (const node of nodes) {
+        if (node.children && node.children.length) {
+          const children = filterByLeaf(node.children, leafSet);
+          if (children.length) {
+            result.push({ ...node, children });
+          }
+        } else if (leafSet.has(node)) {
+          result.push(node);
+        }
+      }
+      return result;
+    }
+    if (exactLeaf.length) {
+      const leafSet = new Set(exactLeaf);
+      return filterByLeaf(filtered, leafSet);
+    } else if (otherLeaf.length) {
+      const leafSet = new Set(otherLeaf);
+      return filterByLeaf(filtered, leafSet);
+    } else {
+      return [];
     }
   }
-  return treeData.value;
+
+  if (!props.searchKey) return treeData.value;
+  const keyword = props.searchKey.trim().toLowerCase();
+
+  // 递归过滤并加分
+  function scoreNode(node) {
+    let isExact = false;
+    if (node.title && node.title.toLowerCase() === keyword) isExact = true;
+    if (node.author && node.author.toLowerCase() === keyword) isExact = true;
+    if ((node.tags || []).some(tag => tag.toLowerCase() === keyword)) isExact = true;
+    if (node.description && node.description.toLowerCase() === keyword) isExact = true;
+    let score = 0;
+    if (!isExact) {
+      if (node.title && node.title.toLowerCase().includes(keyword)) score += 3;
+      if (node.author && node.author.toLowerCase().includes(keyword)) score += 2;
+      if ((node.tags || []).some(tag => tag.toLowerCase().includes(keyword))) score += 2;
+      if (node.description && node.description.toLowerCase().includes(keyword)) score += 1;
+    }
+    return { ...node, _isExact: isExact, _score: score };
+  }
+
+  function filterAndScore(nodes) {
+    let result = [];
+    for (const node of nodes) {
+      if (node.children && node.children.length) {
+        const children = filterAndScore(node.children);
+        if (children.length) {
+          result.push({ ...scoreNode(node), children });
+        }
+      } else {
+        const scored = scoreNode(node);
+        if (scored._isExact || scored._score > 0) {
+          result.push(scored);
+        }
+      }
+    }
+    return result;
+  }
+
+  let filtered = filterAndScore(treeData.value);
+
+  // 展平所有叶子节点，分为exact和others
+  function flatten(nodes, arr = []) {
+    for (const node of nodes) {
+      if (node.children && node.children.length) {
+        flatten(node.children, arr);
+      } else {
+        arr.push(node);
+      }
+    }
+    return arr;
+  }
+  const allLeaf = flatten(filtered);
+  const exactLeaf = allLeaf.filter(n => n._isExact);
+  const otherLeaf = allLeaf.filter(n => !n._isExact && n._score > 0);
+  otherLeaf.sort((a, b) => (b._score || 0) - (a._score || 0));
+
+  // 只保留有相关叶子的分支
+  function filterByLeaf(nodes, leafSet) {
+    let result = [];
+    for (const node of nodes) {
+      if (node.children && node.children.length) {
+        const children = filterByLeaf(node.children, leafSet);
+        if (children.length) {
+          result.push({ ...node, children });
+        }
+      } else if (leafSet.has(node)) {
+        result.push(node);
+      }
+    }
+    return result;
+  }
+
+  if (exactLeaf.length) {
+    const leafSet = new Set(exactLeaf);
+    return filterByLeaf(filtered, leafSet);
+  } else if (otherLeaf.length) {
+    const leafSet = new Set(otherLeaf);
+    return filterByLeaf(filtered, leafSet);
+  } else {
+    return [];
+  }
 });
 
 const updateExpandedKeysForSearch = (newSearchKey) => {
