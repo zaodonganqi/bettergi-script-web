@@ -58,7 +58,6 @@
       <!-- 地图追踪的树状结构 -->
       <div v-if="selectedMenu[0] === '1'" class="script-list">
         <MapTreeList
-          :key="listKey"
           ref="mapTreeRef"
           :search-key="search"
           :repo-data="repoData"
@@ -72,7 +71,6 @@
       <!-- Javascript脚本列表 -->
       <div v-else-if="selectedMenu[0] === '2'" class="script-list">
         <ScriptList
-          :key="listKey"
           :search-key="search"
           :repo-data="repoData"
           :subscribed-paths="subscribedScriptPaths"
@@ -85,7 +83,6 @@
       <!-- 战斗策略列表 -->
       <div v-else-if="selectedMenu[0] === '3'" class="script-list">
         <CombatStrategyList
-          :key="listKey"
           :search-key="search"
           :repo-data="repoData"
           :subscribed-paths="subscribedScriptPaths"
@@ -97,7 +94,6 @@
       <!-- 七圣召唤策略列表 -->
       <div v-else-if="selectedMenu[0] === '4'" class="script-list">
         <CardStrategyList
-          :key="listKey"
           :search-key="search"
           :repo-data="repoData"
           :subscribed-paths="subscribedScriptPaths"
@@ -300,7 +296,7 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
-import { FolderOutlined, FileOutlined, CalculatorOutlined, BulbOutlined, SearchOutlined, ExportOutlined, SettingOutlined, QuestionCircleOutlined, MessageOutlined, LinkOutlined, ReloadOutlined } from '@ant-design/icons-vue';
+import { FolderOutlined, FileOutlined, CalculatorOutlined, BulbOutlined, SearchOutlined, QuestionCircleOutlined, MessageOutlined, LinkOutlined, ReloadOutlined } from '@ant-design/icons-vue';
 import Giscus from '@giscus/vue';
 import MapTreeList from './lists/MapTreeList.vue';
 import ScriptList from './lists/ScriptList.vue';
@@ -622,7 +618,6 @@ const subscribedConfigError = ref(false);
 // 获取订阅信息
 async function fetchSubscribedConfig() {
   if (mode !== 'single') return;
-  globalLoading.value = true;
   try {
     const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
     const json = await repoWebBridge.GetUserConfigJson();
@@ -644,9 +639,7 @@ async function fetchSubscribedConfig() {
     }
   } catch (e) {
     subscribedConfigError.value = true;
-    subscribedScriptPaths.value = [];
   }
-  globalLoading.value = false;
 }
 
 // 静默刷新已订阅
@@ -670,7 +663,6 @@ async function refreshSubscribedConfigSilently() {
     }
   } catch (e) {
     subscribedConfigError.value = true;
-    subscribedScriptPaths.value = [];
   }
 }
 
@@ -812,15 +804,25 @@ watch(selectedMenu, () => {
   scriptTab.value = 'all';
 });
 
-const listKey = ref(0);
-// 只在 subscribedScriptPaths 变化时刷新 repoData，并在拉到新数据后刷新列表
-watch(subscribedScriptPaths, async () => {
-  if (mode === 'single') {
-    await getRepoJson();
-    listKey.value++;
+watch(subscribedScriptPaths, (newPaths) => {
+  if (!selectedScript.value) return;
+
+  if (selectedScript.value.path) {
+    const isSubscribed = newPaths.some(p => selectedScript.value.path === p || selectedScript.value.path.startsWith(p + '/'));
+    if (selectedScript.value.isSubscribed !== isSubscribed) {
+        selectedScript.value.isSubscribed = isSubscribed;
+    }
+  }
+
+  if (selectedScript.value.type === 'directory' && selectedScript.value.files && Array.isArray(selectedScript.value.files)) {
+      selectedScript.value.files.forEach(file => {
+          if (file.path) {
+              const fileIsSubscribed = newPaths.some(p => file.path === p || file.path.startsWith(p + '/'));
+              file.isSubscribed = fileIsSubscribed;
+          }
+      });
   }
 });
-
 </script>
 
 <style scoped>

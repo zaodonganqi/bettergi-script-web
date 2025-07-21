@@ -33,7 +33,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch, inject } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { match } from 'pinyin-pro';
 import { CaretRightOutlined, CaretDownOutlined } from '@ant-design/icons-vue';
 import { useClipboard } from '@vueuse/core';
@@ -325,8 +325,13 @@ const filteredTreeData = computed(() => {
       const filterTreeBySubscribedPaths = (nodes, subscribedPaths) => {
         if (!nodes) return [];
         return nodes.map(node => {
-          if (subscribedPaths.some(sub => node.path.startsWith(sub))) {
-            return node;
+          const isSubscribed = subscribedPaths.some(sub => node.path.startsWith(sub));
+          if (isSubscribed) {
+            // 如果节点本身就被订阅，则直接返回，其所有子节点也应保留
+            return {
+              ...node,
+              children: node.children ? filterTreeBySubscribedPaths(node.children, subscribedPaths) : []
+            };
           }
           if (node.children) {
             const filteredChildren = filterTreeBySubscribedPaths(node.children, subscribedPaths);

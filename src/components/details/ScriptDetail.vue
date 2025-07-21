@@ -59,7 +59,7 @@
 </template>
 
 <script setup>
-import { ref, watch, inject } from 'vue';
+import { ref, watch } from 'vue';
 import { useClipboard } from '@vueuse/core';
 import { message as Message, Spin as ASpin } from 'ant-design-vue';
 import ReadmeViewer from '../ReadmeViewer.vue';
