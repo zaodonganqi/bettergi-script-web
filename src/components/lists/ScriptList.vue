@@ -183,22 +183,21 @@ const filteredScripts = computed(() => {
   }
   if (!props.searchKey) return baseList;
   const keyword = normalize(props.searchKey.trim());
-
   // 完全匹配优先，name1和name2权重一样
   const nameMatches = baseList.filter(s =>
     normalize(s.title) === keyword ||
     normalize(s.name1) === keyword ||
-    normalize(s.name2) === keyword
+    normalize(s.name2) === keyword ||
+    (s.authors && s.authors.some(a => normalize(a.name) === keyword))
   );
   if (nameMatches.length) return nameMatches;
-
   // 相关性分数排序，name1和name2权重一样
   const scored = baseList.map(s => {
     let score = 0;
     if (normalize(s.title).includes(keyword)) score += 3;
     if (normalize(s.name1).includes(keyword)) score += 3;
     if (normalize(s.name2).includes(keyword)) score += 3;
-    if (normalize(s.author).includes(keyword)) score += 2;
+    if (s.authors && s.authors.some(a => normalize(a.name).includes(keyword))) score += 2;
     if ((s.tags || []).some(tag => normalize(tag).includes(keyword))) score += 2;
     if (normalize(s.desc).includes(keyword)) score += 1;
     return { ...s, _score: score };

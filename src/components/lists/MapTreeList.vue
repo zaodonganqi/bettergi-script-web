@@ -315,24 +315,6 @@ const generateTreeData = (data) => {
   return mapCategory?.children?.map(node => processNode(node, '', false)) || [];
 };
 
-function normalize(str) {
-  return (str || '').toLowerCase().replace(/[\s【】\[\]（）()·,，.。!！?？\-_]/g, '');
-}
-
-// 替换原有的scoreNode函数
-function scoreNode(node, keyword) {
-  let isExact = false;
-  if (normalize(node.title) === keyword) isExact = true;
-  let score = 0;
-  if (!isExact) {
-    if (normalize(node.title).includes(keyword)) score += 3;
-    if (normalize(node.author).includes(keyword)) score += 2;
-    if ((node.tags || []).some(tag => normalize(tag).includes(keyword))) score += 2;
-    if (normalize(node.description).includes(keyword)) score += 1;
-  }
-  return { ...node, _isExact: isExact, _score: score };
-}
-
 // 获取匹配数据
 const filteredTreeData = computed(() => {
   // 只显示已订阅”
@@ -363,18 +345,33 @@ const filteredTreeData = computed(() => {
     // 只在已订阅节点中做搜索
     let baseTree = filterTreeBySubscribedPaths(treeData.value, pathingSubs);
     if (!props.searchKey) return baseTree;
-    const keyword = normalize(props.searchKey.trim());
+    const keyword = props.searchKey.trim().toLowerCase();
     // 递归过滤并加分
+    function scoreNode(node) {
+      let isExact = false;
+      if (node.title && node.title.toLowerCase() === keyword) isExact = true;
+      if (node.authors && node.authors.some(a => normalize(a.name) === keyword)) isExact = true;
+      if ((node.tags || []).some(tag => tag.toLowerCase() === keyword)) isExact = true;
+      if (node.description && node.description.toLowerCase() === keyword) isExact = true;
+      let score = 0;
+      if (!isExact) {
+        if (node.title && node.title.toLowerCase().includes(keyword)) score += 3;
+        if (node.authors && node.authors.some(a => normalize(a.name).includes(keyword))) score += 2;
+        if ((node.tags || []).some(tag => tag.toLowerCase().includes(keyword))) score += 2;
+        if (node.description && node.description.toLowerCase().includes(keyword)) score += 1;
+      }
+      return { ...node, _isExact: isExact, _score: score };
+    }
     function filterAndScore(nodes) {
       let result = [];
       for (const node of nodes) {
         if (node.children && node.children.length) {
           const children = filterAndScore(node.children);
           if (children.length) {
-            result.push({ ...scoreNode(node, keyword), children });
+            result.push({ ...scoreNode(node), children });
           }
         } else {
-          const scored = scoreNode(node, keyword);
+          const scored = scoreNode(node);
           if (scored._isExact || scored._score > 0) {
             result.push(scored);
           }
@@ -382,6 +379,22 @@ const filteredTreeData = computed(() => {
       }
       return result;
     }
+    let filtered = filterAndScore(baseTree);
+    // 展平所有叶子节点，分为exact和others
+    function flatten(nodes, arr = []) {
+      for (const node of nodes) {
+        if (node.children && node.children.length) {
+          flatten(node.children, arr);
+        } else {
+          arr.push(node);
+        }
+      }
+      return arr;
+    }
+    const allLeaf = flatten(filtered);
+    const exactLeaf = allLeaf.filter(n => n._isExact);
+    const otherLeaf = allLeaf.filter(n => !n._isExact && n._score > 0);
+    otherLeaf.sort((a, b) => (b._score || 0) - (a._score || 0));
     function filterByLeaf(nodes, leafSet) {
       let result = [];
       for (const node of nodes) {
@@ -408,7 +421,24 @@ const filteredTreeData = computed(() => {
   }
 
   if (!props.searchKey) return treeData.value;
-  const keyword = normalize(props.searchKey.trim());
+  const keyword = props.searchKey.trim().toLowerCase();
+
+  // 递归过滤并加分
+  function scoreNode(node) {
+    let isExact = false;
+    if (node.title && node.title.toLowerCase() === keyword) isExact = true;
+    if (node.authors && node.authors.some(a => normalize(a.name) === keyword)) isExact = true;
+    if ((node.tags || []).some(tag => tag.toLowerCase() === keyword)) isExact = true;
+    if (node.description && node.description.toLowerCase() === keyword) isExact = true;
+    let score = 0;
+    if (!isExact) {
+      if (node.title && node.title.toLowerCase().includes(keyword)) score += 3;
+      if (node.authors && node.authors.some(a => normalize(a.name).includes(keyword))) score += 2;
+      if ((node.tags || []).some(tag => tag.toLowerCase().includes(keyword))) score += 2;
+      if (node.description && node.description.toLowerCase().includes(keyword)) score += 1;
+    }
+    return { ...node, _isExact: isExact, _score: score };
+  }
 
   function filterAndScore(nodes) {
     let result = [];
@@ -416,10 +446,10 @@ const filteredTreeData = computed(() => {
       if (node.children && node.children.length) {
         const children = filterAndScore(node.children);
         if (children.length) {
-          result.push({ ...scoreNode(node, keyword), children });
+          result.push({ ...scoreNode(node), children });
         }
       } else {
-        const scored = scoreNode(node, keyword);
+        const scored = scoreNode(node);
         if (scored._isExact || scored._score > 0) {
           result.push(scored);
         }
@@ -430,6 +460,7 @@ const filteredTreeData = computed(() => {
 
   let filtered = filterAndScore(treeData.value);
 
+  // 展平所有叶子节点，分为exact和others
   function flatten(nodes, arr = []) {
     for (const node of nodes) {
       if (node.children && node.children.length) {
@@ -445,6 +476,7 @@ const filteredTreeData = computed(() => {
   const otherLeaf = allLeaf.filter(n => !n._isExact && n._score > 0);
   otherLeaf.sort((a, b) => (b._score || 0) - (a._score || 0));
 
+  // 只保留有相关叶子的分支
   function filterByLeaf(nodes, leafSet) {
     let result = [];
     for (const node of nodes) {
@@ -504,6 +536,10 @@ watch(
     updateExpandedKeysForSearch(newSearchKey);
   }
 );
+
+function normalize(str) {
+  return (str || '').toLowerCase().replace(/[\s【】\[\]（）()·,，.。!！?？\-_]/g, '');
+}
 
 </script>
 
