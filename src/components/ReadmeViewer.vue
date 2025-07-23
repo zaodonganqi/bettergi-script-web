@@ -21,6 +21,10 @@ const props = defineProps({
   showDescTitle: {
     type: Boolean,
     default: false
+  },
+  forceWeb: {
+    type: Boolean,
+    default: false
   }
 });
 
@@ -42,9 +46,9 @@ const md = new MarkdownIt({
     if (lang && hljs.getLanguage(lang)) {
       try {
         return '<pre class="hljs"><code>' +
-               hljs.highlight(str, { language: lang, ignoreIllegals: true }).value +
-               '</code></pre>';
-      } catch (__) {}
+          hljs.highlight(str, { language: lang, ignoreIllegals: true }).value +
+          '</code></pre>';
+      } catch (__) { }
     }
     return '<pre class="hljs"><code>' + md.utils.escapeHtml(str) + '</code></pre>';
   }
@@ -53,7 +57,7 @@ const md = new MarkdownIt({
 });
 
 // 处理链接渲染逻辑
-const originalLinkRender = md.renderer.rules.link_open || function(tokens, idx, options, env, self) {
+const originalLinkRender = md.renderer.rules.link_open || function (tokens, idx, options, env, self) {
   return self.renderToken(tokens, idx, options);
 };
 md.renderer.rules.link_open = function (tokens, idx, options, env, self) {
@@ -64,16 +68,16 @@ md.renderer.rules.link_open = function (tokens, idx, options, env, self) {
     const isValidHttpLink = /^https?:\/\/[\S]+$/i.test(href);
     const isRelativePath = /^\.\.?\//.test(href) || /^[^\/]*\/[^\/]+(?:\/[^\/]+)*$/i.test(href);
     const isPotentialLink = /^[a-z0-9-]+\.[a-z]{2,}\b/i.test(href);
-    
+
     // 更精确的相对路径判断：排除明显不是路径的情况
-    const isActuallyRelativePath = isRelativePath && 
-      !href.includes('://') && 
-      !href.includes('mailto:') && 
-      !href.includes('tel:') && 
+    const isActuallyRelativePath = isRelativePath &&
+      !href.includes('://') &&
+      !href.includes('mailto:') &&
+      !href.includes('tel:') &&
       !href.includes('javascript:') &&
       !/^[a-z0-9-]+\.[a-z]{2,}\b/i.test(href) && // 排除域名形式的链接
       !/\.(png|jpg|jpeg|gif|webp|svg|ico|bmp|tiff)$/i.test(href); // 排除图片文件路径
-    
+
     if (isValidHttpLink) {
       token.attrPush(['target', '_blank']);
       token.attrPush(['rel', 'noopener noreferrer']);
@@ -81,26 +85,26 @@ md.renderer.rules.link_open = function (tokens, idx, options, env, self) {
       // 处理相对路径链接，转换为GitHub web界面链接
       const baseUrl = getWebPath();
       const currentPath = props.path || '';
-      
+
       // 解析相对路径
       let targetPath = href;
-      
+
       // 处理相对路径
       if (href.startsWith('../') || href.startsWith('./')) {
         // 标准化当前路径（移除末尾的斜杠）
         const normalizedCurrentPath = currentPath.replace(/\/$/, '');
-        
+
         // 分割路径部分
         const currentParts = normalizedCurrentPath.split('/').filter(Boolean);
         const relativeParts = href.split('/').filter(part => part !== '.' && part !== '');
-        
+
         // 计算需要回退的层级
         let backLevels = 0;
         for (const part of relativeParts) {
           if (part === '..') backLevels++;
           else break;
         }
-        
+
         // 构建目标路径
         if (backLevels <= currentParts.length) {
           targetPath = [
@@ -120,11 +124,11 @@ md.renderer.rules.link_open = function (tokens, idx, options, env, self) {
         .replace(/\/+/g, '/')
         .replace(/^\/|\/$/g, '')
         .replace(/\/\.(?=\/|$)/g, '');
-      
+
       // 判断是否为文件（有扩展名）还是目录
       const isFile = /\.[a-zA-Z0-9]+$/.test(targetPath);
       const githubUrl = baseUrl + targetPath;
-      
+
       token.attrs[hrefIndex][1] = githubUrl;
       token.attrPush(['target', '_blank']);
       token.attrPush(['rel', 'noopener noreferrer']);
@@ -145,7 +149,7 @@ md.renderer.rules.link_open = function (tokens, idx, options, env, self) {
 
 // 获取readme文件URL
 function getReadmeUrl(path) {
-  
+
   // 检查是否已经是外链（以 http:// 或 https:// 开头）
   if (/^https?:\/\//i.test(path)) {
     return path;
@@ -249,13 +253,14 @@ const fetchAndRenderReadme = async (path) => {
     return;
   } else {
     // 拼接完整URL
-    const readmeUrl = getRepoPath() + path.replace(/\\/g, '/') + '/README.md';
+    const readmeUrl = getReadmeUrl(path);
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 6000);
     try {
       const response = await fetch(readmeUrl, { signal: controller.signal });
       if (response.ok) {
         markdown = await response.text();
+        console.log('markdown', markdown);
       } else if (response.status === 404) {
         readmeContent.value = '';
         emit('loaded', { status: '404' });
@@ -287,48 +292,55 @@ const fetchAndRenderReadme = async (path) => {
     isLoading.value = false;
     return;
   }
-  if (mode === 'single') {
-    
-  } else {
-    // 处理图片路径，将相对路径转换为绝对路径
-  const baseImageUrl = mode === 'single' ? '' : (getRepoPath() + path.replace(/\\/g, '/') + '/');
-  
-  // 处理markdown图片语法 ![alt](path)
-  markdown = markdown.replace(/!\[([^\]]*)\]\((?!https?:\/\/|data:)([^)]+)\)/gi, (alt, imgPath) => {
-    let cleanPath = imgPath.trim().replace(/\\/g, '/');
-    // 如果路径不是以assets/开头，则添加当前目录路径
-    if (!cleanPath.startsWith('assets/') && !cleanPath.startsWith('http')) {
-      const currentDir = props.path ? props.path.replace(/\\/g, '/') : '';
-      cleanPath = currentDir ? `${currentDir}/${cleanPath}` : cleanPath;
+  // 处理图片路径，将相对路径转换为绝对路径
+  let baseImageUrl;
+  if (props.forceWeb) {
+    baseImageUrl = path.replace(/README\.md$/i, "");
+    if (!baseImageUrl.endsWith('/')) {
+      baseImageUrl += '/';
     }
-    return `![${alt}](${baseImageUrl}${cleanPath})`;
-  });
-  
-  // 处理HTML img标签
-  markdown = markdown.replace(/<img\s+[^>]*src=["']([^"']+)["'][^>]*>/gi, (match, imgPath) => {
+  } else {
+    baseImageUrl = getRepoPath() + path.replace(/\\/g, '/') + '/';
+  }
+
+  // 处理markdown图片语法 ![alt](path)
+  markdown = markdown.replace(/!\[[^\]]*\]\(([^)]+)\)/g, (match, imgPath) => {
     let cleanPath = imgPath.trim().replace(/\\/g, '/');
-    // 如果路径不是以assets/开头且不是绝对URL，则添加当前目录路径
-    if (!cleanPath.startsWith('assets/') && !cleanPath.startsWith('http') && !cleanPath.startsWith('data:')) {
+    console.log('imgPath:', imgPath, 'cleanPath:', cleanPath);
+    if (!props.forceWeb && !cleanPath.startsWith('assets/') && !cleanPath.startsWith('http')) {
       const currentDir = props.path ? props.path.replace(/\\/g, '/') : '';
       cleanPath = currentDir ? `${currentDir}/${cleanPath}` : cleanPath;
     }
     return match.replace(imgPath, baseImageUrl + cleanPath);
   });
-  
+
+  // 处理HTML img标签
+  markdown = markdown.replace(/<img\s+[^>]*src=["']([^"']+)["'][^>]*>/gi, (match, imgPath) => {
+    let cleanPath = imgPath.trim().replace(/\\/g, '/');
+    console.log('imgTagPath:', imgPath, 'cleanPath:', cleanPath);
+    if (!props.forceWeb && !cleanPath.startsWith('assets/') && !cleanPath.startsWith('http') && !cleanPath.startsWith('data:')) {
+      const currentDir = props.path ? props.path.replace(/\\/g, '/') : '';
+      cleanPath = currentDir ? `${currentDir}/${cleanPath}` : cleanPath;
+    }
+    return match.replace(imgPath, baseImageUrl + cleanPath);
+  });
+
   // 处理代码块中的图片路径
   markdown = markdown.replace(/`([^`\n]+\.(?:png|jpg|jpeg|gif|webp|svg))`/gi, (imgPath) => {
     let cleanPath = imgPath.trim().replace(/\\/g, '/');
-    if (!cleanPath.startsWith('assets/') && !cleanPath.startsWith('http')) {
+    console.log('codeImgPath:', imgPath, 'cleanPath:', cleanPath);
+    if (!props.forceWeb && !cleanPath.startsWith('assets/') && !cleanPath.startsWith('http')) {
       const currentDir = props.path ? props.path.replace(/\\/g, '/') : '';
       cleanPath = currentDir ? `${currentDir}/${cleanPath}` : cleanPath;
     }
     return `![](${baseImageUrl}${cleanPath})`;
   });
-  
+
   // 处理代码块中的图片路径
   markdown = markdown.replace(/```\s*([^`\n]+\.(?:png|jpg|jpeg|gif|webp|svg))\s*```/gi, (imgPath) => {
     let cleanPath = imgPath.trim().replace(/\\/g, '/');
-    if (!cleanPath.startsWith('assets/') && !cleanPath.startsWith('http')) {
+    console.log('blockCodeImgPath:', imgPath, 'cleanPath:', cleanPath);
+    if (!props.forceWeb && !cleanPath.startsWith('assets/') && !cleanPath.startsWith('http')) {
       const currentDir = props.path ? props.path.replace(/\\/g, '/') : '';
       cleanPath = currentDir ? `${currentDir}/${cleanPath}` : cleanPath;
     }
@@ -338,7 +350,6 @@ const fetchAndRenderReadme = async (path) => {
   emit('loaded', { status: 'ok' });
   emit('hasContent', true);
   isLoading.value = false;
-  }
 };
 
 // 监听路径变化
@@ -374,12 +385,29 @@ watch(
   font-weight: 600;
 }
 
-.readme-content :deep(h1) { font-size: 2em; }
-.readme-content :deep(h2) { font-size: 1.5em; }
-.readme-content :deep(h3) { font-size: 1.25em; }
-.readme-content :deep(h4) { font-size: 1em; }
-.readme-content :deep(h5) { font-size: 0.875em; }
-.readme-content :deep(h6) { font-size: 0.85em; }
+.readme-content :deep(h1) {
+  font-size: 2em;
+}
+
+.readme-content :deep(h2) {
+  font-size: 1.5em;
+}
+
+.readme-content :deep(h3) {
+  font-size: 1.25em;
+}
+
+.readme-content :deep(h4) {
+  font-size: 1em;
+}
+
+.readme-content :deep(h5) {
+  font-size: 0.875em;
+}
+
+.readme-content :deep(h6) {
+  font-size: 0.85em;
+}
 
 .readme-content :deep(p) {
   margin-bottom: 16px;

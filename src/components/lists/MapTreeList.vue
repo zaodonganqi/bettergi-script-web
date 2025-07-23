@@ -249,7 +249,6 @@ const processNode = (node, parentKey = '', parentSubscribed = false) => {
   const showIcon = node.showIcon || false;
   if (showIcon && node.children.length > 0) {
     iconPath = getIconUrl('pathing/' + currentKey);
-    console.log('图标路径:', iconPath);
   }
   let files = [];
   let lastUpdated = '';
