@@ -118,6 +118,13 @@ const fetchTxtContent = async (path) => {
     try {
       const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
       txt = await repoWebBridge.GetFile(path.replace(/\\/g, '/'));
+      if (txt === "404") {
+        setTxt404(path);
+        txtContent.value = '';
+        isLoadingTxt.value = false;
+        loadTxtError.value = false;
+        return;
+      }
     } catch (e) {
       fetchError = e;
     }

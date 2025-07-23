@@ -281,6 +281,7 @@
         <div class="egg-readme-content">
           <ReadmeViewer :key="eggReadmeKey"
             :path="'https://raw.githubusercontent.com/zaodonganqi/BGI-bsw-egg/main/README.md'"
+            :force-web="true"
             @loaded="handleEggReadmeLoaded" @error="handleEggReadmeError" />
         </div>
       </div>

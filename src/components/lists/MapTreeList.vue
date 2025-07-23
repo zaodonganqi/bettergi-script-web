@@ -18,12 +18,7 @@
               {{ title }}<span v-if="dataRef.isSubscribed"> （已订阅）</span>
             </span>
           </div>
-          <a-button
-            class="subscribe-btn"
-            type="text"
-            size="small"
-            @click.stop="handleSubscribe(dataRef)"
-          >
+          <a-button class="subscribe-btn" type="text" size="small" @click.stop="handleSubscribe(dataRef)">
             {{ dataRef.isSubscribed ? '再次订阅' : '订阅' }}
           </a-button>
         </div>
@@ -172,17 +167,12 @@ const findNodeByKey = (nodes, key) => {
 };
 
 // 获取节点图标
-const getIconUrl = async (tag) => {
+const getIconUrl = (tag) => {
   const mode = import.meta.env.VITE_MODE;
-  const relPath = 'pathing/' + tag + 'icon.ico';
+  const relPath = tag + '/icon.ico';
   if (mode === 'single') {
-    try {
-      const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
-      const base64 = await repoWebBridge.GetFile(relPath);
-      return 'data:image/png;base64,' + base64;
-    } catch (e) {
-      return relPath;
-    }
+    // 本地模式下直接拼接回退路径
+    return '../../../Repos/bettergi-scripts-list-git/repo/' + relPath;
   } else {
     return getRepoPath() + relPath;
   }
@@ -255,8 +245,12 @@ const processNode = (node, parentKey = '', parentSubscribed = false) => {
   // 如果父节点已订阅，自己也视为已订阅
   const isSubscribed = parentSubscribed || selfSubscribed;
   const children = node.children?.map(child => processNode(child, currentKey, isSubscribed)) || [];
-  const iconPath = getIconUrl(currentKey);
-
+  let iconPath = '';
+  const showIcon = node.showIcon || false;
+  if (showIcon && node.children.length > 0) {
+    iconPath = getIconUrl('pathing/' + currentKey);
+    console.log('图标路径:', iconPath);
+  }
   let files = [];
   let lastUpdated = '';
   if (node.type === 'directory') {

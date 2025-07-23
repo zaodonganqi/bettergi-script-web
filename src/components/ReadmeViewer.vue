@@ -180,13 +180,73 @@ const fetchAndRenderReadme = async (path) => {
   let markdown = '';
   let fetchError = null;
   if (mode === 'single') {
-    // 只传相对路径
     try {
       const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
-      markdown = await repoWebBridge.GetFile(path.replace(/\\/g, '/'));
+      markdown = await repoWebBridge.GetFile(path.replace(/\\/g, '/') + '/README.md');
     } catch (e) {
       fetchError = e;
     }
+    if (fetchError) {
+      readmeContent.value = '';
+      if (fetchError.name === 'AbortError') {
+        loadError.value = '加载超时';
+        emit('loaded', { status: 'error', message: '加载超时' });
+        emit('error', '加载超时');
+      } else {
+        loadError.value = '加载失败';
+        emit('loaded', { status: 'error', message: '加载失败' });
+        emit('error', '加载失败');
+      }
+      emit('hasContent', false);
+      isLoading.value = false;
+      return;
+    }
+    if (markdown === '404') {
+      readmeContent.value = '';
+      emit('loaded', { status: '404' });
+      emit('hasContent', false);
+      isLoading.value = false;
+      return;
+    }
+    // 图片路径处理和渲染
+    const baseImageUrl = '../../../Repos/bettergi-scripts-list-git/repo/' + path.replace(/\\/g, '/') + '/';
+    markdown = markdown.replace(/!\[([^\]]*)\]\((?!https?:\/\/|data:)([^)]+)\)/gi, (alt, imgPath) => {
+      let cleanPath = imgPath.trim().replace(/\\/g, '/');
+      if (!cleanPath.startsWith('assets/') && !cleanPath.startsWith('http')) {
+        const currentDir = props.path ? props.path.replace(/\\/g, '/') : '';
+        cleanPath = currentDir ? `${currentDir}/${cleanPath}` : cleanPath;
+      }
+      return `![${alt}](${baseImageUrl}${cleanPath})`;
+    });
+    markdown = markdown.replace(/<img\s+[^>]*src=["']([^"']+)["'][^>]*>/gi, (match, imgPath) => {
+      let cleanPath = imgPath.trim().replace(/\\/g, '/');
+      if (!cleanPath.startsWith('assets/') && !cleanPath.startsWith('http') && !cleanPath.startsWith('data:')) {
+        const currentDir = props.path ? props.path.replace(/\\/g, '/') : '';
+        cleanPath = currentDir ? `${currentDir}/${cleanPath}` : cleanPath;
+      }
+      return match.replace(imgPath, baseImageUrl + cleanPath);
+    });
+    markdown = markdown.replace(/`([^`\n]+\.(?:png|jpg|jpeg|gif|webp|svg))`/gi, (imgPath) => {
+      let cleanPath = imgPath.trim().replace(/\\/g, '/');
+      if (!cleanPath.startsWith('assets/') && !cleanPath.startsWith('http')) {
+        const currentDir = props.path ? props.path.replace(/\\/g, '/') : '';
+        cleanPath = currentDir ? `${currentDir}/${cleanPath}` : cleanPath;
+      }
+      return `![](${baseImageUrl}${cleanPath})`;
+    });
+    markdown = markdown.replace(/```\s*([^`\n]+\.(?:png|jpg|jpeg|gif|webp|svg))\s*```/gi, (imgPath) => {
+      let cleanPath = imgPath.trim().replace(/\\/g, '/');
+      if (!cleanPath.startsWith('assets/') && !cleanPath.startsWith('http')) {
+        const currentDir = props.path ? props.path.replace(/\\/g, '/') : '';
+        cleanPath = currentDir ? `${currentDir}/${cleanPath}` : cleanPath;
+      }
+      return `![](${baseImageUrl}${cleanPath})`;
+    });
+    readmeContent.value = md.render(markdown);
+    emit('loaded', { status: 'ok' });
+    emit('hasContent', true);
+    isLoading.value = false;
+    return;
   } else {
     // 拼接完整URL
     const readmeUrl = getRepoPath() + path.replace(/\\/g, '/') + '/README.md';
@@ -227,7 +287,10 @@ const fetchAndRenderReadme = async (path) => {
     isLoading.value = false;
     return;
   }
-  // 处理图片路径，将相对路径转换为绝对路径
+  if (mode === 'single') {
+    
+  } else {
+    // 处理图片路径，将相对路径转换为绝对路径
   const baseImageUrl = mode === 'single' ? '' : (getRepoPath() + path.replace(/\\/g, '/') + '/');
   
   // 处理markdown图片语法 ![alt](path)
@@ -275,6 +338,7 @@ const fetchAndRenderReadme = async (path) => {
   emit('loaded', { status: 'ok' });
   emit('hasContent', true);
   isLoading.value = false;
+  }
 };
 
 // 监听路径变化
