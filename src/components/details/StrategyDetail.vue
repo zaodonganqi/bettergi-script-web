@@ -66,7 +66,7 @@ import { ref, watch } from 'vue';
 import { useClipboard } from '@vueuse/core';
 import { message as Message, Spin as ASpin } from 'ant-design-vue';
 import { ReloadOutlined } from '@ant-design/icons-vue';
-import { GITHUB_RAW_REPO } from '@/utils/basePaths';
+import { getRepoPath } from '@/utils/basePaths';
 
 const props = defineProps({
   script: {
@@ -84,7 +84,6 @@ const { copy } = useClipboard();
 const isLoadingTxt = ref(false);
 const loadTxtError = ref(false);
 const txtContent = ref('');
-const headerHover = ref(false);
 
 const isTxt404 = (path) => !!localStorage.getItem('txt404:' + path);
 const setTxt404 = (path) => { if (path) localStorage.setItem('txt404:' + path, '1'); };
@@ -93,7 +92,7 @@ const getRawTxtUrl = (path) => {
   if (!path) return '';
   // 兼容http/https外链
   if (/^https?:\/\//i.test(path)) return path;
-  return GITHUB_RAW_REPO + encodeURI(path.replace(/\\/g, '/'));
+  return getRepoPath() + path.replace(/\\/g, '/');
 };
 
 const fetchTxtContent = async (path) => {

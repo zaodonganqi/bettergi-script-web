@@ -307,7 +307,7 @@ import StrategyDetail from './details/StrategyDetail.vue';
 import MapDetail from './details/MapDetail.vue';
 import ReadmeViewer from './ReadmeViewer.vue';
 import Help from './Help.vue';
-import { GITHUB_WEB_REPO, GITHUB_RAW_REPO } from '@/utils/basePaths';
+import { getWebPath, getRawPath } from '@/utils/basePaths';
 
 const mode = import.meta.env.VITE_MODE;
 const selectedMenu = ref(['1']);
@@ -374,7 +374,7 @@ async function getRepoJson() {
         controller.abort();
       }, 10000);
       try {
-        const response = await fetch(GITHUB_RAW_REPO + 'repo.json', {
+        const response = await fetch(getRawPath() + 'repo.json', {
           signal: controller.signal
         });
         clearTimeout(fetchTimeoutId);
@@ -448,7 +448,7 @@ const openExternalLink = (link) => {
 // 跳转到GitHub仓库指定位置
 const jumpToGitHub = () => {
   if (!selectedScript.value) return;
-  const baseUrl = GITHUB_WEB_REPO;
+  const baseUrl = getWebPath();
   let targetPath = '';
 
   // 优先使用脚本的path属性

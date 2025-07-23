@@ -38,7 +38,7 @@ import { match } from 'pinyin-pro';
 import { CaretRightOutlined, CaretDownOutlined } from '@ant-design/icons-vue';
 import { useClipboard } from '@vueuse/core';
 import { message as Message } from 'ant-design-vue';
-import { GITHUB_RAW_REPO } from '@/utils/basePaths';
+import { getRepoPath } from '@/utils/basePaths';
 
 const props = defineProps({
   searchKey: {
@@ -173,7 +173,7 @@ const findNodeByKey = (nodes, key) => {
 
 // 获取节点图标
 const getIconUrl = (tag) => {
-  return GITHUB_RAW_REPO + 'pathing/' + tag + 'icon.ico';
+  return getRepoPath() + 'pathing/' + tag + 'icon.ico';
 };
 
 // 递归收集所有 file 节点，并补全 path 字段
