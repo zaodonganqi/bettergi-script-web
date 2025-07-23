@@ -180,9 +180,12 @@ const fetchAndRenderReadme = async (path) => {
   loadError.value = null;
   readmeContent.value = '';
 
-  const mode = import.meta.env.VITE_MODE;
+  let mode = import.meta.env.VITE_MODE;
   let markdown = '';
   let fetchError = null;
+  if (props.forceWeb) {
+    mode = 'web';
+  }
   if (mode === 'single') {
     try {
       const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
