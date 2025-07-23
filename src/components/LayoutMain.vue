@@ -307,6 +307,7 @@ import StrategyDetail from './details/StrategyDetail.vue';
 import MapDetail from './details/MapDetail.vue';
 import ReadmeViewer from './ReadmeViewer.vue';
 import Help from './Help.vue';
+import { GITHUB_WEB_REPO, GITHUB_RAW_REPO } from '@/utils/basePaths';
 
 const mode = import.meta.env.VITE_MODE;
 const selectedMenu = ref(['1']);
@@ -373,7 +374,7 @@ async function getRepoJson() {
         controller.abort();
       }, 10000);
       try {
-        const response = await fetch('https://raw.githubusercontent.com/babalae/bettergi-scripts-list/refs/heads/main/repo.json', {
+        const response = await fetch(GITHUB_RAW_REPO + 'repo.json', {
           signal: controller.signal
         });
         clearTimeout(fetchTimeoutId);
@@ -447,7 +448,7 @@ const openExternalLink = (link) => {
 // 跳转到GitHub仓库指定位置
 const jumpToGitHub = () => {
   if (!selectedScript.value) return;
-  const baseUrl = 'https://github.com/babalae/bettergi-scripts-list/blob/main/repo/';
+  const baseUrl = GITHUB_WEB_REPO;
   let targetPath = '';
 
   // 优先使用脚本的path属性

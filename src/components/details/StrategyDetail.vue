@@ -66,6 +66,7 @@ import { ref, watch } from 'vue';
 import { useClipboard } from '@vueuse/core';
 import { message as Message, Spin as ASpin } from 'ant-design-vue';
 import { ReloadOutlined } from '@ant-design/icons-vue';
+import { GITHUB_RAW_REPO } from '@/utils/basePaths';
 
 const props = defineProps({
   script: {
@@ -92,7 +93,7 @@ const getRawTxtUrl = (path) => {
   if (!path) return '';
   // 兼容http/https外链
   if (/^https?:\/\//i.test(path)) return path;
-  return `https://raw.githubusercontent.com/babalae/bettergi-scripts-list/refs/heads/main/repo/${encodeURI(path.replace(/\\/g, '/'))}`;
+  return GITHUB_RAW_REPO + encodeURI(path.replace(/\\/g, '/'));
 };
 
 const fetchTxtContent = async (path) => {

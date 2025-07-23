@@ -13,6 +13,7 @@ import MarkdownIt from 'markdown-it';
 import markdownItAnchor from 'markdown-it-anchor';
 import hljs from 'highlight.js';
 import 'highlight.js/styles/github.css';
+import { GITHUB_WEB_REPO } from '@/utils/basePaths';
 
 const props = defineProps({
   path: String,
@@ -78,7 +79,7 @@ md.renderer.rules.link_open = function (tokens, idx, options, env, self) {
       token.attrPush(['rel', 'noopener noreferrer']);
     } else if (isActuallyRelativePath) {
       // 处理相对路径链接，转换为GitHub web界面链接
-      const baseUrl = 'https://github.com/babalae/bettergi-scripts-list/blob/main/repo/';
+      const baseUrl = GITHUB_WEB_REPO;
       const currentPath = props.path || '';
       
       // 解析相对路径

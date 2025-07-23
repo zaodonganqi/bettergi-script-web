@@ -38,6 +38,7 @@ import { match } from 'pinyin-pro';
 import { CaretRightOutlined, CaretDownOutlined } from '@ant-design/icons-vue';
 import { useClipboard } from '@vueuse/core';
 import { message as Message } from 'ant-design-vue';
+import { GITHUB_RAW_REPO } from '@/utils/basePaths';
 
 const props = defineProps({
   searchKey: {
@@ -172,10 +173,7 @@ const findNodeByKey = (nodes, key) => {
 
 // 获取节点图标
 const getIconUrl = (tag) => {
-  const baseIconUrl = "https://raw.githubusercontent.com/babalae/bettergi-scripts-list/refs/heads/main/repo/pathing/";
-  const encodedTag = tag
-  const iconPath = `${baseIconUrl}${encodedTag}/icon.ico`;
-  return iconPath;
+  return GITHUB_RAW_REPO + 'pathing/' + tag + 'icon.ico';
 };
 
 // 递归收集所有 file 节点，并补全 path 字段
@@ -356,9 +354,9 @@ const filteredTreeData = computed(() => {
       let score = 0;
       if (!isExact) {
         if (node.title && node.title.toLowerCase().includes(keyword)) score += 3;
-        if (node.authors && node.authors.some(a => normalize(a.name).includes(keyword))) score += 2;
+        if (node.authors && node.authors.some(a => normalize(a.name).includes(keyword))) score += 3;
         if ((node.tags || []).some(tag => tag.toLowerCase().includes(keyword))) score += 2;
-        if (node.description && node.description.toLowerCase().includes(keyword)) score += 1;
+        if (node.description && node.description.toLowerCase().includes(keyword)) score += 2;
       }
       return { ...node, _isExact: isExact, _score: score };
     }
@@ -433,9 +431,9 @@ const filteredTreeData = computed(() => {
     let score = 0;
     if (!isExact) {
       if (node.title && node.title.toLowerCase().includes(keyword)) score += 3;
-      if (node.authors && node.authors.some(a => normalize(a.name).includes(keyword))) score += 2;
+      if (node.authors && node.authors.some(a => normalize(a.name).includes(keyword))) score += 3;
       if ((node.tags || []).some(tag => tag.toLowerCase().includes(keyword))) score += 2;
-      if (node.description && node.description.toLowerCase().includes(keyword)) score += 1;
+      if (node.description && node.description.toLowerCase().includes(keyword)) score += 2;
     }
     return { ...node, _isExact: isExact, _score: score };
   }
@@ -508,26 +506,27 @@ const updateExpandedKeysForSearch = (newSearchKey) => {
     expandedKeys.value = [];
     return;
   }
-
-  const newExpandedKeys = new Set();
-  const searchText = newSearchKey.toLowerCase();
-
-  const findPaths = (nodes, currentPath) => {
+  // 递归收集所有叶子节点及其路径
+  function collectMatchedLeafKeys(nodes, path = [], result = []) {
     for (const node of nodes) {
-      if (match(node.title.toLowerCase(), searchText)) {
-        currentPath.forEach(parentNode => {
-          if (hasExpandableChildren(parentNode)) {
-            newExpandedKeys.add(parentNode.key);
-          }
-        });
-      }
-      if (node.children && node.children.length > 0) {
-        findPaths(node.children, [...currentPath, node]);
+      if (node.children && node.children.length) {
+        collectMatchedLeafKeys(node.children, [...path, node], result);
+      } else {
+        result.push({ node, path });
       }
     }
-  };
-  findPaths(filteredTreeData.value, []);
-  expandedKeys.value = [...newExpandedKeys];
+    return result;
+  }
+  const matchedLeafs = collectMatchedLeafKeys(filteredTreeData.value);
+  const expandedSet = new Set();
+  matchedLeafs.forEach(({ path }) => {
+    path.forEach(parentNode => {
+      if (hasExpandableChildren(parentNode)) {
+        expandedSet.add(parentNode.key);
+      }
+    });
+  });
+  expandedKeys.value = [...expandedSet];
 }
 
 watch(
