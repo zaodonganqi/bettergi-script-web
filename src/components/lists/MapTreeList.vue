@@ -172,8 +172,20 @@ const findNodeByKey = (nodes, key) => {
 };
 
 // 获取节点图标
-const getIconUrl = (tag) => {
-  return getRepoPath() + 'pathing/' + tag + 'icon.ico';
+const getIconUrl = async (tag) => {
+  const mode = import.meta.env.VITE_MODE;
+  const relPath = 'pathing/' + tag + 'icon.ico';
+  if (mode === 'single') {
+    try {
+      const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
+      const base64 = await repoWebBridge.GetFile(relPath);
+      return 'data:image/png;base64,' + base64;
+    } catch (e) {
+      return relPath;
+    }
+  } else {
+    return getRepoPath() + relPath;
+  }
 };
 
 // 递归收集所有 file 节点，并补全 path 字段

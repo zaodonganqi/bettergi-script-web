@@ -144,7 +144,7 @@ md.renderer.rules.link_open = function (tokens, idx, options, env, self) {
 };
 
 // 获取readme文件URL
-function getReadmeContent(path) {
+function getReadmeUrl(path) {
   
   // 检查是否已经是外链（以 http:// 或 https:// 开头）
   if (/^https?:\/\//i.test(path)) {
@@ -166,7 +166,6 @@ const fetchAndRenderReadme = async (path) => {
     emit('hasContent', false);
     return;
   }
-  // 如果已被标记为404，不再fetch
   if (isReadme404(path)) {
     readmeContent.value = '';
     emit('loaded', { status: '404' });
@@ -177,75 +176,45 @@ const fetchAndRenderReadme = async (path) => {
   loadError.value = null;
   readmeContent.value = '';
 
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 6000);
-
-  try {
-    const readmeUrl = getReadmeContent(path);
-    const response = await fetch(readmeUrl, { signal: controller.signal });
-    if (response.ok) {
-      let markdown = await response.text();
-      // 处理图片路径，将相对路径转换为绝对路径
-      const baseImageUrl = readmeUrl.replace('README.md', '');
-      
-      // 处理markdown图片语法 ![alt](path)
-      markdown = markdown.replace(/!\[([^\]]*)\]\((?!https?:\/\/|data:)([^)]+)\)/gi, (alt, imgPath) => {
-        let cleanPath = imgPath.trim().replace(/\\/g, '/');
-        // 如果路径不是以assets/开头，则添加当前目录路径
-        if (!cleanPath.startsWith('assets/') && !cleanPath.startsWith('http')) {
-          const currentDir = props.path ? props.path.replace(/\\/g, '/') : '';
-          cleanPath = currentDir ? `${currentDir}/${cleanPath}` : cleanPath;
-        }
-        return `![${alt}](${baseImageUrl}${cleanPath})`;
-      });
-      
-      // 处理HTML img标签
-      markdown = markdown.replace(/<img\s+[^>]*src=["']([^"']+)["'][^>]*>/gi, (match, imgPath) => {
-        let cleanPath = imgPath.trim().replace(/\\/g, '/');
-        // 如果路径不是以assets/开头且不是绝对URL，则添加当前目录路径
-        if (!cleanPath.startsWith('assets/') && !cleanPath.startsWith('http') && !cleanPath.startsWith('data:')) {
-          const currentDir = props.path ? props.path.replace(/\\/g, '/') : '';
-          cleanPath = currentDir ? `${currentDir}/${cleanPath}` : cleanPath;
-        }
-        return match.replace(imgPath, baseImageUrl + cleanPath);
-      });
-      
-      // 处理代码块中的图片路径
-      markdown = markdown.replace(/`([^`\n]+\.(?:png|jpg|jpeg|gif|webp|svg))`/gi, (imgPath) => {
-        let cleanPath = imgPath.trim().replace(/\\/g, '/');
-        if (!cleanPath.startsWith('assets/') && !cleanPath.startsWith('http')) {
-          const currentDir = props.path ? props.path.replace(/\\/g, '/') : '';
-          cleanPath = currentDir ? `${currentDir}/${cleanPath}` : cleanPath;
-        }
-        return `![](${baseImageUrl}${cleanPath})`;
-      });
-      
-      // 处理代码块中的图片路径
-      markdown = markdown.replace(/```\s*([^`\n]+\.(?:png|jpg|jpeg|gif|webp|svg))\s*```/gi, (imgPath) => {
-        let cleanPath = imgPath.trim().replace(/\\/g, '/');
-        if (!cleanPath.startsWith('assets/') && !cleanPath.startsWith('http')) {
-          const currentDir = props.path ? props.path.replace(/\\/g, '/') : '';
-          cleanPath = currentDir ? `${currentDir}/${cleanPath}` : cleanPath;
-        }
-        return `![](${baseImageUrl}${cleanPath})`;
-      });
-      readmeContent.value = md.render(markdown);
-      emit('loaded', { status: 'ok' });
-      emit('hasContent', true);
-    } else if (response.status === 404) {
-      readmeContent.value = '';
-      emit('loaded', { status: '404' });
-      emit('hasContent', false);
-    } else {
-      readmeContent.value = '';
-      loadError.value = '加载失败';
-      emit('loaded', { status: 'error', message: '加载失败' });
-      emit('error', '加载失败');
-      emit('hasContent', false);
+  const mode = import.meta.env.VITE_MODE;
+  let markdown = '';
+  let fetchError = null;
+  if (mode === 'single') {
+    // 只传相对路径
+    try {
+      const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
+      markdown = await repoWebBridge.GetFile(path.replace(/\\/g, '/'));
+    } catch (e) {
+      fetchError = e;
     }
-  } catch (e) {
+  } else {
+    // 拼接完整URL
+    const readmeUrl = getRepoPath() + path.replace(/\\/g, '/') + '/README.md';
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 6000);
+    try {
+      const response = await fetch(readmeUrl, { signal: controller.signal });
+      if (response.ok) {
+        markdown = await response.text();
+      } else if (response.status === 404) {
+        readmeContent.value = '';
+        emit('loaded', { status: '404' });
+        emit('hasContent', false);
+        clearTimeout(timeoutId);
+        isLoading.value = false;
+        return;
+      } else {
+        fetchError = new Error('加载失败');
+      }
+    } catch (e) {
+      fetchError = e;
+    } finally {
+      clearTimeout(timeoutId);
+    }
+  }
+  if (fetchError) {
     readmeContent.value = '';
-    if (e.name === 'AbortError') {
+    if (fetchError.name === 'AbortError') {
       loadError.value = '加载超时';
       emit('loaded', { status: 'error', message: '加载超时' });
       emit('error', '加载超时');
@@ -255,10 +224,57 @@ const fetchAndRenderReadme = async (path) => {
       emit('error', '加载失败');
     }
     emit('hasContent', false);
-  } finally {
-    clearTimeout(timeoutId);
     isLoading.value = false;
+    return;
   }
+  // 处理图片路径，将相对路径转换为绝对路径
+  const baseImageUrl = mode === 'single' ? '' : (getRepoPath() + path.replace(/\\/g, '/') + '/');
+  
+  // 处理markdown图片语法 ![alt](path)
+  markdown = markdown.replace(/!\[([^\]]*)\]\((?!https?:\/\/|data:)([^)]+)\)/gi, (alt, imgPath) => {
+    let cleanPath = imgPath.trim().replace(/\\/g, '/');
+    // 如果路径不是以assets/开头，则添加当前目录路径
+    if (!cleanPath.startsWith('assets/') && !cleanPath.startsWith('http')) {
+      const currentDir = props.path ? props.path.replace(/\\/g, '/') : '';
+      cleanPath = currentDir ? `${currentDir}/${cleanPath}` : cleanPath;
+    }
+    return `![${alt}](${baseImageUrl}${cleanPath})`;
+  });
+  
+  // 处理HTML img标签
+  markdown = markdown.replace(/<img\s+[^>]*src=["']([^"']+)["'][^>]*>/gi, (match, imgPath) => {
+    let cleanPath = imgPath.trim().replace(/\\/g, '/');
+    // 如果路径不是以assets/开头且不是绝对URL，则添加当前目录路径
+    if (!cleanPath.startsWith('assets/') && !cleanPath.startsWith('http') && !cleanPath.startsWith('data:')) {
+      const currentDir = props.path ? props.path.replace(/\\/g, '/') : '';
+      cleanPath = currentDir ? `${currentDir}/${cleanPath}` : cleanPath;
+    }
+    return match.replace(imgPath, baseImageUrl + cleanPath);
+  });
+  
+  // 处理代码块中的图片路径
+  markdown = markdown.replace(/`([^`\n]+\.(?:png|jpg|jpeg|gif|webp|svg))`/gi, (imgPath) => {
+    let cleanPath = imgPath.trim().replace(/\\/g, '/');
+    if (!cleanPath.startsWith('assets/') && !cleanPath.startsWith('http')) {
+      const currentDir = props.path ? props.path.replace(/\\/g, '/') : '';
+      cleanPath = currentDir ? `${currentDir}/${cleanPath}` : cleanPath;
+    }
+    return `![](${baseImageUrl}${cleanPath})`;
+  });
+  
+  // 处理代码块中的图片路径
+  markdown = markdown.replace(/```\s*([^`\n]+\.(?:png|jpg|jpeg|gif|webp|svg))\s*```/gi, (imgPath) => {
+    let cleanPath = imgPath.trim().replace(/\\/g, '/');
+    if (!cleanPath.startsWith('assets/') && !cleanPath.startsWith('http')) {
+      const currentDir = props.path ? props.path.replace(/\\/g, '/') : '';
+      cleanPath = currentDir ? `${currentDir}/${cleanPath}` : cleanPath;
+    }
+    return `![](${baseImageUrl}${cleanPath})`;
+  });
+  readmeContent.value = md.render(markdown);
+  emit('loaded', { status: 'ok' });
+  emit('hasContent', true);
+  isLoading.value = false;
 };
 
 // 监听路径变化

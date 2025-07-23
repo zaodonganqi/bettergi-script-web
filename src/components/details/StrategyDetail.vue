@@ -111,31 +111,47 @@ const fetchTxtContent = async (path) => {
   isLoadingTxt.value = true;
   loadTxtError.value = false;
   txtContent.value = '';
-  const txtUrl = getRawTxtUrl(path);
-  try {
+  const mode = import.meta.env.VITE_MODE;
+  let txt = '';
+  let fetchError = null;
+  if (mode === 'single') {
+    try {
+      const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
+      txt = await repoWebBridge.GetFile(path.replace(/\\/g, '/'));
+    } catch (e) {
+      fetchError = e;
+    }
+  } else {
+    const txtUrl = getRawTxtUrl(path);
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 8000);
-    const response = await fetch(txtUrl, { signal: controller.signal });
-    clearTimeout(timeoutId);
-    if (response.ok) {
-      txtContent.value = await response.text();
-      isLoadingTxt.value = false;
-      loadTxtError.value = false;
-    } else if (response.status === 404) {
-      setTxt404(path);
-      txtContent.value = '';
-      isLoadingTxt.value = false;
-      loadTxtError.value = false;
-    } else {
-      txtContent.value = '';
-      isLoadingTxt.value = false;
-      loadTxtError.value = true;
+    try {
+      const response = await fetch(txtUrl, { signal: controller.signal });
+      clearTimeout(timeoutId);
+      if (response.ok) {
+        txt = await response.text();
+      } else if (response.status === 404) {
+        setTxt404(path);
+        txtContent.value = '';
+        isLoadingTxt.value = false;
+        loadTxtError.value = false;
+        return;
+      } else {
+        fetchError = new Error('加载失败');
+      }
+    } catch (e) {
+      fetchError = e;
     }
-  } catch (e) {
+  }
+  if (fetchError) {
     txtContent.value = '';
     isLoadingTxt.value = false;
     loadTxtError.value = true;
+    return;
   }
+  txtContent.value = txt;
+  isLoadingTxt.value = false;
+  loadTxtError.value = false;
 };
 
 const retryLoadTxt = () => {
