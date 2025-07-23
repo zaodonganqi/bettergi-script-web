@@ -169,6 +169,10 @@ const selectScript = (id) => {
   emit('select', script);
 };
 
+function normalize(str) {
+  return (str || '').toLowerCase().replace(/[\s【】\[\]（）()·,，.。!！?？\-_]/g, '');
+}
+
 const filteredScripts = computed(() => {
   let baseList = scripts.value;
   if (props.showSubscribedOnly) {
@@ -178,23 +182,25 @@ const filteredScripts = computed(() => {
     baseList = baseList.filter(script => props.subscribedPaths.includes(script.path));
   }
   if (!props.searchKey) return baseList;
-  const keyword = props.searchKey.trim().toLowerCase();
-  // 完全匹配优先
-  const nameMatches = baseList.filter(s => s.title && s.title.toLowerCase() === keyword);
+  const keyword = normalize(props.searchKey.trim());
+
+  // 完全匹配优先，name1和name2权重一样
+  const nameMatches = baseList.filter(s =>
+    normalize(s.title) === keyword ||
+    normalize(s.name1) === keyword ||
+    normalize(s.name2) === keyword
+  );
   if (nameMatches.length) return nameMatches;
-  const authorMatches = baseList.filter(s => (s.author || '').toLowerCase() === keyword);
-  if (authorMatches.length) return authorMatches;
-  const tagMatches = baseList.filter(s => (s.tags || []).some(tag => tag.toLowerCase() === keyword));
-  if (tagMatches.length) return tagMatches;
-  const descMatches = baseList.filter(s => (s.desc || '').toLowerCase() === keyword);
-  if (descMatches.length) return descMatches;
-  // 相关性分数排序
+
+  // 相关性分数排序，name1和name2权重一样
   const scored = baseList.map(s => {
     let score = 0;
-    if (s.title && s.title.toLowerCase().includes(keyword)) score += 3;
-    if (s.author && s.author.toLowerCase().includes(keyword)) score += 2;
-    if ((s.tags || []).some(tag => tag.toLowerCase().includes(keyword))) score += 2;
-    if (s.desc && s.desc.toLowerCase().includes(keyword)) score += 1;
+    if (normalize(s.title).includes(keyword)) score += 3;
+    if (normalize(s.name1).includes(keyword)) score += 3;
+    if (normalize(s.name2).includes(keyword)) score += 3;
+    if (normalize(s.author).includes(keyword)) score += 2;
+    if ((s.tags || []).some(tag => normalize(tag).includes(keyword))) score += 2;
+    if (normalize(s.desc).includes(keyword)) score += 1;
     return { ...s, _score: score };
   }).filter(s => s._score > 0);
   scored.sort((a, b) => b._score - a._score);
