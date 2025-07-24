@@ -1,0 +1,211 @@
+{
+  "menu": {
+    "map": "地圖追蹤",
+    "script": "Javascript 腳本",
+    "combat": "戰鬥策略",
+    "tcg": "七聖召喚策略"
+  },
+  "button": {
+    "ok": "確定",
+    "cancel": "取消",
+    "refresh": "重新整理頁面",
+    "help": "查看幫助",
+    "all": "全部",
+    "subscribed": "已訂閱",
+    "visitOnline": "前往線上倉庫"
+  },
+  "sider": {
+    "repoTitle": "腳本倉庫",
+    "mainRepo": "前往 BetterGI 主倉庫",
+    "scriptRepo": "前往 BetterGI 腳本倉庫",
+    "onlineRepo": "前往線上倉庫",
+    "lastUpdate": "最後更新時間："
+  },
+  "script": {
+    "all": "全部",
+    "subscribed": "已訂閱",
+    "onlyLocal": "僅本地頁面可用",
+    "searchMap": "搜尋資源名稱、作者、標籤",
+    "searchScript": "搜尋腳本名稱、作者、簡介、標籤",
+    "searchCombat": "搜尋戰鬥策略名稱、作者、標籤",
+    "searchTCG": "搜尋七聖召喚策略名稱、作者、標籤",
+    "searchDefault": "輸入關鍵字查詢",
+    "author": "作者：",
+    "noAuthor": "暫無作者資訊",
+    "unknown": "未知腳本"
+  },
+  "error": {
+    "repoTitle": "取得倉庫資訊失敗",
+    "repoDesc": "請檢查網路或稍後重新整理頁面重試"
+  },
+  "comment": {
+    "title": "評論",
+    "localModeTitle": "本地模式暫不支援評論功能",
+    "localModeDesc": "請移至線上倉庫進行評論"
+  },
+  "egg": {
+    "title": "小彩蛋",
+    "loading": "彩蛋正在拼命載入中…",
+    "error": "努力不敵命運，載入失敗，請重試"
+  },
+  "help": {
+    "title": "常見問題 Q&A",
+    "modalTitle": "觀前提示：任何問題請在自行思考後再提出，下方回答語氣較衝屬正常現象，與 BGI 作者無關，如有不滿敬請見諒或聯絡本頁作者發洩",
+    "author": "作者信箱：anqi4051@gmail.com",
+    "qa": [
+      {
+        "q": "為什麼倉庫一直載入失敗？",
+        "a": "倉庫使用的是 GitHub 的地址，國內連線可能時好時壞屬正常現象，打不開就多試幾次，或過幾分鐘再試，也可以使用 BGI 的本地倉庫頁面。（如果你是魔法師，你知道怎麼做）"
+      },
+      {
+        "q": "評論功能為什麼不可用？",
+        "a": "本地模式下不支援評論，請前往線上倉庫並登入 GitHub 帳號後進行評論，如何使用 GitHub 請自行解決，這裡不做引導。"
+      },
+      {
+        "q": "為什麼沒有 XX 腳本？",
+        "a": "四個列表都找過還找不到，那就是沒有人寫這個腳本。"
+      },
+      {
+        "q": "已訂閱功能怎麼用？",
+        "a": "請進入“BetterGI → 設定 → BetterGI Http 伺服器設定”（若未找到該設定，請確認 BGI 已更新至最新版），確認該項已開啟且連接埠設為 30648。完成後請關閉此頁面並重啟 BGI 再試，仍有問題請聯絡作者。"
+      },
+      {
+        "q": "README 是什麼，為什麼載入失敗了？為什麼沒顯示？",
+        "a": "問 README 是什麼的，學過小學英文的請讀一遍 README 😡。載入失敗狀況同第一題。沒顯示是因為腳本作者沒寫 README 或檔案名稱錯了。"
+      },
+      {
+        "q": "有些連結點不開是為什麼？載入半天載不出來？",
+        "a": "參見第一題。"
+      },
+      {
+        "q": "點擊訂閱後沒反應？",
+        "a": "請打開 BGI，此時會有導入視窗跳出，選擇導入即可。如果你使用的是線上倉庫，刷新 BGI 頁面後沒看到訂閱腳本，請更新本地倉庫再試，仍有問題請到群內詢問。"
+      },
+      {
+        "q": "這個腳本用不了怎麼辦？",
+        "a": "請到相關群組提問，具體問題具體分析，提問時請確保截圖與描述充足。"
+      },
+      {
+        "q": "我之前的評論怎麼不見了？",
+        "a": "通常不會刪除評論，如果消失很可能是你評論的節點路徑被修改了，例如水晶礦改成了晶水礦，導致你看到的是新的評論區。"
+      },
+      {
+        "q": "這個腳本為什麼不用納西妲？",
+        "a": "作者需要考慮不是每個人都有，如果你需要請自己寫一個。"
+      },
+      {
+        "q": "我想要 XX 功能怎麼辦？",
+        "a": "沒人寫就自己寫一個吧！"
+      },
+      {
+        "q": "其它",
+        "a": "更多問題請聯絡我，若有價值會不定期更新本頁。"
+      }
+    ]
+  },
+  "readmeViewer": {
+    "descTitle": "簡介：",
+    "noDesc": "暫無簡介",
+    "loadTimeout": "載入逾時",
+    "loadFailed": "載入失敗",
+    "clickToViewFile": "點擊查看 GitHub 倉庫中的檔案",
+    "clickToViewDir": "點擊查看 GitHub 倉庫中的目錄",
+    "invalidLinkHint": "（這位作者很笨，把連結寫錯了，去提醒他改一下吧）"
+  },
+  "action": {
+    "help": "幫助",
+    "jumpToGitHub": "前往 GitHub",
+    "comment": "評論"
+  },
+  "mapTreeList": {
+    "subscribed": "已訂閱",
+    "subscribe": "訂閱",
+    "subscribeAgain": "再次訂閱",
+    "selectValidNode": "請選擇一個有效的節點進行訂閱",
+    "subscribeFailed": "訂閱失敗",
+    "subscribeFailedWithMsg": "訂閱失敗：{msg}",
+    "subscribeSuccess": "已將 {name} 的訂閱連結複製到剪貼簿",
+    "copyFailed": "複製 {name} 的訂閱連結失敗",
+    "noDesc": "無"
+  },
+  "scriptList": {
+    "subscribed": "已訂閱",
+    "noAuthor": "無"
+  },
+  "combatStrategyList": {
+    "subscribed": "已訂閱",
+    "noAuthor": "無"
+  },
+  "cardStrategyList": {
+    "subscribed": "已訂閱",
+    "noAuthor": "無"
+  },
+  "common": {
+    "comma": "，",
+    "noDesc": "無"
+  },
+  "detail": {
+    "author": "作者：",
+    "scriptAuthor": "作者",
+    "noAuthor": "暫無作者資訊",
+    "subscribe": "訂閱",
+    "subscribed": "已訂閱",
+    "subscribeAgain": "再次訂閱",
+    "subscribeFailed": "訂閱失敗",
+    "subscribeFailedWithMsg": "訂閱失敗：{msg}",
+    "subscribeSuccess": "已將 {name} 的訂閱連結複製到剪貼簿",
+    "copyFailed": "複製 {name} 的訂閱連結失敗",
+    "loadingReadme": "正在載入 readme 檔案",
+    "readmeFailed": "readme 檔案載入失敗，請重試",
+    "loadingStrategy": "正在載入策略檔案內容",
+    "strategyFailed": "策略檔案載入失敗，請重試",
+    "empty": "請從左側選擇腳本查看詳情",
+    "desc": "簡介：",
+    "tabReadme": "簡介",
+    "tabFiles": "檔案列表",
+    "noFiles": "暫無檔案資料",
+    "modalTitle": "檔案詳情",
+    "name": "名稱",
+    "tags": "標籤",
+    "lastUpdated": "更新時間",
+    "operations": "操作",
+    "hash": "hash",
+    "description": "描述",
+    "version": "版本",
+    "path": "路徑",
+    "details": "詳情",
+    "showDetails": "詳情"
+  },
+  "settings": {
+    "title": "設定",
+    "language": "選擇語言",
+    "zhCN": "簡體中文",
+    "zhTW": "繁體中文",
+    "enUS": "英文",
+    "jaJP": "日文",
+    "frFR": "法文"
+  },
+  "loading": {
+    "repoData": "倉庫資料載入中，請稍候..."
+  },
+  "repoError.title": "取得倉庫資訊失敗",
+  "repoError.desc": "請檢查網路或稍後重新整理頁面重試",
+  "repoError.refresh": "重新整理頁面",
+  "repoError.help": "查看幫助",
+  "script.unknownScript": "未知腳本",
+  "script.author": "作者：",
+  "script.noAuthor": "暫無作者資訊",
+  "comment.localModeNoticeTitle": "本地模式暫不支援評論功能",
+  "comment.localModeNoticeDesc": "請移至線上倉庫進行評論",
+  "comment.onlineRepo": "前往線上倉庫",
+  "egg.failed": "努力不敵命運，載入失敗，請重試",
+  "egg.title": "小彩蛋",
+  "egg.loading": "彩蛋正在拼命載入中…",
+  "script.searchMap": "搜尋資源名稱、作者、標籤",
+  "script.onlyLocal": "僅本地頁面可用",
+  "comment.title": "評論",
+  "script.searchScript": "搜尋腳本名稱、作者、簡介、標籤",
+  "script.searchCombat": "搜尋戰鬥策略名稱、作者、標籤",
+  "script.searchTCG": "搜尋七聖召喚策略名稱、作者、標籤",
+  "script.searchDefault": "輸入關鍵字查詢"
+}

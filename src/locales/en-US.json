@@ -1,0 +1,211 @@
+{
+  "menu": {
+    "map": "Map Tracking",
+    "script": "Javascript Script",
+    "combat": "Combat Strategy",
+    "tcg": "Seven Sacred Summons Strategy"
+  },
+  "button": {
+    "ok": "OK",
+    "cancel": "Cancel",
+    "refresh": "Refresh Page",
+    "help": "Help",
+    "all": "All",
+    "subscribed": "Subscribed",
+    "visitOnline": "Visit Online Repository"
+  },
+  "sider": {
+    "repoTitle": "Script Repository",
+    "mainRepo": "Visit BetterGI Main Repository",
+    "scriptRepo": "Visit BetterGI Script Repository",
+    "onlineRepo": "Visit Online Repository",
+    "lastUpdate": "Last Update Time:"
+  },
+  "script": {
+    "all": "All",
+    "subscribed": "Subscribed",
+    "onlyLocal": "Only Available on Local Page",
+    "searchMap": "Search Resource Name, Author, Tag",
+    "searchScript": "Search Script Name, Author, Description, Tag",
+    "searchCombat": "Search Combat Strategy Name, Author, Tag",
+    "searchTCG": "Search Seven Sacred Summons Strategy Name, Author, Tag",
+    "searchDefault": "Enter Keywords to Search",
+    "author": "Author:",
+    "noAuthor": "No Author Information Available",
+    "unknown": "Unknown Script"
+  },
+  "error": {
+    "repoTitle": "Failed to Get Repository Information",
+    "repoDesc": "Please Check the Network or Refresh the Page Later to Try Again"
+  },
+  "comment": {
+    "title": "Comments",
+    "localModeTitle": "Commenting is Not Supported in Local Mode",
+    "localModeDesc": "Please Go to the Online Repository to Comment"
+  },
+  "egg": {
+    "title": "Easter Egg",
+    "loading": "The Easter Egg is Trying Its Best to Load...",
+    "error": "Failed to Load Despite Best Efforts, Please Try Again"
+  },
+  "help": {
+    "title": "Frequently Asked Questions Q&A",
+    "modalTitle": "Before You Ask: Please Think About Any Questions Yourself Before Asking. The Tone of the Answers Below is Relatively Rough, Which is Normal and Not Related to the BGI Author. Please Forgive Any Dissatisfaction or Contact the Author of This Page to Vent",
+    "author": "Author Email: anqi4051@gmail.com",
+    "qa": [
+      {
+        "q": "Why Does the Repository Keep Failing to Load?",
+        "a": "The Repository Uses a GitHub Address, and Direct Connection in China May Be Intermittent, Which is Normal. If You Can't Open It, Try a Few More Times or Come Back in a Few Minutes. You Can Also Use the Local Repository Page of BGI. (If You Are a Magician, You Know What to Do)"
+      },
+      {
+        "q": "Why is the Comment Function Unavailable?",
+        "a": "Comments Are Not Supported in Local Mode. Please Visit the Online Repository and Log in to Your GitHub Account to Comment. Please Solve How to Use GitHub Yourself. No Guidance is Provided Here."
+      },
+      {
+        "q": "Why is There No XX Script?",
+        "a": "After Searching Everything (All Four Lists), If There is No Such Script, Then No One Has Written This Script."
+      },
+      {
+        "q": "How to Use the Subscribed Function?",
+        "a": "“BetterGI → Settings → BetterGI Http Server Settings” (If You Can't Find This Setting, Please Make Sure BGI is Updated to the Latest Version), Make Sure This Item is Enabled and the Port Number is Set to 30648. After Completion, Please Close This Page and Restart BGI to Try Again. If There Are Still Problems, Please Contact the Author to Solve It."
+      },
+      {
+        "q": "What is README, Why Did It Fail to Load? Why is It Not Displayed?",
+        "a": "If You Ask What README is, Please Read README Once If You Have Studied Elementary School English 😡. The Loading Failure Situation is the Same as the First Question. It is Not Displayed Because the Script Author Did Not Write README or the README.md File is Named Incorrectly."
+      },
+      {
+        "q": "Why Can't Some Links Be Opened? Why Does It Take So Long to Load?",
+        "a": "Same as the First Question."
+      },
+      {
+        "q": "Why is There No Response After Clicking Subscribe?",
+        "a": "Please Open BGI, and an Import Window Will Pop Up at This Time. Select Import. If You Are Using the Online Repository, Refresh the BGI Page and If There is No Script You Subscribed To, Please Update the Local Repository and Try Again. If There Are Still Exceptions, Please Ask in the Relevant Group."
+      },
+      {
+        "q": "What Should I Do If This Script Doesn't Work?",
+        "a": "Please Ask in the Relevant Group. Specific Problems Should Be Analyzed Specifically. Make Sure Your Screenshots and Descriptions Are Sufficient When Asking Questions."
+      },
+      {
+        "q": "Why Are My Previous Comments Gone?",
+        "a": "Generally, Comments Will Not Be Deleted. If the Comment Disappears, It is Likely That the Node Path You Commented on Has Changed. For Example, If the Crystal Mine Directory is Renamed to Crystal Water Mine, You Will See a New Comment Area."
+      },
+      {
+        "q": "Why Doesn't This Script Use Nahida?",
+        "a": "Authors Need to Consider Whether Everyone Has It. If You Need It, Please Try to Make One Yourself."
+      },
+      {
+        "q": "What Should I Do If I Want XX Function?",
+        "a": "If No Author Writes It, Then Write One Yourself!"
+      },
+      {
+        "q": "Other",
+        "a": "Please Contact Me for More Questions. If There is Value, This Page Will Be Updated From Time to Time."
+      }
+    ]
+  },
+  "readmeViewer": {
+    "descTitle": "Description:",
+    "noDesc": "No Description Available",
+    "loadTimeout": "Loading Timeout",
+    "loadFailed": "Loading Failed",
+    "clickToViewFile": "Click to View File in GitHub Repository",
+    "clickToViewDir": "Click to View Directory in GitHub Repository",
+    "invalidLinkHint": "(This Author is Very Stupid and Wrote the Link Wrong. Remind Them to Modify It)"
+  },
+  "action": {
+    "help": "Help",
+    "jumpToGitHub": "Jump to GitHub",
+    "comment": "Comment"
+  },
+  "mapTreeList": {
+    "subscribed": "Subscribed",
+    "subscribe": "Subscribe",
+    "subscribeAgain": "Subscribe Again",
+    "selectValidNode": "Please Select a Valid Node to Subscribe",
+    "subscribeFailed": "Subscription Failed",
+    "subscribeFailedWithMsg": "Subscription Failed: {msg}",
+    "subscribeSuccess": "The Subscription Link of {name} Has Been Copied to the Clipboard",
+    "copyFailed": "Failed to Copy the Subscription Link of {name}",
+    "noDesc": "None"
+  },
+  "scriptList": {
+    "subscribed": "Subscribed",
+    "noAuthor": "None"
+  },
+  "combatStrategyList": {
+    "subscribed": "Subscribed",
+    "noAuthor": "None"
+  },
+  "cardStrategyList": {
+    "subscribed": "Subscribed",
+    "noAuthor": "None"
+  },
+  "common": {
+    "comma": ",",
+    "noDesc": "None"
+  },
+  "detail": {
+    "author": "Author:",
+    "scriptAuthor": "Author",
+    "noAuthor": "No Author Information Available",
+    "subscribe": "Subscribe",
+    "subscribed": "Subscribed",
+    "subscribeAgain": "Subscribe Again",
+    "subscribeFailed": "Subscription Failed",
+    "subscribeFailedWithMsg": "Subscription Failed: {msg}",
+    "subscribeSuccess": "The Subscription Link of {name} Has Been Copied to the Clipboard",
+    "copyFailed": "Failed to Copy the Subscription Link of {name}",
+    "loadingReadme": "Loading readme File",
+    "readmeFailed": "readme File Failed to Load, Please Try Again",
+    "loadingStrategy": "Loading Strategy File Content",
+    "strategyFailed": "Strategy File Failed to Load, Please Try Again",
+    "empty": "Please Select a Script on the Left to View Details",
+    "desc": "Description:",
+    "tabReadme": "Description",
+    "tabFiles": "File List",
+    "noFiles": "No File Data Available",
+    "modalTitle": "File Details",
+    "name": "Name",
+    "tags": "Tags",
+    "lastUpdated": "Update Time",
+    "operations": "Operations",
+    "hash": "hash",
+    "description": "Description",
+    "version": "Version",
+    "path": "Path",
+    "details": "Details",
+    "showDetails": "Details"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Select Language",
+    "zhCN": "Simplified Chinese",
+    "zhTW": "Traditional Chinese",
+    "enUS": "English",
+    "jaJP": "Japanese",
+    "frFR": "French"
+  },
+  "loading": {
+    "repoData": "Repository Data is Loading, Please Wait..."
+  },
+  "repoError.title": "Failed to Get Repository Information",
+  "repoError.desc": "Please Check the Network or Refresh the Page Later to Try Again",
+  "repoError.refresh": "Refresh Page",
+  "repoError.help": "Help",
+  "script.unknownScript": "Unknown Script",
+  "script.author": "Author:",
+  "script.noAuthor": "No Author Information Available",
+  "comment.localModeNoticeTitle": "Commenting is Not Supported in Local Mode",
+  "comment.localModeNoticeDesc": "Please Go to the Online Repository to Comment",
+  "comment.onlineRepo": "Visit Online Repository",
+  "egg.failed": "Failed to Load Despite Best Efforts, Please Try Again",
+  "egg.title": "Easter Egg",
+  "egg.loading": "The Easter Egg is Trying Its Best to Load...",
+  "script.searchMap": "Search Resource Name, Author, Tag",
+  "script.onlyLocal": "Only Available on Local Page",
+  "comment.title": "Comments",
+  "script.searchScript": "Search Script Name, Author, Description, Tag",
+  "script.searchCombat": "Search Combat Strategy Name, Author, Tag",
+  "script.searchTCG": "Search Seven Sacred Summons Strategy Name, Author, Tag",
+  "script.searchDefault": "Enter Keywords to Search"
+}

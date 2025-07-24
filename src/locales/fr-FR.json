@@ -1,0 +1,211 @@
+{
+  "menu": {
+    "map": "Suivi de la carte",
+    "script": "Script Javascript",
+    "combat": "Stratégies de combat",
+    "tcg": "Stratégies Invocation des Sept"
+  },
+  "button": {
+    "ok": "OK",
+    "cancel": "Annuler",
+    "refresh": "Rafraîchir la page",
+    "help": "Voir l'aide",
+    "all": "Tout",
+    "subscribed": "Abonné",
+    "visitOnline": "Visiter le dépôt en ligne"
+  },
+  "sider": {
+    "repoTitle": "Dépôt de scripts",
+    "mainRepo": "Accéder au dépôt principal de BetterGI",
+    "scriptRepo": "Accéder au dépôt de scripts BetterGI",
+    "onlineRepo": "Accéder au dépôt en ligne",
+    "lastUpdate": "Dernière mise à jour :"
+  },
+  "script": {
+    "all": "Tout",
+    "subscribed": "Abonné",
+    "onlyLocal": "Disponible uniquement en mode local",
+    "searchMap": "Rechercher par ressource, auteur ou tag",
+    "searchScript": "Rechercher par script, auteur, description ou tag",
+    "searchCombat": "Rechercher par stratégie de combat, auteur ou tag",
+    "searchTCG": "Rechercher par stratégie TCG, auteur ou tag",
+    "searchDefault": "Saisir un mot-clé",
+    "author": "Auteur :",
+    "noAuthor": "Aucune information sur l'auteur",
+    "unknown": "Script inconnu"
+  },
+  "error": {
+    "repoTitle": "Échec du chargement du dépôt",
+    "repoDesc": "Veuillez vérifier votre connexion ou réessayer plus tard"
+  },
+  "comment": {
+    "title": "Commentaires",
+    "localModeTitle": "Commentaires non pris en charge en mode local",
+    "localModeDesc": "Veuillez utiliser le dépôt en ligne pour commenter"
+  },
+  "egg": {
+    "title": "Petit easter egg",
+    "loading": "Chargement de l'easter egg en cours...",
+    "error": "Échec du chargement. Veuillez réessayer"
+  },
+  "help": {
+    "title": "Questions fréquentes (FAQ)",
+    "modalTitle": "Note préalable : veuillez réfléchir avant de poser une question. Le ton des réponses peut sembler rude, mais ce n’est pas la faute de l’auteur de BGI.",
+    "author": "Email de l’auteur : anqi4051@gmail.com",
+    "qa": [
+      {
+        "q": "Pourquoi le dépôt échoue-t-il toujours à se charger ?",
+        "a": "Le dépôt utilise une URL GitHub, ce qui peut être instable depuis la Chine. Réessayez plus tard ou utilisez la version locale. (Si vous êtes un magicien, vous savez quoi faire.)"
+      },
+      {
+        "q": "Pourquoi la fonction de commentaire ne fonctionne-t-elle pas ?",
+        "a": "Les commentaires ne sont pas disponibles en mode local. Veuillez visiter le dépôt en ligne et vous connecter avec votre compte GitHub. Aucune assistance fournie ici."
+      },
+      {
+        "q": "Pourquoi le script XX n'existe-t-il pas ?",
+        "a": "S'il n’apparaît dans aucun des quatre onglets, c’est que personne ne l’a encore écrit."
+      },
+      {
+        "q": "Comment utiliser la fonction d’abonnement ?",
+        "a": "Activez “BetterGI → Paramètres → Paramètres du serveur HTTP de BetterGI” et définissez le port sur 30648. Redémarrez ensuite BGI."
+      },
+      {
+        "q": "Qu’est-ce que le README et pourquoi il ne se charge pas ? Pourquoi ne s’affiche-t-il pas ?",
+        "a": "Tu te demandes ce qu’est un README ? Si tu as appris un peu d’anglais à l’école, lis-le 😡. Si le chargement échoue, voir la première question. S’il ne s’affiche pas, c’est que l’auteur du script n’a pas rédigé de README ou a mal nommé le fichier README.md."
+      },
+      {
+        "q": "Pourquoi certains liens ne s’ouvrent-ils pas ? Pourquoi le chargement est-il si long ?",
+        "a": "Même raison que la première question."
+      },
+      {
+        "q": "Pourquoi rien ne se passe après avoir cliqué sur s’abonner ?",
+        "a": "Ouvrez BGI et suivez les instructions d’importation. Rafraîchissez la page si besoin."
+      },
+      {
+        "q": "Que faire si le script ne fonctionne pas ?",
+        "a": "Posez votre question dans le groupe concerné, avec captures d’écran et explication claire."
+      },
+      {
+        "q": "Pourquoi mes anciens commentaires ont-ils disparu ?",
+        "a": "Ils peuvent avoir disparu si le nom de chemin du script a été modifié."
+      },
+      {
+        "q": "Pourquoi ce script ne contient-il pas Nahida ?",
+        "a": "Tous les utilisateurs ne possèdent pas ce personnage. Si vous en avez besoin, créez votre propre script."
+      },
+      {
+        "q": "Et si je veux une fonctionnalité XX ?",
+        "a": "Écrivez-la vous-même si personne ne l’a encore fait."
+      },
+      {
+        "q": "Autres",
+        "a": "Contactez-moi pour d’autres questions. Cette page sera mise à jour si nécessaire."
+      }
+    ]
+  },
+  "readmeViewer": {
+    "descTitle": "Description :",
+    "noDesc": "Aucune description",
+    "loadTimeout": "Délai de chargement dépassé",
+    "loadFailed": "Échec du chargement",
+    "clickToViewFile": "Cliquez pour voir le fichier sur GitHub",
+    "clickToViewDir": "Cliquez pour voir le dossier sur GitHub",
+    "invalidLinkHint": "(Ce créateur a mal écrit le lien, allez lui dire de le corriger)"
+  },
+  "action": {
+    "help": "Aide",
+    "jumpToGitHub": "Aller sur GitHub",
+    "comment": "Commentaire"
+  },
+  "mapTreeList": {
+    "subscribed": "Abonné",
+    "subscribe": "S’abonner",
+    "subscribeAgain": "S’abonner de nouveau",
+    "selectValidNode": "Veuillez sélectionner un nœud valide",
+    "subscribeFailed": "Échec de l’abonnement",
+    "subscribeFailedWithMsg": "Échec de l’abonnement : {msg}",
+    "subscribeSuccess": "Lien d’abonnement de {name} copié dans le presse-papiers",
+    "copyFailed": "Échec de la copie du lien d’abonnement de {name}",
+    "noDesc": "Aucune"
+  },
+  "scriptList": {
+    "subscribed": "Abonné",
+    "noAuthor": "Aucun"
+  },
+  "combatStrategyList": {
+    "subscribed": "Abonné",
+    "noAuthor": "Aucun"
+  },
+  "cardStrategyList": {
+    "subscribed": "Abonné",
+    "noAuthor": "Aucun"
+  },
+  "common": {
+    "comma": ", ",
+    "noDesc": "Aucune"
+  },
+  "detail": {
+    "author": "Auteur :",
+    "scriptAuthor": "Auteur",
+    "noAuthor": "Aucune information sur l’auteur",
+    "subscribe": "S’abonner",
+    "subscribed": "Abonné",
+    "subscribeAgain": "S’abonner de nouveau",
+    "subscribeFailed": "Échec de l’abonnement",
+    "subscribeFailedWithMsg": "Échec de l’abonnement : {msg}",
+    "subscribeSuccess": "Lien d’abonnement de {name} copié dans le presse-papiers",
+    "copyFailed": "Échec de la copie du lien d’abonnement de {name}",
+    "loadingReadme": "Chargement du fichier README...",
+    "readmeFailed": "Échec du chargement du README. Veuillez réessayer",
+    "loadingStrategy": "Chargement de la stratégie...",
+    "strategyFailed": "Échec du chargement de la stratégie. Veuillez réessayer",
+    "empty": "Veuillez sélectionner un script à gauche pour voir les détails",
+    "desc": "Description :",
+    "tabReadme": "Introduction",
+    "tabFiles": "Liste des fichiers",
+    "noFiles": "Aucun fichier disponible",
+    "modalTitle": "Détails du fichier",
+    "name": "Nom",
+    "tags": "Tags",
+    "lastUpdated": "Dernière mise à jour",
+    "operations": "Actions",
+    "hash": "hash",
+    "description": "Description",
+    "version": "Version",
+    "path": "Chemin",
+    "details": "Détails",
+    "showDetails": "Détails"
+  },
+  "settings": {
+    "title": "Paramètres",
+    "language": "Choisir la langue",
+    "zhCN": "Chinois simplifié",
+    "zhTW": "Chinois traditionnel",
+    "enUS": "Anglais",
+    "jaJP": "Japonais",
+    "frFR": "Français"
+  },
+  "loading": {
+    "repoData": "Chargement des données du dépôt, veuillez patienter..."
+  },
+  "repoError.title": "Échec du chargement du dépôt",
+  "repoError.desc": "Veuillez vérifier votre connexion ou réessayer plus tard",
+  "repoError.refresh": "Rafraîchir la page",
+  "repoError.help": "Voir l’aide",
+  "script.unknownScript": "Script inconnu",
+  "script.author": "Auteur :",
+  "script.noAuthor": "Aucune information sur l’auteur",
+  "comment.localModeNoticeTitle": "Commentaires non pris en charge en mode local",
+  "comment.localModeNoticeDesc": "Veuillez utiliser le dépôt en ligne pour commenter",
+  "comment.onlineRepo": "Visiter le dépôt en ligne",
+  "egg.failed": "Échec du chargement. Veuillez réessayer",
+  "egg.title": "Petit easter egg",
+  "egg.loading": "Chargement de l'easter egg en cours...",
+  "script.searchMap": "Rechercher par ressource, auteur ou tag",
+  "script.onlyLocal": "Disponible uniquement en mode local",
+  "comment.title": "Commentaires",
+  "script.searchScript": "Rechercher par script, auteur, description ou tag",
+  "script.searchCombat": "Rechercher par stratégie de combat, auteur ou tag",
+  "script.searchTCG": "Rechercher par stratégie TCG, auteur ou tag",
+  "script.searchDefault": "Saisir un mot-clé"
+}
