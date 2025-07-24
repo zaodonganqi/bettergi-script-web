@@ -36,8 +36,7 @@ export default {
     },
     error: {
         repoTitle: '倉庫情報の取得に失敗しました',
-        repoDesc: 'ネットワークを確認するか、後でページを更新してください',
-        loading: '倉庫データを読み込み中...'
+        repoDesc: 'ネットワークを確認するか、後でページを更新してください'
     },
     comment: {
         title: 'コメント',
@@ -149,5 +148,8 @@ export default {
         enUS: '英語',
         jaJP: '日本語',
         frFR: 'フランス語'
+    },
+    loading: {
+        repoData: 'リポジトリデータを読み込み中です。しばらくお待ちください...'
     }
 }

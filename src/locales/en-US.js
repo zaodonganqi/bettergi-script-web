@@ -36,8 +36,7 @@ export default {
     },
     error: {
         repoTitle: 'Failed to Fetch Repository',
-        repoDesc: 'Please check network or refresh later',
-        loading: 'Loading repository data...'
+        repoDesc: 'Please check network or refresh later'
     },
     comment: {
         title: 'Comments',
@@ -184,5 +183,8 @@ export default {
         enUS: 'English',
         jaJP: 'Japanese',
         frFR: 'French'
+    },
+    loading: {
+        repoData: 'Repository data is loading, please wait...'
     }
 }

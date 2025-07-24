@@ -36,8 +36,7 @@ export default {
     },
     error: {
         repoTitle: '获取仓库信息失败',
-        repoDesc: '请检查网络或稍后刷新页面重试',
-        loading: '仓库数据加载中，请稍候...'
+        repoDesc: '请检查网络或稍后刷新页面重试'
     },
     comment: {
         title: '评论',
@@ -149,5 +148,8 @@ export default {
         enUS: '英文',
         jaJP: '日语',
         frFR: '法语'
+    },
+    loading: {
+        repoData: '仓库数据加载中，请稍候...'
     }
 }

@@ -36,8 +36,7 @@ export default {
     },
     error: {
         repoTitle: 'Échec de la récupération des informations du dépôt',
-        repoDesc: 'Veuillez vérifier votre connexion ou rafraîchir la page plus tard',
-        loading: 'Chargement des données du dépôt, veuillez patienter...'
+        repoDesc: 'Veuillez vérifier votre connexion ou rafraîchir la page plus tard'
     },
     comment: {
         title: 'Commentaire',
@@ -149,5 +148,8 @@ export default {
         enUS: 'Anglais',
         jaJP: 'Japonais',
         frFR: 'Français'
+    },
+    loading: {
+        repoData: 'Chargement des données du dépôt, veuillez patienter...'
     }
 }

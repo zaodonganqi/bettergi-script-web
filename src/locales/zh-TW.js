@@ -36,8 +36,7 @@ export default {
     },
     error: {
         repoTitle: '獲取倉庫資訊失敗',
-        repoDesc: '請檢查網路或稍後重新整理頁面',
-        loading: '倉庫資料加載中，請稍候...'
+        repoDesc: '請檢查網路或稍後重新整理頁面'
     },
     comment: {
         title: '評論',
@@ -149,5 +148,8 @@ export default {
         enUS: '英文',
         jaJP: '日語',
         frFR: '法語'
+    },
+    loading: {
+        repoData: '倉庫資料加載中，請稍候...'
     }
 }
