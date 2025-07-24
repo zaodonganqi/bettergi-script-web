@@ -193,7 +193,7 @@
 
     <!-- 全局加载弹窗 -->
     <div v-if="globalLoading" class="global-loading-modal">
-      <a-spin size="large" tip="{{ $t('loading.repoData') }}..." />
+      <a-spin size="large" :tip="`${$t('loading.repoData')}...`" />
     </div>
 
     <!-- 评论弹窗 -->
