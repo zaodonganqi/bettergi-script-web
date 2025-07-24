@@ -167,6 +167,7 @@ const selectScript = (id) => {
   selectedId.value = id;
   const script = scripts.value.find(script => script.id === id);
   emit('select', script);
+  console.log("已选择节点", script);
 };
 
 function normalize(str) {

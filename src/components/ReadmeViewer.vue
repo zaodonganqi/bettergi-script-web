@@ -263,7 +263,6 @@ const fetchAndRenderReadme = async (path) => {
       const response = await fetch(readmeUrl, { signal: controller.signal });
       if (response.ok) {
         markdown = await response.text();
-        console.log('markdown', markdown);
       } else if (response.status === 404) {
         readmeContent.value = '';
         emit('loaded', { status: '404' });

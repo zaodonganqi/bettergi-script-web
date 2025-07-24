@@ -162,6 +162,7 @@ const selectStrategy = (id) => {
   selectedId.value = id;
   const strategy = strategies.value.find(strategy => strategy.id === id);
   emit('select', strategy);
+  console.log("已选择节点", strategy);
 };
 
 const filteredStrategies = computed(() => {
