@@ -17,12 +17,16 @@ const antdLocales = {
 };
 
 const { locale } = useI18n();
-const selectedLocale = ref(locale.value);
+// 优先从localStorage读取语言
+const savedLocale = localStorage.getItem('user-locale');
+const selectedLocale = ref(savedLocale || locale.value);
 const currentAntdLocale = ref(antdLocales[selectedLocale.value] || zhCN);
 
 watch(selectedLocale, (newLocale) => {
   locale.value = newLocale;
   currentAntdLocale.value = antdLocales[newLocale] || zhCN;
+  // 保存到localStorage
+  localStorage.setItem('user-locale', newLocale);
 });
 
 function handleLocaleChange(val) {
