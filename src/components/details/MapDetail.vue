@@ -141,7 +141,7 @@ import { ReloadOutlined } from '@ant-design/icons-vue';
 import ReadmeViewer from '../ReadmeViewer.vue';
 import { useClipboard } from '@vueuse/core';
 import { useI18n } from 'vue-i18n';
-const { t: $t } = useI18n();
+const { t: $t, locale } = useI18n();
 
 const props = defineProps({
   script: {
@@ -198,9 +198,9 @@ function isReadme404(path) {
 
 const tabOptions = computed(() => [
   {
-    label: isReadme404(props.script?.path)
+    label: (isReadme404(props.script?.path) || !hasReadmeContent.value)
       ? $t('detail.tabReadme')
-      : (hasReadmeContent.value ? 'README' : $t('detail.tabReadme')),
+      : 'README',
     value: 'readme'
   },
   { label: $t('detail.tabFiles'), value: 'files' }
@@ -375,6 +375,10 @@ watch([
     loadError.value = false;
     hasReadmeContent.value = false;
   }
+});
+
+watch(locale, () => {
+  hasReadmeContent.value = false;
 });
 
 const retryLoadReadme = () => {

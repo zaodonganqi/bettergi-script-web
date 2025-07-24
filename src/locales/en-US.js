@@ -160,7 +160,7 @@ export default {
         strategyFailed: 'Strategy load failed',
         empty: 'Select script from left panel',
         desc: 'Description:',
-        tabReadme: 'README',
+        tabReadme: 'Description',
         tabFiles: 'Files',
         noFiles: 'No files',
         modalTitle: 'File Details',
