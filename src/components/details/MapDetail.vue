@@ -8,7 +8,7 @@
             <div class="detail-meta">
               <template v-if="script.authors && Array.isArray(script.authors) && script.authors.length">
                 <span class="detail-author">
-                  作者：
+                  {{ $t('detail.author') }}：
                   <template v-for="(author, idx) in script.authors" :key="author.name">
                     <template v-if="author.link">
                       <a :href="author.link" class="author-link" target="_blank" rel="noopener noreferrer">{{
@@ -17,28 +17,28 @@
                     <template v-else>
                       <span>{{ author.name }}</span>
                     </template>
-                    <span v-if="idx < script.authors.length - 1">，</span>
+                    <span v-if="idx < script.authors.length - 1">{{ $t('common.comma') }}</span>
                   </template>
                 </span>
               </template>
-              <span v-else class="detail-author">暂无作者信息</span>
+              <span v-else class="detail-author">{{ $t('detail.noAuthor') }}</span>
             </div>
             <div class="detail-time">{{ script.type === 'directory' && script.lastUpdated ? script.lastUpdated :
               script.time
             }}</div>
           </div>
           <div class="header-right" style="display: flex; align-items: center; gap: 8px;">
-            <a-button type="primary" v-if="!script.isSubscribed" @click="handleSubscribe(script)">订阅</a-button>
+            <a-button type="primary" v-if="!script.isSubscribed" @click="handleSubscribe(script)">{{ $t('detail.subscribe') }}</a-button>
             <a-button type="primary" v-if="script.isSubscribed" :disabled="script.isSubscribed"
-              class="subscribed-btn">已订阅</a-button>
-            <a-button type="primary" v-if="script.isSubscribed" @click="handleSubscribe(script)">再次订阅</a-button>
+              class="subscribed-btn">{{ $t('detail.subscribed') }}</a-button>
+            <a-button type="primary" v-if="script.isSubscribed" @click="handleSubscribe(script)">{{ $t('detail.subscribeAgain') }}</a-button>
           </div>
         </div>
         <div class="detail-tabs">
           <a-segmented v-model:value="activeTab" :options="tabOptions" size="large" class="detail-tab-btns" />
           <div v-if="isLoadingReadme" class="readme-loading-indicator">
             <a-spin size="small" />
-            <span>正在加载readme文件</span>
+            <span>{{ $t('detail.loadingReadme') }}</span>
           </div>
           <div v-else-if="loadError" class="readme-loading-indicator">
             <a-button type="text" size="small" @click="retryLoadReadme">
@@ -46,7 +46,7 @@
                 <ReloadOutlined />
               </template>
             </a-button>
-            <span>readme文件加载失败，请重试</span>
+            <span>{{ $t('detail.readmeFailed') }}</span>
           </div>
         </div>
         <div class="tab-content-slider">
@@ -81,14 +81,14 @@
                               @mouseenter="onSubscribeBtnHover(record)" @mouseleave="onSubscribeBtnLeave(record)"
                               @click="handleSubscribe(record)">
                               <template v-if="record.isSubscribed">
-                                <span v-if="!record._hover">已订阅</span>
-                                <span v-else class="subscribe-btn-hover">再次订阅</span>
+                                <span v-if="!record._hover">{{ $t('detail.subscribed') }}</span>
+                                <span v-else class="subscribe-btn-hover">{{ $t('detail.subscribeAgain') }}</span>
                               </template>
                               <template v-else>
-                                订阅
+                                {{ $t('detail.subscribe') }}
                               </template>
                             </a-button>
-                            <a-button class="more-detail" size="small" @click="showDetails(record)">详情</a-button>
+                            <a-button class="more-detail" size="small" @click="showDetails(record)">{{ $t('detail.showDetails') }}</a-button>
                           </a-space>
                         </template>
                         <template v-else>
@@ -103,32 +103,32 @@
                       :page-size-options="['10', '20', '50', '100']" />
                   </div>
                 </div>
-                <div v-else class="no-files">暂无文件数据</div>
+                <div v-else class="no-files">{{ $t('detail.noFiles') }}</div>
               </div>
             </div>
           </transition>
         </div>
         <!-- 详情弹窗 -->
-        <a-modal v-model:open="modalOpen" title="文件详情" :footer="null" width="480" centered>
+        <a-modal v-model:open="modalOpen" :title="$t('detail.modalTitle')" :footer="null" width="480" centered>
           <a-descriptions bordered size="small" :column="1">
-            <a-descriptions-item label="名称">{{ modalRecord.name }}</a-descriptions-item>
-            <a-descriptions-item label="作者">{{ modalRecord.author }}</a-descriptions-item>
-            <a-descriptions-item label="标签">
+            <a-descriptions-item :label="$t('detail.name')">{{ modalRecord.name }}</a-descriptions-item>
+            <a-descriptions-item :label="$t('detail.author')">{{ modalRecord.author }}</a-descriptions-item>
+            <a-descriptions-item :label="$t('detail.tags')">
               <a-space>
                 <a-tag v-for="tag in modalRecord.tags" :key="tag" :color="getTagColor(tag)">{{ tag }}</a-tag>
               </a-space>
             </a-descriptions-item>
-            <a-descriptions-item label="更新时间">{{ modalRecord.lastUpdated }}</a-descriptions-item>
-            <a-descriptions-item label="hash">{{ modalRecord.hash }}</a-descriptions-item>
-            <a-descriptions-item label="描述">{{ modalRecord.description }}</a-descriptions-item>
-            <a-descriptions-item label="版本">{{ modalRecord.version }}</a-descriptions-item>
-            <a-descriptions-item label="路径">{{ modalRecord.path }}</a-descriptions-item>
+            <a-descriptions-item :label="$t('detail.lastUpdated')">{{ modalRecord.lastUpdated }}</a-descriptions-item>
+            <a-descriptions-item :label="$t('detail.hash')">{{ modalRecord.hash }}</a-descriptions-item>
+            <a-descriptions-item :label="$t('detail.description')">{{ modalRecord.description }}</a-descriptions-item>
+            <a-descriptions-item :label="$t('detail.version')">{{ modalRecord.version }}</a-descriptions-item>
+            <a-descriptions-item :label="$t('detail.path')">{{ modalRecord.path }}</a-descriptions-item>
           </a-descriptions>
         </a-modal>
       </div>
     </template>
     <template v-else>
-      <div class="detail-empty">请选择左侧脚本查看详情</div>
+      <div class="detail-empty">{{ $t('detail.empty') }}</div>
     </template>
   </div>
 </template>
@@ -140,6 +140,8 @@ import { Table as ATable, Tag as ATag, Popover as APopover, Space as ASpace, Mod
 import { ReloadOutlined } from '@ant-design/icons-vue';
 import ReadmeViewer from '../ReadmeViewer.vue';
 import { useClipboard } from '@vueuse/core';
+import { useI18n } from 'vue-i18n';
+const { t: $t } = useI18n();
 
 const props = defineProps({
   script: {
@@ -172,27 +174,27 @@ const tableScrollRef = ref(null);
 const columns = computed(() => {
   if (mode === 'single') {
     return [
-      { title: '名称', dataIndex: 'name', width: '30%' },
-      { title: '作者', dataIndex: 'author', width: '13%' },
-      { title: '标签', dataIndex: 'tags', width: '24%' },
-      { title: '更新时间', dataIndex: 'lastUpdated', width: '16%' },
-      { title: '操作', key: 'operations', width: '17%' }
+      { title: $t('detail.name'), dataIndex: 'name', width: '30%' },
+      { title: $t('detail.author'), dataIndex: 'author', width: '13%' },
+      { title: $t('detail.tags'), dataIndex: 'tags', width: '24%' },
+      { title: $t('detail.lastUpdated'), dataIndex: 'lastUpdated', width: '16%' },
+      { title: $t('detail.operations'), key: 'operations', width: '17%' }
     ]
   } else {
     return [
-      { title: '名称', dataIndex: 'name', width: '30%' },
-      { title: '作者', dataIndex: 'author', width: '10%' },
-      { title: '标签', dataIndex: 'tags', width: '24%' },
-      { title: '更新时间', dataIndex: 'lastUpdated', width: '16%' },
-      { title: '操作', key: 'operations', width: '20%' }
+      { title: $t('detail.name'), dataIndex: 'name', width: '30%' },
+      { title: $t('detail.author'), dataIndex: 'author', width: '10%' },
+      { title: $t('detail.tags'), dataIndex: 'tags', width: '24%' },
+      { title: $t('detail.lastUpdated'), dataIndex: 'lastUpdated', width: '16%' },
+      { title: $t('detail.operations'), key: 'operations', width: '20%' }
     ]
   }
 });
 
 // tab切换选项
 const tabOptions = ref([
-  { label: '简介', value: 'readme' },
-  { label: '文件列表', value: 'files' }
+  { label: $t('detail.tabReadme'), value: 'readme' },
+  { label: $t('detail.tabFiles'), value: 'files' }
 ]);
 const activeTab = ref('readme');
 
@@ -251,7 +253,7 @@ const handleReadmeHasContent = (hasContent) => {
 const updateTabLabel = () => {
   const readmeOption = tabOptions.value.find(option => option.value === 'readme');
   if (readmeOption) {
-    readmeOption.label = hasReadmeContent.value ? 'README' : '简介';
+    readmeOption.label = hasReadmeContent.value ? 'README' : $t('detail.tabReadme');
   }
 };
 
@@ -317,15 +319,15 @@ const downloadScript = async (script) => {
     try {
       await subscribeToLocal(fullUrl);
     } catch (error) {
-      console.error('订阅失败:', error);
-      Message.error(`订阅失败: ${error.message}`);
+      console.error('Subscribe failed:', error);
+      Message.error($t('detail.subscribeFailedWithMsg', { msg: error.message }));
     }
   } else {
     copy(fullUrl).then(() => {
-      Message.success(`已将 ${script.name} 的订阅链接复制到剪贴板`);
+      Message.success($t('detail.subscribeSuccess', { name: script.name }));
     }).catch((error) => {
-      console.error('复制到剪贴板失败:', error);
-      Message.error(`复制 ${script.name} 的订阅链接失败`);
+      console.error('Copy to clipboard failed:', error);
+      Message.error($t('detail.copyFailed', { name: script.name }));
     });
   }
 };

@@ -2,8 +2,8 @@
 <template>
   <div class="readme-viewer">
     <div v-if="readmeContent" v-html="readmeContent" class="readme-content"></div>
-    <div v-else-if="desc" class="detail-desc">{{ showDescTitle ? '简介：\n' + desc : desc }}</div>
-    <div v-else-if="!isHttpUrl" class="readme-empty">暂无简介</div>
+    <div v-else-if="desc" class="detail-desc">{{ showDescTitle ? $t('readmeViewer.descTitle') + '\n' + desc : desc }}</div>
+    <div v-else-if="!isHttpUrl" class="readme-empty">{{ $t('readmeViewer.noDesc') }}</div>
   </div>
 </template>
 
@@ -14,6 +14,8 @@ import markdownItAnchor from 'markdown-it-anchor';
 import hljs from 'highlight.js';
 import 'highlight.js/styles/github.css';
 import { getWebPath, getRepoPath } from '@/utils/basePaths';
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
 
 const props = defineProps({
   path: String,
@@ -133,14 +135,14 @@ md.renderer.rules.link_open = function (tokens, idx, options, env, self) {
       token.attrPush(['target', '_blank']);
       token.attrPush(['rel', 'noopener noreferrer']);
       token.attrPush(['class', 'internal-link']);
-      token.attrPush(['title', isFile ? '点击查看GitHub仓库中的文件' : '点击查看GitHub仓库中的目录']);
+      token.attrPush(['title', isFile ? t('readmeViewer.clickToViewFile') : t('readmeViewer.clickToViewDir')]);
     } else if (isPotentialLink) {
       token.attrPush(['class', 'invalid-link']);
       token.attrPush(['onclick', 'return false;']);
       token.attrPush(['style', 'cursor: default;']);
       const textToken = tokens[idx + 1];
       if (textToken && textToken.type === 'text') {
-        textToken.content += '（这个作者很笨，把链接写错了，去提醒ta修改吧）';
+        textToken.content += t('readmeViewer.invalidLinkHint');
       }
     }
   }
@@ -196,13 +198,13 @@ const fetchAndRenderReadme = async (path) => {
     if (fetchError) {
       readmeContent.value = '';
       if (fetchError.name === 'AbortError') {
-        loadError.value = '加载超时';
-        emit('loaded', { status: 'error', message: '加载超时' });
-        emit('error', '加载超时');
+        loadError.value = t('readmeViewer.loadTimeout');
+        emit('loaded', { status: 'error', message: t('readmeViewer.loadTimeout') });
+        emit('error', t('readmeViewer.loadTimeout'));
       } else {
-        loadError.value = '加载失败';
-        emit('loaded', { status: 'error', message: '加载失败' });
-        emit('error', '加载失败');
+        loadError.value = t('readmeViewer.loadFailed');
+        emit('loaded', { status: 'error', message: t('readmeViewer.loadFailed') });
+        emit('error', t('readmeViewer.loadFailed'));
       }
       emit('hasContent', false);
       isLoading.value = false;
@@ -271,7 +273,7 @@ const fetchAndRenderReadme = async (path) => {
         isLoading.value = false;
         return;
       } else {
-        fetchError = new Error('加载失败');
+        fetchError = new Error('Load failed');
       }
     } catch (e) {
       fetchError = e;
@@ -282,13 +284,13 @@ const fetchAndRenderReadme = async (path) => {
   if (fetchError) {
     readmeContent.value = '';
     if (fetchError.name === 'AbortError') {
-      loadError.value = '加载超时';
-      emit('loaded', { status: 'error', message: '加载超时' });
-      emit('error', '加载超时');
+      loadError.value = t('readmeViewer.loadTimeout');
+      emit('loaded', { status: 'error', message: t('readmeViewer.loadTimeout') });
+      emit('error', t('readmeViewer.loadTimeout'));
     } else {
-      loadError.value = '加载失败';
-      emit('loaded', { status: 'error', message: '加载失败' });
-      emit('error', '加载失败');
+      loadError.value = t('readmeViewer.loadFailed');
+      emit('loaded', { status: 'error', message: t('readmeViewer.loadFailed') });
+      emit('error', t('readmeViewer.loadFailed'));
     }
     emit('hasContent', false);
     isLoading.value = false;

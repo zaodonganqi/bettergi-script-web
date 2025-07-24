@@ -15,11 +15,11 @@
             <a-image v-if="dataRef.showIcon" :src="dataRef.icon" :width="22" :placeholder="false"
               @error="dataRef.showIcon = false" />
             <span>
-              {{ title }}<span v-if="dataRef.isSubscribed"> （已订阅）</span>
+              {{ title }}<span v-if="dataRef.isSubscribed"> （{{ $t('mapTreeList.subscribed') }}）</span>
             </span>
           </div>
           <a-button class="subscribe-btn" type="text" size="small" @click.stop="handleSubscribe(dataRef)">
-            {{ dataRef.isSubscribed ? '再次订阅' : '订阅' }}
+            {{ dataRef.isSubscribed ? $t('mapTreeList.subscribeAgain') : $t('mapTreeList.subscribe') }}
           </a-button>
         </div>
       </template>
@@ -34,6 +34,8 @@ import { CaretRightOutlined, CaretDownOutlined } from '@ant-design/icons-vue';
 import { useClipboard } from '@vueuse/core';
 import { message as Message } from 'ant-design-vue';
 import { getRepoPath } from '@/utils/basePaths';
+import { useI18n } from 'vue-i18n';
+const { t: $t } = useI18n();
 
 const props = defineProps({
   searchKey: {
@@ -104,13 +106,13 @@ const handleSelect = (selectedKeysList) => {
 
   emit('select', selectedNode);
   selectedKeys.value = selectedNode.key ? [selectedNode.key] : [];
-  console.log("已选择节点", selectedNode);
+  console.log("Node selected", selectedNode);
 };
 
 // 处理订阅
 const handleSubscribe = (nodeData) => {
   if (!nodeData || !nodeData.key) {
-    Message.error('请选择一个有效的节点进行订阅');
+    Message.error($t('mapTreeList.selectValidNode'));
     return;
   }
   downloadScript(nodeData);
@@ -134,16 +136,16 @@ const downloadScript = async (script) => {
     try {
       await subscribeToLocal(fullUrl);
     } catch (error) {
-      console.error('订阅失败:', error);
-      Message.error(`订阅失败: ${error.message}`);
+      console.error('Subscribe failed:', error);
+      Message.error($t('mapTreeList.subscribeFailedWithMsg', { msg: error.message }));
     }
   } else {
     // 将完整的 URL 复制到剪贴板
     copy(fullUrl).then(() => {
-      Message.success(`已将 ${script.name} 的订阅链接复制到剪贴板`);
+      Message.success($t('mapTreeList.subscribeSuccess', { name: script.name }));
     }).catch((error) => {
-      console.error('复制到剪贴板失败:', error);
-      Message.error(`复制 ${script.name} 的订阅链接失败`);
+      console.error('Copy to clipboard failed:', error);
+      Message.error($t('mapTreeList.copyFailed', { name: script.name }));
     });
   }
 };
@@ -273,7 +275,7 @@ const processNode = (node, parentKey = '', parentSubscribed = false) => {
     version: node.version,
     author: node.author || '',
     authors: authors,
-    description: node.description || '无',
+    description: node.description || $t('mapTreeList.noDesc'),
     tags: node.tags || [],
     time: node.lastUpdated || '',
     lastUpdated: lastUpdated,

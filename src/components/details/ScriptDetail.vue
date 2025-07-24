@@ -7,7 +7,7 @@
           <div class="detail-meta">
             <template v-if="script.authors && Array.isArray(script.authors) && script.authors.length">
               <span class="detail-author">
-                作者：
+                {{ $t('detail.author') }}
                 <template v-for="(author, idx) in script.authors" :key="author.name">
                   <template v-if="author.link">
                     <a :href="author.link" class="author-link" target="_blank" rel="noopener noreferrer">{{ author.name
@@ -16,26 +16,26 @@
                   <template v-else>
                     <span>{{ author.name }}</span>
                   </template>
-                  <span v-if="idx < script.authors.length - 1">，</span>
+                  <span v-if="idx < script.authors.length - 1">{{ $t('common.comma') }}</span>
                 </template>
               </span>
             </template>
-            <span v-else class="detail-author">暂无作者信息</span>
+            <span v-else class="detail-author">{{ $t('detail.noAuthor') }}</span>
           </div>
           <div class="detail-time">{{ script.time }}</div>
         </div>
         <div class="header-right" style="display: flex; align-items: center; gap: 8px;">
-            <a-button type="primary" v-if="!script.isSubscribed" @click="handleSubscribe(script)">订阅</a-button>
+            <a-button type="primary" v-if="!script.isSubscribed" @click="handleSubscribe(script)">{{ $t('detail.subscribe') }}</a-button>
             <a-button type="primary" v-if="script.isSubscribed" :disabled="script.isSubscribed"
-              class="subscribed-btn">已订阅</a-button>
-            <a-button type="primary" v-if="script.isSubscribed" @click="handleSubscribe(script)">再次订阅</a-button>
+              class="subscribed-btn">{{ $t('detail.subscribed') }}</a-button>
+            <a-button type="primary" v-if="script.isSubscribed" @click="handleSubscribe(script)">{{ $t('detail.subscribeAgain') }}</a-button>
           </div>
       </div>
       <div class="detail-readme">
         <transition name="fade-slide-up">
           <div v-if="isLoadingReadme" class="readme-loading-indicator">
             <a-spin size="small" />
-            <span>正在加载readme文件</span>
+            <span>{{ $t('detail.loadingReadme') }}</span>
           </div>
         </transition>
         <transition name="fade-slide-up">
@@ -45,7 +45,7 @@
                 <ReloadOutlined />
               </template>
             </a-button>
-            <span>readme文件加载失败，请重试</span>
+            <span>{{ $t('detail.readmeFailed') }}</span>
           </div>
         </transition>
         <ReadmeViewer :key="readmeKey" :path="script.path" :desc="script.desc" :showDescTitle="true"
@@ -53,7 +53,7 @@
       </div>
     </template>
     <template v-else>
-      <div class="detail-empty">请选择左侧脚本查看详情</div>
+      <div class="detail-empty">{{ $t('detail.empty') }}</div>
     </template>
   </div>
 </template>
@@ -64,6 +64,8 @@ import { useClipboard } from '@vueuse/core';
 import { message as Message, Spin as ASpin } from 'ant-design-vue';
 import ReadmeViewer from '../ReadmeViewer.vue';
 import { ReloadOutlined } from '@ant-design/icons-vue';
+import { useI18n } from 'vue-i18n';
+const { t: $t } = useI18n();
 
 const props = defineProps({
   script: {
@@ -131,15 +133,15 @@ const downloadScript = async (script) => {
     try {
       await subscribeToLocal(fullUrl);
     } catch (error) {
-      console.error('订阅失败:', error);
-      Message.error(`订阅失败: ${error.message}`);
+      console.error('Subscribe failed:', error);
+      Message.error($t('detail.subscribeFailedWithMsg', { msg: error.message }));
     }
   } else {
     copy(fullUrl).then(() => {
-      Message.success(`已将 ${script.name} 的订阅链接复制到剪贴板`);
+      Message.success($t('detail.subscribeSuccess', { name: script.name }));
     }).catch((error) => {
-      console.error('复制到剪贴板失败:', error);
-      Message.error(`复制 ${script.name} 的订阅链接失败`);
+      console.error('Copy to clipboard failed:', error);
+      Message.error($t('detail.copyFailed', { name: script.name }));
     });
   }
 };

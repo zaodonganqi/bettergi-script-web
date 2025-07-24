@@ -3,8 +3,23 @@
     <!-- 左侧菜单 -->
     <a-layout-sider class="custom-sider">
       <div class="sider-header">
-        <div class="sider-logo" title="访问 BetterGI 官网" @click="openExternalLink('https://bettergi.com/')"></div>
-        <span class="repo-title">脚本仓库</span>
+        <div class="sider-logo" :title="$t('sider.mainRepo')" @click="openExternalLink('https://bettergi.com/')"></div>
+        <span class="repo-title">{{ $t('sider.repoTitle') }}</span>
+        <div class="lang-select-wrapper">
+          <a-select
+            :value="selectedLocale"
+            size="middle"
+            style="width: 130px;"
+            @change="handleLocaleChange"
+            dropdown-class-name="lang-select-dropdown"
+          >
+            <a-select-option value="zh-CN">简体中文</a-select-option>
+            <a-select-option value="zh-TW">繁體中文</a-select-option>
+            <a-select-option value="en-US">English</a-select-option>
+            <a-select-option value="ja-JP">日本語</a-select-option>
+            <a-select-option value="fr-FR">Français</a-select-option>
+          </a-select>
+        </div>
       </div>
       <div class="sider-menu-wrap">
         <div class="menu-content">
@@ -20,15 +35,15 @@
         </div>
         <div class="sider-footer">
           <div class="sider-link" @click="openExternalLink('https://github.com/babalae/better-genshin-impact')">
-            访问BetterGI主仓库</div>
+            {{ $t('sider.mainRepo') }}</div>
           <div class="sider-link" @click="openExternalLink('https://github.com/babalae/bettergi-scripts-list')">
-            访问BetterGI脚本仓库</div>
-          <div class="sider-link" @click="openExternalLink('https://bgi.sh')">访问在线仓库</div>
+            {{ $t('sider.scriptRepo') }}</div>
+          <div class="sider-link" @click="openExternalLink('https://bgi.sh')">{{ $t('sider.onlineRepo') }}</div>
         </div>
       </div>
       <!-- 最后更新时间 -->
       <div v-if="lastUpdateTime" class="last-update-time" @click="showEggModal = true" style="cursor:pointer;">
-        <span>最后更新时间：</span>
+        <span>{{ $t('sider.lastUpdate') }}</span>
         <span>{{ lastUpdateTime }}</span>
       </div>
     </a-layout-sider>
@@ -39,11 +54,11 @@
         <span class="script-title">{{ currentMenuTitle }}</span>
         <div class="script-actions" style="position:relative;">
           <a-button type="primary" class="script-btn"
-            :class="{ 'script-btn-active': scriptTab === 'all' }" @click="onClickShowAll">全部</a-button>
+            :class="{ 'script-btn-active': scriptTab === 'all' }" @click="onClickShowAll">{{ $t('button.all') }}</a-button>
           <a-button class="script-btn" :class="{ 'script-btn-active': scriptTab === 'subscribed' }"
-            @click="onClickShowSubscribed">已订阅</a-button>
+            @click="onClickShowSubscribed">{{ $t('button.subscribed') }}</a-button>
           <div v-if="mode === 'web'" class="script-actions-mask">
-            <span>仅本地页面可用</span>
+            <span>{{ $t('script.onlyLocal') }}</span>
           </div>
         </div>
       </div>
@@ -110,19 +125,19 @@
         <!-- 顶部操作栏 -->
         <div v-if="selectedScript" class="detail-top-bar">
           <div class="top-bar-left">
-            <a-tooltip title="跳转到GitHub">
+            <a-tooltip :title="$t('action.jumpToGitHub')">
               <a-button type="text" size="small" class="action-btn" @click="jumpToGitHub">
                 <LinkOutlined />
               </a-button>
             </a-tooltip>
-            <a-tooltip title="评论">
+            <a-tooltip :title="$t('action.comment')">
               <a-button type="text" size="small" class="action-btn" @click="commentModalOpen = true">
                 <MessageOutlined />
               </a-button>
             </a-tooltip>
           </div>
           <div class="top-bar-right">
-            <a-tooltip title="帮助">
+            <a-tooltip :title="$t('action.help')">
               <a-button type="text" size="small" class="action-btn" @click="showHelpModal = true">
                 <QuestionCircleOutlined />
               </a-button>
@@ -135,19 +150,19 @@
         <!-- 顶部操作栏 -->
         <div v-if="selectedScript" class="detail-top-bar">
           <div class="top-bar-left">
-            <a-tooltip title="跳转到该脚本的GitHub仓库">
+            <a-tooltip :title="$t('action.jumpToGitHub')">
               <a-button type="text" size="small" class="action-btn" @click="jumpToGitHub">
                 <LinkOutlined />
               </a-button>
             </a-tooltip>
-            <a-tooltip title="评论">
+            <a-tooltip :title="$t('action.comment')">
               <a-button type="text" size="small" class="action-btn" @click="commentModalOpen = true">
                 <MessageOutlined />
               </a-button>
             </a-tooltip>
           </div>
           <div class="top-bar-right">
-            <a-tooltip title="帮助">
+            <a-tooltip :title="$t('action.help')">
               <a-button type="text" size="small" class="action-btn" @click="showHelpModal = true">
                 <QuestionCircleOutlined />
               </a-button>
@@ -160,19 +175,19 @@
         <!-- 顶部操作栏 -->
         <div v-if="selectedScript" class="detail-top-bar">
           <div class="top-bar-left">
-            <a-tooltip title="跳转到该脚本的GitHub仓库">
+            <a-tooltip :title="$t('action.jumpToGitHub')">
               <a-button type="text" size="small" class="action-btn" @click="jumpToGitHub">
                 <LinkOutlined />
               </a-button>
             </a-tooltip>
-            <a-tooltip title="评论">
+            <a-tooltip :title="$t('action.comment')">
               <a-button type="text" size="small" class="action-btn" @click="commentModalOpen = true">
                 <MessageOutlined />
               </a-button>
             </a-tooltip>
           </div>
           <div class="top-bar-right">
-            <a-tooltip title="帮助">
+            <a-tooltip :title="$t('action.help')">
               <a-button type="text" size="small" class="action-btn" @click="showHelpModal = true">
                 <QuestionCircleOutlined />
               </a-button>
@@ -193,31 +208,31 @@
             <circle cx="24" cy="32" r="2.5" fill="#f44336" />
           </svg>
         </div>
-        <div class="repo-error-title">获取仓库信息失败</div>
-        <div class="repo-error-desc">请检查网络或稍后刷新页面重试</div>
+        <div class="repo-error-title">{{ $t('repoError.title') }}</div>
+        <div class="repo-error-desc">{{ $t('repoError.desc') }}</div>
         <div class="repo-error-btn-group">
-          <button class="repo-error-btn" @click="getRepoJson">刷新页面</button>
-          <button class="repo-help-btn" @click="showHelpModal = true">查看帮助</button>
+          <button class="repo-error-btn" @click="getRepoJson">{{ $t('repoError.refresh') }}</button>
+          <button class="repo-help-btn" @click="showHelpModal = true">{{ $t('repoError.help') }}</button>
         </div>
       </div>
     </div>
 
     <!-- 全局加载弹窗 -->
     <div v-if="globalLoading" class="global-loading-modal">
-      <a-spin size="large" tip="仓库数据加载中，请稍候..." />
+      <a-spin size="large" tip="{{ $t('loading.repoData') }}..." />
     </div>
 
     <!-- 评论弹窗 -->
-    <a-modal v-model:open="commentModalOpen" title="评论" :footer="null" centered width="90%"
+    <a-modal v-model:open="commentModalOpen" :title="$t('comment.title')" :footer="null" centered width="90%"
       :style="{ maxWidth: '1200px' }" @cancel="handleCommentModalCancel" class="comment-modal">
       <div class="comment-modal-content">
         <div class="comment-header">
           <div class="script-title-simple">
-            {{ selectedScript?.title || '未知脚本' }}
+            {{ selectedScript?.title || $t('script.unknownScript') }}
             <template
               v-if="selectedScript?.authors && Array.isArray(selectedScript.authors) && selectedScript.authors.length">
               <span class="script-author">
-                · 作者：
+                {{ $t('script.author') }}
                 <template v-for="(author, idx) in selectedScript.authors" :key="author.name">
                   <template v-if="author.link">
                     <a :href="author.link" class="author-link" target="_blank" rel="noopener noreferrer">{{ author.name
@@ -230,8 +245,8 @@
                 </template>
               </span>
             </template>
-            <span v-else-if="selectedScript?.author" class="script-author">· 作者：{{ selectedScript.author }}</span>
-            <span v-else class="script-author">· 暂无作者信息</span>
+            <span v-else-if="selectedScript?.author" class="script-author">{{ $t('script.author') }}{{ selectedScript.author }}</span>
+            <span v-else class="script-author">{{ $t('script.noAuthor') }}</span>
           </div>
         </div>
 
@@ -245,9 +260,9 @@
                 <circle cx="24" cy="36" r="2.5" fill="#2196f3" />
               </svg>
             </div>
-            <div class="notice-title">本地模式暂不支持评论功能</div>
-            <div class="notice-desc">请移步在线仓库进行评论</div>
-            <button class="notice-btn" @click="openExternalLink('https://bgi.sh')">访问在线仓库</button>
+            <div class="notice-title">{{ $t('comment.localModeNoticeTitle') }}</div>
+            <div class="notice-desc">{{ $t('comment.localModeNoticeDesc') }}</div>
+            <button class="notice-btn" @click="openExternalLink('https://bgi.sh')">{{ $t('comment.onlineRepo') }}</button>
           </div>
 
           <!-- Web模式显示giscus评论 -->
@@ -261,13 +276,13 @@
     </a-modal>
 
     <!-- 彩蛋弹窗 -->
-    <a-modal v-model:open="showEggModal" title="小彩蛋" :footer="null" centered width="80%" :style="{ maxWidth: '900px' }"
+    <a-modal v-model:open="showEggModal" :title="$t('egg.title')" :footer="null" centered width="80%" :style="{ maxWidth: '900px' }"
       @cancel="showEggModal = false">
       <div class="egg-modal-content">
         <div class="egg-readme-tabs">
           <div v-if="isLoadingEggReadme" class="egg-readme-loading-indicator">
             <a-spin size="small" />
-            <span>彩蛋正在拼尽全力加载…</span>
+            <span>{{ $t('egg.loading') }}</span>
           </div>
           <div v-else-if="eggReadmeError" class="egg-readme-loading-indicator">
             <a-button type="text" size="small" @click="retryLoadEggReadme">
@@ -275,7 +290,7 @@
                 <ReloadOutlined />
               </template>
             </a-button>
-            <span>拼尽全力无法战胜，加载失败，请重试</span>
+            <span>{{ $t('egg.failed') }}</span>
           </div>
         </div>
         <div class="egg-readme-content">
@@ -288,7 +303,7 @@
     </a-modal>
 
     <!-- 帮助弹窗 -->
-    <a-modal v-model:open="showHelpModal" title="常见问题 Q&A" :footer="null" centered width="80%"
+    <a-modal v-model:open="showHelpModal" :title="$t('help.title')" :footer="null" centered width="80%"
       :style="{ maxWidth: '900px' }" @cancel="showHelpModal = false">
       <Help />
     </a-modal>
@@ -309,17 +324,33 @@ import MapDetail from './details/MapDetail.vue';
 import ReadmeViewer from './ReadmeViewer.vue';
 import Help from './Help.vue';
 import { getWebPath, getRawPath } from '@/utils/basePaths';
+import { useI18n } from 'vue-i18n';
 
 const mode = import.meta.env.VITE_MODE;
 const selectedMenu = ref(['1']);
 const search = ref('');
 
-const menuList = ref([
-  { key: '1', label: '地图追踪', icon: FolderOutlined, count: 0 },
-  { key: '2', label: 'Javascript 脚本', icon: FileOutlined, count: 0 },
-  { key: '3', label: '战斗策略', icon: CalculatorOutlined, count: 0 },
-  { key: '4', label: '七圣召唤策略', icon: BulbOutlined, count: 0 },
+const { t: $t } = useI18n();
+
+defineProps({
+  selectedLocale: {
+    type: String,
+    required: true
+  },
+  handleLocaleChange: {
+    type: Function,
+    required: true
+  }
+});
+
+const menuList = computed(() => [
+  { key: '1', label: $t('menu.map'), icon: FolderOutlined, count: menuCounts.value[0] },
+  { key: '2', label: $t('menu.script'), icon: FileOutlined, count: menuCounts.value[1] },
+  { key: '3', label: $t('menu.combat'), icon: CalculatorOutlined, count: menuCounts.value[2] },
+  { key: '4', label: $t('menu.tcg'), icon: BulbOutlined, count: menuCounts.value[3] },
 ]);
+
+const menuCounts = ref([0, 0, 0, 0]);
 
 const repoData = ref({});
 const repoError = ref(false);
@@ -365,7 +396,7 @@ async function getRepoJson() {
   repoError.value = false;
   globalLoading.value = true;
   try {
-    console.log("当前模式：", mode)
+    console.log("Current mode:", mode)
     if (mode === 'web') {
       const controller = new AbortController();
       let didTimeout = false;
@@ -380,13 +411,13 @@ async function getRepoJson() {
         });
         clearTimeout(fetchTimeoutId);
         fetchTimeoutId = null;
-        if (!response.ok) throw new Error('网络请求失败');
+        if (!response.ok) throw new Error('Network request failed');
         repoData.value = await response.json();
       } catch (err) {
         clearTimeout(fetchTimeoutId);
         fetchTimeoutId = null;
         if (didTimeout) {
-          throw new Error('请求超时');
+          throw new Error('Request timed out');
         } else {
           throw err;
         }
@@ -398,13 +429,13 @@ async function getRepoJson() {
       const json = await repoWebBridge.GetRepoJson();
       repoData.value = typeof json === 'string' ? JSON.parse(json) : json;
     }
-    console.log("json信息：", repoData.value)
-    menuList.value[0].count = getMapCount(repoData.value);
-    menuList.value[1].count = getJsCount(repoData.value);
-    menuList.value[2].count = getCombatCount(repoData.value);
-    menuList.value[3].count = getCardCount(repoData.value);
+    console.log("json info:", repoData.value)
+    menuCounts.value[0] = getMapCount(repoData.value);
+    menuCounts.value[1] = getJsCount(repoData.value);
+    menuCounts.value[2] = getCombatCount(repoData.value);
+    menuCounts.value[3] = getCardCount(repoData.value);
   } catch (e) {
-    console.error('获取仓库信息失败', e);
+    console.error('Failed to fetch repo info', e);
     repoError.value = true;
   }
   globalLoading.value = false;
@@ -420,15 +451,15 @@ const currentMenuTitle = computed(() => {
 const searchPlaceholder = computed(() => {
   switch (selectedMenu.value[0]) {
     case '1':
-      return '搜索资源名称、作者、tag';
+      return $t('script.searchMap');
     case '2':
-      return '搜索脚本名称、作者、简介、tag';
+      return $t('script.searchScript');
     case '3':
-      return '搜索战斗策略名称、作者、tag';
+      return $t('script.searchCombat');
     case '4':
-      return '搜索七圣召唤策略名称、作者、tag';
+      return $t('script.searchTCG');
     default:
-      return '输入关键词查询';
+      return $t('script.searchDefault');
   }
 });
 
@@ -512,17 +543,11 @@ const combatStrategyRef = ref(null);
 const cardStrategyRef = ref(null);
 
 const handleLeafCount = (count) => {
-  const index = menuList.value.findIndex(item => item.key === '1');
-  if (index !== -1) {
-    menuList.value[index].count = count;
-  }
+  menuCounts.value[0] = count;
 };
 
 const handleScriptCount = (count) => {
-  const index = menuList.value.findIndex(item => item.key === '2');
-  if (index !== -1) {
-    menuList.value[index].count = count;
-  }
+  menuCounts.value[1] = count;
 };
 
 function getJsCount(repo) {
@@ -733,7 +758,7 @@ const giscusTerm = computed(() => {
 // 监听评论弹窗打开
 watch(commentModalOpen, (newVal) => {
   if (newVal) {
-    console.log('评论弹窗打开，当前脚本:', selectedScript.value);
+    console.log('Comment modal opened, current script:', selectedScript.value);
   }
 });
 
@@ -754,13 +779,13 @@ const handleEggReadmeLoaded = () => {
 };
 
 const handleEggReadmeError = () => {
-  console.log('彩蛋 README 加载失败');
+  console.log('Egg README load failed');
   isLoadingEggReadme.value = false;
   eggReadmeError.value = true;
 };
 
 const retryLoadEggReadme = () => {
-  console.log('重试加载彩蛋 README');
+  console.log('Retry loading egg README');
   isLoadingEggReadme.value = true;
   eggReadmeError.value = false;
   eggReadmeKey.value++;
@@ -850,6 +875,7 @@ watch(subscribedScriptPaths, (newPaths) => {
   border-bottom: 1px solid #ececec;
   width: 100%;
   flex-shrink: 0;
+  position: relative;
 }
 
 .sider-logo {
@@ -1539,6 +1565,21 @@ watch(subscribedScriptPaths, (newPaths) => {
 }
 
 .subscribed-error-msg {
+  font-size: 15px;
+}
+
+.lang-select-wrapper {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+}
+
+.lang-select-wrapper .ant-select {
+  font-size: 15px;
+  border-radius: 8px;
+}
+
+.lang-select-dropdown {
   font-size: 15px;
 }
 </style>

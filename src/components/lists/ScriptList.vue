@@ -6,7 +6,7 @@
           <div class="item-header">
             <div class="item-title-wrap">
               <span class="item-title-main">{{ item.name1 }}</span>
-              <span v-if="item.isSubscribed" class="subscribed-badge">已订阅</span>
+              <span v-if="item.isSubscribed" class="subscribed-badge">{{ $t('scriptList.subscribed') }}</span>
             </div>
             <div v-if="item.name1 !== item.name2" class="item-title-wrap">
               <span class="item-title-main">{{ item.name2 }}</span>
@@ -15,10 +15,10 @@
           </div>
           <div class="item-author">
             <template v-if="item.authors && item.authors.length">
-              {{item.authors.map(a => a.name).join('，')}}
+              {{item.authors.map(a => a.name).join($t('common.comma'))}}
             </template>
             <template v-else>
-              {{ item.author }}
+              {{ item.author || $t('scriptList.noAuthor') }}
             </template>
           </div>
           <div class="item-desc">{{ item.desc }}</div>
@@ -34,6 +34,8 @@
 
 <script setup>
 import { ref, computed, watch, nextTick } from 'vue';
+import { useI18n } from 'vue-i18n';
+const { t: $t } = useI18n();
 
 const props = defineProps({
   searchKey: {
@@ -112,9 +114,9 @@ const scripts = ref(
     name: item.name,
     name1: item.name1,
     name2: item.name2,
-    author: item.author || '',
+    author: item.author || $t('scriptList.noAuthor'),
     authors: item.authors || [],
-    desc: item.description,
+    desc: item.description || $t('common.noDesc'),
     tags: item.tags || [],
     time: item.lastUpdated || '',
     unread: false,
@@ -137,9 +139,9 @@ watch(
           name: item.name,
           name1: item.name1,
           name2: item.name2,
-          author: item.author || '',
+          author: item.author || $t('scriptList.noAuthor'),
           authors: item.authors || [],
-          desc: item.description,
+          desc: item.description || $t('common.noDesc'),
           tags: item.tags || [],
           time: item.lastUpdated || '',
           unread: false,
@@ -167,7 +169,7 @@ const selectScript = (id) => {
   selectedId.value = id;
   const script = scripts.value.find(script => script.id === id);
   emit('select', script);
-  console.log("已选择节点", script);
+  console.log("Node selected", script);
 };
 
 function normalize(str) {

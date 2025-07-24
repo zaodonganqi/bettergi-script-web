@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "private": true,
     "type": "module",
-    "repository":"https://github.com/zaodonganqi/bettergi-script-web-new",
+    "repository": "https://github.com/zaodonganqi/bettergi-script-web-new",
     "scripts": {
         "dev": "vite",
         "build": "vite build",
@@ -22,7 +22,8 @@
         "marked": "^15.0.12",
         "pinia": "^3.0.1",
         "pinyin-pro": "^3.26.0",
-        "vue": "^3.4.0"
+        "vue": "^3.4.0",
+        "vue-i18n": "^11.1.11"
     },
     "devDependencies": {
         "@vitejs/plugin-vue": "^5.2.4",

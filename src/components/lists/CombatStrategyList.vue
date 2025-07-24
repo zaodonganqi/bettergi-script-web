@@ -6,16 +6,16 @@
           <div class="item-header">
             <div class="item-title-wrap">
               <span class="item-title-main">{{ item.title }}</span>
-              <span v-if="item.isSubscribed" class="subscribed-badge">已订阅</span>
+              <span v-if="item.isSubscribed" class="subscribed-badge">{{ $t('combatStrategyList.subscribed') }}</span>
             </div>
             <span v-if="item.unread" class="item-dot"></span>
           </div>
           <div class="item-author">
             <template v-if="item.authors && item.authors.length">
-              {{item.authors.map(a => a.name).join('，')}}
+              {{item.authors.map(a => a.name).join($t('common.comma'))}}
             </template>
             <template v-else>
-              {{ item.author }}
+              {{ item.author || $t('combatStrategyList.noAuthor') }}
             </template>
           </div>
           <div class="item-desc">{{ item.desc }}</div>
@@ -31,6 +31,8 @@
 
 <script setup>
 import { ref, computed, watch, nextTick } from 'vue';
+import { useI18n } from 'vue-i18n';
+const { t: $t } = useI18n();
 
 const props = defineProps({
   searchKey: {
@@ -109,9 +111,9 @@ const strategies = ref(
     id: idx + 1,
     title: removeFileSuffix(item.name),
     name: item.name,
-    author: item.author || '无',
+    author: item.author || $t('combatStrategyList.noAuthor'),
     authors: item.authors || [],
-    desc: item.description || '',
+    desc: item.description || $t('common.noDesc'),
     tags: item.tags || [],
     time: item.lastUpdated || '',
     unread: false,
@@ -132,9 +134,9 @@ watch(
           id: idx + 1,
           title: removeFileSuffix(item.name),
           name: item.name,
-          author: item.author || '无',
+          author: item.author || $t('combatStrategyList.noAuthor'),
           authors: item.authors || [],
-          desc: item.description || '',
+          desc: item.description || $t('common.noDesc'),
           tags: item.tags || [],
           time: item.lastUpdated || '',
           unread: false,
@@ -162,7 +164,7 @@ const selectStrategy = (id) => {
   selectedId.value = id;
   const strategy = strategies.value.find(strategy => strategy.id === id);
   emit('select', strategy);
-  console.log("已选择节点", strategy);
+  console.log("Node selected", strategy);
 };
 
 const filteredStrategies = computed(() => {

@@ -1,14 +1,38 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import LayoutMain from './components/LayoutMain.vue';
 import zhCN from 'ant-design-vue/es/locale/zh_CN';
+import zhTW from 'ant-design-vue/es/locale/zh_TW';
+import enUS from 'ant-design-vue/es/locale/en_US';
+import jaJP from 'ant-design-vue/es/locale/ja_JP';
+import frFR from 'ant-design-vue/es/locale/fr_FR';
+import { useI18n } from 'vue-i18n';
 
-const locale = ref(zhCN);
+const antdLocales = {
+  'zh-CN': zhCN,
+  'zh-TW': zhTW,
+  'en-US': enUS,
+  'ja-JP': jaJP,
+  'fr-FR': frFR
+};
+
+const { locale } = useI18n();
+const selectedLocale = ref(locale.value);
+const currentAntdLocale = ref(antdLocales[selectedLocale.value] || zhCN);
+
+watch(selectedLocale, (newLocale) => {
+  locale.value = newLocale;
+  currentAntdLocale.value = antdLocales[newLocale] || zhCN;
+});
+
+function handleLocaleChange(val) {
+  selectedLocale.value = val;
+}
 </script>
 
 <template>
-  <a-config-provider :locale="locale">
-    <LayoutMain />
+  <a-config-provider :locale="currentAntdLocale">
+    <LayoutMain :selected-locale="selectedLocale" :handle-locale-change="handleLocaleChange" />
   </a-config-provider>
 </template>
 
