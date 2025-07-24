@@ -308,7 +308,6 @@ const fetchAndRenderReadme = async (path) => {
   // 处理markdown图片语法 ![alt](path)
   markdown = markdown.replace(/!\[[^\]]*\]\(([^)]+)\)/g, (match, imgPath) => {
     let cleanPath = imgPath.trim().replace(/\\/g, '/');
-    console.log('imgPath:', imgPath, 'cleanPath:', cleanPath);
     if (!props.forceWeb && !cleanPath.startsWith('assets/') && !cleanPath.startsWith('http')) {
       const currentDir = props.path ? props.path.replace(/\\/g, '/') : '';
       cleanPath = currentDir ? `${currentDir}/${cleanPath}` : cleanPath;
@@ -319,7 +318,6 @@ const fetchAndRenderReadme = async (path) => {
   // 处理HTML img标签
   markdown = markdown.replace(/<img\s+[^>]*src=["']([^"']+)["'][^>]*>/gi, (match, imgPath) => {
     let cleanPath = imgPath.trim().replace(/\\/g, '/');
-    console.log('imgTagPath:', imgPath, 'cleanPath:', cleanPath);
     if (!props.forceWeb && !cleanPath.startsWith('assets/') && !cleanPath.startsWith('http') && !cleanPath.startsWith('data:')) {
       const currentDir = props.path ? props.path.replace(/\\/g, '/') : '';
       cleanPath = currentDir ? `${currentDir}/${cleanPath}` : cleanPath;
@@ -330,7 +328,6 @@ const fetchAndRenderReadme = async (path) => {
   // 处理代码块中的图片路径
   markdown = markdown.replace(/`([^`\n]+\.(?:png|jpg|jpeg|gif|webp|svg))`/gi, (imgPath) => {
     let cleanPath = imgPath.trim().replace(/\\/g, '/');
-    console.log('codeImgPath:', imgPath, 'cleanPath:', cleanPath);
     if (!props.forceWeb && !cleanPath.startsWith('assets/') && !cleanPath.startsWith('http')) {
       const currentDir = props.path ? props.path.replace(/\\/g, '/') : '';
       cleanPath = currentDir ? `${currentDir}/${cleanPath}` : cleanPath;
@@ -341,7 +338,6 @@ const fetchAndRenderReadme = async (path) => {
   // 处理代码块中的图片路径
   markdown = markdown.replace(/```\s*([^`\n]+\.(?:png|jpg|jpeg|gif|webp|svg))\s*```/gi, (imgPath) => {
     let cleanPath = imgPath.trim().replace(/\\/g, '/');
-    console.log('blockCodeImgPath:', imgPath, 'cleanPath:', cleanPath);
     if (!props.forceWeb && !cleanPath.startsWith('assets/') && !cleanPath.startsWith('http')) {
       const currentDir = props.path ? props.path.replace(/\\/g, '/') : '';
       cleanPath = currentDir ? `${currentDir}/${cleanPath}` : cleanPath;
