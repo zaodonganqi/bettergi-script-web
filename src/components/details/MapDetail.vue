@@ -8,7 +8,7 @@
             <div class="detail-meta">
               <template v-if="script.authors && Array.isArray(script.authors) && script.authors.length">
                 <span class="detail-author">
-                  {{ $t('detail.author') }}：
+                  {{ $t('detail.author') }}
                   <template v-for="(author, idx) in script.authors" :key="author.name">
                     <template v-if="author.link">
                       <a :href="author.link" class="author-link" target="_blank" rel="noopener noreferrer">{{
@@ -192,8 +192,17 @@ const columns = computed(() => {
 });
 
 // tab切换选项
-const tabOptions = ref([
-  { label: $t('detail.tabReadme'), value: 'readme' },
+function isReadme404(path) {
+  return !!localStorage.getItem('readme404:' + path);
+}
+
+const tabOptions = computed(() => [
+  {
+    label: isReadme404(props.script?.path)
+      ? $t('detail.tabReadme')
+      : (hasReadmeContent.value ? 'README' : $t('detail.tabReadme')),
+    value: 'readme'
+  },
   { label: $t('detail.tabFiles'), value: 'files' }
 ]);
 const activeTab = ref('readme');
@@ -224,16 +233,11 @@ function setReadme404(path) {
   }
 }
 
-function isReadme404(path) {
-  return !!localStorage.getItem('readme404:' + path);
-}
-
 const handleReadmeError = (error) => {
   console.log(error);
   isLoadingReadme.value = false;
   loadError.value = true;
   hasReadmeContent.value = false;
-  updateTabLabel();
   let is404 = false;
   if (typeof error === 'string' && error.includes('404')) is404 = true;
   if (error && typeof error === 'object') {
@@ -247,15 +251,8 @@ const handleReadmeError = (error) => {
 
 const handleReadmeHasContent = (hasContent) => {
   hasReadmeContent.value = hasContent;
-  updateTabLabel();
 };
 
-const updateTabLabel = () => {
-  const readmeOption = tabOptions.value.find(option => option.value === 'readme');
-  if (readmeOption) {
-    readmeOption.label = hasReadmeContent.value ? 'README' : $t('detail.tabReadme');
-  }
-};
 
 // 详情弹窗
 const modalOpen = ref(false);
@@ -365,12 +362,10 @@ watch([
       isLoadingReadme.value = false;
       loadError.value = false;
       hasReadmeContent.value = false;
-      updateTabLabel();
       return;
     }
     // 未知404，正常加载
     hasReadmeContent.value = false;
-    updateTabLabel();
     isLoadingReadme.value = true;
     loadError.value = false;
     readmeKey.value++;
@@ -378,6 +373,7 @@ watch([
   if (newTab !== 'readme') {
     isLoadingReadme.value = false;
     loadError.value = false;
+    hasReadmeContent.value = false;
   }
 });
 
@@ -385,7 +381,6 @@ const retryLoadReadme = () => {
   isLoadingReadme.value = true;
   loadError.value = false;
   hasReadmeContent.value = false;
-  updateTabLabel();
   readmeKey.value++;
 };
 
