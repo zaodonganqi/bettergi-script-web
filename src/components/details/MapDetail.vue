@@ -343,42 +343,37 @@ const tabTransitionName = computed(() => {
 watch(() => props.script, (newScript) => {
   if (newScript) {
     activeTab.value = 'readme';
-  }
-});
-
-// 每次切换 script时 fetch readme，并赋值文件列表
-watch([
-  () => props.script,
-  () => activeTab.value
-], async ([newScript, newTab]) => {
-  if (newScript) {
     files.value = Array.isArray(newScript.files) ? newScript.files : [];
+    // 只有script变化时才重置和加载README
+    if (newScript.path) {
+      if (isReadme404(newScript.path)) {
+        isLoadingReadme.value = false;
+        loadError.value = false;
+        hasReadmeContent.value = false;
+      } else {
+        hasReadmeContent.value = false;
+        isLoadingReadme.value = true;
+        loadError.value = false;
+        readmeKey.value++;
+      }
+    }
   } else {
     files.value = [];
   }
-  if (newScript && newTab === 'readme' && newScript.path) {
-    if (isReadme404(newScript.path)) {
-      // 已知404，不再加载
-      isLoadingReadme.value = false;
-      loadError.value = false;
-      hasReadmeContent.value = false;
-      return;
-    }
-    // 未知404，正常加载
-    hasReadmeContent.value = false;
-    isLoadingReadme.value = true;
-    loadError.value = false;
-    readmeKey.value++;
-  }
+});
+
+// tab切换时只控制loading和error，不影响README内容
+watch(() => activeTab.value, (newTab) => {
   if (newTab !== 'readme') {
     isLoadingReadme.value = false;
     loadError.value = false;
-    hasReadmeContent.value = false;
+    // 不重置hasReadmeContent
   }
 });
 
 watch(locale, () => {
-  hasReadmeContent.value = false;
+  isLoadingReadme.value = false;
+  loadError.value = false;
 });
 
 const retryLoadReadme = () => {
