@@ -175,7 +175,7 @@ const columns = computed(() => {
   if (mode === 'single') {
     return [
       { title: $t('detail.name'), dataIndex: 'name', width: '30%' },
-      { title: $t('detail.author'), dataIndex: 'author', width: '13%' },
+      { title: $t('detail.scriptAuthor'), dataIndex: 'author', width: '13%' },
       { title: $t('detail.tags'), dataIndex: 'tags', width: '24%' },
       { title: $t('detail.lastUpdated'), dataIndex: 'lastUpdated', width: '16%' },
       { title: $t('detail.operations'), key: 'operations', width: '17%' }
@@ -183,7 +183,7 @@ const columns = computed(() => {
   } else {
     return [
       { title: $t('detail.name'), dataIndex: 'name', width: '30%' },
-      { title: $t('detail.author'), dataIndex: 'author', width: '10%' },
+      { title: $t('detail.scriptAuthor'), dataIndex: 'author', width: '10%' },
       { title: $t('detail.tags'), dataIndex: 'tags', width: '24%' },
       { title: $t('detail.lastUpdated'), dataIndex: 'lastUpdated', width: '16%' },
       { title: $t('detail.operations'), key: 'operations', width: '20%' }

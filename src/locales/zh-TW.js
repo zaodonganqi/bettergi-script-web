@@ -74,6 +74,7 @@ export default {
     },
     detail: {
         author: '作者：',
+        scriptAuthor: '作者',
         noAuthor: '暫無作者資訊',
         subscribe: '訂閱',
         subscribed: '已訂閱',
@@ -139,5 +140,14 @@ export default {
         help: '幫助',
         jumpToGitHub: '跳轉到GitHub',
         comment: '評論'
+    },
+    settings: {
+        title: '設定',
+        language: '選擇語言',
+        zhCN: '簡體中文',
+        zhTW: '繁體中文',
+        enUS: '英文',
+        jaJP: '日語',
+        frFR: '法語'
     }
 }

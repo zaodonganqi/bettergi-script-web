@@ -146,6 +146,7 @@ export default {
     },
     detail: {
         author: 'Author: ',
+        scriptAuthor: 'Author',
         noAuthor: 'Unknown author',
         subscribe: 'Subscribe',
         subscribed: 'Subscribed',
@@ -174,5 +175,14 @@ export default {
         path: 'Path',
         details: 'Details',
         showDetails: 'View'
+    },
+    settings: {
+        title: 'Settings',
+        language: 'Language',
+        zhCN: 'Simplified Chinese',
+        zhTW: 'Traditional Chinese',
+        enUS: 'English',
+        jaJP: 'Japanese',
+        frFR: 'French'
     }
 }

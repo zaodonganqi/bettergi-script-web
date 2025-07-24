@@ -5,21 +5,6 @@
       <div class="sider-header">
         <div class="sider-logo" :title="$t('sider.mainRepo')" @click="openExternalLink('https://bettergi.com/')"></div>
         <span class="repo-title">{{ $t('sider.repoTitle') }}</span>
-        <div class="lang-select-wrapper">
-          <a-select
-            :value="selectedLocale"
-            size="middle"
-            style="width: 130px;"
-            @change="handleLocaleChange"
-            dropdown-class-name="lang-select-dropdown"
-          >
-            <a-select-option value="zh-CN">简体中文</a-select-option>
-            <a-select-option value="zh-TW">繁體中文</a-select-option>
-            <a-select-option value="en-US">English</a-select-option>
-            <a-select-option value="ja-JP">日本語</a-select-option>
-            <a-select-option value="fr-FR">Français</a-select-option>
-          </a-select>
-        </div>
       </div>
       <div class="sider-menu-wrap">
         <div class="menu-content">
@@ -42,9 +27,23 @@
         </div>
       </div>
       <!-- 最后更新时间 -->
-      <div v-if="lastUpdateTime" class="last-update-time" @click="showEggModal = true" style="cursor:pointer;">
-        <span>{{ $t('sider.lastUpdate') }}</span>
-        <span>{{ lastUpdateTime }}</span>
+      <div v-if="lastUpdateTime" class="last-update-time" @click="showEggModal = true">
+        <div class="update-content" :class="{ 'column-mode': mode === 'single' }">
+          <template v-if="mode === 'single'">
+            <div class="update-label">{{ $t('sider.lastUpdate') }}</div>
+            <div class="update-time">{{ lastUpdateTime }}</div>
+          </template>
+          <template v-else>
+            <span>{{ $t('sider.lastUpdate') }}</span>
+            <span>{{ lastUpdateTime }}</span>
+          </template>
+        </div>
+        <a-button class="settings-btn" type="text" size="small" @click.stop="showSettingsModal = true"
+          :title="$t('settings.title')">
+          <template #icon>
+            <SettingOutlined />
+          </template>
+        </a-button>
       </div>
     </a-layout-sider>
 
@@ -53,8 +52,8 @@
       <div class="script-header">
         <span class="script-title">{{ currentMenuTitle }}</span>
         <div class="script-actions" style="position:relative;">
-          <a-button type="primary" class="script-btn"
-            :class="{ 'script-btn-active': scriptTab === 'all' }" @click="onClickShowAll">{{ $t('button.all') }}</a-button>
+          <a-button type="primary" class="script-btn" :class="{ 'script-btn-active': scriptTab === 'all' }"
+            @click="onClickShowAll">{{ $t('button.all') }}</a-button>
           <a-button class="script-btn" :class="{ 'script-btn-active': scriptTab === 'subscribed' }"
             @click="onClickShowSubscribed">{{ $t('button.subscribed') }}</a-button>
           <div v-if="mode === 'web'" class="script-actions-mask">
@@ -72,50 +71,25 @@
       </div>
       <!-- 地图追踪的树状结构 -->
       <div v-if="selectedMenu[0] === '1'" class="script-list">
-        <MapTreeList
-          :search-key="search"
-          :repo-data="repoData"
-          :subscribed-paths="subscribedScriptPaths"
-          :show-subscribed-only="scriptTab === 'subscribed'"
-          ref="mapTreeRef"
-          :start-polling-user-config="startPollingUserConfig"
-          @select="handleMapSelect"
-          @leaf-count="handleLeafCount"
-        />
+        <MapTreeList :search-key="search" :repo-data="repoData" :subscribed-paths="subscribedScriptPaths"
+          :show-subscribed-only="scriptTab === 'subscribed'" ref="mapTreeRef"
+          :start-polling-user-config="startPollingUserConfig" @select="handleMapSelect" @leaf-count="handleLeafCount" />
       </div>
       <!-- Javascript脚本列表 -->
       <div v-else-if="selectedMenu[0] === '2'" class="script-list">
-        <ScriptList
-          :search-key="search"
-          :repo-data="repoData"
-          :subscribed-paths="subscribedScriptPaths"
-          :show-subscribed-only="scriptTab === 'subscribed'"
-          ref="scriptListRef"
-          @select="handleScriptSelect"
-          @script-count="handleScriptCount"
-        />
+        <ScriptList :search-key="search" :repo-data="repoData" :subscribed-paths="subscribedScriptPaths"
+          :show-subscribed-only="scriptTab === 'subscribed'" ref="scriptListRef" @select="handleScriptSelect"
+          @script-count="handleScriptCount" />
       </div>
       <!-- 战斗策略列表 -->
       <div v-else-if="selectedMenu[0] === '3'" class="script-list">
-        <CombatStrategyList
-          :search-key="search"
-          :repo-data="repoData"
-          :subscribed-paths="subscribedScriptPaths"
-          :show-subscribed-only="scriptTab === 'subscribed'"
-          ref="combatStrategyRef"
-          @select="handleScriptSelect"
-        />
+        <CombatStrategyList :search-key="search" :repo-data="repoData" :subscribed-paths="subscribedScriptPaths"
+          :show-subscribed-only="scriptTab === 'subscribed'" ref="combatStrategyRef" @select="handleScriptSelect" />
       </div>
       <!-- 七圣召唤策略列表 -->
       <div v-else-if="selectedMenu[0] === '4'" class="script-list">
-        <CardStrategyList
-          :search-key="search"
-          :repo-data="repoData"
-          :subscribed-paths="subscribedScriptPaths"
-          :show-subscribed-only="scriptTab === 'subscribed'"
-          ref="cardStrategyRef"
-          @select="handleScriptSelect"
-        />
+        <CardStrategyList :search-key="search" :repo-data="repoData" :subscribed-paths="subscribedScriptPaths"
+          :show-subscribed-only="scriptTab === 'subscribed'" ref="cardStrategyRef" @select="handleScriptSelect" />
       </div>
     </a-layout-sider>
 
@@ -245,7 +219,9 @@
                 </template>
               </span>
             </template>
-            <span v-else-if="selectedScript?.author" class="script-author">{{ $t('script.author') }}{{ selectedScript.author }}</span>
+            <span v-else-if="selectedScript?.author" class="script-author">{{ $t('script.author') }}{{
+              selectedScript.author
+              }}</span>
             <span v-else class="script-author">{{ $t('script.noAuthor') }}</span>
           </div>
         </div>
@@ -262,7 +238,8 @@
             </div>
             <div class="notice-title">{{ $t('comment.localModeNoticeTitle') }}</div>
             <div class="notice-desc">{{ $t('comment.localModeNoticeDesc') }}</div>
-            <button class="notice-btn" @click="openExternalLink('https://bgi.sh')">{{ $t('comment.onlineRepo') }}</button>
+            <button class="notice-btn" @click="openExternalLink('https://bgi.sh')">{{ $t('comment.onlineRepo')
+              }}</button>
           </div>
 
           <!-- Web模式显示giscus评论 -->
@@ -276,8 +253,8 @@
     </a-modal>
 
     <!-- 彩蛋弹窗 -->
-    <a-modal v-model:open="showEggModal" :title="$t('egg.title')" :footer="null" centered width="80%" :style="{ maxWidth: '900px' }"
-      @cancel="showEggModal = false">
+    <a-modal v-model:open="showEggModal" :title="$t('egg.title')" :footer="null" centered width="80%"
+      :style="{ maxWidth: '900px' }" @cancel="showEggModal = false">
       <div class="egg-modal-content">
         <div class="egg-readme-tabs">
           <div v-if="isLoadingEggReadme" class="egg-readme-loading-indicator">
@@ -295,8 +272,7 @@
         </div>
         <div class="egg-readme-content">
           <ReadmeViewer :key="eggReadmeKey"
-            :path="'https://raw.githubusercontent.com/zaodonganqi/BGI-bsw-egg/main/README.md'"
-            :force-web="true"
+            :path="'https://raw.githubusercontent.com/zaodonganqi/BGI-bsw-egg/main/README.md'" :force-web="true"
             @loaded="handleEggReadmeLoaded" @error="handleEggReadmeError" />
         </div>
       </div>
@@ -307,12 +283,28 @@
       :style="{ maxWidth: '900px' }" @cancel="showHelpModal = false">
       <Help />
     </a-modal>
+
+    <!-- 设置弹窗 -->
+    <a-modal v-model:open="showSettingsModal" :title="$t('settings.title')" :footer="null" centered width="400px"
+      @cancel="showSettingsModal = false">
+      <div class="settings-row">
+        <span class="settings-label">{{ $t('settings.language') }}</span>
+        <a-select :value="selectedLocale" size="middle" style="width: 160px;" @change="onLocaleChange"
+          popupClassName="lang-select-dropdown">
+          <a-select-option value="zh-CN">{{ $t('settings.zhCN') }}</a-select-option>
+          <a-select-option value="zh-TW">{{ $t('settings.zhTW') }}</a-select-option>
+          <a-select-option value="en-US">{{ $t('settings.enUS') }}</a-select-option>
+          <a-select-option value="ja-JP">{{ $t('settings.jaJP') }}</a-select-option>
+          <a-select-option value="fr-FR">{{ $t('settings.frFR') }}</a-select-option>
+        </a-select>
+      </div>
+    </a-modal>
   </a-layout>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
-import { FolderOutlined, FileOutlined, CalculatorOutlined, BulbOutlined, SearchOutlined, QuestionCircleOutlined, MessageOutlined, LinkOutlined, ReloadOutlined } from '@ant-design/icons-vue';
+import { FolderOutlined, FileOutlined, CalculatorOutlined, BulbOutlined, SearchOutlined, QuestionCircleOutlined, MessageOutlined, LinkOutlined, ReloadOutlined, SettingOutlined } from '@ant-design/icons-vue';
 import Giscus from '@giscus/vue';
 import MapTreeList from './lists/MapTreeList.vue';
 import ScriptList from './lists/ScriptList.vue';
@@ -332,7 +324,7 @@ const search = ref('');
 
 const { t: $t } = useI18n();
 
-defineProps({
+const { selectedLocale, handleLocaleChange } = defineProps({
   selectedLocale: {
     type: String,
     required: true
@@ -828,19 +820,26 @@ watch(subscribedScriptPaths, (newPaths) => {
   if (selectedScript.value.path) {
     const isSubscribed = newPaths.some(p => selectedScript.value.path === p || selectedScript.value.path.startsWith(p + '/'));
     if (selectedScript.value.isSubscribed !== isSubscribed) {
-        selectedScript.value.isSubscribed = isSubscribed;
+      selectedScript.value.isSubscribed = isSubscribed;
     }
   }
 
   if (selectedScript.value.type === 'directory' && selectedScript.value.files && Array.isArray(selectedScript.value.files)) {
-      selectedScript.value.files.forEach(file => {
-          if (file.path) {
-              const fileIsSubscribed = newPaths.some(p => file.path === p || file.path.startsWith(p + '/'));
-              file.isSubscribed = fileIsSubscribed;
-          }
-      });
+    selectedScript.value.files.forEach(file => {
+      if (file.path) {
+        const fileIsSubscribed = newPaths.some(p => file.path === p || file.path.startsWith(p + '/'));
+        file.isSubscribed = fileIsSubscribed;
+      }
+    });
   }
 });
+
+const showSettingsModal = ref(false);
+
+function onLocaleChange(val) {
+  handleLocaleChange(val);
+  showSettingsModal.value = false;
+}
 </script>
 
 <style scoped>
@@ -921,7 +920,6 @@ watch(subscribedScriptPaths, (newPaths) => {
 }
 
 .custom-menu-item {
-  height: 44px !important;
   display: flex;
   align-items: center;
   font-size: 15px;
@@ -929,6 +927,8 @@ watch(subscribedScriptPaths, (newPaths) => {
   border-radius: 8px;
   margin: 0 8px;
   padding: 0 16px !important;
+  min-width: 0;
+  height: auto;
 }
 
 .ant-menu-item-selected {
@@ -939,16 +939,19 @@ watch(subscribedScriptPaths, (newPaths) => {
 .menu-icon {
   margin-right: 10px;
   font-size: 18px;
+  flex-shrink: 0;
 }
 
 .menu-label {
-  flex: 1;
+  flex: 1 1 0;
+  min-width: 0;
 }
 
 .menu-count {
   color: #b0b0b0;
   font-size: 13px;
   margin-left: 8px;
+  flex-shrink: 0;
 }
 
 .sider-footer {
@@ -974,9 +977,20 @@ watch(subscribedScriptPaths, (newPaths) => {
   flex-shrink: 0;
   height: 60px;
   display: flex;
-  flex-wrap: wrap;
-  align-content: center;
-  gap: 0 4px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.last-update-time.column-mode {
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  height: auto;
+  gap: 0;
+  padding-bottom: 8px;
 }
 
 .last-update-time span {
@@ -1568,18 +1582,83 @@ watch(subscribedScriptPaths, (newPaths) => {
   font-size: 15px;
 }
 
-.lang-select-wrapper {
-  margin-left: auto;
+.sider-settings-btn-wrap {
+  width: 100%;
   display: flex;
+  justify-content: center;
   align-items: center;
+  padding: 16px 0 12px 0;
+  background: #f7f8fa;
+  border-top: 1px solid #ececec;
 }
 
-.lang-select-wrapper .ant-select {
+.settings-btn {
+  margin-left: auto;
+  color: #888;
+  font-size: 18px;
+  border-radius: 50%;
+  transition: background 0.2s, color 0.2s;
+  margin-right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+  width: 36px;
+  padding: 0;
+}
+
+.settings-btn:hover {
+  color: #1677ff;
+  background: #f0f5ff;
+}
+
+.settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.settings-label {
   font-size: 15px;
-  border-radius: 8px;
+  color: #222;
+  font-weight: 500;
 }
 
 .lang-select-dropdown {
   font-size: 15px;
+}
+
+.update-label {
+  font-size: 15px;
+  color: #666;
+  line-height: 1.2;
+}
+
+.update-time {
+  font-size: 14px;
+  color: #888;
+  margin-top: 2px;
+  line-height: 1.2;
+}
+
+.last-update-time {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.update-content {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.update-content.column-mode {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
 }
 </style>

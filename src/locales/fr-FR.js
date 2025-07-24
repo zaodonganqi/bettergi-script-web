@@ -74,6 +74,7 @@ export default {
     },
     detail: {
         author: 'Auteur :',
+        scriptAuthor: 'Auteur',
         noAuthor: 'Aucune information sur l\'auteur',
         subscribe: 'S\'abonner',
         subscribed: 'Abonné',
@@ -139,5 +140,14 @@ export default {
         help: 'Aide',
         jumpToGitHub: 'Aller sur GitHub',
         comment: 'Commentaire'
+    },
+    settings: {
+        title: 'Paramètres',
+        language: 'Langue',
+        zhCN: 'Chinois simplifié',
+        zhTW: 'Chinois traditionnel',
+        enUS: 'Anglais',
+        jaJP: 'Japonais',
+        frFR: 'Français'
     }
 }

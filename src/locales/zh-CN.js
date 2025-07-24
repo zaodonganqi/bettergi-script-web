@@ -111,6 +111,7 @@ export default {
     },
     detail: {
         author: '作者：',
+        scriptAuthor: '作者',
         noAuthor: '暂无作者信息',
         subscribe: '订阅',
         subscribed: '已订阅',
@@ -139,5 +140,14 @@ export default {
         path: '路径',
         details: '详情',
         showDetails: '详情'
+    },
+    settings: {
+        title: '设置',
+        language: '选择语言',
+        zhCN: '简体中文',
+        zhTW: '繁體中文',
+        enUS: '英文',
+        jaJP: '日语',
+        frFR: '法语'
     }
 }
