@@ -609,17 +609,19 @@ function onSubscribeBtnLeave(node) {
   padding-bottom: 80px;
 }
 
+/*
 :deep(.ant-table-thead > tr > th),
 :deep(.ant-table-tbody > tr > td) {
-  border: 1px solid #c5c5c5 !important;
+  // border: 1px solid #c5c5c5 !important; // 表格线条颜色和粗细
   word-break: break-all;
   white-space: normal;
   text-align: left;
 }
 
 :deep(.ant-table-thead > tr > th) {
-  background: #f2f3f5;
+  // background: #f2f3f5; // 表头背景色
 }
+*/
 
 .comment-float-btn {
   position: fixed;
@@ -765,23 +767,23 @@ function onSubscribeBtnLeave(node) {
 }
 
 .subscribed-btn {
-  background: #fff;
+  /* background: #fff; */
   color: #1677ff;
   border-color: #1677ff;
 }
 
 .subscribe-btn-bordered {
   color: #1677ff;
-  border: 1px solid #1677ff;
-  background: #fff;
+  /* border: 1px solid #1677ff; */
+  /* background: #fff; */
   width: 72px;
   text-align: center;
 }
 
 .subscribe-btn-bordered[disabled] {
   color: #1677ff !important;
-  border-color: #1677ff !important;
-  background: #fff !important;
+  /* border-color: #1677ff !important; */
+  /* background: #fff !important; */
 }
 
 .more-detail {
