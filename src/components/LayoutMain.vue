@@ -1,7 +1,7 @@
 <template>
   <a-layout class="main-layout">
     <!-- 左侧菜单 -->
-    <a-layout-sider class="custom-sider">
+    <div class="custom-sider">
       <div class="sider-header">
         <div class="sider-logo" :title="$t('sider.mainRepo')" @click="openExternalLink('https://bettergi.com/')"></div>
         <span class="repo-title">{{ $t('sider.repoTitle') }}</span>
@@ -34,8 +34,7 @@
             <div class="update-time">{{ lastUpdateTime }}</div>
           </template>
           <template v-else>
-            <span>{{ $t('sider.lastUpdate') }}</span>
-            <span>{{ lastUpdateTime }}</span>
+            <span>{{ $t('sider.lastUpdate') + lastUpdateTime }}</span>
           </template>
         </div>
         <a-button class="settings-btn" type="text" size="small" @click.stop="showSettingsModal = true"
@@ -45,7 +44,7 @@
           </template>
         </a-button>
       </div>
-    </a-layout-sider>
+    </div>
 
     <!-- 中间内容区域 -->
     <a-layout-sider class="script-sider">
@@ -853,8 +852,7 @@ function onLocaleChange(val) {
 
 .custom-sider {
   width: 18% !important;
-  min-width: 18% !important;
-  max-width: 18% !important;
+  max-width: 300px !important;
   background: #f7f8fa !important;
   border-right: 1px solid #e5e7eb;
   display: flex;
@@ -1596,19 +1594,14 @@ function onLocaleChange(val) {
   margin-left: auto;
   color: #888;
   font-size: 18px;
-  border-radius: 50%;
-  transition: background 0.2s, color 0.2s;
-  margin-right: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   height: 36px;
   width: 36px;
-  padding: 0;
 }
 
 .settings-btn:hover {
-  color: #1677ff;
   background: #f0f5ff;
 }
 
