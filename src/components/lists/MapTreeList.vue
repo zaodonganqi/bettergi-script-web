@@ -29,7 +29,6 @@
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue';
-import { match } from 'pinyin-pro';
 import { CaretRightOutlined, CaretDownOutlined } from '@ant-design/icons-vue';
 import { useClipboard } from '@vueuse/core';
 import { message as Message } from 'ant-design-vue';
@@ -287,29 +286,6 @@ const processNode = (node, parentKey = '', parentSubscribed = false) => {
     files,
     isSubscribed,
   };
-};
-
-// 过滤树节点
-const filterTreeNodes = (nodes, searchText) => {
-  if (!searchText) return nodes;
-
-  return nodes.map(node => {
-    const isMatch = match(node.title.toLowerCase(), searchText.toLowerCase());
-    if (isMatch) {
-      return {
-        ...node,
-        children: node.rawChildren.map(child => processNode(child, node.key))
-      };
-    }
-
-    // 子节点匹配
-    if (node.children) {
-      const filteredChildren = filterTreeNodes(node.children, searchText);
-      if (filteredChildren.length) return { ...node, children: filteredChildren };
-    }
-
-    return null;
-  }).filter(Boolean);
 };
 
 // 生成树形数据
