@@ -215,12 +215,15 @@ const isLoadingReadme = ref(false);
 const loadError = ref(false);
 const readmeKey = ref(0);
 const hasReadmeContent = ref(false);
+const hasAutoSwitched = ref(false); // 标记是否已经自动切换过
 
 const handleReadmeLoaded = (payload) => {
   isLoadingReadme.value = false;
   loadError.value = false;
   if (payload && payload.status === '404' && props.script && props.script.path) {
     setReadme404(props.script.path);
+    // README为404时检查是否需要自动切换
+    checkAndSwitchToFiles();
   } else if (payload && payload.status === 'error') {
     loadError.value = true;
   }
@@ -246,11 +249,26 @@ const handleReadmeError = (error) => {
   }
   if (props.script && props.script.path && is404) {
     setReadme404(props.script.path);
+    // README为404时检查是否需要自动切换
+    checkAndSwitchToFiles();
   }
 };
 
 const handleReadmeHasContent = (hasContent) => {
   hasReadmeContent.value = hasContent;
+};
+
+// 检查是否需要自动切换到文件列表
+const checkAndSwitchToFiles = () => {
+  if (props.script && props.script.path && activeTab.value === 'readme' && !hasAutoSwitched.value) {
+    const is404 = isReadme404(props.script.path);
+    const hasDesc = props.script.desc && props.script.desc.trim() !== '';
+    
+    if (!hasDesc && is404 && !hasReadmeContent.value && files.value.length > 0) {
+      activeTab.value = 'files';
+      hasAutoSwitched.value = true;
+    }
+  }
 };
 
 
@@ -343,6 +361,7 @@ const tabTransitionName = computed(() => {
 watch(() => props.script, (newScript) => {
   if (newScript) {
     activeTab.value = 'readme';
+    hasAutoSwitched.value = false; // 重置自动切换标记
     files.value = Array.isArray(newScript.files) ? newScript.files : [];
     // 只有script变化时才重置和加载README
     if (newScript.path) {
@@ -350,6 +369,8 @@ watch(() => props.script, (newScript) => {
         isLoadingReadme.value = false;
         loadError.value = false;
         hasReadmeContent.value = false;
+        // 如果README已知为404，立即检查是否需要切换
+        checkAndSwitchToFiles();
       } else {
         hasReadmeContent.value = false;
         isLoadingReadme.value = true;

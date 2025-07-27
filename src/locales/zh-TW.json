@@ -31,7 +31,7 @@
         "searchTCG": "搜尋七聖召喚策略名稱、作者、tag",
         "searchDefault": "輸入關鍵詞查詢",
         "author": "作者：",
-        "noAuthor": "暫無作者資訊",
+        "noAuthor": "佚名",
         "unknown": "未知腳本"
     },
     "error": {
@@ -104,7 +104,7 @@
     },
     "readmeViewer": {
         "descTitle": "簡介：",
-        "noDesc": "暫無簡介",
+        "noDesc": "無簡介",
         "loadTimeout": "載入超時",
         "loadFailed": "載入失敗",
         "clickToViewFile": "點擊查看GitHub倉庫中的檔案",
@@ -125,28 +125,28 @@
         "subscribeFailedWithMsg": "訂閱失敗: {msg}",
         "subscribeSuccess": "已將 {name} 的訂閱連結複製到剪貼簿",
         "copyFailed": "複製 {name} 的訂閱連結失敗",
-        "noDesc": "無"
+        "noDesc": "無簡介"
     },
     "scriptList": {
         "subscribed": "已訂閱",
-        "noAuthor": "無"
+        "noAuthor": "佚名"
     },
     "combatStrategyList": {
         "subscribed": "已訂閱",
-        "noAuthor": "無"
+        "noAuthor": "佚名"
     },
     "cardStrategyList": {
         "subscribed": "已訂閱",
-        "noAuthor": "無"
+        "noAuthor": "佚名"
     },
     "common": {
         "comma": "，",
-        "noDesc": "無"
+        "noDesc": "無簡介"
     },
     "detail": {
         "author": "作者：",
         "scriptAuthor": "作者",
-        "noAuthor": "暫無作者資訊",
+        "noAuthor": "佚名",
         "subscribe": "訂閱",
         "subscribed": "已訂閱",
         "subscribeAgain": "再次訂閱",
@@ -193,7 +193,7 @@
     "repoError.help": "查看說明",
     "script.unknownScript": "未知腳本",
     "script.author": "作者：",
-    "script.noAuthor": "暫無作者資訊",
+    "script.noAuthor": "佚名",
     "comment.localModeNoticeTitle": "本地模式暫不支援評論功能",
     "comment.localModeNoticeDesc": "請移步線上倉庫進行評論",
     "comment.onlineRepo": "訪問線上倉庫",

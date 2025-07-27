@@ -31,7 +31,7 @@
         "searchTCG": "Search TCG strategy name, author, tag",
         "searchDefault": "Enter keywords to search",
         "author": "Author: ",
-        "noAuthor": "No author information",
+        "noAuthor": "Anonymous",
         "unknown": "Unknown Script"
     },
     "error": {
@@ -129,24 +129,24 @@
     },
     "scriptList": {
         "subscribed": "Subscribed",
-        "noAuthor": "None"
+        "noAuthor": "Anonymous"
     },
     "combatStrategyList": {
         "subscribed": "Subscribed",
-        "noAuthor": "None"
+        "noAuthor": "Anonymous"
     },
     "cardStrategyList": {
         "subscribed": "Subscribed",
-        "noAuthor": "None"
+        "noAuthor": "Anonymous"
     },
     "common": {
         "comma": ", ",
-        "noDesc": "None"
+        "noDesc": "No description"
     },
     "detail": {
         "author": "Author: ",
         "scriptAuthor": "Author",
-        "noAuthor": "No author information",
+        "noAuthor": "Anonymous",
         "subscribe": "Subscribe",
         "subscribed": "Subscribed",
         "subscribeAgain": "Subscribe Again",
@@ -193,7 +193,7 @@
     "repoError.help": "View Help",
     "script.unknownScript": "Unknown Script",
     "script.author": "Author: ",
-    "script.noAuthor": "No author information",
+    "script.noAuthor": "Anonymous",
     "comment.localModeNoticeTitle": "Comments not supported in local mode",
     "comment.localModeNoticeDesc": "Please visit the online repository for comments",
     "comment.onlineRepo": "Visit Online Repository",

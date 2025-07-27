@@ -31,7 +31,7 @@
         "searchTCG": "搜索七圣召唤策略名称、作者、tag",
         "searchDefault": "输入关键词查询",
         "author": "作者：",
-        "noAuthor": "暂无作者信息",
+        "noAuthor": "佚名",
         "unknown": "未知脚本"
     },
     "error": {
@@ -104,7 +104,7 @@
     },
     "readmeViewer": {
         "descTitle": "简介：",
-        "noDesc": "暂无简介",
+        "noDesc": "无简介",
         "loadTimeout": "加载超时",
         "loadFailed": "加载失败",
         "clickToViewFile": "点击查看GitHub仓库中的文件",
@@ -125,28 +125,28 @@
         "subscribeFailedWithMsg": "订阅失败: {msg}",
         "subscribeSuccess": "已将 {name} 的订阅链接复制到剪贴板",
         "copyFailed": "复制 {name} 的订阅链接失败",
-        "noDesc": "无"
+        "noDesc": "无简介"
     },
     "scriptList": {
         "subscribed": "已订阅",
-        "noAuthor": "无"
+        "noAuthor": "佚名"
     },
     "combatStrategyList": {
         "subscribed": "已订阅",
-        "noAuthor": "无"
+        "noAuthor": "佚名"
     },
     "cardStrategyList": {
         "subscribed": "已订阅",
-        "noAuthor": "无"
+        "noAuthor": "佚名"
     },
     "common": {
         "comma": "，",
-        "noDesc": "无"
+        "noDesc": "无简介"
     },
     "detail": {
         "author": "作者：",
         "scriptAuthor": "作者",
-        "noAuthor": "暂无作者信息",
+        "noAuthor": "佚名",
         "subscribe": "订阅",
         "subscribed": "已订阅",
         "subscribeAgain": "再次订阅",
@@ -193,7 +193,7 @@
     "repoError.help": "查看帮助",
     "script.unknownScript": "未知脚本",
     "script.author": "作者：",
-    "script.noAuthor": "暂无作者信息",
+    "script.noAuthor": "佚名",
     "comment.localModeNoticeTitle": "本地模式暂不支持评论功能",
     "comment.localModeNoticeDesc": "请移步在线仓库进行评论",
     "comment.onlineRepo": "访问在线仓库",

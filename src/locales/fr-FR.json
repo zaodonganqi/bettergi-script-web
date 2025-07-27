@@ -31,7 +31,7 @@
         "searchTCG": "Rechercher nom de stratégie TCG, auteur, tag",
         "searchDefault": "Entrer des mots-clés pour rechercher",
         "author": "Auteur : ",
-        "noAuthor": "Aucune information d'auteur",
+        "noAuthor": "Anonyme",
         "unknown": "Script Inconnu"
     },
     "error": {
@@ -129,24 +129,24 @@
     },
     "scriptList": {
         "subscribed": "Abonné",
-        "noAuthor": "Aucun"
+        "noAuthor": "Anonyme"
     },
     "combatStrategyList": {
         "subscribed": "Abonné",
-        "noAuthor": "Aucun"
+        "noAuthor": "Anonyme"
     },
     "cardStrategyList": {
         "subscribed": "Abonné",
-        "noAuthor": "Aucun"
+        "noAuthor": "Anonyme"
     },
     "common": {
         "comma": ", ",
-        "noDesc": "Aucun"
+        "noDesc": "Aucune description"
     },
     "detail": {
         "author": "Auteur : ",
         "scriptAuthor": "Auteur",
-        "noAuthor": "Aucune information d'auteur",
+        "noAuthor": "Anonyme",
         "subscribe": "S'abonner",
         "subscribed": "Abonné",
         "subscribeAgain": "S'abonner à nouveau",
@@ -193,7 +193,7 @@
     "repoError.help": "Voir l'Aide",
     "script.unknownScript": "Script Inconnu",
     "script.author": "Auteur : ",
-    "script.noAuthor": "Aucune information d'auteur",
+    "script.noAuthor": "Anonyme",
     "comment.localModeNoticeTitle": "Les commentaires ne sont pas pris en charge en mode local",
     "comment.localModeNoticeDesc": "Veuillez visiter le dépôt en ligne pour les commentaires",
     "comment.onlineRepo": "Visiter le Dépôt en Ligne",

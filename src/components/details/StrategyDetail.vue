@@ -32,7 +32,7 @@
           </div>
       </div>
       <div class="detail-readme">
-        <div v-if="script && script.desc" class="desc-block">
+        <div v-if="script && script.desc && script.desc.trim() && script.desc !== $t('common.noDesc')" class="desc-block">
           <div class="desc-title">{{ $t('detail.desc') }}</div>
           <div class="desc-content">{{ script.desc }}</div>
         </div>
