@@ -21,7 +21,6 @@
         "markdown-it-anchor": "^9.2.0",
         "marked": "^15.0.12",
         "pinia": "^3.0.1",
-        "pinyin-pro": "^3.26.0",
         "vue": "^3.4.0",
         "vue-i18n": "^11.1.11"
     },
