@@ -97,7 +97,8 @@ function getTcgStrategiesFromRepo(repo, subscribedPaths = [], parentSubscribed =
         child.authors = authors;
         result.push({
           ...child,
-          isSubscribed: isSubscribed
+          isSubscribed: isSubscribed,
+          hasUpdate: child.hasUpdate || false
         });
       }
     }
@@ -128,7 +129,8 @@ const strategies = ref(
     hash: item.hash,
     version: item.version,
     path: item.fullPath || `tcg/${item.name}`,
-    isSubscribed: item.isSubscribed
+    isSubscribed: item.isSubscribed,
+    hasUpdate: item.hasUpdate || false
   }))
 );
 
@@ -151,7 +153,8 @@ watch(
           hash: item.hash,
           version: item.version,
           path: item.fullPath || `tcg/${item.name}`,
-          isSubscribed: item.isSubscribed
+          isSubscribed: item.isSubscribed,
+          hasUpdate: item.hasUpdate || false
         }));
 
         if (strategies.value.length > 0) {

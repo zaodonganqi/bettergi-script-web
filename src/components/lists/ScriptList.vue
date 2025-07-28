@@ -106,7 +106,8 @@ function getJsScriptsFromRepo(repo, subscribedPaths = [], parentSubscribed = fal
           description: description,
           fullPath: `${currentPath}/${child.name}`,
           authors: authors,
-          isSubscribed: isSubscribed
+          isSubscribed: isSubscribed,
+          hasUpdate: child.hasUpdate || false
         });
       }
     }
@@ -131,7 +132,8 @@ const scripts = ref(
     hash: item.hash,
     version: item.version,
     path: item.fullPath || `js/${item.name}`,
-    isSubscribed: item.isSubscribed
+    isSubscribed: item.isSubscribed,
+    hasUpdate: item.hasUpdate || false
   }))
 );
 
@@ -156,7 +158,8 @@ watch(
           hash: item.hash,
           version: item.version,
           path: item.fullPath || `js/${item.name}`,
-          isSubscribed: item.isSubscribed
+          isSubscribed: item.isSubscribed,
+          hasUpdate: item.hasUpdate || false
         }));
 
         if (scripts.value.length > 0) {

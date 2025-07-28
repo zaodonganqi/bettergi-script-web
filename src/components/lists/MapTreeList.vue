@@ -285,6 +285,7 @@ const processNode = (node, parentKey = '', parentSubscribed = false) => {
     path: `pathing/${currentKey}`,
     files,
     isSubscribed,
+    hasUpdate: node.hasUpdate || false,
   };
 };
 
