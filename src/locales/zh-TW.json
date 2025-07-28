@@ -26,10 +26,10 @@
         "subscribed": "已訂閱",
         "onlyLocal": "僅本地頁面可用",
         "searchMap": "搜尋資源名稱、作者、tag",
-        "searchScript": "搜尋腳本名稱、作者、簡介、tag",
-        "searchCombat": "搜尋戰鬥策略名稱、作者、tag",
-        "searchTCG": "搜尋七聖召喚策略名稱、作者、tag",
-        "searchDefault": "輸入關鍵詞查詢",
+        "searchScript": "輸入關鍵詞搜尋",
+        "searchCombat": "輸入關鍵詞搜尋",
+        "searchTCG": "輸入關鍵詞搜尋",
+        "searchDefault": "輸入關鍵詞搜尋",
         "author": "作者：",
         "noAuthor": "佚名",
         "unknown": "未知腳本"
@@ -183,6 +183,15 @@
         "enUS": "英文",
         "jaJP": "日語",
         "frFR": "法語"
+    },
+    "sort": {
+        "sortBy": "排序方式",
+        "sortOrder": "排序順序",
+        "recommend": "推薦",
+        "time": "時間",
+        "name": "名稱",
+        "ascending": "正序",
+        "descending": "倒序"
     },
     "loading": {
         "repoData": "倉庫資料載入中，請稍候..."

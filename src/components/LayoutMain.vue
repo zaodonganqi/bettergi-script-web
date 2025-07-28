@@ -67,6 +67,40 @@
             <SearchOutlined />
           </template>
         </a-input>
+        <a-dropdown v-if="selectedMenu[0] !== '1'" placement="bottomLeft" trigger="click" class="sort-dropdown">
+          <a-button class="sort-button" size="middle">
+            <AlignRightOutlined />
+          </a-button>
+          <template #overlay>
+            <a-menu class="sort-menu" @click="handleSortMenuClick">
+              <a-menu-item-group :title="$t('sort.sortBy')">
+                <a-menu-item key="recommend" :class="{ active: sortType === 'recommend' }">
+                  <span>{{ $t('sort.recommend') }}</span>
+                  <CheckOutlined v-if="sortType === 'recommend'" class="check-icon" />
+                </a-menu-item>
+                <a-menu-item key="time" :class="{ active: sortType === 'time' }">
+                  <span>{{ $t('sort.time') }}</span>
+                  <CheckOutlined v-if="sortType === 'time'" class="check-icon" />
+                </a-menu-item>
+                <a-menu-item key="name" :class="{ active: sortType === 'name' }">
+                  <span>{{ $t('sort.name') }}</span>
+                  <CheckOutlined v-if="sortType === 'name'" class="check-icon" />
+                </a-menu-item>
+              </a-menu-item-group>
+              <a-menu-divider />
+              <a-menu-item-group :title="$t('sort.sortOrder')">
+                <a-menu-item key="asc" :class="{ active: sortOrder === 'asc' }">
+                  <span>{{ $t('sort.ascending') }}</span>
+                  <CheckOutlined v-if="sortOrder === 'asc'" class="check-icon" />
+                </a-menu-item>
+                <a-menu-item key="desc" :class="{ active: sortOrder === 'desc' }">
+                  <span>{{ $t('sort.descending') }}</span>
+                  <CheckOutlined v-if="sortOrder === 'desc'" class="check-icon" />
+                </a-menu-item>
+              </a-menu-item-group>
+            </a-menu>
+          </template>
+        </a-dropdown>
       </div>
       <!-- 地图追踪的树状结构 -->
       <div v-if="selectedMenu[0] === '1'" class="script-list">
@@ -77,18 +111,20 @@
       <!-- Javascript脚本列表 -->
       <div v-else-if="selectedMenu[0] === '2'" class="script-list">
         <ScriptList :search-key="search" :repo-data="repoData" :subscribed-paths="subscribedScriptPaths"
-          :show-subscribed-only="scriptTab === 'subscribed'" ref="scriptListRef" @select="handleScriptSelect"
-          @script-count="handleScriptCount" />
+          :show-subscribed-only="scriptTab === 'subscribed'" :sort-type="sortType" :sort-order="sortOrder"
+          ref="scriptListRef" @select="handleScriptSelect" @script-count="handleScriptCount" />
       </div>
       <!-- 战斗策略列表 -->
       <div v-else-if="selectedMenu[0] === '3'" class="script-list">
         <CombatStrategyList :search-key="search" :repo-data="repoData" :subscribed-paths="subscribedScriptPaths"
-          :show-subscribed-only="scriptTab === 'subscribed'" ref="combatStrategyRef" @select="handleScriptSelect" />
+          :show-subscribed-only="scriptTab === 'subscribed'" :sort-type="sortType" :sort-order="sortOrder"
+          ref="combatStrategyRef" @select="handleScriptSelect" />
       </div>
       <!-- 七圣召唤策略列表 -->
       <div v-else-if="selectedMenu[0] === '4'" class="script-list">
         <CardStrategyList :search-key="search" :repo-data="repoData" :subscribed-paths="subscribedScriptPaths"
-          :show-subscribed-only="scriptTab === 'subscribed'" ref="cardStrategyRef" @select="handleScriptSelect" />
+          :show-subscribed-only="scriptTab === 'subscribed'" :sort-type="sortType" :sort-order="sortOrder"
+          ref="cardStrategyRef" @select="handleScriptSelect" />
       </div>
     </a-layout-sider>
 
@@ -220,7 +256,7 @@
             </template>
             <span v-else-if="selectedScript?.author" class="script-author">{{ $t('script.author') }}{{
               selectedScript.author
-              }}</span>
+            }}</span>
             <span v-else class="script-author">{{ $t('script.noAuthor') }}</span>
           </div>
         </div>
@@ -238,7 +274,7 @@
             <div class="notice-title">{{ $t('comment.localModeNoticeTitle') }}</div>
             <div class="notice-desc">{{ $t('comment.localModeNoticeDesc') }}</div>
             <button class="notice-btn" @click="openExternalLink('https://bgi.sh')">{{ $t('comment.onlineRepo')
-              }}</button>
+            }}</button>
           </div>
 
           <!-- Web模式显示giscus评论 -->
@@ -303,7 +339,7 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
-import { FolderOutlined, FileOutlined, CalculatorOutlined, BulbOutlined, SearchOutlined, QuestionCircleOutlined, MessageOutlined, LinkOutlined, ReloadOutlined, SettingOutlined } from '@ant-design/icons-vue';
+import { FolderOutlined, FileOutlined, CalculatorOutlined, BulbOutlined, SearchOutlined, QuestionCircleOutlined, MessageOutlined, LinkOutlined, ReloadOutlined, SettingOutlined, AlignRightOutlined, CheckOutlined } from '@ant-design/icons-vue';
 import Giscus from '@giscus/vue';
 import MapTreeList from './lists/MapTreeList.vue';
 import ScriptList from './lists/ScriptList.vue';
@@ -320,6 +356,10 @@ import { useI18n } from 'vue-i18n';
 const mode = import.meta.env.VITE_MODE;
 const selectedMenu = ref(['1']);
 const search = ref('');
+
+// 排序相关数据
+const sortType = ref('recommend');
+const sortOrder = ref('desc');
 
 const { t: $t } = useI18n();
 
@@ -456,6 +496,16 @@ const searchPlaceholder = computed(() => {
 
 const handleSearch = (value) => {
   search.value = value;
+};
+
+// 处理排序菜单点击
+const handleSortMenuClick = ({ key }) => {
+  if (['recommend', 'time', 'name'].includes(key)) {
+    sortType.value = key;
+  } else if (['asc', 'desc'].includes(key)) {
+    sortOrder.value = key;
+  }
+  console.log('排序设置已更新:', { sortType: sortType.value, sortOrder: sortOrder.value });
 };
 
 const handleMenuSelect = ({ key }) => {
@@ -811,6 +861,8 @@ const onClickShowSubscribed = () => {
 
 watch(selectedMenu, () => {
   scriptTab.value = 'all';
+  sortType.value = 'recommend';
+  sortOrder.value = 'desc';
 });
 
 watch(subscribedScriptPaths, (newPaths) => {
@@ -1038,17 +1090,78 @@ function onLocaleChange(val) {
 }
 
 .search-section {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
   height: 60px;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  padding-left: 16px;
-  padding-right: 16px;
+  padding: 10px 16px;
   border-bottom: 1px solid #ececec;
+  gap: 8px;
 }
 
 .script-search {
-  width: 100%;
-  height: 100%;
+  flex: 1;
+  height: 40px;
+}
+
+.sort-dropdown {
+  flex-shrink: 0;
+}
+
+.sort-button {
+  height: 40px;
+  width: 40px;
+  background: #fff !important;
+  border: 1px solid #d9d9d9 !important;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  font-size: 16px;
+  padding: 0;
+  box-shadow: none;
+  transition: all 0.2s;
+}
+
+.sort-button:hover {
+  border-color: #4096ff !important;
+  color: #4096ff;
+}
+
+.sort-button:focus {
+  border-color: #4096ff !important;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(64, 150, 255, 0.2);
+}
+
+.sort-menu {
+  min-width: 120px;
+}
+
+.sort-menu .ant-menu-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 16px;
+}
+
+.sort-menu .ant-menu-item.active {
+  background-color: #f0f5ff;
+  color: #1677ff;
+}
+
+.sort-menu .check-icon {
+  color: #1677ff;
+  font-size: 14px;
+  margin-left: 8px;
+}
+
+.sort-menu .ant-menu-item-group-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #666;
+  padding: 8px 16px 4px 16px;
 }
 
 .script-list {

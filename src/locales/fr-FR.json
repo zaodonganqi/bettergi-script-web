@@ -26,9 +26,9 @@
         "subscribed": "Abonné",
         "onlyLocal": "Disponible uniquement en mode local",
         "searchMap": "Rechercher nom de ressource, auteur, tag",
-        "searchScript": "Rechercher nom de script, auteur, description, tag",
-        "searchCombat": "Rechercher nom de stratégie de combat, auteur, tag",
-        "searchTCG": "Rechercher nom de stratégie TCG, auteur, tag",
+        "searchScript": "Entrer des mots-clés pour rechercher",
+        "searchCombat": "Entrer des mots-clés pour rechercher",
+        "searchTCG": "Entrer des mots-clés pour rechercher",
         "searchDefault": "Entrer des mots-clés pour rechercher",
         "author": "Auteur : ",
         "noAuthor": "Anonyme",
@@ -183,6 +183,15 @@
         "enUS": "Anglais",
         "jaJP": "Japonais",
         "frFR": "Français"
+    },
+    "sort": {
+        "sortBy": "Trier par",
+        "sortOrder": "Ordre de tri",
+        "recommend": "Recommandé",
+        "time": "Temps",
+        "name": "Nom",
+        "ascending": "Croissant",
+        "descending": "Décroissant"
     },
     "loading": {
         "repoData": "Chargement des données du dépôt, veuillez patienter..."

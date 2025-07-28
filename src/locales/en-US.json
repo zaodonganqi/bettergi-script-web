@@ -26,9 +26,9 @@
         "subscribed": "Subscribed",
         "onlyLocal": "Only available in local mode",
         "searchMap": "Search resource name, author, tag",
-        "searchScript": "Search script name, author, description, tag",
-        "searchCombat": "Search combat strategy name, author, tag",
-        "searchTCG": "Search TCG strategy name, author, tag",
+        "searchScript": "Enter keywords to search",
+        "searchCombat": "Enter keywords to search",
+        "searchTCG": "Enter keywords to search",
         "searchDefault": "Enter keywords to search",
         "author": "Author: ",
         "noAuthor": "Anonymous",
@@ -183,6 +183,15 @@
         "enUS": "English",
         "jaJP": "Japanese",
         "frFR": "French"
+    },
+    "sort": {
+        "sortBy": "Sort By",
+        "sortOrder": "Sort Order",
+        "recommend": "Recommended",
+        "time": "Time",
+        "name": "Name",
+        "ascending": "Ascending",
+        "descending": "Descending"
     },
     "loading": {
         "repoData": "Loading repository data, please wait..."

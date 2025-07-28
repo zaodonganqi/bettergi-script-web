@@ -51,6 +51,14 @@ const props = defineProps({
   showSubscribedOnly: {
     type: Boolean,
     default: false
+  },
+  sortType: {
+    type: String,
+    default: 'recommend'
+  },
+  sortOrder: {
+    type: String,
+    default: 'desc'
   }
 });
 const { repoData } = props;
@@ -167,6 +175,32 @@ const selectStrategy = (id) => {
   console.log("Node selected", strategy);
 };
 
+const sortStrategies = (strategyList) => {
+  if (props.sortType === 'recommend') {
+    return [...strategyList];
+  }
+  
+  const sorted = [...strategyList];
+  
+  if (props.sortType === 'name') {
+    // 按title排序
+    sorted.sort((a, b) => {
+      const nameA = (a.title || '').toLowerCase();
+      const nameB = (b.title || '').toLowerCase();
+      return props.sortOrder === 'asc' ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA);
+    });
+  } else if (props.sortType === 'time') {
+    // 按时间排序
+    sorted.sort((a, b) => {
+      const timeA = a.time || '';
+      const timeB = b.time || '';
+      return props.sortOrder === 'asc' ? timeA.localeCompare(timeB) : timeB.localeCompare(timeA);
+    });
+  }
+  
+  return sorted;
+};
+
 const filteredStrategies = computed(() => {
   let baseList = strategies.value;
   if (props.showSubscribedOnly) {
@@ -175,14 +209,19 @@ const filteredStrategies = computed(() => {
     }
     baseList = baseList.filter(strategy => props.subscribedPaths.includes(strategy.path));
   }
-  if (!props.searchKey) return baseList;
+  
+  if (!props.searchKey) {
+    return sortStrategies(baseList);
+  }
+  
   const keyword = normalize(props.searchKey.trim());
   // 完全匹配优先
   const nameMatches = baseList.filter(s =>
     normalize(s.title) === keyword ||
     (s.authors && s.authors.some(a => normalize(a.name) === keyword))
   );
-  if (nameMatches.length) return nameMatches;
+  if (nameMatches.length) return sortStrategies(nameMatches);
+  
   // 相关性分数排序
   const scored = baseList.map(s => {
     let score = 0;

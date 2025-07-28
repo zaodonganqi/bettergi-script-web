@@ -26,9 +26,9 @@
         "subscribed": "購読済み",
         "onlyLocal": "ローカルモードでのみ利用可能",
         "searchMap": "リソース名、作者、タグを検索",
-        "searchScript": "スクリプト名、作者、説明、タグを検索",
-        "searchCombat": "戦闘戦略名、作者、タグを検索",
-        "searchTCG": "七聖召喚戦略名、作者、タグを検索",
+        "searchScript": "キーワードを入力して検索",
+        "searchCombat": "キーワードを入力して検索",
+        "searchTCG": "キーワードを入力して検索",
         "searchDefault": "キーワードを入力して検索",
         "author": "作者：",
         "noAuthor": "匿名",
@@ -183,6 +183,15 @@
         "enUS": "英語",
         "jaJP": "日本語",
         "frFR": "フランス語"
+    },
+    "sort": {
+        "sortBy": "並び順",
+        "sortOrder": "ソート順序",
+        "recommend": "おすすめ",
+        "time": "時間",
+        "name": "名前",
+        "ascending": "昇順",
+        "descending": "降順"
     },
     "loading": {
         "repoData": "リポジトリデータを読み込み中、お待ちください..."

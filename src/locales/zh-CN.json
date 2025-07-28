@@ -26,10 +26,10 @@
         "subscribed": "已订阅",
         "onlyLocal": "仅本地页面可用",
         "searchMap": "搜索资源名称、作者、tag",
-        "searchScript": "搜索脚本名称、作者、简介、tag",
-        "searchCombat": "搜索战斗策略名称、作者、tag",
-        "searchTCG": "搜索七圣召唤策略名称、作者、tag",
-        "searchDefault": "输入关键词查询",
+        "searchScript": "输入关键词搜索",
+        "searchCombat": "输入关键词搜索",
+        "searchTCG": "输入关键词搜索",
+        "searchDefault": "输入关键词搜索",
         "author": "作者：",
         "noAuthor": "佚名",
         "unknown": "未知脚本"
@@ -183,6 +183,15 @@
         "enUS": "英文",
         "jaJP": "日语",
         "frFR": "法语"
+    },
+    "sort": {
+        "sortBy": "排序方式",
+        "sortOrder": "排序顺序",
+        "recommend": "推荐",
+        "time": "时间",
+        "name": "名称",
+        "ascending": "正序",
+        "descending": "倒序"
     },
     "loading": {
         "repoData": "仓库数据加载中，请稍候..."

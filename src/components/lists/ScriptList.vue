@@ -54,6 +54,14 @@ const props = defineProps({
   showSubscribedOnly: {
     type: Boolean,
     default: false
+  },
+  sortType: {
+    type: String,
+    default: 'recommend'
+  },
+  sortOrder: {
+    type: String,
+    default: 'desc'
   }
 });
 const { repoData } = props;
@@ -176,6 +184,32 @@ function normalize(str) {
   return (str || '').toLowerCase().replace(/[\s【】\[\]（）()·,，.。!！?？\-_]/g, '');
 }
 
+const sortScripts = (scriptList) => {
+  if (props.sortType === 'recommend') {
+    return [...scriptList];
+  }
+  
+  const sorted = [...scriptList];
+  
+  if (props.sortType === 'name') {
+    // 按name1排序
+    sorted.sort((a, b) => {
+      const nameA = (a.name1 || '').toLowerCase();
+      const nameB = (b.name1 || '').toLowerCase();
+      return props.sortOrder === 'asc' ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA);
+    });
+  } else if (props.sortType === 'time') {
+    // 按时间排序
+    sorted.sort((a, b) => {
+      const timeA = a.time || '';
+      const timeB = b.time || '';
+      return props.sortOrder === 'asc' ? timeA.localeCompare(timeB) : timeB.localeCompare(timeA);
+    });
+  }
+  
+  return sorted;
+};
+
 const filteredScripts = computed(() => {
   let baseList = scripts.value;
   if (props.showSubscribedOnly) {
@@ -184,7 +218,11 @@ const filteredScripts = computed(() => {
     }
     baseList = baseList.filter(script => props.subscribedPaths.includes(script.path));
   }
-  if (!props.searchKey) return baseList;
+  
+  if (!props.searchKey) {
+    return sortScripts(baseList);
+  }
+  
   const keyword = normalize(props.searchKey.trim());
   // 完全匹配优先，name1和name2权重一样
   const nameMatches = baseList.filter(s =>
@@ -193,7 +231,8 @@ const filteredScripts = computed(() => {
     normalize(s.name2) === keyword ||
     (s.authors && s.authors.some(a => normalize(a.name) === keyword))
   );
-  if (nameMatches.length) return nameMatches;
+  if (nameMatches.length) return sortScripts(nameMatches);
+  
   // 相关性分数排序，name1和name2权重一样
   const scored = baseList.map(s => {
     let score = 0;
