@@ -182,7 +182,11 @@
         "zhTW": "繁體中文",
         "enUS": "英文",
         "jaJP": "日語",
-        "frFR": "法語"
+        "frFR": "法語",
+        "clearUpdate": "清除更新提示",
+        "clearUpdateBtn": "清除",
+        "clearUpdateSuccess": "清除更新提示成功",
+        "clearUpdateFailed": "清除更新提示失敗"
     },
     "sort": {
         "sortBy": "排序方式",

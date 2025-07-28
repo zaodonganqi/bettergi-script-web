@@ -182,7 +182,11 @@
         "zhTW": "Traditional Chinese",
         "enUS": "English",
         "jaJP": "Japanese",
-        "frFR": "French"
+        "frFR": "French",
+        "clearUpdate": "Clear Update Notifications",
+        "clearUpdateBtn": "Clear",
+        "clearUpdateSuccess": "Successfully cleared update notifications",
+        "clearUpdateFailed": "Failed to clear update notifications"
     },
     "sort": {
         "sortBy": "Sort By",

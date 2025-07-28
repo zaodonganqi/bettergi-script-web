@@ -128,14 +128,17 @@
         "noDesc": "无简介"
     },
     "scriptList": {
+        "hasUpdate": "有更新",
         "subscribed": "已订阅",
         "noAuthor": "佚名"
     },
     "combatStrategyList": {
+        "hasUpdate": "有更新",
         "subscribed": "已订阅",
         "noAuthor": "佚名"
     },
     "cardStrategyList": {
+        "hasUpdate": "有更新",
         "subscribed": "已订阅",
         "noAuthor": "佚名"
     },
@@ -182,7 +185,11 @@
         "zhTW": "繁體中文",
         "enUS": "英文",
         "jaJP": "日语",
-        "frFR": "法语"
+        "frFR": "法语",
+        "clearUpdate": "清除更新提示",
+        "clearUpdateBtn": "清除",
+        "clearUpdateSuccess": "清除更新提示成功",
+        "clearUpdateFailed": "清除更新提示失败"
     },
     "sort": {
         "sortBy": "排序方式",

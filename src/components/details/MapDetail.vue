@@ -277,9 +277,7 @@ const modalOpen = ref(false);
 const modalRecord = ref({});
 
 function showDetails(record) {
-  const fullPath = props.script && props.script.path ?
-    `${props.script.path}/${record.name}` :
-    record.path || record.name;
+  const fullPath = record.path || record.name;
 
   modalRecord.value = {
     ...record,
@@ -317,10 +315,7 @@ const handleSubscribe = (item) => {
 };
 
 const downloadScript = async (script) => {
-  let scriptPath = script.path;
-  if (!scriptPath && script.type === 'file' && props.script && props.script.path) {
-    scriptPath = `${props.script.path}/${script.name}`;
-  }
+  const scriptPath = script.path;
   // 创建一个包含脚本路径的数组
   const subscriptionData = [scriptPath];
 

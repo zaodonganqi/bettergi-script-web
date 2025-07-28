@@ -182,7 +182,11 @@
         "zhTW": "Chinois Traditionnel",
         "enUS": "Anglais",
         "jaJP": "Japonais",
-        "frFR": "Français"
+        "frFR": "Français",
+        "clearUpdate": "Effacer les Notifications de Mise à Jour",
+        "clearUpdateBtn": "Effacer",
+        "clearUpdateSuccess": "Notifications de mise à jour effacées avec succès",
+        "clearUpdateFailed": "Échec de l'effacement des notifications de mise à jour"
     },
     "sort": {
         "sortBy": "Trier par",

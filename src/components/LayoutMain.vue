@@ -106,25 +106,27 @@
       <div v-if="selectedMenu[0] === '1'" class="script-list">
         <MapTreeList :search-key="search" :repo-data="repoData" :subscribed-paths="subscribedScriptPaths"
           :show-subscribed-only="scriptTab === 'subscribed'" ref="mapTreeRef"
-          :start-polling-user-config="startPollingUserConfig" @select="handleMapSelect" @leaf-count="handleLeafCount" />
+          :start-polling-user-config="startPollingUserConfig" @select="handleMapSelect" @leaf-count="handleLeafCount"
+          @update-has-update="updateScriptHasUpdate" />
       </div>
       <!-- Javascript脚本列表 -->
       <div v-else-if="selectedMenu[0] === '2'" class="script-list">
         <ScriptList :search-key="search" :repo-data="repoData" :subscribed-paths="subscribedScriptPaths"
           :show-subscribed-only="scriptTab === 'subscribed'" :sort-type="sortType" :sort-order="sortOrder"
-          ref="scriptListRef" @select="handleScriptSelect" @script-count="handleScriptCount" />
+          ref="scriptListRef" @select="handleScriptSelect" @script-count="handleScriptCount" 
+          @update-has-update="updateScriptHasUpdate" />
       </div>
       <!-- 战斗策略列表 -->
       <div v-else-if="selectedMenu[0] === '3'" class="script-list">
         <CombatStrategyList :search-key="search" :repo-data="repoData" :subscribed-paths="subscribedScriptPaths"
           :show-subscribed-only="scriptTab === 'subscribed'" :sort-type="sortType" :sort-order="sortOrder"
-          ref="combatStrategyRef" @select="handleScriptSelect" />
+          ref="combatStrategyRef" @select="handleScriptSelect" @update-has-update="updateScriptHasUpdate" />
       </div>
       <!-- 七圣召唤策略列表 -->
       <div v-else-if="selectedMenu[0] === '4'" class="script-list">
         <CardStrategyList :search-key="search" :repo-data="repoData" :subscribed-paths="subscribedScriptPaths"
           :show-subscribed-only="scriptTab === 'subscribed'" :sort-type="sortType" :sort-order="sortOrder"
-          ref="cardStrategyRef" @select="handleScriptSelect" />
+          ref="cardStrategyRef" @select="handleScriptSelect" @update-has-update="updateScriptHasUpdate" />
       </div>
     </a-layout-sider>
 
@@ -333,13 +335,21 @@
           <a-select-option value="fr-FR">{{ $t('settings.frFR') }}</a-select-option>
         </a-select>
       </div>
+      <a-divider v-if="mode === 'single'" />
+      <div v-if="mode === 'single'" class="settings-row">
+        <span class="settings-label">{{ $t('settings.clearUpdate') }}</span>
+        <a-button type="primary" size="middle" @click="handleClearUpdate" :loading="clearUpdateLoading">
+          {{ $t('settings.clearUpdateBtn') }}
+        </a-button>
+      </div>
     </a-modal>
   </a-layout>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
+import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue';
 import { FolderOutlined, FileOutlined, CalculatorOutlined, BulbOutlined, SearchOutlined, QuestionCircleOutlined, MessageOutlined, LinkOutlined, ReloadOutlined, SettingOutlined, AlignRightOutlined, CheckOutlined } from '@ant-design/icons-vue';
+import { message as Message } from 'ant-design-vue';
 import Giscus from '@giscus/vue';
 import MapTreeList from './lists/MapTreeList.vue';
 import ScriptList from './lists/ScriptList.vue';
@@ -570,6 +580,57 @@ const selectedLocation = ref(null);
 
 const handleScriptSelect = (script) => {
   selectedScript.value = script;
+};
+
+// 更新repoData中指定脚本的hasUpdate状态
+const updateScriptHasUpdate = (scriptPath, hasUpdate) => {
+  if (!repoData.value || !repoData.value.indexes) return;
+  
+  // 递归查找并更新指定路径的脚本
+  const updateNode = (nodes, path, basePath) => {
+    for (let node of nodes) {
+      if (node.children && node.children.length > 0) {
+        // 如果是目录，递归查找
+        updateNode(node.children, path, basePath);
+      } else {
+        // 如果是文件，检查路径是否匹配
+        const fullPath = `${basePath}/${node.name}`;
+        if (fullPath === path) {
+          node.hasUpdate = hasUpdate;
+          return true;
+        }
+      }
+    }
+    return false;
+  };
+  
+  // 根据路径前缀确定要查找的节点类型
+  let targetNode = null;
+  let basePath = '';
+  
+  if (scriptPath.startsWith('js/')) {
+    targetNode = repoData.value.indexes.find(item => item.name === 'js');
+    basePath = 'js';
+  } else if (scriptPath.startsWith('combat/')) {
+    targetNode = repoData.value.indexes.find(item => item.name === 'combat');
+    basePath = 'combat';
+  } else if (scriptPath.startsWith('tcg/')) {
+    targetNode = repoData.value.indexes.find(item => item.name === 'tcg');
+    basePath = 'tcg';
+  } else if (scriptPath.startsWith('pathing/')) {
+    targetNode = repoData.value.indexes.find(item => item.name === 'pathing');
+    basePath = 'pathing';
+  }
+  
+  if (targetNode && targetNode.children) {
+    const updated = updateNode(targetNode.children, scriptPath, basePath);
+    if (updated) {
+      // 强制触发响应式更新
+      nextTick(() => {
+        repoData.value = { ...repoData.value };
+      });
+    }
+  }
 };
 
 // 地图追踪板块
@@ -886,11 +947,67 @@ watch(subscribedScriptPaths, (newPaths) => {
 });
 
 const showSettingsModal = ref(false);
+const clearUpdateLoading = ref(false);
 
 function onLocaleChange(val) {
   handleLocaleChange(val);
   showSettingsModal.value = false;
 }
+
+// 清除更新提示
+const handleClearUpdate = async () => {
+  if (mode !== 'single') return;
+  
+  clearUpdateLoading.value = true;
+  try {
+    const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
+    const result = await repoWebBridge.ClearUpdate();
+    
+    if (result) {
+      // 清除成功，更新所有脚本的hasUpdate状态
+      updateAllScriptsHasUpdate(false);
+      // 显示成功消息
+      Message.success($t('settings.clearUpdateSuccess'));
+    } else {
+      // 清除失败
+      Message.error($t('settings.clearUpdateFailed'));
+    }
+  } catch (error) {
+    console.error('ClearUpdate failed:', error);
+    Message.error($t('settings.clearUpdateFailed'));
+  } finally {
+    clearUpdateLoading.value = false;
+  }
+};
+
+// 更新所有脚本的hasUpdate状态
+const updateAllScriptsHasUpdate = (hasUpdate) => {
+  if (!repoData.value || !repoData.value.indexes) return;
+  
+  const updateNodeHasUpdate = (nodes) => {
+    for (let node of nodes) {
+      if (node.children && node.children.length > 0) {
+        // 如果是目录，递归更新
+        updateNodeHasUpdate(node.children);
+      } else {
+        // 如果是文件，更新hasUpdate状态
+        node.hasUpdate = hasUpdate;
+      }
+    }
+  };
+  
+  // 更新所有类型的脚本
+  repoData.value.indexes.forEach(index => {
+    if (index.children) {
+      updateNodeHasUpdate(index.children);
+    }
+  });
+  
+  // 强制触发响应式更新
+  nextTick(() => {
+    repoData.value = { ...repoData.value };
+  });
+};
 </script>
 
 <style scoped>

@@ -6,6 +6,7 @@
           <div class="item-header">
             <div class="item-title-wrap">
               <span class="item-title-main">{{ item.title }}</span>
+              <span v-if="item.hasUpdate" class="has-update-badge">{{ $t('cardStrategyList.hasUpdate') }}</span>
               <span v-if="item.isSubscribed" class="subscribed-badge">{{ $t('cardStrategyList.subscribed') }}</span>
             </div>
             <span v-if="item.unread" class="item-dot"></span>
@@ -63,7 +64,7 @@ const props = defineProps({
 });
 const { repoData } = props;
 
-const emit = defineEmits(['select']);
+const emit = defineEmits(['select', 'updateHasUpdate']);
 
 function getTcgStrategiesFromRepo(repo, subscribedPaths = [], parentSubscribed = false, currentPath = 'tcg') {
   const tcgNode = repo.indexes.find(item => item.name === 'tcg');
@@ -171,10 +172,21 @@ watch(
 
 const selectedId = ref(1);
 
-const selectStrategy = (id) => {
+const selectStrategy = async (id) => {
   selectedId.value = id;
   const strategy = strategies.value.find(strategy => strategy.id === id);
   emit('select', strategy);
+  const mode = import.meta.env.VITE_MODE;
+  if (mode === 'single') {
+    const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
+    const result = await repoWebBridge.UpdateSubscribed(strategy.path);
+    if (result) {
+      // 通知父组件更新repoData中的hasUpdate状态
+      emit('updateHasUpdate', strategy.path, false);
+    } else {
+      console.error('Failed to update subscription:');
+    }
+  }
   console.log("Node selected", strategy);
 };
 
@@ -298,10 +310,23 @@ const filteredStrategies = computed(() => {
   text-overflow: ellipsis;
 }
 
-.subscribed-badge {
+.has-update-badge {
   display: inline-block;
   margin-left: 4px;
   transform: translateY(-2px);
+  background: #fff;
+  color: #00b96b;
+  font-size: 10px;
+  padding: 1px 3px;
+  border-radius: 8px;
+  border: 1px solid #00b96b;
+  vertical-align: middle;
+}
+
+.subscribed-badge {
+  display: inline-block;
+  margin-left: 1px;
+  transform: translateY(-2px) translateX(8px);
   background: #fff;
   color: #1677ff;
   font-size: 10px;

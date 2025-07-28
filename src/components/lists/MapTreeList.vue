@@ -254,7 +254,8 @@ const processNode = (node, parentKey = '', parentSubscribed = false) => {
   let files = [];
   let lastUpdated = '';
   if (node.type === 'directory') {
-    files = collectFiles(node, parentKey);
+    // 修复：传递当前节点的完整路径，而不是父级路径
+    files = collectFiles(node, currentKey);
     files = markFilesSubscribed(files, props.subscribedPaths);
     // 目录显示最新文件时间
     lastUpdated = getLatestUpdateTime(files);
