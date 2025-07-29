@@ -138,13 +138,13 @@ const scripts = ref(
   }))
 );
 
-// 监听 repoData 变化，重新生成 scripts
+// 监听 repoData 和 subscribedPaths 变化，重新生成 scripts
 watch(
-  () => props.repoData,
-  (newVal) => {
-    if (newVal && newVal.indexes) {
+  [() => props.repoData, () => props.subscribedPaths],
+  ([newRepoData, newSubscribedPaths]) => {
+    if (newRepoData && newRepoData.indexes) {
       nextTick(() => {
-        scripts.value = getJsScriptsFromRepo(newVal, props.subscribedPaths).map((item, idx) => ({
+        scripts.value = getJsScriptsFromRepo(newRepoData, newSubscribedPaths).map((item, idx) => ({
           id: idx + 1,
           title: item.title,
           name: item.name,
@@ -183,14 +183,7 @@ const selectScript = async (id) => {
   emit('select', script);
   const mode = import.meta.env.VITE_MODE;
   if (mode === 'single') {
-    const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
-    const result = await repoWebBridge.UpdateSubscribed(script.path);
-    if (result) {
-      // 通知父组件更新repoData中的hasUpdate状态
-      emit('updateHasUpdate', script.path, false);
-    } else {
-      console.error('Failed to update subscription:');
-    }
+    emit('updateHasUpdate', script.path, false);
   }
   console.log("Node selected", script);
 };

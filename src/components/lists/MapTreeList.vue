@@ -183,13 +183,14 @@ const getIconUrl = (tag) => {
 function collectFiles(node, parentPath = '') {
   let files = [];
   if (node.type === 'file') {
-    // 递归时传入完整路径
+    // 生成与订阅时完全一致的路径格式
     const fullPath = parentPath ? `${parentPath}/${node.name}` : node.name;
     files.push({ ...node, path: `pathing/${fullPath}` });
   } else if (node.children) {
     node.children.forEach(child => {
-      const currentPath = parentPath ? `${parentPath}/${node.name}` : node.name;
-      files = files.concat(collectFiles(child, currentPath));
+      // 为子节点构建正确的父路径
+      const childParentPath = parentPath ? `${parentPath}/${child.name}` : child.name;
+      files = files.concat(collectFiles(child, childParentPath));
     });
   }
   return files;

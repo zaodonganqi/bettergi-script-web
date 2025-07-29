@@ -148,6 +148,10 @@ const props = defineProps({
     type: Object,
     default: null
   },
+  subscribedPaths: {
+    type: Array,
+    default: () => []
+  },
   startPollingUserConfig: Function
 });
 
@@ -209,6 +213,24 @@ const activeTab = ref('readme');
 
 // 文件数据
 const files = ref([]);
+
+// 更新文件列表的订阅状态
+const updateFilesSubscriptionStatus = () => {
+  if (props.script && Array.isArray(props.script.files)) {
+    files.value = props.script.files.map(file => ({
+      ...file,
+      isSubscribed: props.subscribedPaths.some(sub => file.path && file.path.startsWith(sub))
+    }));
+  }
+};
+
+// 监听 subscribedPaths 变化，更新文件订阅状态
+watch(
+  () => props.subscribedPaths,
+  () => {
+    updateFilesSubscriptionStatus();
+  }
+);
 
 // readme加载状态
 const isLoadingReadme = ref(false);
@@ -360,7 +382,7 @@ watch(() => props.script, (newScript) => {
     // 重置分页器状态
     currentPage.value = 1;
     pageSize.value = 10;
-    files.value = Array.isArray(newScript.files) ? newScript.files : [];
+    updateFilesSubscriptionStatus(); // 更新文件订阅状态
     // 只有script变化时才重置和加载README
     if (newScript.path) {
       if (isReadme404(newScript.path)) {

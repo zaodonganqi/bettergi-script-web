@@ -135,13 +135,13 @@ const strategies = ref(
   }))
 );
 
-// 监听 repoData 变化，重新生成 strategies
+// 监听 repoData 和 subscribedPaths 变化，重新生成 strategies
 watch(
-  () => props.repoData,
-  (newVal) => {
-    if (newVal && newVal.indexes) {
+  [() => props.repoData, () => props.subscribedPaths],
+  ([newRepoData, newSubscribedPaths]) => {
+    if (newRepoData && newRepoData.indexes) {
       nextTick(() => {
-        strategies.value = getCombatStrategiesFromRepo(newVal, props.subscribedPaths).map((item, idx) => ({
+        strategies.value = getCombatStrategiesFromRepo(newRepoData, newSubscribedPaths).map((item, idx) => ({
           id: idx + 1,
           title: removeFileSuffix(item.name),
           name: item.name,
@@ -178,14 +178,7 @@ const selectStrategy = async (id) => {
   emit('select', strategy);
   const mode = import.meta.env.VITE_MODE;
   if (mode === 'single') {
-    const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
-    const result = await repoWebBridge.UpdateSubscribed(strategy.path);
-    if (result) {
-      // 通知父组件更新repoData中的hasUpdate状态
-      emit('updateHasUpdate', strategy.path, false);
-    } else {
-      console.error('Failed to update subscription:');
-    }
+    emit('updateHasUpdate', strategy.path, false);
   }
   console.log("Node selected", strategy);
 };

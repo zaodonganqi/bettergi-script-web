@@ -155,7 +155,7 @@
             </a-tooltip>
           </div>
         </div>
-        <MapDetail :script="selectedScript" :start-polling-user-config="startPollingUserConfig" />
+        <MapDetail :script="selectedScript" :subscribed-paths="subscribedScriptPaths" :start-polling-user-config="startPollingUserConfig" />
       </div>
       <div v-else-if="selectedMenu[0] === '2'" class="main-right">
         <!-- 顶部操作栏 -->
