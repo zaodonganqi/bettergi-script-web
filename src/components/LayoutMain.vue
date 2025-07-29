@@ -1839,7 +1839,7 @@ const updateAllScriptsHasUpdate = (hasUpdate) => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
 }
 
 .settings-label {

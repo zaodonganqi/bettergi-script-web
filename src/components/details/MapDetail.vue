@@ -357,6 +357,9 @@ watch(() => props.script, (newScript) => {
   if (newScript) {
     activeTab.value = 'readme';
     hasAutoSwitched.value = false; // 重置自动切换标记
+    // 重置分页器状态
+    currentPage.value = 1;
+    pageSize.value = 10;
     files.value = Array.isArray(newScript.files) ? newScript.files : [];
     // 只有script变化时才重置和加载README
     if (newScript.path) {
@@ -375,6 +378,9 @@ watch(() => props.script, (newScript) => {
     }
   } else {
     files.value = [];
+    // 重置分页器状态
+    currentPage.value = 1;
+    pageSize.value = 10;
   }
 });
 
