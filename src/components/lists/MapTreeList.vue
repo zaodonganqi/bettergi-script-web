@@ -188,8 +188,7 @@ function collectFiles(node, parentPath = '') {
     files.push({ ...node, path: `pathing/${fullPath}` });
   } else if (node.children) {
     node.children.forEach(child => {
-      // 为子节点构建正确的父路径
-      const childParentPath = parentPath ? `${parentPath}/${child.name}` : child.name;
+      const childParentPath = parentPath ? `${parentPath}/${node.name}` : node.name;
       files = files.concat(collectFiles(child, childParentPath));
     });
   }
@@ -255,8 +254,8 @@ const processNode = (node, parentKey = '', parentSubscribed = false) => {
   let files = [];
   let lastUpdated = '';
   if (node.type === 'directory') {
-    // 修复：传递当前节点的完整路径，而不是父级路径
-    files = collectFiles(node, currentKey);
+    // 传递父级路径，不包含当前目录名
+    files = collectFiles(node, parentKey);
     files = markFilesSubscribed(files, props.subscribedPaths);
     // 目录显示最新文件时间
     lastUpdated = getLatestUpdateTime(files);
