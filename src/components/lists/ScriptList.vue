@@ -166,7 +166,7 @@ watch(
         if (scripts.value.length > 0) {
           const prevSelected = selectedId.value;
           const stillExists = scripts.value.some(s => s.id === prevSelected);
-          selectedId.value = stillExists ? prevSelected : scripts.value[0].id;
+          selectedId.value = stillExists ? prevSelected : null;
         } else {
           selectedId.value = null;
         }
@@ -175,7 +175,7 @@ watch(
   }
 );
 
-const selectedId = ref(scripts.value.length > 0 ? scripts.value[0].id : null);
+const selectedId = ref(null);
 
 const selectScript = async (id) => {
   selectedId.value = id;

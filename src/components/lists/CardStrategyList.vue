@@ -161,7 +161,7 @@ watch(
         if (strategies.value.length > 0) {
           const prevSelected = selectedId.value;
           const stillExists = strategies.value.some(s => s.id === prevSelected);
-          selectedId.value = stillExists ? prevSelected : strategies.value[0].id;
+          selectedId.value = stillExists ? prevSelected : null;
         } else {
           selectedId.value = null;
         }
@@ -170,7 +170,7 @@ watch(
   }
 );
 
-const selectedId = ref(1);
+const selectedId = ref(null);
 
 const selectStrategy = async (id) => {
   selectedId.value = id;
