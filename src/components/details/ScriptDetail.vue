@@ -22,6 +22,9 @@
             </template>
             <span v-else class="detail-author">{{ $t('detail.noAuthor') }}</span>
           </div>
+          <div class="detail-version" v-if="script.version">
+            {{ $t('detail.version') }}：{{ script.version }}
+          </div>
           <div class="detail-time">{{ script.time }}</div>
         </div>
         <div class="header-right" style="display: flex; align-items: center; gap: 8px;">
@@ -222,6 +225,12 @@ watch(() => props.script, (newScript) => {
 
 .detail-author {
   margin-right: 12px;
+}
+
+.detail-version {
+  color: #888;
+  font-size: 14px;
+  margin-bottom: 10px;
 }
 
 .detail-time {
