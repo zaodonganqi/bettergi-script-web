@@ -253,7 +253,10 @@ const filteredScripts = computed(() => {
     return { ...s, _score: score };
   }).filter(s => s._score > 0);
   scored.sort((a, b) => b._score - a._score);
-  return scored;
+  
+  // 对搜索结果应用排序
+  const sortedScored = sortScripts(scored);
+  return sortedScored;
 });
 
 const calculateScriptCount = () => {
