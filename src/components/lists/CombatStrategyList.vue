@@ -178,7 +178,14 @@ const selectStrategy = async (id) => {
   emit('select', strategy);
   const mode = import.meta.env.VITE_MODE;
   if (mode === 'single') {
-    emit('updateHasUpdate', strategy.path, false);
+    const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
+    const result = await repoWebBridge.UpdateSubscribed(strategy.path);
+    if (result) {
+      // 通知父组件更新repoData中的hasUpdate状态
+      emit('updateHasUpdate', strategy.path, false);
+    } else {
+      console.error('Failed to update subscription:');
+    }
   }
   console.log("Node selected", strategy);
 };
@@ -187,9 +194,9 @@ const sortStrategies = (strategyList) => {
   if (props.sortType === 'recommend') {
     return [...strategyList];
   }
-  
+
   const sorted = [...strategyList];
-  
+
   if (props.sortType === 'name') {
     // 按title排序
     sorted.sort((a, b) => {
@@ -205,7 +212,7 @@ const sortStrategies = (strategyList) => {
       return props.sortOrder === 'asc' ? timeA.localeCompare(timeB) : timeB.localeCompare(timeA);
     });
   }
-  
+
   return sorted;
 };
 
@@ -217,11 +224,11 @@ const filteredStrategies = computed(() => {
     }
     baseList = baseList.filter(strategy => props.subscribedPaths.includes(strategy.path));
   }
-  
+
   if (!props.searchKey) {
     return sortStrategies(baseList);
   }
-  
+
   const keyword = normalize(props.searchKey.trim());
   // 完全匹配优先
   const nameMatches = baseList.filter(s =>
@@ -229,7 +236,7 @@ const filteredStrategies = computed(() => {
     (s.authors && s.authors.some(a => normalize(a.name) === keyword))
   );
   if (nameMatches.length) return sortStrategies(nameMatches);
-  
+
   // 相关性分数排序
   const scored = baseList.map(s => {
     let score = 0;
@@ -240,7 +247,7 @@ const filteredStrategies = computed(() => {
     return { ...s, _score: score };
   }).filter(s => s._score > 0);
   scored.sort((a, b) => b._score - a._score);
-  
+
   // 对搜索结果应用排序
   const sortedScored = sortStrategies(scored);
   return sortedScored;

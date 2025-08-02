@@ -14,9 +14,8 @@
           <div class="tree-node-title">
             <a-image v-if="dataRef.showIcon" :src="dataRef.icon" :width="22" :placeholder="false"
               @error="dataRef.showIcon = false" />
-            <span>
-              {{ title }}<span v-if="dataRef.isSubscribed"> （{{ $t('mapTreeList.subscribed') }}）</span>
-            </span>
+            <span>{{ title }}</span>
+            <span v-if="dataRef.hasUpdate" class="has-update-dot"></span>
           </div>
           <a-button class="subscribe-btn" type="text" size="small" @click.stop="handleSubscribe(dataRef)">
             {{ dataRef.isSubscribed ? $t('mapTreeList.subscribeAgain') : $t('mapTreeList.subscribe') }}
@@ -58,10 +57,11 @@ const props = defineProps({
 });
 const { copy } = useClipboard();
 const mode = import.meta.env.VITE_MODE;
-const emit = defineEmits(['select', 'leafCount']);
+const emit = defineEmits(['select', 'leafCount', 'updateHasUpdate']);
 const expandedKeys = ref([]);
 const selectedKeys = ref([]);
 const treeData = ref([]);
+const clearedUpdates = ref(new Set()); // 跟踪已清除更新的节点路径
 
 onMounted(() => {
   treeData.value = generateTreeData(props.repoData);
@@ -69,7 +69,7 @@ onMounted(() => {
 
 watch(() => props.repoData, (val) => {
   treeData.value = generateTreeData(val);
-});
+}, { deep: true });
 
 watch(() => props.subscribedPaths, (newPaths) => {
   treeData.value = generateTreeData(props.repoData);
@@ -97,7 +97,7 @@ const handleExpand = (keys) => {
 };
 
 // 处理节点选择
-const handleSelect = (selectedKeysList) => {
+const handleSelect = async (selectedKeysList) => {
   if (selectedKeysList.length === 0) return;
 
   const selectedNode = findNodeByKey(filteredTreeData.value, selectedKeysList[0]);
@@ -105,6 +105,18 @@ const handleSelect = (selectedKeysList) => {
 
   emit('select', selectedNode);
   selectedKeys.value = selectedNode.key ? [selectedNode.key] : [];
+
+  if (selectedNode.hasUpdate && mode === 'single') {
+    const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
+    const result = await repoWebBridge.UpdateSubscribed(selectedNode.path);
+    if (result) {
+      // 通知父组件更新repoData中的hasUpdate状态
+      emit('updateHasUpdate', selectedNode.path, false);
+    } else {
+      console.error('Failed to update subscription:');
+    }
+  }
+
   console.log("Node selected", selectedNode);
 };
 
@@ -591,5 +603,17 @@ function normalize(str) {
   color: #1677ff !important;
   border-color: #1677ff !important;
   cursor: default !important;
+}
+
+.has-update-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background: #00b96b;
+  border-radius: 50%;
+  margin-left: 6px;
+  vertical-align: middle;
+  position: relative;
+  top: -1px;
 }
 </style>

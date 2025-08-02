@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, watch,onMounted } from 'vue';
 import LayoutMain from './components/LayoutMain.vue';
 import zhCN from 'ant-design-vue/es/locale/zh_CN';
 import zhTW from 'ant-design-vue/es/locale/zh_TW';
@@ -32,6 +32,10 @@ watch(selectedLocale, (newLocale) => {
 function handleLocaleChange(val) {
   selectedLocale.value = val;
 }
+
+onMounted(() => {
+  currentAntdLocale.value = antdLocales[selectedLocale.value] || zhCN;
+});
 </script>
 
 <template>

@@ -23,7 +23,8 @@
             {{ $t('sider.mainRepo') }}</div>
           <div class="sider-link" @click="openExternalLink('https://github.com/babalae/bettergi-scripts-list')">
             {{ $t('sider.scriptRepo') }}</div>
-          <div v-if="mode === 'single'" class="sider-link" @click="openExternalLink('https://bgi.sh')">{{ $t('sider.onlineRepo') }}</div>
+          <div v-if="mode === 'single'" class="sider-link" @click="openExternalLink('https://bgi.sh')">{{
+            $t('sider.onlineRepo') }}</div>
         </div>
       </div>
       <!-- 最后更新时间 -->
@@ -113,7 +114,7 @@
       <div v-else-if="selectedMenu[0] === '2'" class="script-list">
         <ScriptList :search-key="search" :repo-data="repoData" :subscribed-paths="subscribedScriptPaths"
           :show-subscribed-only="scriptTab === 'subscribed'" :sort-type="sortType" :sort-order="sortOrder"
-          ref="scriptListRef" @select="handleScriptSelect" @script-count="handleScriptCount" 
+          ref="scriptListRef" @select="handleScriptSelect" @script-count="handleScriptCount"
           @update-has-update="updateScriptHasUpdate" />
       </div>
       <!-- 战斗策略列表 -->
@@ -155,7 +156,8 @@
             </a-tooltip>
           </div>
         </div>
-        <MapDetail :script="selectedScript" :subscribed-paths="subscribedScriptPaths" :start-polling-user-config="startPollingUserConfig" />
+        <MapDetail :script="selectedScript" :subscribed-paths="subscribedScriptPaths"
+          :start-polling-user-config="startPollingUserConfig" />
       </div>
       <div v-else-if="selectedMenu[0] === '2'" class="main-right">
         <!-- 顶部操作栏 -->
@@ -585,51 +587,61 @@ const handleScriptSelect = (script) => {
 // 更新repoData中指定脚本的hasUpdate状态
 const updateScriptHasUpdate = (scriptPath, hasUpdate) => {
   if (!repoData.value || !repoData.value.indexes) return;
-  
-  // 递归查找并更新指定路径的脚本
-  const updateNode = (nodes, path, basePath) => {
-    for (let node of nodes) {
-      if (node.children && node.children.length > 0) {
-        // 如果是目录，递归查找
-        updateNode(node.children, path, basePath);
-      } else {
-        // 如果是文件，检查路径是否匹配
-        const fullPath = `${basePath}/${node.name}`;
-        if (fullPath === path) {
-          node.hasUpdate = hasUpdate;
-          return true;
-        }
+
+  let targetNode = null;
+
+  // 递归查找目标节点
+  const findTargetNode = (node, currentPath = '') => {
+    // 构建当前节点的完整路径
+    const nodePath = currentPath ? `${currentPath}/${node.name}` : node.name;
+    
+    // 检查是否匹配目标路径
+    if (nodePath === scriptPath || scriptPath.endsWith(`/${nodePath}`)) {
+      targetNode = node;
+      return;
+    }
+    
+    // 如果有子节点，继续递归查找
+    if (node.children && node.children.length > 0) {
+      for (let child of node.children) {
+        findTargetNode(child, nodePath);
+        // 不return，继续查找所有分支
       }
     }
-    return false;
+  };
+
+  // 递归更新所有子节点的hasUpdate状态
+  const updateDescendants = (node) => {
+    if (!node) return;
+    
+    // 先更新所有子节点
+    if (node.children && node.children.length > 0) {
+      for (let child of node.children) {
+        updateDescendants(child);
+      }
+    }
+    
+    // 最后更新当前节点
+    node.hasUpdate = hasUpdate;
   };
   
-  // 根据路径前缀确定要查找的节点类型
-  let targetNode = null;
-  let basePath = '';
-  
-  if (scriptPath.startsWith('js/')) {
-    targetNode = repoData.value.indexes.find(item => item.name === 'js');
-    basePath = 'js';
-  } else if (scriptPath.startsWith('combat/')) {
-    targetNode = repoData.value.indexes.find(item => item.name === 'combat');
-    basePath = 'combat';
-  } else if (scriptPath.startsWith('tcg/')) {
-    targetNode = repoData.value.indexes.find(item => item.name === 'tcg');
-    basePath = 'tcg';
-  } else if (scriptPath.startsWith('pathing/')) {
-    targetNode = repoData.value.indexes.find(item => item.name === 'pathing');
-    basePath = 'pathing';
+  // 先从repoData递归查找目标节点
+  for (let index of repoData.value.indexes) {
+    findTargetNode(index);
+    if (targetNode) break; // 找到目标节点后停止查找
   }
   
-  if (targetNode && targetNode.children) {
-    const updated = updateNode(targetNode.children, scriptPath, basePath);
-    if (updated) {
-      // 强制触发响应式更新
-      nextTick(() => {
-        repoData.value = { ...repoData.value };
-      });
-    }
+  if (targetNode) {
+    
+    // 先更新所有子节点，最后更新目标节点本身
+    updateDescendants(targetNode);
+    
+    // 强制触发响应式更新
+    nextTick(() => {
+      repoData.value = { ...repoData.value };
+    });
+  } else {
+    console.log("updateScriptHasUpdate: 未找到匹配节点", scriptPath);
   }
 };
 
@@ -957,12 +969,12 @@ function onLocaleChange(val) {
 // 清除更新提示
 const handleClearUpdate = async () => {
   if (mode !== 'single') return;
-  
+
   clearUpdateLoading.value = true;
   try {
     const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
     const result = await repoWebBridge.ClearUpdate();
-    
+
     if (result) {
       // 清除成功，更新所有脚本的hasUpdate状态
       updateAllScriptsHasUpdate(false);
@@ -983,7 +995,7 @@ const handleClearUpdate = async () => {
 // 更新所有脚本的hasUpdate状态
 const updateAllScriptsHasUpdate = (hasUpdate) => {
   if (!repoData.value || !repoData.value.indexes) return;
-  
+
   const updateNodeHasUpdate = (nodes) => {
     for (let node of nodes) {
       if (node.children && node.children.length > 0) {
@@ -995,14 +1007,14 @@ const updateAllScriptsHasUpdate = (hasUpdate) => {
       }
     }
   };
-  
+
   // 更新所有类型的脚本
   repoData.value.indexes.forEach(index => {
     if (index.children) {
       updateNodeHasUpdate(index.children);
     }
   });
-  
+
   // 强制触发响应式更新
   nextTick(() => {
     repoData.value = { ...repoData.value };

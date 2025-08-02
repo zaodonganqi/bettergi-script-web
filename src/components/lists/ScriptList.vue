@@ -183,7 +183,14 @@ const selectScript = async (id) => {
   emit('select', script);
   const mode = import.meta.env.VITE_MODE;
   if (mode === 'single') {
-    emit('updateHasUpdate', script.path, false);
+    const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
+    const result = await repoWebBridge.UpdateSubscribed(script.path);
+    if (result) {
+      // 通知父组件更新repoData中的hasUpdate状态
+      emit('updateHasUpdate', script.path, false);
+    } else {
+      console.error('Failed to update subscription:');
+    }
   }
   console.log("Node selected", script);
 };
