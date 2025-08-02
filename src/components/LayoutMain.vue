@@ -1001,6 +1001,7 @@ const updateAllScriptsHasUpdate = (hasUpdate) => {
       if (node.children && node.children.length > 0) {
         // 如果是目录，递归更新
         updateNodeHasUpdate(node.children);
+        node.hasUpdate = hasUpdate;
       } else {
         // 如果是文件，更新hasUpdate状态
         node.hasUpdate = hasUpdate;
