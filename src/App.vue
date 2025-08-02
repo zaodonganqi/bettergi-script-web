@@ -17,9 +17,16 @@ const antdLocales = {
 };
 
 const { locale } = useI18n();
-// 优先从localStorage读取语言
+// 从localStorage读取语言，如果没有则使用i18n的当前语言
 const savedLocale = localStorage.getItem('user-locale');
 const selectedLocale = ref(savedLocale || locale.value);
+
+// 确保i18n的语言设置与localStorage同步
+if (savedLocale && savedLocale !== locale.value) {
+  locale.value = savedLocale;
+  selectedLocale.value = savedLocale;
+}
+
 const currentAntdLocale = ref(antdLocales[selectedLocale.value] || zhCN);
 
 watch(selectedLocale, (newLocale) => {
@@ -34,6 +41,13 @@ function handleLocaleChange(val) {
 }
 
 onMounted(() => {
+  // 确保在组件挂载时正确设置语言
+  const savedLocale = localStorage.getItem('user-locale');
+  
+  if (savedLocale && savedLocale !== locale.value) {
+    locale.value = savedLocale;
+    selectedLocale.value = savedLocale;
+  }
   currentAntdLocale.value = antdLocales[selectedLocale.value] || zhCN;
 });
 </script>

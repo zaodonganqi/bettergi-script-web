@@ -10,9 +10,12 @@ import enUS from './locales/en-US'
 import jaJP from './locales/ja-JP'
 import frFR from './locales/fr-FR'
 
+// 从localStorage读取用户的语言偏好
+const savedLocale = localStorage.getItem('user-locale') || 'zh-CN';
+
 const i18n = createI18n({
     legacy: false,
-    locale: 'zh-CN',
+    locale: savedLocale,
     fallbackLocale: 'zh-CN',
     messages: {
         'zh': zhCN,
