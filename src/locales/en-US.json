@@ -128,14 +128,17 @@
         "noDesc": "None"
     },
     "scriptList": {
+        "hasUpdate": "Has Update",
         "subscribed": "Subscribed",
         "noAuthor": "Anonymous"
     },
     "combatStrategyList": {
+        "hasUpdate": "Has Update",
         "subscribed": "Subscribed",
         "noAuthor": "Anonymous"
     },
     "cardStrategyList": {
+        "hasUpdate": "Has Update",
         "subscribed": "Subscribed",
         "noAuthor": "Anonymous"
     },

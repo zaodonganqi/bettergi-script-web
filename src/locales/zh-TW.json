@@ -128,14 +128,17 @@
         "noDesc": "無簡介"
     },
     "scriptList": {
+        "hasUpdate": "有更新",
         "subscribed": "已訂閱",
         "noAuthor": "佚名"
     },
     "combatStrategyList": {
+        "hasUpdate": "有更新",
         "subscribed": "已訂閱",
         "noAuthor": "佚名"
     },
     "cardStrategyList": {
+        "hasUpdate": "有更新",
         "subscribed": "已訂閱",
         "noAuthor": "佚名"
     },

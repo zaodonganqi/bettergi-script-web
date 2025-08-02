@@ -128,14 +128,17 @@
         "noDesc": "なし"
     },
     "scriptList": {
+        "hasUpdate": "更新あり",
         "subscribed": "購読済み",
         "noAuthor": "匿名"
     },
     "combatStrategyList": {
+        "hasUpdate": "更新あり",
         "subscribed": "購読済み",
         "noAuthor": "匿名"
     },
     "cardStrategyList": {
+        "hasUpdate": "更新あり",
         "subscribed": "購読済み",
         "noAuthor": "匿名"
     },
