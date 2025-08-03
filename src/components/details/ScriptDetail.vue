@@ -55,7 +55,7 @@
             <span>{{ $t('detail.readmeFailed') }}</span>
           </div>
         </transition>
-        <ReadmeViewer :key="readmeKey" :path="script.path" :desc="null" :showDescTitle="false" :showNoDesc="true"
+                 <ReadmeViewer :key="readmeKey" :path="script.path" :desc="null" :showDescTitle="false" :showNoDesc="!script.desc"
           @loaded="handleReadmeLoaded" @error="handleReadmeError" />
       </div>
     </template>
