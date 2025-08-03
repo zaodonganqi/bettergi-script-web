@@ -18,6 +18,7 @@
             </a-menu-item>
           </a-menu>
         </div>
+        <!-- 外链（需要可自行添加，修改链接即可） -->
         <div class="sider-footer">
           <div class="sider-link" @click="openExternalLink('https://github.com/babalae/better-genshin-impact')">
             {{ $t('sider.mainRepo') }}</div>
@@ -25,6 +26,8 @@
             {{ $t('sider.scriptRepo') }}</div>
           <div v-if="mode === 'single'" class="sider-link" @click="openExternalLink('https://bgi.sh')">{{
             $t('sider.onlineRepo') }}</div>
+            <div class="sider-link" @click="openExternalLink('https://bettergi.com/doc.html')">
+            {{ $t('sider.document') }}</div>
         </div>
       </div>
       <!-- 最后更新时间 -->

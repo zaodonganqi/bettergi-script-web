@@ -1,226 +1,228 @@
 {
-    "menu": {
-        "map": "Map Tracking",
-        "script": "Javascript Scripts",
-        "combat": "Combat Strategies",
-        "tcg": "TCG Strategies"
-    },
-    "button": {
-        "ok": "OK",
-        "cancel": "Cancel",
-        "refresh": "Refresh Page",
-        "help": "View Help",
-        "all": "All",
-        "subscribed": "Subscribed",
-        "visitOnline": "Visit Online Repository"
-    },
-    "sider": {
-        "repoTitle": "Script Repository",
-        "mainRepo": "Visit BetterGI Main Repository",
-        "scriptRepo": "Visit BetterGI Script Repository",
-        "onlineRepo": "Visit Online Repository",
-        "lastUpdate": "Last Update: "
-    },
-    "script": {
-        "all": "All",
-        "subscribed": "Subscribed",
-        "onlyLocal": "Only available in local mode",
-        "searchMap": "Search resource name, author, tag",
-        "searchScript": "Enter keywords to search",
-        "searchCombat": "Enter keywords to search",
-        "searchTCG": "Enter keywords to search",
-        "searchDefault": "Enter keywords to search",
-        "author": "Author: ",
-        "noAuthor": "Anonymous",
-        "unknown": "Unknown Script"
-    },
-    "error": {
-        "repoTitle": "Failed to get repository information",
-        "repoDesc": "Please check your network or refresh the page later"
-    },
-    "comment": {
-        "title": "Comments",
-        "localModeTitle": "Comments not supported in local mode",
-        "localModeDesc": "Please visit the online repository for comments"
-    },
-    "egg": {
-        "title": "Easter Egg",
-        "loading": "Easter egg is trying its best to load...",
-        "error": "Failed to load despite best efforts, please retry"
-    },
-    "help": {
-        "title": "FAQ Q&A",
-        "modalTitle": "Note: Any questions should be thought through or documented before asking",
-        "author": "Author email: anqi4051{'@'}gmail.com",
-        "qa": [{
-                "q": "Why does the repository keep failing to load?",
-                "a": "The repository uses GitHub addresses, and direct connections from China may be intermittent, which is normal. If it doesn't open, try a few more times or come back in a few minutes. You can also use BGI's local repository page. (If you're a wizard, you know what to do)"
-            },
-            {
-                "q": "Why is the comment function unavailable?",
-                "a": "Comments are not supported in local mode. Please visit the online repository and log in to your GitHub account to comment. How to use GitHub, please search for yourself."
-            },
-            {
-                "q": "Why is there no XX script?",
-                "a": "When searching, try to ensure keywords are accurate, such as \"Sweet Flower\". If you've searched everything and still can't find it, then no author has written it. You can try writing one yourself."
-            },
-            {
-                "q": "How to use the subscribed function?",
-                "a": "\"BetterGI → Settings → BetterGI Http Server Settings\" (if you can't find this setting, please make sure BGI is updated to the latest version), ensure this item is enabled and the port number is set to 30648. After completion, please close this page and restart BGI to try again. If there are still issues, please contact the author for resolution."
-            },
-            {
-                "q": "What is README, why did it fail to load? Why is it not displayed?",
-                "a": "Read the README yourself first, do you understand it? Loading failure is the same as the first question. It's not displayed because there's no README.md file in that directory."
-            },
-            {
-                "q": "Why can't some links be clicked? Why does it load for a long time without loading?",
-                "a": "Same as the first question."
-            },
-            {
-                "q": "Why is there no response after clicking subscribe?",
-                "a": "Please open BGI, an import window will pop up, select import. If you're using the online repository and the script you subscribed to doesn't appear after refreshing the BGI page, please update the local repository and try again. If there are still issues, please ask in the relevant group."
-            },
-            {
-                "q": "What should I do if this script doesn't work?",
-                "a": "Please ask in the relevant group, specific problems require specific analysis. When asking, make sure your screenshots and descriptions are sufficient."
-            },
-            {
-                "q": "Why are my previous comments gone?",
-                "a": "Comments are generally not deleted. If comments disappear, it's likely because the node path you commented on has changed. For example, if the Crystal Ore directory was renamed to Crystal Water Ore, you'll see a new comment section."
-            },
-            {
-                "q": "Why doesn't this script use Nahida?",
-                "a": "Authors need to consider whether everyone has her. If needed, try making one yourself."
-            },
-            {
-                "q": "What should I do if I want XX function?",
-                "a": "If no author has written it, write one yourself!"
-            },
-            {
-                "q": "Others",
-                "a": "For more questions, please contact me. If valuable, this page will be updated periodically."
-            }
-        ]
-    },
-    "readmeViewer": {
-        "descTitle": "Description: ",
-        "noDesc": "No description",
-        "loadTimeout": "Load timeout",
-        "loadFailed": "Load failed",
-        "clickToViewFile": "Click to view file in GitHub repository",
-        "clickToViewDir": "Click to view directory in GitHub repository",
-        "invalidLinkHint": "(This author is stupid and wrote the link wrong, go remind them to fix it)"
-    },
-    "action": {
-        "help": "Help",
-        "jumpToGitHub": "Jump to GitHub",
-        "comment": "Comment"
-    },
-    "mapTreeList": {
-        "subscribed": "Subscribed",
-        "subscribe": "Subscribe",
-        "subscribeAgain": "Subscribe Again",
-        "selectValidNode": "Please select a valid node to subscribe",
-        "subscribeFailed": "Subscribe failed",
-        "subscribeFailedWithMsg": "Subscribe failed: {msg}",
-        "subscribeSuccess": "Subscription link for {name} has been copied to clipboard",
-        "copyFailed": "Failed to copy subscription link for {name}",
-        "noDesc": "None"
-    },
-    "scriptList": {
-        "hasUpdate": "Has Update",
-        "subscribed": "Subscribed",
-        "noAuthor": "Anonymous"
-    },
-    "combatStrategyList": {
-        "hasUpdate": "Has Update",
-        "subscribed": "Subscribed",
-        "noAuthor": "Anonymous"
-    },
-    "cardStrategyList": {
-        "hasUpdate": "Has Update",
-        "subscribed": "Subscribed",
-        "noAuthor": "Anonymous"
-    },
-    "common": {
-        "comma": ", ",
-        "noDesc": "No description"
-    },
-    "detail": {
-        "author": "Author: ",
-        "scriptAuthor": "Author",
-        "noAuthor": "Anonymous",
-        "subscribe": "Subscribe",
-        "subscribed": "Subscribed",
-        "subscribeAgain": "Subscribe Again",
-        "subscribeFailed": "Subscribe failed",
-        "subscribeFailedWithMsg": "Subscribe failed: {msg}",
-        "subscribeSuccess": "Subscription link for {name} has been copied to clipboard",
-        "copyFailed": "Failed to copy subscription link for {name}",
-        "loadingReadme": "Loading readme file",
-        "readmeFailed": "Readme file failed to load, please retry",
-        "loadingStrategy": "Loading strategy file content",
-        "strategyFailed": "Strategy file failed to load, please retry",
-        "empty": "Please select a script from the left to view details",
-        "desc": "Description: ",
-        "tabReadme": "Description",
-        "tabFiles": "File List",
-        "noFiles": "No file data",
-        "modalTitle": "File Details",
-        "name": "Name",
-        "tags": "Tags",
-        "lastUpdated": "Last Updated",
-        "operations": "Operations",
-        "hash": "Hash",
-        "description": "Description",
-        "version": "Version",
-        "path": "Path",
-        "details": "Details",
-        "showDetails": "Details"
-    },
-    "settings": {
-        "title": "Settings",
-        "language": "Select Language",
-        "zhCN": "Simplified Chinese",
-        "zhTW": "Traditional Chinese",
-        "enUS": "English",
-        "jaJP": "Japanese",
-        "frFR": "French",
-        "clearUpdate": "Clear Update Notifications",
-        "clearUpdateBtn": "Clear",
-        "clearUpdateSuccess": "Successfully cleared update notifications",
-        "clearUpdateFailed": "Failed to clear update notifications"
-    },
-    "sort": {
-        "sortBy": "Sort By",
-        "sortOrder": "Sort Order",
-        "recommend": "Recommended",
-        "time": "Time",
-        "name": "Name",
-        "ascending": "Ascending",
-        "descending": "Descending"
-    },
-    "loading": {
-        "repoData": "Loading repository data, please wait..."
-    },
-    "repoError.title": "Failed to get repository information",
-    "repoError.desc": "Please check your network or refresh the page later",
-    "repoError.refresh": "Refresh Page",
-    "repoError.help": "View Help",
-    "script.unknownScript": "Unknown Script",
-    "script.author": "Author: ",
-    "script.noAuthor": "Anonymous",
-    "comment.localModeNoticeTitle": "Comments not supported in local mode",
-    "comment.localModeNoticeDesc": "Please visit the online repository for comments",
-    "comment.onlineRepo": "Visit Online Repository",
-    "egg.failed": "Failed to load despite best efforts, please retry",
-    "egg.title": "Easter Egg",
-    "egg.loading": "Easter egg is trying its best to load...",
-    "script.searchMap": "Search resource name, author, tag",
-    "script.onlyLocal": "Only available in local mode",
-    "comment.title": "Comments",
-    "script.searchScript": "Search script name, author, description, tag",
-    "script.searchCombat": "Search combat strategy name, author, tag",
-    "script.searchTCG": "Search TCG strategy name, author, tag",
-    "script.searchDefault": "Enter keywords to search"
+  "menu": {
+    "map": "Map Tracking",
+    "script": "Javascript Scripts",
+    "combat": "Combat Strategies",
+    "tcg": "TCG Strategies"
+  },
+  "button": {
+    "ok": "OK",
+    "cancel": "Cancel",
+    "refresh": "Refresh Page",
+    "help": "View Help",
+    "all": "All",
+    "subscribed": "Subscribed",
+    "visitOnline": "Visit Online Repository"
+  },
+  "sider": {
+    "repoTitle": "Script Repository",
+    "mainRepo": "Visit BetterGI Main Repository",
+    "scriptRepo": "Visit BetterGI Script Repository",
+    "onlineRepo": "Visit Online Repository",
+    "lastUpdate": "Last Update: ",
+    "document": "Official Documentation"
+  },
+  "script": {
+    "all": "All",
+    "subscribed": "Subscribed",
+    "onlyLocal": "Only available in local mode",
+    "searchMap": "Search resource name, author, tag",
+    "searchScript": "Enter keywords to search",
+    "searchCombat": "Enter keywords to search",
+    "searchTCG": "Enter keywords to search",
+    "searchDefault": "Enter keywords to search",
+    "author": "Author: ",
+    "noAuthor": "Anonymous",
+    "unknown": "Unknown Script"
+  },
+  "error": {
+    "repoTitle": "Failed to get repository information",
+    "repoDesc": "Please check your network or refresh the page later"
+  },
+  "comment": {
+    "title": "Comments",
+    "localModeTitle": "Comments not supported in local mode",
+    "localModeDesc": "Please visit the online repository for comments"
+  },
+  "egg": {
+    "title": "Easter Egg",
+    "loading": "Easter egg is trying its best to load...",
+    "error": "Failed to load despite best efforts, please retry"
+  },
+  "help": {
+    "title": "FAQ Q&A",
+    "modalTitle": "Note: Any questions should be thought through or documented before asking",
+    "author": "Author email: anqi4051{'@'}gmail.com",
+    "qa": [
+      {
+        "q": "Why does the repository keep failing to load?",
+        "a": "The repository uses GitHub addresses, and direct connections from China may be intermittent, which is normal. If it doesn't open, try a few more times or come back in a few minutes. You can also use BGI's local repository page. (If you're a wizard, you know what to do)"
+      },
+      {
+        "q": "Why is the comment function unavailable?",
+        "a": "Comments are not supported in local mode. Please visit the online repository and log in to your GitHub account to comment. How to use GitHub, please search for yourself."
+      },
+      {
+        "q": "Why is there no XX script?",
+        "a": "When searching, try to ensure keywords are accurate, such as \"Sweet Flower\". If you've searched everything and still can't find it, then no author has written it. You can try writing one yourself."
+      },
+      {
+        "q": "How to use the subscribed function?",
+        "a": "\"BetterGI → Settings → BetterGI Http Server Settings\" (if you can't find this setting, please make sure BGI is updated to the latest version), ensure this item is enabled and the port number is set to 30648. After completion, please close this page and restart BGI to try again. If there are still issues, please contact the author for resolution."
+      },
+      {
+        "q": "What is README, why did it fail to load? Why is it not displayed?",
+        "a": "Read the README yourself first, do you understand it? Loading failure is the same as the first question. It's not displayed because there's no README.md file in that directory."
+      },
+      {
+        "q": "Why can't some links be clicked? Why does it load for a long time without loading?",
+        "a": "Same as the first question."
+      },
+      {
+        "q": "Why is there no response after clicking subscribe?",
+        "a": "Please open BGI, an import window will pop up, select import. If you're using the online repository and the script you subscribed to doesn't appear after refreshing the BGI page, please update the local repository and try again. If there are still issues, please ask in the relevant group."
+      },
+      {
+        "q": "What should I do if this script doesn't work?",
+        "a": "Please ask in the relevant group, specific problems require specific analysis. When asking, make sure your screenshots and descriptions are sufficient."
+      },
+      {
+        "q": "Why are my previous comments gone?",
+        "a": "Comments are generally not deleted. If comments disappear, it's likely because the node path you commented on has changed. For example, if the Crystal Ore directory was renamed to Crystal Water Ore, you'll see a new comment section."
+      },
+      {
+        "q": "Why doesn't this script use Nahida?",
+        "a": "Authors need to consider whether everyone has her. If needed, try making one yourself."
+      },
+      {
+        "q": "What should I do if I want XX function?",
+        "a": "If no author has written it, write one yourself!"
+      },
+      {
+        "q": "Others",
+        "a": "For more questions, please contact me. If valuable, this page will be updated periodically."
+      }
+    ]
+  },
+  "readmeViewer": {
+    "descTitle": "Description: ",
+    "noDesc": "No description",
+    "loadTimeout": "Load timeout",
+    "loadFailed": "Load failed",
+    "clickToViewFile": "Click to view file in GitHub repository",
+    "clickToViewDir": "Click to view directory in GitHub repository",
+    "invalidLinkHint": "(This author is stupid and wrote the link wrong, go remind them to fix it)"
+  },
+  "action": {
+    "help": "Help",
+    "jumpToGitHub": "Jump to GitHub",
+    "comment": "Comment"
+  },
+  "mapTreeList": {
+    "subscribed": "Subscribed",
+    "subscribe": "Subscribe",
+    "subscribeAgain": "Subscribe Again",
+    "selectValidNode": "Please select a valid node to subscribe",
+    "subscribeFailed": "Subscribe failed",
+    "subscribeFailedWithMsg": "Subscribe failed: {msg}",
+    "subscribeSuccess": "Subscription link for {name} has been copied to clipboard",
+    "copyFailed": "Failed to copy subscription link for {name}",
+    "noDesc": "None"
+  },
+  "scriptList": {
+    "hasUpdate": "Has Update",
+    "subscribed": "Subscribed",
+    "noAuthor": "Anonymous"
+  },
+  "combatStrategyList": {
+    "hasUpdate": "Has Update",
+    "subscribed": "Subscribed",
+    "noAuthor": "Anonymous"
+  },
+  "cardStrategyList": {
+    "hasUpdate": "Has Update",
+    "subscribed": "Subscribed",
+    "noAuthor": "Anonymous"
+  },
+  "common": {
+    "comma": ", ",
+    "noDesc": "No description"
+  },
+  "detail": {
+    "author": "Author: ",
+    "scriptAuthor": "Author",
+    "noAuthor": "Anonymous",
+    "subscribe": "Subscribe",
+    "subscribed": "Subscribed",
+    "subscribeAgain": "Subscribe Again",
+    "subscribeFailed": "Subscribe failed",
+    "subscribeFailedWithMsg": "Subscribe failed: {msg}",
+    "subscribeSuccess": "Subscription link for {name} has been copied to clipboard",
+    "copyFailed": "Failed to copy subscription link for {name}",
+    "loadingReadme": "Loading readme file",
+    "readmeFailed": "Readme file failed to load, please retry",
+    "loadingStrategy": "Loading strategy file content",
+    "strategyFailed": "Strategy file failed to load, please retry",
+    "empty": "Please select a script from the left to view details",
+    "desc": "Description: ",
+    "tabReadme": "Description",
+    "tabFiles": "File List",
+    "noFiles": "No file data",
+    "modalTitle": "File Details",
+    "name": "Name",
+    "tags": "Tags",
+    "lastUpdated": "Last Updated",
+    "operations": "Operations",
+    "hash": "Hash",
+    "description": "Description",
+    "version": "Version",
+    "path": "Path",
+    "details": "Details",
+    "showDetails": "Details"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Select Language",
+    "zhCN": "Simplified Chinese",
+    "zhTW": "Traditional Chinese",
+    "enUS": "English",
+    "jaJP": "Japanese",
+    "frFR": "French",
+    "clearUpdate": "Clear Update Notifications",
+    "clearUpdateBtn": "Clear",
+    "clearUpdateSuccess": "Successfully cleared update notifications",
+    "clearUpdateFailed": "Failed to clear update notifications"
+  },
+  "sort": {
+    "sortBy": "Sort By",
+    "sortOrder": "Sort Order",
+    "recommend": "Recommended",
+    "time": "Time",
+    "name": "Name",
+    "ascending": "Ascending",
+    "descending": "Descending"
+  },
+  "loading": {
+    "repoData": "Loading repository data, please wait..."
+  },
+  "repoError.title": "Failed to get repository information",
+  "repoError.desc": "Please check your network or refresh the page later",
+  "repoError.refresh": "Refresh Page",
+  "repoError.help": "View Help",
+  "script.unknownScript": "Unknown Script",
+  "script.author": "Author: ",
+  "script.noAuthor": "Anonymous",
+  "comment.localModeNoticeTitle": "Comments not supported in local mode",
+  "comment.localModeNoticeDesc": "Please visit the online repository for comments",
+  "comment.onlineRepo": "Visit Online Repository",
+  "egg.failed": "Failed to load despite best efforts, please retry",
+  "egg.title": "Easter Egg",
+  "egg.loading": "Easter egg is trying its best to load...",
+  "script.searchMap": "Search resource name, author, tag",
+  "script.onlyLocal": "Only available in local mode",
+  "comment.title": "Comments",
+  "script.searchScript": "Search script name, author, description, tag",
+  "script.searchCombat": "Search combat strategy name, author, tag",
+  "script.searchTCG": "Search TCG strategy name, author, tag",
+  "script.searchDefault": "Enter keywords to search"
 }

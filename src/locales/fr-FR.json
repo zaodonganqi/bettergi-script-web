@@ -1,226 +1,228 @@
 {
-    "menu": {
-        "map": "Suivi de Carte",
-        "script": "Scripts Javascript",
-        "combat": "Stratégies de Combat",
-        "tcg": "Stratégies TCG"
-    },
-    "button": {
-        "ok": "OK",
-        "cancel": "Annuler",
-        "refresh": "Actualiser la Page",
-        "help": "Voir l'Aide",
-        "all": "Tout",
-        "subscribed": "Abonné",
-        "visitOnline": "Visiter le Dépôt en Ligne"
-    },
-    "sider": {
-        "repoTitle": "Dépôt de Scripts",
-        "mainRepo": "Visiter le Dépôt Principal BetterGI",
-        "scriptRepo": "Visiter le Dépôt de Scripts BetterGI",
-        "onlineRepo": "Visiter le Dépôt en Ligne",
-        "lastUpdate": "Dernière Mise à Jour : "
-    },
-    "script": {
-        "all": "Tout",
-        "subscribed": "Abonné",
-        "onlyLocal": "Disponible uniquement en mode local",
-        "searchMap": "Rechercher nom de ressource, auteur, tag",
-        "searchScript": "Entrer des mots-clés pour rechercher",
-        "searchCombat": "Entrer des mots-clés pour rechercher",
-        "searchTCG": "Entrer des mots-clés pour rechercher",
-        "searchDefault": "Entrer des mots-clés pour rechercher",
-        "author": "Auteur : ",
-        "noAuthor": "Anonyme",
-        "unknown": "Script Inconnu"
-    },
-    "error": {
-        "repoTitle": "Échec de récupération des informations du dépôt",
-        "repoDesc": "Vérifiez votre réseau ou actualisez la page plus tard"
-    },
-    "comment": {
-        "title": "Commentaires",
-        "localModeTitle": "Les commentaires ne sont pas pris en charge en mode local",
-        "localModeDesc": "Veuillez visiter le dépôt en ligne pour les commentaires"
-    },
-    "egg": {
-        "title": "Easter Egg",
-        "loading": "L'easter egg fait de son mieux pour charger...",
-        "error": "Échec du chargement malgré tous les efforts, veuillez réessayer"
-    },
-    "help": {
-        "title": "FAQ Q&A",
-        "modalTitle": "Note : Toute question doit être réfléchie ou documentée avant d'être posée",
-        "author": "Email de l'auteur : anqi4051{'@'}gmail.com",
-        "qa": [{
-                "q": "Pourquoi le dépôt échoue-t-il toujours à charger ?",
-                "a": "Le dépôt utilise des adresses GitHub, et les connexions directes depuis la Chine peuvent être intermittentes, ce qui est normal. Si cela ne s'ouvre pas, essayez plusieurs fois ou revenez dans quelques minutes. Vous pouvez aussi utiliser la page de dépôt local de BGI. (Si vous êtes un magicien, vous savez quoi faire)"
-            },
-            {
-                "q": "Pourquoi la fonction de commentaire n'est-elle pas disponible ?",
-                "a": "Les commentaires ne sont pas pris en charge en mode local. Veuillez visiter le dépôt en ligne et vous connecter à votre compte GitHub pour commenter. Comment utiliser GitHub, veuillez chercher vous-même."
-            },
-            {
-                "q": "Pourquoi n'y a-t-il pas de script XX ?",
-                "a": "Lors de la recherche, essayez de vous assurer que les mots-clés sont précis, comme \"Fleur Douce\". Si vous avez tout cherché et que vous ne le trouvez toujours pas, alors aucun auteur ne l'a écrit. Vous pouvez essayer d'en écrire un vous-même."
-            },
-            {
-                "q": "Comment utiliser la fonction abonné ?",
-                "a": "\"BetterGI → Paramètres → Paramètres du Serveur Http BetterGI\" (si vous ne trouvez pas ce paramètre, assurez-vous que BGI est mis à jour vers la dernière version), assurez-vous que cet élément est activé et que le numéro de port est défini sur 30648. Après avoir terminé, fermez cette page et redémarrez BGI pour réessayer. S'il y a encore des problèmes, contactez l'auteur pour résolution."
-            },
-            {
-                "q": "Qu'est-ce que README, pourquoi a-t-il échoué à charger ? Pourquoi n'est-il pas affiché ?",
-                "a": "Lisez d'abord README vous-même, comprenez-vous ? L'échec de chargement est le même que la première question. Il n'est pas affiché car il n'y a pas de fichier README.md dans ce répertoire."
-            },
-            {
-                "q": "Pourquoi certains liens ne peuvent-ils pas être cliqués ? Pourquoi cela charge-t-il longtemps sans charger ?",
-                "a": "Même que la première question."
-            },
-            {
-                "q": "Pourquoi n'y a-t-il pas de réponse après avoir cliqué sur s'abonner ?",
-                "a": "Veuillez ouvrir BGI, une fenêtre d'importation apparaîtra, sélectionnez importer. Si vous utilisez le dépôt en ligne et que le script auquel vous vous êtes abonné n'apparaît pas après avoir actualisé la page BGI, mettez à jour le dépôt local et réessayez. S'il y a encore des problèmes, demandez dans le groupe pertinent."
-            },
-            {
-                "q": "Que faire si ce script ne fonctionne pas ?",
-                "a": "Veuillez demander dans le groupe pertinent, les problèmes spécifiques nécessitent une analyse spécifique. Lors de la demande, assurez-vous que vos captures d'écran et descriptions sont suffisantes."
-            },
-            {
-                "q": "Pourquoi mes commentaires précédents ont-ils disparu ?",
-                "a": "Les commentaires ne sont généralement pas supprimés. Si les commentaires disparaissent, il est probable que le chemin du nœud sur lequel vous avez commenté ait changé. Par exemple, si le répertoire Crystal Ore a été renommé en Crystal Water Ore, vous verrez une nouvelle section de commentaires."
-            },
-            {
-                "q": "Pourquoi ce script n'utilise-t-il pas Nahida ?",
-                "a": "Les auteurs doivent considérer si tout le monde l'a. Si nécessaire, essayez d'en faire un vous-même."
-            },
-            {
-                "q": "Que faire si je veux la fonction XX ?",
-                "a": "Si aucun auteur ne l'a écrit, écrivez-en un vous-même !"
-            },
-            {
-                "q": "Autres",
-                "a": "Pour plus de questions, contactez-moi. Si c'est précieux, cette page sera mise à jour périodiquement."
-            }
-        ]
-    },
-    "readmeViewer": {
-        "descTitle": "Description : ",
-        "noDesc": "Aucune description",
-        "loadTimeout": "Délai d'attente de chargement",
-        "loadFailed": "Échec du chargement",
-        "clickToViewFile": "Cliquez pour voir le fichier dans le dépôt GitHub",
-        "clickToViewDir": "Cliquez pour voir le répertoire dans le dépôt GitHub",
-        "invalidLinkHint": "(Cet auteur est stupide et a mal écrit le lien, allez lui rappeler de le corriger)"
-    },
-    "action": {
-        "help": "Aide",
-        "jumpToGitHub": "Aller sur GitHub",
-        "comment": "Commentaire"
-    },
-    "mapTreeList": {
-        "subscribed": "Abonné",
-        "subscribe": "S'abonner",
-        "subscribeAgain": "S'abonner à nouveau",
-        "selectValidNode": "Veuillez sélectionner un nœud valide pour s'abonner",
-        "subscribeFailed": "Échec de l'abonnement",
-        "subscribeFailedWithMsg": "Échec de l'abonnement : {msg}",
-        "subscribeSuccess": "Le lien d'abonnement pour {name} a été copié dans le presse-papiers",
-        "copyFailed": "Échec de la copie du lien d'abonnement pour {name}",
-        "noDesc": "Aucun"
-    },
-    "scriptList": {
-        "hasUpdate": "Mise à jour disponible",
-        "subscribed": "Abonné",
-        "noAuthor": "Anonyme"
-    },
-    "combatStrategyList": {
-        "hasUpdate": "Mise à jour disponible",
-        "subscribed": "Abonné",
-        "noAuthor": "Anonyme"
-    },
-    "cardStrategyList": {
-        "hasUpdate": "Mise à jour disponible",
-        "subscribed": "Abonné",
-        "noAuthor": "Anonyme"
-    },
-    "common": {
-        "comma": ", ",
-        "noDesc": "Aucune description"
-    },
-    "detail": {
-        "author": "Auteur : ",
-        "scriptAuthor": "Auteur",
-        "noAuthor": "Anonyme",
-        "subscribe": "S'abonner",
-        "subscribed": "Abonné",
-        "subscribeAgain": "S'abonner à nouveau",
-        "subscribeFailed": "Échec de l'abonnement",
-        "subscribeFailedWithMsg": "Échec de l'abonnement : {msg}",
-        "subscribeSuccess": "Le lien d'abonnement pour {name} a été copié dans le presse-papiers",
-        "copyFailed": "Échec de la copie du lien d'abonnement pour {name}",
-        "loadingReadme": "Chargement du fichier readme",
-        "readmeFailed": "Échec du chargement du fichier readme, veuillez réessayer",
-        "loadingStrategy": "Chargement du contenu du fichier de stratégie",
-        "strategyFailed": "Échec du chargement du fichier de stratégie, veuillez réessayer",
-        "empty": "Veuillez sélectionner un script à gauche pour voir les détails",
-        "desc": "Description : ",
-        "tabReadme": "Description",
-        "tabFiles": "Liste des Fichiers",
-        "noFiles": "Aucune donnée de fichier",
-        "modalTitle": "Détails du Fichier",
-        "name": "Nom",
-        "tags": "Tags",
-        "lastUpdated": "Dernière Mise à Jour",
-        "operations": "Opérations",
-        "hash": "Hash",
-        "description": "Description",
-        "version": "Version",
-        "path": "Chemin",
-        "details": "Détails",
-        "showDetails": "Détails"
-    },
-    "settings": {
-        "title": "Paramètres",
-        "language": "Sélectionner la Langue",
-        "zhCN": "Chinois Simplifié",
-        "zhTW": "Chinois Traditionnel",
-        "enUS": "Anglais",
-        "jaJP": "Japonais",
-        "frFR": "Français",
-        "clearUpdate": "Effacer les Notifications de Mise à Jour",
-        "clearUpdateBtn": "Effacer",
-        "clearUpdateSuccess": "Notifications de mise à jour effacées avec succès",
-        "clearUpdateFailed": "Échec de l'effacement des notifications de mise à jour"
-    },
-    "sort": {
-        "sortBy": "Trier par",
-        "sortOrder": "Ordre de tri",
-        "recommend": "Recommandé",
-        "time": "Temps",
-        "name": "Nom",
-        "ascending": "Croissant",
-        "descending": "Décroissant"
-    },
-    "loading": {
-        "repoData": "Chargement des données du dépôt, veuillez patienter..."
-    },
-    "repoError.title": "Échec de récupération des informations du dépôt",
-    "repoError.desc": "Vérifiez votre réseau ou actualisez la page plus tard",
-    "repoError.refresh": "Actualiser la Page",
-    "repoError.help": "Voir l'Aide",
-    "script.unknownScript": "Script Inconnu",
-    "script.author": "Auteur : ",
-    "script.noAuthor": "Anonyme",
-    "comment.localModeNoticeTitle": "Les commentaires ne sont pas pris en charge en mode local",
-    "comment.localModeNoticeDesc": "Veuillez visiter le dépôt en ligne pour les commentaires",
-    "comment.onlineRepo": "Visiter le Dépôt en Ligne",
-    "egg.failed": "Échec du chargement malgré tous les efforts, veuillez réessayer",
-    "egg.title": "Easter Egg",
-    "egg.loading": "L'easter egg fait de son mieux pour charger...",
-    "script.searchMap": "Rechercher nom de ressource, auteur, tag",
-    "script.onlyLocal": "Disponible uniquement en mode local",
-    "comment.title": "Commentaires",
-    "script.searchScript": "Rechercher nom de script, auteur, description, tag",
-    "script.searchCombat": "Rechercher nom de stratégie de combat, auteur, tag",
-    "script.searchTCG": "Rechercher nom de stratégie TCG, auteur, tag",
-    "script.searchDefault": "Entrer des mots-clés pour rechercher"
+  "menu": {
+    "map": "Suivi de Carte",
+    "script": "Scripts Javascript",
+    "combat": "Stratégies de Combat",
+    "tcg": "Stratégies TCG"
+  },
+  "button": {
+    "ok": "OK",
+    "cancel": "Annuler",
+    "refresh": "Actualiser la Page",
+    "help": "Voir l'Aide",
+    "all": "Tout",
+    "subscribed": "Abonné",
+    "visitOnline": "Visiter le Dépôt en Ligne"
+  },
+  "sider": {
+    "repoTitle": "Dépôt de Scripts",
+    "mainRepo": "Visiter le Dépôt Principal BetterGI",
+    "scriptRepo": "Visiter le Dépôt de Scripts BetterGI",
+    "onlineRepo": "Visiter le Dépôt en Ligne",
+    "lastUpdate": "Dernière Mise à Jour : ",
+    "document": "Consultez la documentation officielle"
+  },
+  "script": {
+    "all": "Tout",
+    "subscribed": "Abonné",
+    "onlyLocal": "Disponible uniquement en mode local",
+    "searchMap": "Rechercher nom de ressource, auteur, tag",
+    "searchScript": "Entrer des mots-clés pour rechercher",
+    "searchCombat": "Entrer des mots-clés pour rechercher",
+    "searchTCG": "Entrer des mots-clés pour rechercher",
+    "searchDefault": "Entrer des mots-clés pour rechercher",
+    "author": "Auteur : ",
+    "noAuthor": "Anonyme",
+    "unknown": "Script Inconnu"
+  },
+  "error": {
+    "repoTitle": "Échec de récupération des informations du dépôt",
+    "repoDesc": "Vérifiez votre réseau ou actualisez la page plus tard"
+  },
+  "comment": {
+    "title": "Commentaires",
+    "localModeTitle": "Les commentaires ne sont pas pris en charge en mode local",
+    "localModeDesc": "Veuillez visiter le dépôt en ligne pour les commentaires"
+  },
+  "egg": {
+    "title": "Easter Egg",
+    "loading": "L'easter egg fait de son mieux pour charger...",
+    "error": "Échec du chargement malgré tous les efforts, veuillez réessayer"
+  },
+  "help": {
+    "title": "FAQ Q&A",
+    "modalTitle": "Note : Toute question doit être réfléchie ou documentée avant d'être posée",
+    "author": "Email de l'auteur : anqi4051{'@'}gmail.com",
+    "qa": [
+      {
+        "q": "Pourquoi le dépôt échoue-t-il toujours à charger ?",
+        "a": "Le dépôt utilise des adresses GitHub, et les connexions directes depuis la Chine peuvent être intermittentes, ce qui est normal. Si cela ne s'ouvre pas, essayez plusieurs fois ou revenez dans quelques minutes. Vous pouvez aussi utiliser la page de dépôt local de BGI. (Si vous êtes un magicien, vous savez quoi faire)"
+      },
+      {
+        "q": "Pourquoi la fonction de commentaire n'est-elle pas disponible ?",
+        "a": "Les commentaires ne sont pas pris en charge en mode local. Veuillez visiter le dépôt en ligne et vous connecter à votre compte GitHub pour commenter. Comment utiliser GitHub, veuillez chercher vous-même."
+      },
+      {
+        "q": "Pourquoi n'y a-t-il pas de script XX ?",
+        "a": "Lors de la recherche, essayez de vous assurer que les mots-clés sont précis, comme \"Fleur Douce\". Si vous avez tout cherché et que vous ne le trouvez toujours pas, alors aucun auteur ne l'a écrit. Vous pouvez essayer d'en écrire un vous-même."
+      },
+      {
+        "q": "Comment utiliser la fonction abonné ?",
+        "a": "\"BetterGI → Paramètres → Paramètres du Serveur Http BetterGI\" (si vous ne trouvez pas ce paramètre, assurez-vous que BGI est mis à jour vers la dernière version), assurez-vous que cet élément est activé et que le numéro de port est défini sur 30648. Après avoir terminé, fermez cette page et redémarrez BGI pour réessayer. S'il y a encore des problèmes, contactez l'auteur pour résolution."
+      },
+      {
+        "q": "Qu'est-ce que README, pourquoi a-t-il échoué à charger ? Pourquoi n'est-il pas affiché ?",
+        "a": "Lisez d'abord README vous-même, comprenez-vous ? L'échec de chargement est le même que la première question. Il n'est pas affiché car il n'y a pas de fichier README.md dans ce répertoire."
+      },
+      {
+        "q": "Pourquoi certains liens ne peuvent-ils pas être cliqués ? Pourquoi cela charge-t-il longtemps sans charger ?",
+        "a": "Même que la première question."
+      },
+      {
+        "q": "Pourquoi n'y a-t-il pas de réponse après avoir cliqué sur s'abonner ?",
+        "a": "Veuillez ouvrir BGI, une fenêtre d'importation apparaîtra, sélectionnez importer. Si vous utilisez le dépôt en ligne et que le script auquel vous vous êtes abonné n'apparaît pas après avoir actualisé la page BGI, mettez à jour le dépôt local et réessayez. S'il y a encore des problèmes, demandez dans le groupe pertinent."
+      },
+      {
+        "q": "Que faire si ce script ne fonctionne pas ?",
+        "a": "Veuillez demander dans le groupe pertinent, les problèmes spécifiques nécessitent une analyse spécifique. Lors de la demande, assurez-vous que vos captures d'écran et descriptions sont suffisantes."
+      },
+      {
+        "q": "Pourquoi mes commentaires précédents ont-ils disparu ?",
+        "a": "Les commentaires ne sont généralement pas supprimés. Si les commentaires disparaissent, il est probable que le chemin du nœud sur lequel vous avez commenté ait changé. Par exemple, si le répertoire Crystal Ore a été renommé en Crystal Water Ore, vous verrez une nouvelle section de commentaires."
+      },
+      {
+        "q": "Pourquoi ce script n'utilise-t-il pas Nahida ?",
+        "a": "Les auteurs doivent considérer si tout le monde l'a. Si nécessaire, essayez d'en faire un vous-même."
+      },
+      {
+        "q": "Que faire si je veux la fonction XX ?",
+        "a": "Si aucun auteur ne l'a écrit, écrivez-en un vous-même !"
+      },
+      {
+        "q": "Autres",
+        "a": "Pour plus de questions, contactez-moi. Si c'est précieux, cette page sera mise à jour périodiquement."
+      }
+    ]
+  },
+  "readmeViewer": {
+    "descTitle": "Description : ",
+    "noDesc": "Aucune description",
+    "loadTimeout": "Délai d'attente de chargement",
+    "loadFailed": "Échec du chargement",
+    "clickToViewFile": "Cliquez pour voir le fichier dans le dépôt GitHub",
+    "clickToViewDir": "Cliquez pour voir le répertoire dans le dépôt GitHub",
+    "invalidLinkHint": "(Cet auteur est stupide et a mal écrit le lien, allez lui rappeler de le corriger)"
+  },
+  "action": {
+    "help": "Aide",
+    "jumpToGitHub": "Aller sur GitHub",
+    "comment": "Commentaire"
+  },
+  "mapTreeList": {
+    "subscribed": "Abonné",
+    "subscribe": "S'abonner",
+    "subscribeAgain": "S'abonner à nouveau",
+    "selectValidNode": "Veuillez sélectionner un nœud valide pour s'abonner",
+    "subscribeFailed": "Échec de l'abonnement",
+    "subscribeFailedWithMsg": "Échec de l'abonnement : {msg}",
+    "subscribeSuccess": "Le lien d'abonnement pour {name} a été copié dans le presse-papiers",
+    "copyFailed": "Échec de la copie du lien d'abonnement pour {name}",
+    "noDesc": "Aucun"
+  },
+  "scriptList": {
+    "hasUpdate": "Mise à jour disponible",
+    "subscribed": "Abonné",
+    "noAuthor": "Anonyme"
+  },
+  "combatStrategyList": {
+    "hasUpdate": "Mise à jour disponible",
+    "subscribed": "Abonné",
+    "noAuthor": "Anonyme"
+  },
+  "cardStrategyList": {
+    "hasUpdate": "Mise à jour disponible",
+    "subscribed": "Abonné",
+    "noAuthor": "Anonyme"
+  },
+  "common": {
+    "comma": ", ",
+    "noDesc": "Aucune description"
+  },
+  "detail": {
+    "author": "Auteur : ",
+    "scriptAuthor": "Auteur",
+    "noAuthor": "Anonyme",
+    "subscribe": "S'abonner",
+    "subscribed": "Abonné",
+    "subscribeAgain": "S'abonner à nouveau",
+    "subscribeFailed": "Échec de l'abonnement",
+    "subscribeFailedWithMsg": "Échec de l'abonnement : {msg}",
+    "subscribeSuccess": "Le lien d'abonnement pour {name} a été copié dans le presse-papiers",
+    "copyFailed": "Échec de la copie du lien d'abonnement pour {name}",
+    "loadingReadme": "Chargement du fichier readme",
+    "readmeFailed": "Échec du chargement du fichier readme, veuillez réessayer",
+    "loadingStrategy": "Chargement du contenu du fichier de stratégie",
+    "strategyFailed": "Échec du chargement du fichier de stratégie, veuillez réessayer",
+    "empty": "Veuillez sélectionner un script à gauche pour voir les détails",
+    "desc": "Description : ",
+    "tabReadme": "Description",
+    "tabFiles": "Liste des Fichiers",
+    "noFiles": "Aucune donnée de fichier",
+    "modalTitle": "Détails du Fichier",
+    "name": "Nom",
+    "tags": "Tags",
+    "lastUpdated": "Dernière Mise à Jour",
+    "operations": "Opérations",
+    "hash": "Hash",
+    "description": "Description",
+    "version": "Version",
+    "path": "Chemin",
+    "details": "Détails",
+    "showDetails": "Détails"
+  },
+  "settings": {
+    "title": "Paramètres",
+    "language": "Sélectionner la Langue",
+    "zhCN": "Chinois Simplifié",
+    "zhTW": "Chinois Traditionnel",
+    "enUS": "Anglais",
+    "jaJP": "Japonais",
+    "frFR": "Français",
+    "clearUpdate": "Effacer les Notifications de Mise à Jour",
+    "clearUpdateBtn": "Effacer",
+    "clearUpdateSuccess": "Notifications de mise à jour effacées avec succès",
+    "clearUpdateFailed": "Échec de l'effacement des notifications de mise à jour"
+  },
+  "sort": {
+    "sortBy": "Trier par",
+    "sortOrder": "Ordre de tri",
+    "recommend": "Recommandé",
+    "time": "Temps",
+    "name": "Nom",
+    "ascending": "Croissant",
+    "descending": "Décroissant"
+  },
+  "loading": {
+    "repoData": "Chargement des données du dépôt, veuillez patienter..."
+  },
+  "repoError.title": "Échec de récupération des informations du dépôt",
+  "repoError.desc": "Vérifiez votre réseau ou actualisez la page plus tard",
+  "repoError.refresh": "Actualiser la Page",
+  "repoError.help": "Voir l'Aide",
+  "script.unknownScript": "Script Inconnu",
+  "script.author": "Auteur : ",
+  "script.noAuthor": "Anonyme",
+  "comment.localModeNoticeTitle": "Les commentaires ne sont pas pris en charge en mode local",
+  "comment.localModeNoticeDesc": "Veuillez visiter le dépôt en ligne pour les commentaires",
+  "comment.onlineRepo": "Visiter le Dépôt en Ligne",
+  "egg.failed": "Échec du chargement malgré tous les efforts, veuillez réessayer",
+  "egg.title": "Easter Egg",
+  "egg.loading": "L'easter egg fait de son mieux pour charger...",
+  "script.searchMap": "Rechercher nom de ressource, auteur, tag",
+  "script.onlyLocal": "Disponible uniquement en mode local",
+  "comment.title": "Commentaires",
+  "script.searchScript": "Rechercher nom de script, auteur, description, tag",
+  "script.searchCombat": "Rechercher nom de stratégie de combat, auteur, tag",
+  "script.searchTCG": "Rechercher nom de stratégie TCG, auteur, tag",
+  "script.searchDefault": "Entrer des mots-clés pour rechercher"
 }
