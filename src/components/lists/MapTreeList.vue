@@ -287,7 +287,7 @@ const processNode = (node, parentKey = '', parentSubscribed = false) => {
     version: node.version,
     author: node.author || '',
     authors: authors,
-    description: node.description || $t('mapTreeList.noDesc'),
+    description: node.description,
     tags: node.tags || [],
     time: node.lastUpdated || '',
     lastUpdated: lastUpdated,

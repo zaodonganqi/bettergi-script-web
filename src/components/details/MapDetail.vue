@@ -53,7 +53,11 @@
           <transition :name="tabTransitionName">
             <div :key="activeTab" class="tab-content-inner">
               <div v-if="activeTab === 'readme'" class="tab-pane readme-pane">
-                <ReadmeViewer :key="readmeKey" :path="script.path" :desc="script.desc" @loaded="handleReadmeLoaded"
+                <div v-if="script && script.desc && script.desc.trim()" class="desc-block">
+                  <div class="desc-title">{{ $t('detail.desc') }}</div>
+                  <div class="desc-content">{{ script.desc }}</div>
+                </div>
+                <ReadmeViewer :key="readmeKey" :path="script.path" :desc="null" :showDescTitle="false" :showNoDesc="true" @loaded="handleReadmeLoaded"
                   @error="handleReadmeError" @hasContent="handleReadmeHasContent" />
               </div>
               <div v-else class="tab-pane files-pane">
@@ -809,5 +813,39 @@ function onSubscribeBtnLeave(node) {
 
 .more-detail {
   width: 72px;
+}
+
+.desc-block {
+  margin-bottom: 20px;
+  background: linear-gradient(135deg, #f8fbff 0%, #f0f7ff 100%);
+  border: 1px solid #e6f0ff;
+  border-radius: 8px;
+  padding: 16px 20px;
+  box-shadow: 0 2px 8px rgba(22, 119, 255, 0.08);
+  position: relative;
+}
+
+.desc-title {
+  font-weight: 600;
+  color: #1677ff;
+  margin-bottom: 8px;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+}
+
+.desc-title::before {
+  content: '📝';
+  margin-right: 8px;
+  font-size: 14px;
+}
+
+.desc-content {
+  color: #2c3e50;
+  font-size: 15px;
+  line-height: 1.8;
+  margin: 0;
+  white-space: pre-line;
+  word-break: break-word;
 }
 </style>

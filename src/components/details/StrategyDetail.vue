@@ -32,7 +32,7 @@
           </div>
       </div>
       <div class="detail-readme">
-        <div v-if="script && script.desc && script.desc.trim() && script.desc !== $t('common.noDesc')" class="desc-block">
+        <div v-if="script && script.desc && script.desc.trim()" class="desc-block">
           <div class="desc-title">{{ $t('detail.desc') }}</div>
           <div class="desc-content">{{ script.desc }}</div>
         </div>
@@ -368,22 +368,37 @@ watch(() => props.script, (newScript) => {
 }
 
 .desc-block {
-  margin-bottom: 16px;
-  background: #f4f8ff;
-  border-radius: 6px;
-  padding: 12px 16px;
+  margin-bottom: 20px;
+  background: linear-gradient(135deg, #f8fbff 0%, #f0f7ff 100%);
+  border: 1px solid #e6f0ff;
+  border-radius: 8px;
+  padding: 16px 20px;
+  box-shadow: 0 2px 8px rgba(22, 119, 255, 0.08);
+  position: relative;
 }
 
 .desc-title {
-  font-weight: bold;
+  font-weight: 600;
   color: #1677ff;
-  margin-bottom: 4px;
+  margin-bottom: 8px;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+}
+
+.desc-title::before {
+  content: '📝';
+  margin-right: 8px;
+  font-size: 14px;
 }
 
 .desc-content {
-  color: #333;
+  color: #2c3e50;
   font-size: 15px;
-  line-height: 1.7;
+  line-height: 1.8;
+  margin: 0;
+  white-space: pre-line;
+  word-break: break-word;
 }
 
 .subscribe-btn {

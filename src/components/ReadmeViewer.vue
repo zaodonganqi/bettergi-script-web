@@ -3,7 +3,7 @@
   <div class="readme-viewer">
     <div v-if="readmeContent" v-html="readmeContent" class="readme-content"></div>
     <div v-else-if="desc" class="detail-desc">{{ showDescTitle ? $t('readmeViewer.descTitle') + '\n' + desc : desc }}</div>
-    <div v-else-if="!isHttpUrl" class="readme-empty">{{ $t('readmeViewer.noDesc') }}</div>
+    <div v-else-if="!isHttpUrl && showNoDesc" class="readme-empty">{{ $t('readmeViewer.noDesc') }}</div>
   </div>
 </template>
 
@@ -21,6 +21,10 @@ const props = defineProps({
   path: String,
   desc: String,
   showDescTitle: {
+    type: Boolean,
+    default: false
+  },
+  showNoDesc: {
     type: Boolean,
     default: false
   },
