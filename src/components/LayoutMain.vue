@@ -852,11 +852,25 @@ onUnmounted(() => {
 const commentModalOpen = ref(false);
 
 // giscus 配置
+// 测试数据
+// const giscusConfig = {
+//   repo: 'zaodonganqi/bettergi-scripts-web',
+//   repoId: 'R_kgDOOdJNqw',
+//   category: 'Q&A',
+//   categoryId: 'DIC_kwDOOdJNq84CsJV4',
+//   mapping: 'specific',
+//   strict: '0',
+//   reactionsEnabled: '1',
+//   emitMetadata: '0',
+//   inputPosition: 'top',
+//   theme: 'light',
+//   lang: 'zh-CN'
+// };
 const giscusConfig = {
-  repo: 'zaodonganqi/bettergi-scripts-web',
-  repoId: 'R_kgDOOdJNqw',
+  repo: 'babalae/bettergi-scripts-list',
+  repoId: 'R_kgDOM6y97g',
   category: 'Q&A',
-  categoryId: 'DIC_kwDOOdJNq84CsJV4',
+  categoryId: 'DIC_kwDOM6y97s4CqEEj',
   mapping: 'specific',
   strict: '0',
   reactionsEnabled: '1',
