@@ -869,7 +869,7 @@ const commentModalOpen = ref(false);
 const giscusConfig = {
   repo: 'babalae/bettergi-scripts-list',
   repoId: 'R_kgDOM6y97g',
-  category: 'Show and tell',
+  category: 'General',
   categoryId: 'DIC_kwDOM6y97s4CqEEj',
   mapping: 'specific',
   strict: '0',
