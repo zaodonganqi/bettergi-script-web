@@ -285,7 +285,7 @@
           </div>
 
           <!-- Web模式显示giscus评论 -->
-          <Giscus v-else id="comments" :repo="giscusConfig.repo" :repoId="giscusConfig.repoId"
+          <Giscus v-else :key="giscusKey" id="comments" :repo="giscusConfig.repo" :repoId="giscusConfig.repoId"
             :category="giscusConfig.category" :categoryId="giscusConfig.categoryId" :mapping="giscusConfig.mapping"
             :term="giscusTerm" :strict="giscusConfig.strict" :reactionsEnabled="giscusConfig.reactionsEnabled"
             :emitMetadata="giscusConfig.emitMetadata" :inputPosition="giscusConfig.inputPosition"
@@ -853,11 +853,24 @@ const commentModalOpen = ref(false);
 
 // giscus 配置
 // 测试数据
+//const giscusConfig = {
+//  repo: 'zaodonganqi/bettergi-scripts-web',
+//  repoId: 'R_kgDOOdJNqw',
+//  category: 'General',
+//  categoryId: 'DIC_kwDOOdJNq84CsJV3',
+//  mapping: 'specific', 
+//  strict: '0',
+//  reactionsEnabled: '1',
+//  emitMetadata: '0',
+//  inputPosition: 'top',
+//  theme: 'light',
+//  lang: 'zh-CN'
+//};
 const giscusConfig = {
-  repo: 'zaodonganqi/bettergi-scripts-web',
-  repoId: 'R_kgDOOdJNqw',
+  repo: 'babalae/bettergi-scripts-list',
+  repoId: 'R_kgDOM6y97g',
   category: 'General',
-  categoryId: 'DIC_kwDOOdJNq84CsJV3',
+  categoryId: 'DIC_kwDOM6y97s4CqEEi',
   mapping: 'specific',
   strict: '0',
   reactionsEnabled: '1',
@@ -866,24 +879,21 @@ const giscusConfig = {
   theme: 'light',
   lang: 'zh-CN'
 };
-// const giscusConfig = {
-//   repo: 'babalae/bettergi-scripts-list',
-//   repoId: 'R_kgDOM6y97g',
-//   category: 'General',
-//   categoryId: 'DIC_kwDOM6y97s4CqEEi',
-//   mapping: 'specific',
-//   strict: '0',
-//   reactionsEnabled: '1',
-//   emitMetadata: '0',
-//   inputPosition: 'top',
-//   theme: 'light',
-//   lang: 'zh-CN'
-// };
+
+// 强制 Giscus 组件重新渲染的 key
+const giscusKey = ref(0);
 
 // 计算 giscus term，用于区分不同脚本的评论
 const giscusTerm = computed(() => {
   if (!selectedScript.value) return 'default';
   return selectedScript.value.path || selectedScript.value.title || 'default';
+});
+
+// 监听 giscusTerm 变化，强制重新渲染 Giscus 组件
+watch(giscusTerm, (newTerm, oldTerm) => {
+  if (newTerm !== oldTerm) {
+    giscusKey.value++;
+  }
 });
 
 // 监听评论弹窗打开
