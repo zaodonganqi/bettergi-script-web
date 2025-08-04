@@ -853,24 +853,11 @@ const commentModalOpen = ref(false);
 
 // giscus 配置
 // 测试数据
-const giscusConfig = {
-  repo: 'zaodonganqi/bettergi-scripts-web',
-  repoId: 'R_kgDOOdJNqw',
-  category: 'General',
-  categoryId: 'DIC_kwDOOdJNq84CsJV4',
-  mapping: 'specific',
-  strict: '0',
-  reactionsEnabled: '1',
-  emitMetadata: '0',
-  inputPosition: 'top',
-  theme: 'light',
-  lang: 'zh-CN'
-};
 // const giscusConfig = {
-//   repo: 'babalae/bettergi-scripts-list',
-//   repoId: 'R_kgDOM6y97g',
+//   repo: 'zaodonganqi/bettergi-scripts-web',
+//   repoId: 'R_kgDOOdJNqw',
 //   category: 'General',
-//   categoryId: 'DIC_kwDOM6y97s4CqEEj',
+//   categoryId: 'DIC_kwDOOdJNq84CsJV4',
 //   mapping: 'specific',
 //   strict: '0',
 //   reactionsEnabled: '1',
@@ -879,6 +866,19 @@ const giscusConfig = {
 //   theme: 'light',
 //   lang: 'zh-CN'
 // };
+const giscusConfig = {
+  repo: 'babalae/bettergi-scripts-list',
+  repoId: 'R_kgDOM6y97g',
+  category: 'General',
+  categoryId: 'DIC_kwDOM6y97s4CqEEi',
+  mapping: 'specific',
+  strict: '0',
+  reactionsEnabled: '1',
+  emitMetadata: '0',
+  inputPosition: 'top',
+  theme: 'light',
+  lang: 'zh-CN'
+};
 
 // 计算 giscus term，用于区分不同脚本的评论
 const giscusTerm = computed(() => {
