@@ -75,6 +75,20 @@ md.renderer.rules.link_open = function (tokens, idx, options, env, self) {
     const isRelativePath = /^\.\.?\//.test(href) || /^[^\/]*\/[^\/]+(?:\/[^\/]+)*$/i.test(href);
     const isPotentialLink = /^[a-z0-9-]+\.[a-z]{2,}\b/i.test(href);
 
+    // 检查是否为带后缀的文件路径
+    const hasFileExtension = /\.[a-zA-Z0-9]+$/.test(href);
+    const isImageFile = /\.(png|jpg|jpeg|gif|webp|svg|ico|bmp|tiff)$/i.test(href);
+    const isNonImageFile = hasFileExtension && !isImageFile;
+
+    // 如果是非图片文件路径，禁用链接功能
+    if (isNonImageFile) {
+      token.attrPush(['class', 'text-only-link']);
+      token.attrPush(['onclick', 'return false;']);
+      token.attrPush(['style', 'cursor: default; text-decoration: none; color: inherit;']);
+      token.attrPush(['title', '仅显示文本，不作为链接']);
+      return originalLinkRender(tokens, idx, options, env, self);
+    }
+
     // 更精确的相对路径判断：排除明显不是路径的情况
     const isActuallyRelativePath = isRelativePath &&
       !href.includes('://') &&
@@ -420,6 +434,13 @@ watch(
 .readme-content :deep(.invalid-link) {
   color: #ff4d4f;
   text-decoration: line-through;
+  pointer-events: none;
+  cursor: default;
+}
+
+.readme-content :deep(.text-only-link) {
+  color: #1890ff !important;
+  text-decoration: none !important;
   pointer-events: none;
   cursor: default;
 }
