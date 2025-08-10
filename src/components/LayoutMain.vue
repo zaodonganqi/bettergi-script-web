@@ -867,10 +867,10 @@ const commentModalOpen = ref(false);
 //  lang: 'zh-CN'
 //};
 const giscusConfig = {
-  repo: 'babalae/bettergi-scripts-list',
-  repoId: 'R_kgDOM6y97g',
+  repo: 'babalae/bettergi-script-web-giscus',
+  repoId: 'R_kgDOPbW19A',
   category: 'General',
-  categoryId: 'DIC_kwDOM6y97s4CqEEi',
+  categoryId: 'DIC_kwDOPbW19M4Ct_3t',
   mapping: 'specific',
   strict: '0',
   reactionsEnabled: '1',
