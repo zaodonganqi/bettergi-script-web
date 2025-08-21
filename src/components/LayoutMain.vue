@@ -24,7 +24,7 @@
             {{ $t('sider.mainRepo') }}</div>
           <div class="sider-link" @click="openExternalLink('https://github.com/babalae/bettergi-scripts-list')">
             {{ $t('sider.scriptRepo') }}</div>
-          <div v-if="mode === 'single'" class="sider-link" @click="openExternalLink('https://s.bettergi.com')">{{
+          <div v-if="mode === 'single'" class="sider-link" @click="openExternalLink('https://bgi.sh')">{{
             $t('sider.onlineRepo') }}</div>
             <div class="sider-link" @click="openExternalLink('https://bettergi.com/doc.html')">
             {{ $t('sider.document') }}</div>
