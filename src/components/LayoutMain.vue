@@ -574,7 +574,8 @@ const jumpToGitHub = () => {
   // 对路径进行编码，特别注意编码方括号等特殊字符
   const encodedPath = encodeURI(targetPath)
     .replace(/\[/g, '%5B')
-    .replace(/\]/g, '%5D');
+    .replace(/\]/g, '%5D')
+    .replace(/#/g, '%23');
 
   const githubUrl = baseUrl + encodedPath;
   openExternalLink(githubUrl);
