@@ -144,6 +144,7 @@ import { Table as ATable, Tag as ATag, Popover as APopover, Space as ASpace, Mod
 import { ReloadOutlined } from '@ant-design/icons-vue';
 import ReadmeViewer from '../ReadmeViewer.vue';
 import { useClipboard } from '@vueuse/core';
+import { subscribePath } from '@/utils/subscription';
 import { useI18n } from 'vue-i18n';
 const { t: $t, locale } = useI18n();
 
@@ -309,46 +310,21 @@ function getTagColor(tag) {
   return tagColorMap.value[tag];
 }
 
-const handleSubscribe = (item) => {
-  if (item.path) {
-    downloadScript(item);
+const handleSubscribe = async (item) => {
+  if (!item.path) return;
+  try {
+    const result = await subscribePath(item.path);
+    if (result.needsCopy) {
+      await copy(result.url);
+      Message.success($t('detail.subscribeSuccess', { name: item.name }));
+    }
     if (typeof props.startPollingUserConfig === 'function') {
       props.startPollingUserConfig();
     }
+  } catch (error) {
+    console.error('Subscribe failed:', error);
+    Message.error($t('detail.subscribeFailedWithMsg', { msg: error.message }));
   }
-};
-
-const downloadScript = async (script) => {
-  const scriptPath = script.path;
-  // 创建一个包含脚本路径的数组
-  const subscriptionData = [scriptPath];
-
-  // 将数组转换为 JSON 字串
-  const jsonString = JSON.stringify(subscriptionData);
-  const base64String = btoa(encodeURIComponent(jsonString));
-
-  const fullUrl = `bettergi://script?import=${base64String}`;
-
-  if (mode === 'single') {
-    try {
-      await subscribeToLocal(fullUrl);
-    } catch (error) {
-      console.error('Subscribe failed:', error);
-      Message.error($t('detail.subscribeFailedWithMsg', { msg: error.message }));
-    }
-  } else {
-    copy(fullUrl).then(() => {
-      Message.success($t('detail.subscribeSuccess', { name: script.name }));
-    }).catch((error) => {
-      console.error('Copy to clipboard failed:', error);
-      Message.error($t('detail.copyFailed', { name: script.name }));
-    });
-  }
-};
-
-const subscribeToLocal = async (url) => {
-  const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
-  await repoWebBridge.ImportUri(url);
 };
 
 // tab切换动画

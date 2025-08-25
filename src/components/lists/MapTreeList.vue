@@ -32,6 +32,7 @@ import { CaretRightOutlined, CaretDownOutlined } from '@ant-design/icons-vue';
 import { useClipboard } from '@vueuse/core';
 import { message as Message } from 'ant-design-vue';
 import { getRepoPath } from '@/utils/basePaths';
+import { subscribePath } from '@/utils/subscription';
 import { useI18n } from 'vue-i18n';
 const { t: $t } = useI18n();
 
@@ -61,7 +62,6 @@ const emit = defineEmits(['select', 'updateHasUpdate']);
 const expandedKeys = ref([]);
 const selectedKeys = ref([]);
 const treeData = ref([]);
-const clearedUpdates = ref(new Set()); // 跟踪已清除更新的节点路径
 
 onMounted(() => {
   treeData.value = generateTreeData(props.repoData);
@@ -121,49 +121,24 @@ const handleSelect = async (selectedKeysList) => {
 };
 
 // 处理订阅
-const handleSubscribe = (nodeData) => {
+const handleSubscribe = async (nodeData) => {
   if (!nodeData || !nodeData.key) {
     Message.error($t('mapTreeList.selectValidNode'));
     return;
   }
-  downloadScript(nodeData);
+  try {
+    const result = await subscribePath(nodeData.path);
+    if (result.needsCopy) {
+      await copy(result.url);
+      Message.success($t('mapTreeList.subscribeSuccess', { name: nodeData.name }));
+    }
+  } catch (error) {
+    console.error('Subscribe failed:', error);
+    Message.error($t('mapTreeList.subscribeFailedWithMsg', { msg: error.message }));
+  }
   if (typeof props.startPollingUserConfig === 'function') {
     props.startPollingUserConfig();
   }
-};
-
-const downloadScript = async (script) => {
-  // 创建一个包含脚本路径的数组
-  const subscriptionData = [script.path];
-
-  // 将数组转换为 JSON 字串
-  const jsonString = JSON.stringify(subscriptionData);
-  const base64String = btoa(encodeURIComponent(jsonString));
-
-  // 创建完整的 URL
-  const fullUrl = `bettergi://script?import=${base64String}`;
-
-  if (mode === 'single') {
-    try {
-      await subscribeToLocal(fullUrl);
-    } catch (error) {
-      console.error('Subscribe failed:', error);
-      Message.error($t('mapTreeList.subscribeFailedWithMsg', { msg: error.message }));
-    }
-  } else {
-    // 将完整的 URL 复制到剪贴板
-    copy(fullUrl).then(() => {
-      Message.success($t('mapTreeList.subscribeSuccess', { name: script.name }));
-    }).catch((error) => {
-      console.error('Copy to clipboard failed:', error);
-      Message.error($t('mapTreeList.copyFailed', { name: script.name }));
-    });
-  }
-};
-
-const subscribeToLocal = async (url) => {
-  const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
-  await repoWebBridge.ImportUri(url);
 };
 
 // 查找节点
