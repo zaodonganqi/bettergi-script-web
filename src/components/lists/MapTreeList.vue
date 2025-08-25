@@ -57,7 +57,7 @@ const props = defineProps({
 });
 const { copy } = useClipboard();
 const mode = import.meta.env.VITE_MODE;
-const emit = defineEmits(['select', 'leafCount', 'updateHasUpdate']);
+const emit = defineEmits(['select', 'updateHasUpdate']);
 const expandedKeys = ref([]);
 const selectedKeys = ref([]);
 const treeData = ref([]);

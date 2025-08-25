@@ -110,14 +110,14 @@
       <div v-if="selectedMenu[0] === '1'" class="script-list">
         <MapTreeList :search-key="search" :repo-data="repoData" :subscribed-paths="subscribedScriptPaths"
           :show-subscribed-only="scriptTab === 'subscribed'" ref="mapTreeRef"
-          :start-polling-user-config="startPollingUserConfig" @select="handleMapSelect" @leaf-count="handleLeafCount"
+          :start-polling-user-config="startPollingUserConfig" @select="handleMapSelect"
           @update-has-update="updateScriptHasUpdate" />
       </div>
       <!-- Javascript脚本列表 -->
       <div v-else-if="selectedMenu[0] === '2'" class="script-list">
         <ScriptList :search-key="search" :repo-data="repoData" :subscribed-paths="subscribedScriptPaths"
           :show-subscribed-only="scriptTab === 'subscribed'" :sort-type="sortType" :sort-order="sortOrder"
-          ref="scriptListRef" @select="handleScriptSelect" @script-count="handleScriptCount"
+          ref="scriptListRef" @select="handleScriptSelect"
           @update-has-update="updateScriptHasUpdate" />
       </div>
       <!-- 战斗策略列表 -->
@@ -658,100 +658,51 @@ const scriptListRef = ref(null);
 const combatStrategyRef = ref(null);
 const cardStrategyRef = ref(null);
 
-const handleLeafCount = (count) => {
-  menuCounts.value[0] = count;
-};
+// 按分类统计脚本数量
+function countCategoryLeaves(repo, categoryName, isLeaf) {
+  if (!repo?.indexes) return 0;
+  const category = repo.indexes.find(item => item.name === categoryName);
+  if (!category || !Array.isArray(category.children)) return 0;
 
-const handleScriptCount = (count) => {
-  menuCounts.value[1] = count;
-};
-
-function getJsCount(repo) {
-  const jsNode = repo.indexes.find(item => item.name === 'js');
-
-  const hasExpandableChildren = (dataRef) => {
-    if (!dataRef?.children || dataRef.children.length === 0) return false;
-    return dataRef.children.some(child => child.type === 'directory');
+  const hasExpandableChildren = (node) => {
+    if (!node?.children || node.children.length === 0) return false;
+    return node.children.some(child => child.type === 'directory');
   };
 
-  function countLeaf(nodes) {
+  const defaultIsLeaf = (node) => !hasExpandableChildren(node);
+  const leafPredicate = typeof isLeaf === 'function' ? isLeaf : defaultIsLeaf;
+
+  function dfs(nodes) {
     if (!nodes) return 0;
-    let count = 0;
+    let total = 0;
     for (const node of nodes) {
-      if (!hasExpandableChildren(node)) {
-        count++;
-      } else {
-        count += countLeaf(node.children);
+      if (leafPredicate(node)) {
+        total++;
+      } else if (node.children && node.children.length > 0) {
+        total += dfs(node.children);
       }
     }
-    return count;
+    return total;
   }
-  return countLeaf(jsNode?.children);
+
+  return dfs(category.children);
+}
+
+function getJsCount(repo) {
+  return countCategoryLeaves(repo, 'js');
 }
 
 function getMapCount(repo) {
-  const mapNode = repo.indexes.find(item => item.name === 'pathing');
-
-  const hasExpandableChildren = (dataRef) => {
-    if (!dataRef?.children || dataRef.children.length === 0) return false;
-    return dataRef.children.some(child => child.type === 'directory');
-  };
-
-  function countLeaf(nodes) {
-    if (!nodes) return 0;
-    let count = 0;
-    for (const node of nodes) {
-      if (!hasExpandableChildren(node)) {
-        count++;
-      } else {
-        count += countLeaf(node.children);
-      }
-    }
-    return count;
-  }
-  return countLeaf(mapNode?.children);
+  return countCategoryLeaves(repo, 'pathing');
 }
 
 function getCombatCount(repo) {
-  const combatNode = repo.indexes.find(item => item.name === 'combat');
-
-  const hasExpandableChildren = (dataRef) => {
-    if (!dataRef?.children || dataRef.children.length === 0) return false;
-    return dataRef.children.some(child => child.type === 'directory');
-  };
-
-  function countLeaf(nodes) {
-    if (!nodes) return 0;
-    let count = 0;
-    for (const node of nodes) {
-      if (!hasExpandableChildren(node)) {
-        count++;
-      } else {
-        count += countLeaf(node.children);
-      }
-    }
-    return count;
-  }
-  return countLeaf(combatNode?.children);
+  return countCategoryLeaves(repo, 'combat');
 }
 
 function getCardCount(repo) {
-  const cardNode = repo.indexes.find(item => item.name === 'tcg');
-
-  function countLeaf(nodes) {
-    if (!nodes) return 0;
-    let count = 0;
-    for (const node of nodes) {
-      if (node.type === 'file') {
-        count++;
-      } else if (node.type === 'directory' && node.children) {
-        count += countLeaf(node.children);
-      }
-    }
-    return count;
-  }
-
-  return countLeaf(cardNode?.children);
+  // tcg 的叶子是文件节点
+  return countCategoryLeaves(repo, 'tcg', (node) => node.type === 'file');
 }
 
 const subscribedScriptPaths = ref([]);

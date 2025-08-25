@@ -67,7 +67,7 @@ const props = defineProps({
 });
 const { repoData } = props;
 
-const emit = defineEmits(['select', 'scriptCount', 'updateHasUpdate']);
+const emit = defineEmits(['select', 'updateHasUpdate']);
 
 function getJsScriptsFromRepo(repo, subscribedPaths = [], parentSubscribed = false, currentPath = 'js') {
   const jsNode = repo.indexes.find(item => item.name === 'js');
@@ -266,13 +266,7 @@ const filteredScripts = computed(() => {
   return sortedScored;
 });
 
-const calculateScriptCount = () => {
-  emit('scriptCount', scripts.value.length);
-};
-
-defineExpose({
-  calculateScriptCount
-});
+// 计数由父组件根据 repoData 直接计算
 </script>
 
 <style scoped>
