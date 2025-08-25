@@ -582,7 +582,6 @@ const jumpToGitHub = () => {
 };
 
 const selectedScript = ref(null);
-const selectedLocation = ref(null);
 
 const handleScriptSelect = (script) => {
   selectedScript.value = script;
@@ -651,7 +650,6 @@ const updateScriptHasUpdate = (scriptPath, hasUpdate) => {
 
 // 地图追踪板块
 const handleMapSelect = (location) => {
-  selectedLocation.value = location;
   selectedScript.value = location;
 };
 
