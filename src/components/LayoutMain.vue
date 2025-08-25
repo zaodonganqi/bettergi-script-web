@@ -141,19 +141,19 @@
         <div v-if="selectedScript" class="detail-top-bar">
           <div class="top-bar-left">
             <a-tooltip :title="$t('action.jumpToGitHub')">
-              <a-button type="text" size="small" class="action-btn" @click="jumpToGitHub">
+              <a-button type="text" class="action-btn" @click="jumpToGitHub">
                 <LinkOutlined />
               </a-button>
             </a-tooltip>
             <a-tooltip :title="$t('action.comment')">
-              <a-button type="text" size="small" class="action-btn" @click="commentModalOpen = true">
+              <a-button type="text" class="action-btn" @click="commentModalOpen = true">
                 <MessageOutlined />
               </a-button>
             </a-tooltip>
           </div>
           <div class="top-bar-right">
             <a-tooltip :title="$t('action.help')">
-              <a-button type="text" size="small" class="action-btn" @click="showHelpModal = true">
+              <a-button type="text" class="action-btn" @click="showHelpModal = true">
                 <QuestionCircleOutlined />
               </a-button>
             </a-tooltip>
@@ -167,19 +167,19 @@
         <div v-if="selectedScript" class="detail-top-bar">
           <div class="top-bar-left">
             <a-tooltip :title="$t('action.jumpToGitHub')">
-              <a-button type="text" size="small" class="action-btn" @click="jumpToGitHub">
+              <a-button type="text" class="action-btn" @click="jumpToGitHub">
                 <LinkOutlined />
               </a-button>
             </a-tooltip>
             <a-tooltip :title="$t('action.comment')">
-              <a-button type="text" size="small" class="action-btn" @click="commentModalOpen = true">
+              <a-button type="text" class="action-btn" @click="commentModalOpen = true">
                 <MessageOutlined />
               </a-button>
             </a-tooltip>
           </div>
           <div class="top-bar-right">
             <a-tooltip :title="$t('action.help')">
-              <a-button type="text" size="small" class="action-btn" @click="showHelpModal = true">
+              <a-button type="text" class="action-btn" @click="showHelpModal = true">
                 <QuestionCircleOutlined />
               </a-button>
             </a-tooltip>
@@ -192,19 +192,19 @@
         <div v-if="selectedScript" class="detail-top-bar">
           <div class="top-bar-left">
             <a-tooltip :title="$t('action.jumpToGitHub')">
-              <a-button type="text" size="small" class="action-btn" @click="jumpToGitHub">
+              <a-button type="text" class="action-btn" @click="jumpToGitHub">
                 <LinkOutlined />
               </a-button>
             </a-tooltip>
             <a-tooltip :title="$t('action.comment')">
-              <a-button type="text" size="small" class="action-btn" @click="commentModalOpen = true">
+              <a-button type="text" class="action-btn" @click="commentModalOpen = true">
                 <MessageOutlined />
               </a-button>
             </a-tooltip>
           </div>
           <div class="top-bar-right">
             <a-tooltip :title="$t('action.help')">
-              <a-button type="text" size="small" class="action-btn" @click="showHelpModal = true">
+              <a-button type="text" class="action-btn" @click="showHelpModal = true">
                 <QuestionCircleOutlined />
               </a-button>
             </a-tooltip>
@@ -1318,9 +1318,12 @@ const updateAllScriptsHasUpdate = (hasUpdate) => {
 .action-btn {
   color: #444;
   border: none;
-  padding: 2px 4px;
-  border-radius: 4px;
+  padding: 6px 8px;
+  border-radius: 6px;
   transition: all 0.2s;
+  font-size: 19px;
+  min-height: 32px;
+  min-width: 32px;
 }
 
 .action-btn:hover {
