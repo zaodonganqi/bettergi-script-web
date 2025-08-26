@@ -12,9 +12,9 @@
       <template #title="{ title, dataRef }">
         <div class="tree-node-container">
           <div class="tree-node-title">
-            <a-image v-if="dataRef.showIcon" :src="dataRef.icon" :width="22" :placeholder="false"
+            <a-image v-if="dataRef.showIcon" :src="dataRef.icon" :width="26" :placeholder="false"
               @error="dataRef.showIcon = false" />
-            <span>{{ title }}</span>
+            <span class="tree-node-title-text">{{ title }}</span>
             <span v-if="dataRef.hasUpdate" class="has-update-dot"></span>
           </div>
           <a-button class="subscribe-btn" type="text" size="small" @click.stop="handleSubscribe(dataRef)">
@@ -34,6 +34,7 @@ import { message as Message } from 'ant-design-vue';
 import { getRepoPath } from '@/utils/basePaths';
 import { subscribePath } from '@/utils/subscription';
 import { useI18n } from 'vue-i18n';
+import iconUrlMap from '@/assets/icon_url.json';
 const { t: $t } = useI18n();
 
 const props = defineProps({
@@ -234,9 +235,20 @@ const processNode = (node, parentKey = '', parentSubscribed = false) => {
   const isSubscribed = parentSubscribed || selfSubscribed;
   const children = node.children?.map(child => processNode(child, currentKey, isSubscribed)) || [];
   let iconPath = '';
-  const showIcon = node.showIcon || false;
-  if (showIcon && node.children.length > 0) {
-    iconPath = getIconUrl('pathing/' + currentKey);
+  let showIcon = node.showIcon || false;
+  if (node.children && node.children.length > 0) {
+    if (mode === 'single') {
+      if (showIcon) {
+        iconPath = getIconUrl('pathing/' + currentKey);
+      }
+    } else {
+      // web模式根据名称匹配
+      const mappedItem = Array.isArray(iconUrlMap) ? iconUrlMap.find(item => item && item.name === node.name) : undefined;
+      if (mappedItem && mappedItem.link) {
+        iconPath = mappedItem.link;
+        showIcon = true;
+      }
+    }
   }
   let files = [];
   let lastUpdated = '';
@@ -269,7 +281,7 @@ const processNode = (node, parentKey = '', parentSubscribed = false) => {
     rawChildren: node.children || [],
     children,
     icon: iconPath,
-    showIcon: node.showIcon || false,
+    showIcon: showIcon,
     path: `pathing/${currentKey}`,
     files,
     isSubscribed,
@@ -540,6 +552,11 @@ function normalize(str) {
 .tree-node-title {
   flex: 1;
   padding-right: 62px;
+}
+
+.tree-node-title-text {
+  font-size: 14px;
+  margin-left: 5px;
 }
 
 .subscribe-btn {
