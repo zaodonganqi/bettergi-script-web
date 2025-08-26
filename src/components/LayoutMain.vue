@@ -352,7 +352,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue';
+import { ref, reactive, computed, onMounted, onUnmounted, watch, nextTick } from 'vue';
 import { FolderOutlined, FileOutlined, CalculatorOutlined, BulbOutlined, SearchOutlined, QuestionCircleOutlined, MessageOutlined, LinkOutlined, ReloadOutlined, SettingOutlined, AlignRightOutlined, CheckOutlined } from '@ant-design/icons-vue';
 import { message as Message } from 'ant-design-vue';
 import Giscus from '@giscus/vue';
@@ -375,6 +375,27 @@ const search = ref('');
 // 排序相关数据
 const sortType = ref('recommend');
 const sortOrder = ref('desc');
+const sortStateByMenu = reactive({
+  '2': { type: 'recommend', order: 'desc' },
+  '3': { type: 'recommend', order: 'desc' },
+  '4': { type: 'recommend', order: 'desc' }
+});
+
+function applySortForMenu(menuKey) {
+  const state = sortStateByMenu[menuKey];
+  if (state) {
+    sortType.value = state.type || 'recommend';
+    sortOrder.value = state.order || 'desc';
+  } else {
+    sortType.value = 'recommend';
+    sortOrder.value = 'desc';
+  }
+}
+
+function saveSortForMenu(menuKey) {
+  if (!['2', '3', '4'].includes(menuKey)) return;
+  sortStateByMenu[menuKey] = { type: sortType.value, order: sortOrder.value };
+}
 
 const { t: $t } = useI18n();
 
@@ -520,6 +541,8 @@ const handleSortMenuClick = ({ key }) => {
   } else if (['asc', 'desc'].includes(key)) {
     sortOrder.value = key;
   }
+  // 保存当前菜单的排序状态
+  saveSortForMenu(selectedMenu.value[0]);
   console.log('排序设置已更新:', { sortType: sortType.value, sortOrder: sortOrder.value });
 };
 
@@ -911,8 +934,14 @@ const onClickShowSubscribed = () => {
 
 watch(selectedMenu, () => {
   scriptTab.value = 'all';
-  sortType.value = 'recommend';
-  sortOrder.value = 'desc';
+  // 切换菜单时恢复该菜单上次会话内的排序状态
+  applySortForMenu(selectedMenu.value[0]);
+});
+
+onMounted(() => {
+  if (['2', '3', '4'].includes(selectedMenu.value[0])) {
+    applySortForMenu(selectedMenu.value[0]);
+  }
 });
 
 watch(subscribedScriptPaths, (newPaths) => {

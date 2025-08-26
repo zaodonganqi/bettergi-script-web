@@ -62,6 +62,57 @@ const md = new MarkdownIt({
   level: [1, 2, 3, 4, 5, 6]
 });
 
+// 脚注处理
+function processFootnotes(rawMarkdown) {
+  if (!rawMarkdown) return rawMarkdown;
+
+  const lines = rawMarkdown.split(/\r?\n/);
+  const footnoteIdToText = {};
+  const keptLines = [];
+
+  // 提取脚注定义
+  for (let i = 0; i < lines.length; ) {
+    const defMatch = lines[i].match(/^\[\^([^\]]+)\]:\s*(.*)$/);
+    if (defMatch) {
+      const id = defMatch[1];
+      let text = defMatch[2] || '';
+      i++;
+      while (i < lines.length && /^( {2,}|\t)/.test(lines[i])) {
+        text += '\n' + lines[i].replace(/^( {2,}|\t)/, '');
+        i++;
+      }
+      footnoteIdToText[id] = (text || '').trim();
+      continue;
+    }
+    keptLines.push(lines[i]);
+    i++;
+  }
+
+  let content = keptLines.join('\n');
+
+  // 替换脚注引用为页面内上标锚点
+  const idToRefCount = {};
+  content = content.replace(/\[\^([^\]]+)\]/g, (m, id) => {
+    const count = (idToRefCount[id] || 0) + 1;
+    idToRefCount[id] = count;
+    const refId = count === 1 ? `fnref:${id}` : `fnref:${id}-${count}`;
+    return `<sup id="${refId}" class="footnote-ref"><a href="#fn:${id}">[${id}]</a></sup>`;
+  });
+
+  const footnoteIds = Object.keys(footnoteIdToText);
+  if (footnoteIds.length === 0) return content;
+
+  // 生成文末脚注 HTML
+  let footnotesHtml = '\n\n<div class="footnotes">\n<hr/>\n<ol>\n';
+  for (const id of footnoteIds) {
+    const htmlText = md.renderInline(footnoteIdToText[id] || '');
+    footnotesHtml += `<li id="fn:${id}"><p>${htmlText} <a href="#fnref:${id}" class="footnote-backref" aria-label="back to content">↩</a></p></li>\n`;
+  }
+  footnotesHtml += '</ol>\n</div>\n';
+
+  return content + footnotesHtml;
+}
+
 // 处理链接渲染逻辑
 const originalLinkRender = md.renderer.rules.link_open || function (tokens, idx, options, env, self) {
   return self.renderToken(tokens, idx, options);
@@ -279,6 +330,7 @@ const fetchAndRenderReadme = async (path) => {
       }
       return `![](${isHttpUrl ? cleanPath : baseImageUrl + cleanPath})`;
     });
+    markdown = processFootnotes(markdown);
     readmeContent.value = md.render(markdown);
     emit('loaded', { status: 'ok' });
     emit('hasContent', true);
@@ -383,6 +435,7 @@ const fetchAndRenderReadme = async (path) => {
     }
     return `![](${isHttpUrl ? cleanPath : baseImageUrl + cleanPath})`;
   });
+  markdown = processFootnotes(markdown);
   readmeContent.value = md.render(markdown);
   emit('loaded', { status: 'ok' });
   emit('hasContent', true);
