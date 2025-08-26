@@ -1322,8 +1322,11 @@ const updateAllScriptsHasUpdate = (hasUpdate) => {
   border-radius: 6px;
   transition: all 0.2s;
   font-size: 19px;
-  min-height: 32px;
-  min-width: 32px;
+  height: 32px !important;
+  width: 32px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 
 .action-btn:hover {
