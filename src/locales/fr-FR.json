@@ -146,7 +146,9 @@
   },
   "common": {
     "comma": ", ",
-    "noDesc": "Aucune description"
+    "noDesc": "Aucune description",
+    "reset": "Réinitialiser",
+    "confirm": "Confirmer"
   },
   "detail": {
     "author": "Auteur : ",
@@ -200,7 +202,9 @@
     "time": "Temps",
     "name": "Nom",
     "ascending": "Croissant",
-    "descending": "Décroissant"
+    "descending": "Décroissant",
+    "filterByRole": "Filtrer par rôle",
+    "searchRole": "Rechercher des rôles"
   },
   "loading": {
     "repoData": "Chargement des données du dépôt, veuillez patienter..."

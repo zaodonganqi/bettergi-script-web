@@ -71,12 +71,12 @@
             <SearchOutlined />
           </template>
         </a-input>
-        <a-dropdown v-if="selectedMenu[0] !== '1'" placement="bottomLeft" trigger="click" class="sort-dropdown">
+        <a-dropdown v-if="selectedMenu[0] !== '1'" placement="bottomLeft" trigger="click" class="sort-dropdown" v-model:open="sortDropdownOpen">
           <a-button class="sort-button" size="middle">
             <AlignRightOutlined />
           </a-button>
           <template #overlay>
-            <a-menu class="sort-menu" @click="handleSortMenuClick">
+            <a-menu class="sort-menu" @click="handleSortMenuClick" @mousedown.stop @click.stop>
               <a-menu-item-group :title="$t('sort.sortBy')">
                 <a-menu-item key="recommend" :class="{ active: sortType === 'recommend' }">
                   <span>{{ $t('sort.recommend') }}</span>
@@ -102,6 +102,35 @@
                   <CheckOutlined v-if="sortOrder === 'desc'" class="check-icon" />
                 </a-menu-item>
               </a-menu-item-group>
+              <a-menu-divider v-if="selectedMenu[0] === '3'" />
+              <a-sub-menu v-if="selectedMenu[0] === '3'">
+                <template #title>
+                  <span>{{ $t('sort.filterByRole') || '角色筛选' }}</span>
+                </template>
+                <div class="role-filter-panel" @mousedown.stop @click.stop>
+                  <a-input v-model:value="roleFilterSearch" size="middle" class="role-filter-search" :placeholder="$t('sort.searchRole') || '搜索角色'">
+                    <template #prefix>
+                      <SearchOutlined />
+                    </template>
+                  </a-input>
+                  <div class="role-filter-list">
+                    <a-checkbox
+                      v-for="tag in displayedRoleTags"
+                      :key="tag"
+                      :checked="selectedRoleTags.includes(tag)"
+                      :disabled="!selectedRoleTags.includes(tag) && selectedRoleTags.length >= 4"
+                      class="role-filter-checkbox"
+                      @change="onRoleCheckboxChange(tag, $event)"
+                    >
+                      <span class="role-filter-label">{{ tag }}</span>
+                    </a-checkbox>
+                  </div>
+                  <div class="role-filter-footer">
+                    <a-button size="middle" class="role-filter-btn" @click="resetRoleFilter">{{ $t('common.reset') || '重置' }}</a-button>
+                    <a-button size="middle" type="primary" class="role-filter-btn-primary" @click="confirmRoleFilter">{{ $t('common.confirm') || '确定' }}</a-button>
+                  </div>
+                </div>
+              </a-sub-menu>
             </a-menu>
           </template>
         </a-dropdown>
@@ -123,7 +152,7 @@
       <!-- 战斗策略列表 -->
       <div v-else-if="selectedMenu[0] === '3'" class="script-list">
         <CombatStrategyList :search-key="search" :repo-data="repoData" :subscribed-paths="subscribedScriptPaths"
-          :show-subscribed-only="scriptTab === 'subscribed'" :sort-type="sortType" :sort-order="sortOrder"
+          :show-subscribed-only="scriptTab === 'subscribed'" :sort-type="sortType" :sort-order="sortOrder" :role-tags="appliedRoleTags"
           ref="combatStrategyRef" @select="handleScriptSelect" @update-has-update="updateScriptHasUpdate" />
       </div>
       <!-- 七圣召唤策略列表 -->
@@ -367,6 +396,7 @@ import ReadmeViewer from './ReadmeViewer.vue';
 import Help from './Help.vue';
 import { getWebPath, getRawPath } from '@/utils/basePaths';
 import { useI18n } from 'vue-i18n';
+import { mapTagsToCanonical } from '@/utils/roleAlias';
 
 const mode = import.meta.env.VITE_MODE;
 const selectedMenu = ref(['1']);
@@ -380,6 +410,62 @@ const sortStateByMenu = reactive({
   '3': { type: 'recommend', order: 'desc' },
   '4': { type: 'recommend', order: 'desc' }
 });
+
+// 排序下拉显隐
+const sortDropdownOpen = ref(false);
+
+// 战斗策略角色筛选
+const roleFilterSearch = ref('');
+const selectedRoleTags = ref([]); // 面板中的临时选择（≤4）
+const appliedRoleTags = ref([]);  // 确认后生效
+
+function collectCombatTags(repo) {
+  if (!repo?.indexes) return [];
+  const combat = repo.indexes.find(i => i.name === 'combat');
+  if (!combat || !Array.isArray(combat.children)) return [];
+  const all = [];
+  const dfs = (nodes) => {
+    for (const node of nodes) {
+      if (node.children && node.children.length > 0) {
+        dfs(node.children);
+      } else {
+        const tags = mapTagsToCanonical(Array.isArray(node.tags) ? node.tags : []);
+        for (const tag of tags) if (tag && typeof tag === 'string') all.push(tag);
+      }
+    }
+  };
+  dfs(combat.children);
+  return Array.from(new Set(all)).sort((a, b) => String(a).localeCompare(String(b)));
+}
+
+const allRoleTags = computed(() => collectCombatTags(repoData.value));
+const displayedRoleTags = computed(() => {
+  const kw = (roleFilterSearch.value || '').trim().toLowerCase();
+  if (!kw) return allRoleTags.value;
+  return allRoleTags.value.filter(t => String(t).toLowerCase().includes(kw));
+});
+
+function onRoleCheckboxChange(tag, evt) {
+  const checked = evt?.target?.checked;
+  const current = new Set(selectedRoleTags.value);
+  if (checked) {
+    if (!current.has(tag) && current.size < 4) current.add(tag);
+  } else {
+    current.delete(tag);
+  }
+  selectedRoleTags.value = Array.from(current);
+  appliedRoleTags.value = [...selectedRoleTags.value];
+}
+
+function resetRoleFilter() {
+  selectedRoleTags.value = [];
+  appliedRoleTags.value = [];
+}
+
+function confirmRoleFilter() {
+  appliedRoleTags.value = [...selectedRoleTags.value];
+  sortDropdownOpen.value = false;
+}
 
 function applySortForMenu(menuKey) {
   const state = sortStateByMenu[menuKey];
@@ -936,12 +1022,16 @@ watch(selectedMenu, () => {
   scriptTab.value = 'all';
   // 切换菜单时恢复该菜单上次会话内的排序状态
   applySortForMenu(selectedMenu.value[0]);
+  // 同步 combat 面板临时选择
+  roleFilterSearch.value = '';
+  selectedRoleTags.value = [...appliedRoleTags.value];
 });
 
 onMounted(() => {
   if (['2', '3', '4'].includes(selectedMenu.value[0])) {
     applySortForMenu(selectedMenu.value[0]);
   }
+  selectedRoleTags.value = [...appliedRoleTags.value];
 });
 
 watch(subscribedScriptPaths, (newPaths) => {
@@ -1273,6 +1363,64 @@ const updateAllScriptsHasUpdate = (hasUpdate) => {
 
 .sort-menu {
   min-width: 120px;
+}
+
+.role-filter-panel {
+  width: 360px;
+  max-height: 400px;
+  padding: 8px 12px 12px 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+.role-filter-search :deep(.ant-input-affix-wrapper) {
+  height: 34px;
+  border-radius: 8px;
+  border-color: #d9d9d9;
+}
+.role-filter-search :deep(.ant-input-prefix) {
+  color: #999;
+}
+.role-filter-list {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 4px;
+  display: grid;
+  margin: 8px 0;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px 10px;
+}
+.role-filter-checkbox :deep(.ant-checkbox) {
+  transform: translateY(-1px);
+}
+.role-filter-checkbox :deep(.ant-checkbox-checked .ant-checkbox-inner) {
+  background-color: #1677ff;
+  border-color: #1677ff;
+}
+.role-filter-checkbox:hover {
+  color: #1677ff;
+}
+.role-filter-label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.role-filter-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #f0f0f0;
+  background: #fff;
+}
+.role-filter-btn {
+  border-radius: 8px;
+  padding: 0 12px;
+}
+.role-filter-btn-primary {
+  border-radius: 8px;
+  padding: 0 14px;
 }
 
 .sort-menu .ant-menu-item {

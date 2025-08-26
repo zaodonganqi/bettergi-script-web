@@ -33,6 +33,7 @@
 <script setup>
 import { ref, computed, watch, nextTick } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { mapTagsToCanonical } from '@/utils/roleAlias';
 const { t: $t } = useI18n();
 
 const props = defineProps({
@@ -60,6 +61,10 @@ const props = defineProps({
   sortOrder: {
     type: String,
     default: 'desc'
+  },
+  roleTags: {
+    type: Array,
+    default: () => []
   }
 });
 const { repoData } = props;
@@ -223,6 +228,16 @@ const filteredStrategies = computed(() => {
       return [];
     }
     baseList = baseList.filter(strategy => props.subscribedPaths.includes(strategy.path));
+  }
+
+  // 角色标签筛选
+  if (Array.isArray(props.roleTags) && props.roleTags.length > 0) {
+    const selected = mapTagsToCanonical(props.roleTags).map(s => String(s).toLowerCase());
+    baseList = baseList.filter(item => {
+      const tags = mapTagsToCanonical(Array.isArray(item.tags) ? item.tags : [])
+        .map(t => String(t).toLowerCase());
+      return selected.every(sel => tags.includes(sel));
+    });
   }
 
   if (!props.searchKey) {

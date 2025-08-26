@@ -146,7 +146,9 @@
   },
   "common": {
     "comma": "，",
-    "noDesc": "無簡介"
+    "noDesc": "無簡介",
+    "reset": "重置",
+    "confirm": "確定"
   },
   "detail": {
     "author": "作者：",

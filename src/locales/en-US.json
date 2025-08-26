@@ -146,7 +146,9 @@
   },
   "common": {
     "comma": ", ",
-    "noDesc": "No description"
+    "noDesc": "No description",
+    "reset": "Reset",
+    "confirm": "Confirm"
   },
   "detail": {
     "author": "Author: ",
@@ -200,7 +202,9 @@
     "time": "Time",
     "name": "Name",
     "ascending": "Ascending",
-    "descending": "Descending"
+    "descending": "Descending",
+    "filterByRole": "Filter by Role",
+    "searchRole": "Search roles"
   },
   "loading": {
     "repoData": "Loading repository data, please wait..."
