@@ -64,7 +64,7 @@
                 <div class="table-pagination-outer" v-if="script.type === 'directory' && files && files.length > 0">
                   <div class="table-scroll-container" ref="tableScrollRef">
                     <a-table :columns="columns" :data-source="pagedData" row-key="hash" :bordered="true"
-                      :pagination="false">
+                      :pagination="false", :sticky="true">
                       <template #bodyCell="{ column, record }">
                         <template v-if="column.dataIndex === 'name'">
                           <a-popover v-if="record.description" :content="record.description">
@@ -180,17 +180,17 @@ const columns = computed(() => {
   if (mode === 'single') {
     return [
       { title: $t('detail.name'), dataIndex: 'name', width: '30%' },
-      { title: $t('detail.scriptAuthor'), dataIndex: 'author', width: '13%' },
-      { title: $t('detail.tags'), dataIndex: 'tags', width: '24%' },
-      { title: $t('detail.lastUpdated'), dataIndex: 'lastUpdated', width: '16%' },
+      { title: $t('detail.scriptAuthor'), dataIndex: 'author', width: '13%', onFilter: (value, record) => record.author === value, filters: buildAuthorFilters(files.value), filterSearch: true, filterMultiple: true },
+      { title: $t('detail.tags'), dataIndex: 'tags', width: '24%', onFilter: (value, record) => matchTagFilter(value, record), filters: buildTagFilters(files.value), filterSearch: true, filterMultiple: true },
+      { title: $t('detail.lastUpdated'), dataIndex: 'lastUpdated', width: '16%', sorter: (a, b) => new Date(a.lastUpdated) - new Date(b.lastUpdated) },
       { title: $t('detail.operations'), key: 'operations', width: '17%' }
     ]
   } else {
     return [
       { title: $t('detail.name'), dataIndex: 'name', width: '30%' },
-      { title: $t('detail.scriptAuthor'), dataIndex: 'author', width: '10%' },
-      { title: $t('detail.tags'), dataIndex: 'tags', width: '24%' },
-      { title: $t('detail.lastUpdated'), dataIndex: 'lastUpdated', width: '16%' },
+      { title: $t('detail.scriptAuthor'), dataIndex: 'author', width: '10%', onFilter: (value, record) => record.author === value, filters: buildAuthorFilters(files.value), filterSearch: true, filterMultiple: true },
+      { title: $t('detail.tags'), dataIndex: 'tags', width: '24%', onFilter: (value, record) => matchTagFilter(value, record), filters: buildTagFilters(files.value), filterSearch: true, filterMultiple: true },
+      { title: $t('detail.lastUpdated'), dataIndex: 'lastUpdated', width: '16%', sorter: (a, b) => new Date(a.lastUpdated) - new Date(b.lastUpdated) },
       { title: $t('detail.operations'), key: 'operations', width: '20%' }
     ]
   }
@@ -308,6 +308,79 @@ function getTagColor(tag) {
     tagColorMap.value[tag] = getRandomColor();
   }
   return tagColorMap.value[tag];
+}
+
+// 作者筛选项
+function buildAuthorFilters(fileList) {
+  const authors = fileList.map(f => f.author).filter(Boolean);
+  const uniqueAuthors = Array.from(new Set(authors)).sort((a, b) => String(a).localeCompare(String(b)));
+  return uniqueAuthors.map(author => ({ text: author, value: author }));
+}
+
+// 标签筛选项：版本提示归为二级菜单
+function parseSemverFromTag(tag) {
+  // 提取版本号
+  const match = tag.match(/(\d+)\.(\d+)\.(\d+)/);
+  if (!match) return null;
+  return { major: Number(match[1]), minor: Number(match[2]), patch: Number(match[3]) };
+}
+
+function isVersionTag(tag) {
+  if (!tag) return false;
+  const lower = String(tag).toLowerCase();
+  if (!lower.startsWith('bgi')) return false;
+  return /(\d+)\.(\d+)\.(\d+)/.test(lower);
+}
+
+function compareSemverDesc(aTag, bTag) {
+  const a = parseSemverFromTag(aTag);
+  const b = parseSemverFromTag(bTag);
+  if (!a && !b) return String(aTag).localeCompare(String(bTag));
+  if (!a) return 1;
+  if (!b) return -1;
+  if (a.major !== b.major) return b.major - a.major;
+  if (a.minor !== b.minor) return b.minor - a.minor;
+  return b.patch - a.patch;
+}
+
+function buildTagFilters(fileList) {
+  const tags = fileList.flatMap(f => f.tags || []).filter(Boolean);
+  const uniqueTags = Array.from(new Set(tags));
+
+  const versionTags = uniqueTags.filter(isVersionTag).sort(compareSemverDesc);
+  const otherTags = uniqueTags.filter(t => !isVersionTag(t)).sort((a, b) => String(a).localeCompare(String(b)));
+
+  const filters = [];
+  if (versionTags.length) {
+    filters.push({
+      text: '⭕ 筛选bgi版本 ->',
+      value: '__version_group__',
+      children: versionTags.map(v => ({ text: v, value: v }))
+    });
+  }
+  filters.push(...otherTags.map(t => ({ text: t, value: t })));
+  return filters;
+}
+
+// 选择高版本时，默认也匹配低版本
+function matchTagFilter(value, record) {
+  if (!record || !Array.isArray(record.tags)) return false;
+  if (!isVersionTag(value)) {
+    return record.tags.includes(value);
+  }
+
+  // 如果版本满足 recordVersion >= selectedVersion 则匹配
+  const selected = parseSemverFromTag(value);
+  if (!selected) return record.tags.includes(value);
+
+  return record.tags.some(tag => {
+    if (!isVersionTag(tag)) return false;
+    const v = parseSemverFromTag(tag);
+    if (!v) return false;
+    if (v.major !== selected.major) return v.major < selected.major;
+    if (v.minor !== selected.minor) return v.minor < selected.minor;
+    return v.patch <= selected.patch;
+  });
 }
 
 const handleSubscribe = async (item) => {
