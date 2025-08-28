@@ -270,7 +270,6 @@ const processNode = (node, parentKey = '', parentSubscribed = false) => {
     title: node.name,
     name: node.name,
     type: node.type || '',
-    hash: node.hash || '',
     version: node.version,
     author: node.author || '',
     authors: authors,

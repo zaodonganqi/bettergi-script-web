@@ -64,7 +64,7 @@
                 <div class="table-pagination-outer" v-if="script.type === 'directory' && files && files.length > 0">
                   <div class="table-scroll-container" ref="tableScrollRef">
                     <a-table :columns="columns" :data-source="pagedData" row-key="hash" :bordered="true"
-                      :pagination="false", :sticky="true">
+                      :pagination="false", :sticky="true" @change="onTableChange">
                       <template #bodyCell="{ column, record }">
                         <template v-if="column.dataIndex === 'name'">
                           <a-popover v-if="record.description" :content="record.description">
@@ -102,7 +102,7 @@
                     </a-table>
                   </div>
                   <div class="custom-pagination">
-                    <a-pagination :current="currentPage" :page-size="pageSize" :total="files.length"
+                    <a-pagination :current="currentPage" :page-size="pageSize" :total="filteredSortedData.length"
                       @change="onPageChange" @showSizeChange="onPageSizeChange" :show-size-changer="true"
                       :page-size-options="['10', '20', '50', '100']" />
                   </div>
@@ -123,7 +123,6 @@
               </a-space>
             </a-descriptions-item>
             <a-descriptions-item :label="$t('detail.lastUpdated')">{{ modalRecord.lastUpdated }}</a-descriptions-item>
-            <a-descriptions-item :label="$t('detail.hash')">{{ modalRecord.hash }}</a-descriptions-item>
             <a-descriptions-item :label="$t('detail.description')">{{ modalRecord.description }}</a-descriptions-item>
             <a-descriptions-item :label="$t('detail.version')">{{ modalRecord.version }}</a-descriptions-item>
             <a-descriptions-item :label="$t('detail.path')">{{ modalRecord.path }}</a-descriptions-item>
@@ -160,9 +159,46 @@ const mode = import.meta.env.VITE_MODE;
 const { copy } = useClipboard();
 const currentPage = ref(1);
 const pageSize = ref(10);
+
+// 筛选与排序状态
+const columnFilters = ref({
+  author: [],
+  tags: []
+});
+const currentSorter = ref({
+  field: null,
+  order: null
+});
+
+// 筛选排序的结果
+const filteredSortedData = computed(() => {
+  let data = Array.isArray(files.value) ? files.value.slice() : [];
+
+  // 作者筛选
+  const authors = columnFilters.value.author || [];
+  if (authors.length > 0) {
+    data = data.filter(item => authors.includes(item.author));
+  }
+
+  // 标签筛选
+  const tags = columnFilters.value.tags || [];
+  if (tags.length > 0) {
+    data = data.filter(item => Array.isArray(item.tags) && item.tags.some(tag => tags.includes(tag)));
+  }
+
+  // 排序
+  if (currentSorter.value && currentSorter.value.field === 'lastUpdated' && currentSorter.value.order) {
+    const direction = currentSorter.value.order === 'ascend' ? 1 : -1;
+    data.sort((a, b) => (new Date(a.lastUpdated) - new Date(b.lastUpdated)) * direction);
+  }
+
+  return data;
+});
+
+// 分页
 const pagedData = computed(() => {
   const start = (currentPage.value - 1) * pageSize.value;
-  return files.value.slice(start, start + pageSize.value);
+  return filteredSortedData.value.slice(start, start + pageSize.value);
 });
 
 const onPageChange = (page) => {
@@ -174,23 +210,45 @@ const onPageSizeChange = (current, size) => {
   currentPage.value = 1;
 };
 
+// 表格筛选/排序
+const onTableChange = (pagination, filters, sorter) => {
+  // 筛选
+  columnFilters.value = {
+    author: (filters && (filters.author || filters['author'])) || [],
+    tags: (filters && (filters.tags || filters['tags'])) || []
+  };
+
+  // 排序
+  if (Array.isArray(sorter)) {
+    const s = sorter.find(s => s.field === 'lastUpdated');
+    currentSorter.value = s ? { field: s.field, order: s.order } : { field: null, order: null };
+  } else if (sorter && sorter.field) {
+    currentSorter.value = { field: sorter.field, order: sorter.order };
+  } else {
+    currentSorter.value = { field: null, order: null };
+  }
+
+  // 变更后回到第一页
+  currentPage.value = 1;
+};
+
 const tableScrollRef = ref(null);
 
 const columns = computed(() => {
   if (mode === 'single') {
     return [
       { title: $t('detail.name'), dataIndex: 'name', width: '30%' },
-      { title: $t('detail.scriptAuthor'), dataIndex: 'author', width: '13%', onFilter: (value, record) => record.author === value, filters: buildAuthorFilters(files.value), filterSearch: true, filterMultiple: true },
-      { title: $t('detail.tags'), dataIndex: 'tags', width: '24%', onFilter: (value, record) => matchTagFilter(value, record), filters: buildTagFilters(files.value), filterSearch: true, filterMultiple: true },
-      { title: $t('detail.lastUpdated'), dataIndex: 'lastUpdated', width: '16%', sorter: (a, b) => new Date(a.lastUpdated) - new Date(b.lastUpdated) },
+      { title: $t('detail.scriptAuthor'), dataIndex: 'author', width: '13%', onFilter: (value, record) => record.author === value, filters: buildAuthorFilters(files.value), filterSearch: true, filterMultiple: true, filteredValue: columnFilters.value.author },
+      { title: $t('detail.tags'), dataIndex: 'tags', width: '24%', onFilter: (value, record) => record.tags && record.tags.includes(value), filters: buildTagFilters(files.value), filterSearch: true, filterMultiple: true, filteredValue: columnFilters.value.tags },
+      { title: $t('detail.lastUpdated'), dataIndex: 'lastUpdated', width: '16%', sorter: (a, b) => new Date(a.lastUpdated) - new Date(b.lastUpdated), sortOrder: currentSorter.value.field === 'lastUpdated' ? currentSorter.value.order : null },
       { title: $t('detail.operations'), key: 'operations', width: '17%' }
     ]
   } else {
     return [
       { title: $t('detail.name'), dataIndex: 'name', width: '30%' },
-      { title: $t('detail.scriptAuthor'), dataIndex: 'author', width: '10%', onFilter: (value, record) => record.author === value, filters: buildAuthorFilters(files.value), filterSearch: true, filterMultiple: true },
-      { title: $t('detail.tags'), dataIndex: 'tags', width: '24%', onFilter: (value, record) => matchTagFilter(value, record), filters: buildTagFilters(files.value), filterSearch: true, filterMultiple: true },
-      { title: $t('detail.lastUpdated'), dataIndex: 'lastUpdated', width: '16%', sorter: (a, b) => new Date(a.lastUpdated) - new Date(b.lastUpdated) },
+      { title: $t('detail.scriptAuthor'), dataIndex: 'author', width: '10%', onFilter: (value, record) => record.author === value, filters: buildAuthorFilters(files.value), filterSearch: true, filterMultiple: true, filteredValue: columnFilters.value.author },
+      { title: $t('detail.tags'), dataIndex: 'tags', width: '24%', onFilter: (value, record) => record.tags && record.tags.includes(value), filters: buildTagFilters(files.value), filterSearch: true, filterMultiple: true, filteredValue: columnFilters.value.tags },
+      { title: $t('detail.lastUpdated'), dataIndex: 'lastUpdated', width: '16%', sorter: (a, b) => new Date(a.lastUpdated) - new Date(b.lastUpdated), sortOrder: currentSorter.value.field === 'lastUpdated' ? currentSorter.value.order : null },
       { title: $t('detail.operations'), key: 'operations', width: '20%' }
     ]
   }
@@ -317,70 +375,11 @@ function buildAuthorFilters(fileList) {
   return uniqueAuthors.map(author => ({ text: author, value: author }));
 }
 
-// 标签筛选项：版本提示归为二级菜单
-function parseSemverFromTag(tag) {
-  // 提取版本号
-  const match = tag.match(/(\d+)\.(\d+)\.(\d+)/);
-  if (!match) return null;
-  return { major: Number(match[1]), minor: Number(match[2]), patch: Number(match[3]) };
-}
-
-function isVersionTag(tag) {
-  if (!tag) return false;
-  const lower = String(tag).toLowerCase();
-  if (!lower.startsWith('bgi')) return false;
-  return /(\d+)\.(\d+)\.(\d+)/.test(lower);
-}
-
-function compareSemverDesc(aTag, bTag) {
-  const a = parseSemverFromTag(aTag);
-  const b = parseSemverFromTag(bTag);
-  if (!a && !b) return String(aTag).localeCompare(String(bTag));
-  if (!a) return 1;
-  if (!b) return -1;
-  if (a.major !== b.major) return b.major - a.major;
-  if (a.minor !== b.minor) return b.minor - a.minor;
-  return b.patch - a.patch;
-}
-
+// tag筛选项
 function buildTagFilters(fileList) {
   const tags = fileList.flatMap(f => f.tags || []).filter(Boolean);
-  const uniqueTags = Array.from(new Set(tags));
-
-  const versionTags = uniqueTags.filter(isVersionTag).sort(compareSemverDesc);
-  const otherTags = uniqueTags.filter(t => !isVersionTag(t)).sort((a, b) => String(a).localeCompare(String(b)));
-
-  const filters = [];
-  if (versionTags.length) {
-    filters.push({
-      text: '⭕ 筛选bgi版本 ->',
-      value: '__version_group__',
-      children: versionTags.map(v => ({ text: v, value: v }))
-    });
-  }
-  filters.push(...otherTags.map(t => ({ text: t, value: t })));
-  return filters;
-}
-
-// 选择高版本时，默认也匹配低版本
-function matchTagFilter(value, record) {
-  if (!record || !Array.isArray(record.tags)) return false;
-  if (!isVersionTag(value)) {
-    return record.tags.includes(value);
-  }
-
-  // 如果版本满足 recordVersion >= selectedVersion 则匹配
-  const selected = parseSemverFromTag(value);
-  if (!selected) return record.tags.includes(value);
-
-  return record.tags.some(tag => {
-    if (!isVersionTag(tag)) return false;
-    const v = parseSemverFromTag(tag);
-    if (!v) return false;
-    if (v.major !== selected.major) return v.major < selected.major;
-    if (v.minor !== selected.minor) return v.minor < selected.minor;
-    return v.patch <= selected.patch;
-  });
+  const uniqueTags = Array.from(new Set(tags)).sort((a, b) => String(a).localeCompare(String(b)));
+  return uniqueTags.map(tag => ({ text: tag, value: tag }));
 }
 
 const handleSubscribe = async (item) => {
@@ -413,6 +412,9 @@ watch(() => props.script, (newScript) => {
     // 重置分页器状态
     currentPage.value = 1;
     pageSize.value = 10;
+    // 重置筛选与排序
+    columnFilters.value = { author: [], tags: [] };
+    currentSorter.value = { field: null, order: null };
     files.value = Array.isArray(newScript.files) ? newScript.files : [];
     // 只有script变化时才重置和加载README
     if (newScript.path) {
