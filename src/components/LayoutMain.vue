@@ -3,7 +3,7 @@
     <!-- 左侧菜单 -->
     <div class="custom-sider">
       <div class="sider-header">
-        <div class="sider-logo" :title="$t('sider.mainRepo')" @click="openExternalLink('https://bettergi.com/')"></div>
+        <div class="sider-logo" :title="$t('sider.document')" @click="openExternalLink('https://bettergi.com/')"></div>
         <span class="repo-title">{{ $t('sider.repoTitle') }}</span>
       </div>
       <div class="sider-menu-wrap">
