@@ -12,7 +12,7 @@
       <template #title="{ title, dataRef }">
         <div class="tree-node-container">
           <div class="tree-node-title">
-            <a-image v-if="dataRef.showIcon" :src="dataRef.icon" :width="26" :placeholder="false"
+            <a-image class="tree-node-icon" v-if="dataRef.showIcon" :src="dataRef.icon" :placeholder="false"
               @error="dataRef.showIcon = false" />
             <span class="tree-node-title-text">{{ title }}</span>
             <span v-if="dataRef.hasUpdate" class="has-update-dot"></span>
@@ -550,7 +550,15 @@ function normalize(str) {
 
 .tree-node-title {
   flex: 1;
+  display: flex;
+  align-items: center;
   padding-right: 62px;
+}
+
+:deep(.ant-image-img) {
+  width: 28px;
+  height: 28px;
+  border-radius: 10px;
 }
 
 .tree-node-title-text {
