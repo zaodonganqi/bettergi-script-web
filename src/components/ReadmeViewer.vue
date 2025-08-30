@@ -13,7 +13,7 @@ import MarkdownIt from 'markdown-it';
 import markdownItAnchor from 'markdown-it-anchor';
 import hljs from 'highlight.js';
 import 'highlight.js/styles/github.css';
-import { getWebPath, getRepoPath } from '@/utils/basePaths';
+import { getWebPath, getRepoPath, getMirrorPath } from '@/utils/basePaths';
 import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
 
@@ -38,6 +38,7 @@ const emit = defineEmits(['loaded', 'error', 'hasContent']);
 const readmeContent = ref('');
 const isLoading = ref(false);
 const loadError = ref(null);
+const useMirror = ref(false);
 
 // 判断是否为 HTTP URL
 const isHttpUrl = computed(() => {
@@ -225,7 +226,10 @@ function getReadmeUrl(path) {
   if (/^https?:\/\//i.test(path)) {
     return path;
   }
-  // 否则拼接 GitHub Raw URL
+  // 检查是否需要加速
+  if (useMirror.value) {
+    return getMirrorPath() + path.replace(/\\/g, '/') + '/README.md';
+  }
   return getRepoPath() + path.replace(/\\/g, '/') + '/README.md';
 }
 
@@ -353,6 +357,7 @@ const fetchAndRenderReadme = async (path) => {
         isLoading.value = false;
         return;
       } else {
+        useMirror.value = true;
         fetchError = new Error('Load failed');
       }
     } catch (e) {

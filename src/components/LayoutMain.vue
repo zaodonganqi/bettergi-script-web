@@ -508,6 +508,7 @@ const menuCounts = ref([0, 0, 0, 0]);
 const repoData = ref({});
 const repoError = ref(false);
 const globalLoading = ref(false);
+const useMirror = ref(false);
 let fetchTimeoutId = null;
 
 // 格式化时间
@@ -559,7 +560,14 @@ async function getRepoJson() {
         controller.abort();
       }, 10000);
       try {
-        const response = await fetch(getRawPath() + 'repo.json', {
+        let repoPath = '';
+        if (useMirror.value) {
+          console.log("Using mirror for fetching repo.json");
+          repoPath = getMirrorPath() + 'repo.json';
+        } else {
+          repoPath = getRawPath() + 'repo.json';
+        }
+        const response = await fetch(repoPath, {
           signal: controller.signal
         });
         clearTimeout(fetchTimeoutId);
@@ -567,6 +575,7 @@ async function getRepoJson() {
         if (!response.ok) throw new Error('Network request failed');
         repoData.value = await response.json();
       } catch (err) {
+        useMirror.value = true; // 下次使用镜像
         clearTimeout(fetchTimeoutId);
         fetchTimeoutId = null;
         if (didTimeout) {
