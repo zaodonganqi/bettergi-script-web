@@ -54,14 +54,11 @@
     <a-layout-sider class="script-sider">
       <div class="script-header">
         <span class="script-title">{{ currentMenuTitle }}</span>
-        <div class="script-actions" style="position:relative;">
+        <div v-if="mode === 'single'", class="script-actions" style="position:relative;">
           <a-button type="primary" class="script-btn" :class="{ 'script-btn-active': scriptTab === 'all' }"
             @click="onClickShowAll">{{ $t('button.all') }}</a-button>
           <a-button class="script-btn" :class="{ 'script-btn-active': scriptTab === 'subscribed' }"
             @click="onClickShowSubscribed">{{ $t('button.subscribed') }}</a-button>
-          <div v-if="mode === 'web'" class="script-actions-mask">
-            <span>{{ $t('script.onlyLocal') }}</span>
-          </div>
         </div>
       </div>
       <div class="search-section">
@@ -165,10 +162,14 @@
 
     <!-- 右侧内容区域 -->
     <a-layout>
-      <div v-if="selectedMenu[0] === '1'" class="main-right">
-        <!-- 顶部操作栏 -->
-        <div v-if="selectedScript" class="detail-top-bar">
+      <!-- 顶部操作栏 -->
+      <div v-if="selectedScript" class="detail-top-bar">
           <div class="top-bar-left">
+            <!-- <a-tooltip v-if="mode === 'single'" :title="'一键订阅'">
+              <a-button type="text" class="action-btn" @click="">
+                <DownloadOutlined />
+              </a-button>
+            </a-tooltip> -->
             <a-tooltip :title="$t('action.jumpToGitHub')">
               <a-button type="text" class="action-btn" @click="jumpToGitHub">
                 <LinkOutlined />
@@ -188,57 +189,14 @@
             </a-tooltip>
           </div>
         </div>
+      <div v-if="selectedMenu[0] === '1'" class="main-right">
         <MapDetail :script="selectedScript" :subscribed-paths="subscribedScriptPaths"
           :start-polling-user-config="startPollingUserConfig" />
       </div>
       <div v-else-if="selectedMenu[0] === '2'" class="main-right">
-        <!-- 顶部操作栏 -->
-        <div v-if="selectedScript" class="detail-top-bar">
-          <div class="top-bar-left">
-            <a-tooltip :title="$t('action.jumpToGitHub')">
-              <a-button type="text" class="action-btn" @click="jumpToGitHub">
-                <LinkOutlined />
-              </a-button>
-            </a-tooltip>
-            <a-tooltip :title="$t('action.comment')">
-              <a-button type="text" class="action-btn" @click="commentModalOpen = true">
-                <MessageOutlined />
-              </a-button>
-            </a-tooltip>
-          </div>
-          <div class="top-bar-right">
-            <a-tooltip :title="$t('action.help')">
-              <a-button type="text" class="action-btn" @click="showHelpModal = true">
-                <QuestionCircleOutlined />
-              </a-button>
-            </a-tooltip>
-          </div>
-        </div>
         <ScriptDetail :script="selectedScript" :start-polling-user-config="startPollingUserConfig" />
       </div>
       <div v-else-if="selectedMenu[0] === '3' || selectedMenu[0] === '4'" class="main-right">
-        <!-- 顶部操作栏 -->
-        <div v-if="selectedScript" class="detail-top-bar">
-          <div class="top-bar-left">
-            <a-tooltip :title="$t('action.jumpToGitHub')">
-              <a-button type="text" class="action-btn" @click="jumpToGitHub">
-                <LinkOutlined />
-              </a-button>
-            </a-tooltip>
-            <a-tooltip :title="$t('action.comment')">
-              <a-button type="text" class="action-btn" @click="commentModalOpen = true">
-                <MessageOutlined />
-              </a-button>
-            </a-tooltip>
-          </div>
-          <div class="top-bar-right">
-            <a-tooltip :title="$t('action.help')">
-              <a-button type="text" class="action-btn" @click="showHelpModal = true">
-                <QuestionCircleOutlined />
-              </a-button>
-            </a-tooltip>
-          </div>
-        </div>
         <StrategyDetail :script="selectedScript" :start-polling-user-config="startPollingUserConfig" />
       </div>
     </a-layout>
@@ -382,7 +340,7 @@
 
 <script setup>
 import { ref, reactive, computed, onMounted, onUnmounted, watch, nextTick } from 'vue';
-import { FolderOutlined, FileOutlined, CalculatorOutlined, BulbOutlined, SearchOutlined, QuestionCircleOutlined, MessageOutlined, LinkOutlined, ReloadOutlined, SettingOutlined, AlignRightOutlined, CheckOutlined } from '@ant-design/icons-vue';
+import { FolderOutlined, FileOutlined, CalculatorOutlined, BulbOutlined, SearchOutlined, QuestionCircleOutlined, MessageOutlined, DownloadOutlined, LinkOutlined, ReloadOutlined, SettingOutlined, AlignRightOutlined, CheckOutlined } from '@ant-design/icons-vue';
 import { message as Message } from 'ant-design-vue';
 import Giscus from '@giscus/vue';
 import MapTreeList from './lists/MapTreeList.vue';
@@ -394,7 +352,7 @@ import StrategyDetail from './details/StrategyDetail.vue';
 import MapDetail from './details/MapDetail.vue';
 import ReadmeViewer from './ReadmeViewer.vue';
 import Help from './Help.vue';
-import { getWebPath, getRawPath } from '@/utils/basePaths';
+import { getWebPath, getRawPath, getMirrorPath } from '@/utils/basePaths';
 import { useI18n } from 'vue-i18n';
 import { mapTagsToCanonical } from '@/utils/roleAlias';
 
