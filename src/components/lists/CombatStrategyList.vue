@@ -16,7 +16,7 @@
               {{item.authors.map(a => a.name).join($t('common.comma'))}}
             </template>
             <template v-else>
-              {{ item.author || $t('combatStrategyList.noAuthor') }}
+              {{ $t('combatStrategyList.noAuthor') }}
             </template>
           </div>
           <div class="item-desc">{{ item.desc }}</div>
@@ -94,12 +94,7 @@ function getCombatStrategiesFromRepo(repo, subscribedPaths = [], parentSubscribe
           }
         }
         child.fullPath = `${currentPath}/${child.name}`;
-        let authors = [];
-        if (Array.isArray(child.authors) && child.authors.length > 0) {
-          authors = child.authors;
-        } else if (child.author) {
-          authors = [{ name: child.author }];
-        }
+        const authors = Array.isArray(child.authors) ? child.authors : [];
         child.authors = authors;
         result.push({
           ...child,
@@ -126,7 +121,6 @@ const strategies = ref(
     id: idx + 1,
     title: removeFileSuffix(item.name),
     name: item.name,
-    author: item.author || $t('combatStrategyList.noAuthor'),
     authors: item.authors || [],
     desc: item.description,
     tags: item.tags || [],
@@ -149,7 +143,6 @@ watch(
           id: idx + 1,
           title: removeFileSuffix(item.name),
           name: item.name,
-          author: item.author || $t('combatStrategyList.noAuthor'),
           authors: item.authors || [],
           desc: item.description,
           tags: item.tags || [],

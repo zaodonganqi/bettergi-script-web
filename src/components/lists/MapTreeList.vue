@@ -27,14 +27,14 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue';
-import { CaretRightOutlined, CaretDownOutlined } from '@ant-design/icons-vue';
-import { useClipboard } from '@vueuse/core';
-import { message as Message } from 'ant-design-vue';
-import { getRepoPath } from '@/utils/basePaths';
-import { subscribePaths } from '@/utils/subscription';
-import { useI18n } from 'vue-i18n';
+import {computed, onMounted, ref, watch} from 'vue';
+import {CaretDownOutlined, CaretRightOutlined} from '@ant-design/icons-vue';
+import {useClipboard} from '@vueuse/core';
+import {message as Message} from 'ant-design-vue';
+import {subscribePaths} from '@/utils/subscription';
+import {useI18n} from 'vue-i18n';
 import iconUrlMap from '@/assets/icon_url.json';
+
 const { t: $t } = useI18n();
 
 const props = defineProps({
@@ -183,30 +183,25 @@ function collectFiles(node, parentPath = '') {
   return files;
 }
 
-// 递归收集 authors
+// 递归收集authors
 function collectAuthors(node) {
-  // 优先用 node.authors
-  if (Array.isArray(node.authors) && node.authors.length > 0) {
-    return node.authors;
+  let authors = [];
+
+  // 收集当前节点的作者
+  if (Array.isArray(node.authors)) {
+    authors = [...node.authors];
   }
-  // 文件节点
-  if (node.type === 'file') {
-    if (node.author) {
-      return [{ name: node.author }];
-    }
-    return [];
-  }
-  // 目录节点递归
+
+  // 收集子节点的作者
   if (Array.isArray(node.children)) {
-    const all = node.children.flatMap(collectAuthors);
-    // 去重（按 name）
-    const map = new Map();
-    all.forEach(a => {
-      if (a && a.name) map.set(a.name, a);
-    });
-    return Array.from(map.values());
+    const childAuthors = node.children.flatMap(collectAuthors);
+    authors.push(...childAuthors);
   }
-  return [];
+
+  // 去重
+  return Array.from(
+      new Map(authors.filter(a => a && a.name).map(a => [a.name, a])).values()
+  );
 }
 
 // 递归给 files 节点赋 isSubscribed 字段
@@ -276,7 +271,6 @@ const processNode = (node, parentKey = '', parentSubscribed = false) => {
     name: node.name,
     type: node.type || '',
     version: node.version,
-    author: node.author || '',
     authors: authors,
     description: node.description,
     tags: node.tags || [],

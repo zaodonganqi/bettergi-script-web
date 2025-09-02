@@ -87,7 +87,6 @@ const openExternalLink = (url) => {
                 </template>
               </span>
           </template>
-          <span v-else-if="selectedScript?.author" class="script-author">{{ $t('script.author') }}{{ selectedScript.author }}</span>
           <span v-else class="script-author">{{ $t('script.noAuthor') }}</span>
         </div>
       </div>

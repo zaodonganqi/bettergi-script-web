@@ -74,13 +74,21 @@
                 <div class="table-pagination-outer" v-if="script.type === 'directory' && files && files.length > 0">
                   <div class="table-scroll-container" ref="tableScrollRef">
                     <a-table :columns="columns" :data-source="pagedData" row-key="hash" :bordered="true"
-                             :pagination="false" , :sticky="true" @change="onTableChange">
+                             :pagination="false" :sticky="true" @change="onTableChange">
                       <template #bodyCell="{ column, record }">
                         <template v-if="column.dataIndex === 'name'">
                           <a-popover v-if="record.description" :content="record.description">
                             <span style="word-break: break-all; white-space: normal;">{{ record.name }}</span>
                           </a-popover>
                           <span v-else style="word-break: break-all; white-space: normal;">{{ record.name }}</span>
+                        </template>
+                        <template v-else-if="column.dataIndex === 'authors'">
+                          <span>
+                            {{ Array.isArray(record.authors)
+                              ? record.authors.map(a => (typeof a === 'string' ? a : a && a.name)).filter(Boolean).join($t('common.comma'))
+                              : (record.authors || '')
+                            }}
+                          </span>
                         </template>
                         <template v-else-if="column.dataIndex === 'tags'">
                           <div class="tags-container">
@@ -134,7 +142,14 @@
         <a-modal v-model:open="modalOpen" :title="$t('detail.modalTitle')" :footer="null" width="480" centered>
           <a-descriptions bordered size="small" :column="1">
             <a-descriptions-item :label="$t('detail.name')">{{ modalRecord.name }}</a-descriptions-item>
-            <a-descriptions-item :label="$t('detail.author')">{{ modalRecord.author }}</a-descriptions-item>
+            <a-descriptions-item :label="$t('detail.author')">
+              <template v-if="Array.isArray(modalRecord.authors)">
+                {{ modalRecord.authors.map(a => a.name || a).join($t('common.comma')) }}
+              </template>
+              <template v-else>
+                {{ modalRecord.authors || $t('detail.noAuthor') }}
+              </template>
+            </a-descriptions-item>
             <a-descriptions-item :label="$t('detail.tags')">
               <a-space>
                 <a-tag v-for="tag in modalRecord.tags" :key="tag" :color="getTagColor(tag)">{{ tag }}</a-tag>
@@ -194,7 +209,7 @@ const commentModalOpen = ref(false);
 
 // 筛选与排序状态
 const columnFilters = ref({
-  author: [],
+  authors: [],
   tags: []
 });
 const currentSorter = ref({
@@ -207,9 +222,14 @@ const filteredSortedData = computed(() => {
   let data = Array.isArray(files.value) ? files.value.slice() : [];
 
   // 作者筛选
-  const authors = columnFilters.value.author || [];
+  const authors = columnFilters.value.authors || [];
   if (authors.length > 0) {
-    data = data.filter(item => authors.includes(item.author));
+    data = data.filter(item => {
+      const itemAuthors = Array.isArray(item.authors)
+        ? item.authors.map(a => (typeof a === 'string' ? a : a && a.name).trim()).filter(Boolean)
+        : (item.authors ? [String(item.authors)] : []);
+      return itemAuthors.some(name => authors.includes(name));
+    });
   }
 
   // 标签筛选
@@ -246,7 +266,7 @@ const onPageSizeChange = (current, size) => {
 const onTableChange = (pagination, filters, sorter) => {
   // 筛选
   columnFilters.value = {
-    author: (filters && (filters.author || filters['author'])) || [],
+    authors: (filters && (filters.authors || filters['authors'])) || [],
     tags: (filters && (filters.tags || filters['tags'])) || []
   };
 
@@ -275,13 +295,18 @@ const columns = computed(() => {
         width: '30%'},
       {
         title: $t('detail.scriptAuthor'),
-        dataIndex: 'author',
+        dataIndex: 'authors',
         width: '13%',
-        onFilter: (value, record) => record.author === value,
+        onFilter: (value, record) => {
+          const itemAuthors = Array.isArray(record.authors)
+            ? record.authors.map(a => (typeof a === 'string' ? a : a && a.name).trim()).filter(Boolean)
+            : (record.authors ? [String(record.authors)] : []);
+          return itemAuthors.includes(value);
+        },
         filters: buildAuthorFilters(files.value),
         filterSearch: true,
         filterMultiple: true,
-        filteredValue: columnFilters.value.author
+        filteredValue: columnFilters.value.authors
       },
       {
         title: $t('detail.tags'),
@@ -313,13 +338,18 @@ const columns = computed(() => {
         width: '30%'},
       {
         title: $t('detail.scriptAuthor'),
-        dataIndex: 'author',
+        dataIndex: 'authors',
         width: '10%',
-        onFilter: (value, record) => record.author === value,
+        onFilter: (value, record) => {
+          const itemAuthors = Array.isArray(record.authors)
+            ? record.authors.map(a => (typeof a === 'string' ? a : a && a.name).trim()).filter(Boolean)
+            : (record.authors ? [String(record.authors)] : []);
+          return itemAuthors.includes(value);
+        },
         filters: buildAuthorFilters(files.value),
         filterSearch: true,
         filterMultiple: true,
-        filteredValue: columnFilters.value.author
+        filteredValue: columnFilters.value.authors
       },
       {
         title: $t('detail.tags'),
@@ -462,9 +492,13 @@ function getTagColor(tag) {
 
 // 作者筛选项
 function buildAuthorFilters(fileList) {
-  const authors = fileList.map(f => f.author).filter(Boolean);
-  const uniqueAuthors = Array.from(new Set(authors)).sort((a, b) => String(a).localeCompare(String(b)));
-  return uniqueAuthors.map(author => ({text: author, value: author}));
+  const names = (Array.isArray(fileList) ? fileList : [])
+    .flatMap(f => Array.isArray(f.authors)
+      ? f.authors.map(a => (typeof a === 'string' ? a : a && a.name)).filter(Boolean)
+      : (f && f.authors ? [String(f.authors)] : [])
+    );
+  const unique = Array.from(new Set(names)).sort((a, b) => String(a).localeCompare(String(b)));
+  return unique.map(name => ({ text: name, value: name }));
 }
 
 // tag筛选项
@@ -505,7 +539,7 @@ watch(() => props.script, (newScript) => {
     currentPage.value = 1;
     pageSize.value = 10;
     // 重置筛选与排序
-    columnFilters.value = {author: [], tags: []};
+    columnFilters.value = {authors: [], tags: []};
     currentSorter.value = {field: null, order: null};
     files.value = Array.isArray(newScript.files) ? newScript.files : [];
     // 只有script变化时才重置和加载README

@@ -19,7 +19,7 @@
               {{item.authors.map(a => a.name).join($t('common.comma'))}}
             </template>
             <template v-else>
-              {{ item.author || $t('scriptList.noAuthor') }}
+              {{ $t('scriptList.noAuthor') }}
             </template>
           </div>
           <div class="item-desc">{{ item.desc }}</div>
@@ -93,12 +93,7 @@ function getJsScriptsFromRepo(repo, subscribedPaths = [], parentSubscribed = fal
           title = `${name1} - ${name2}`;
           description = newDescription.trim();
         }
-        let authors = [];
-        if (Array.isArray(child.authors) && child.authors.length > 0) {
-          authors = child.authors;
-        } else if (child.author) {
-          authors = [{ name: child.author }];
-        }
+        const authors = Array.isArray(child.authors) ? child.authors : [];
         result.push({
           ...child,
           name1: name1,
@@ -124,7 +119,6 @@ const scripts = ref(
     name: item.name,
     name1: item.name1,
     name2: item.name2,
-    author: item.author || $t('scriptList.noAuthor'),
     authors: item.authors || [],
     desc: item.description,
     tags: item.tags || [],
@@ -149,7 +143,6 @@ watch(
           name: item.name,
           name1: item.name1,
           name2: item.name2,
-          author: item.author || $t('scriptList.noAuthor'),
           authors: item.authors || [],
           desc: item.description,
           tags: item.tags || [],
