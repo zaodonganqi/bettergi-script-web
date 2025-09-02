@@ -10,8 +10,8 @@
                 {{ $t('detail.author') }}
                 <template v-for="(author, idx) in script.authors" :key="author.name">
                   <template v-if="author.link">
-                    <a :href="author.link" class="author-link" target="_blank" rel="noopener noreferrer">{{ author.name
-                      }}</a>
+                    <a :href="author.link" class="author-link" target="_blank" rel="noopener noreferrer">
+                      {{ author.name }}</a>
                   </template>
                   <template v-else>
                     <span>{{ author.name }}</span>
@@ -27,21 +27,29 @@
           </div>
           <div class="detail-time">{{ script.time }}</div>
         </div>
-        <div class="header-right" style="display: flex; align-items: center; gap: 8px;">
-            <a-button type="primary" v-if="!script.isSubscribed" @click="handleSubscribe(script)">{{ $t('detail.subscribe') }}</a-button>
-            <a-button type="primary" v-if="script.isSubscribed" :disabled="script.isSubscribed"
-              class="subscribed-btn">{{ $t('detail.subscribed') }}</a-button>
-            <a-button type="primary" v-if="script.isSubscribed" @click="handleSubscribe(script)">{{ $t('detail.subscribeAgain') }}</a-button>
-          </div>
+        <div class="header-right">
+          <a-button type="primary" @click="jumpToGitHub(script)">
+            {{ $t('action.jumpToGitHub') }}
+          </a-button>
+          <a-button type="primary" @click="commentModalOpen = true">
+            {{ $t('action.comment') }}
+          </a-button>
+          <a-button type="primary" v-if="!script.isSubscribed" @click="handleSubscribe(script)">
+            {{ $t('detail.subscribe') }}
+          </a-button>
+          <a-button type="primary" v-if="script.isSubscribed" @click="handleSubscribe(script)">
+            {{ $t('detail.subscribeAgain') }}
+          </a-button>
+        </div>
       </div>
       <div class="detail-readme">
-                            <div v-if="script && script.desc && script.desc.trim()" class="desc-block">
+        <div v-if="script && script.desc && script.desc.trim()" class="desc-block">
           <div class="desc-title">{{ $t('detail.desc') }}</div>
           <div class="desc-content">{{ script.desc }}</div>
         </div>
         <transition name="fade-slide-up">
           <div v-if="isLoadingReadme" class="readme-loading-indicator">
-            <a-spin size="small" />
+            <a-spin size="small"/>
             <span>{{ $t('detail.loadingReadme') }}</span>
           </div>
         </transition>
@@ -49,14 +57,17 @@
           <div v-if="loadError" class="readme-loading-indicator">
             <a-button type="text" size="small" @click="retryLoadReadme">
               <template #icon>
-                <ReloadOutlined />
+                <ReloadOutlined/>
               </template>
             </a-button>
             <span>{{ $t('detail.readmeFailed') }}</span>
           </div>
         </transition>
-                 <ReadmeViewer :key="readmeKey" :path="script.path" :desc="null" :showDescTitle="false" :showNoDesc="!script.desc"
-          @loaded="handleReadmeLoaded" @error="handleReadmeError" />
+        <ReadmeViewer :key="readmeKey" :path="script.path" :desc="null" :showDescTitle="false"
+                      :showNoDesc="!script.desc"
+                      @loaded="handleReadmeLoaded" @error="handleReadmeError"/>
+        <!-- 评论弹窗-->
+        <Comment v-model:commentModalOpen="commentModalOpen" :selected-script="script" />
       </div>
     </template>
     <template v-else>
@@ -66,14 +77,17 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
-import { useClipboard } from '@vueuse/core';
-import { message as Message, Spin as ASpin } from 'ant-design-vue';
-import ReadmeViewer from '../ReadmeViewer.vue';
-import { ReloadOutlined } from '@ant-design/icons-vue';
-import { subscribePath } from '@/utils/subscription';
-import { useI18n } from 'vue-i18n';
-const { t: $t } = useI18n();
+import {ref, watch} from 'vue';
+import {useClipboard} from '@vueuse/core';
+import {message as Message, Spin as ASpin} from 'ant-design-vue';
+import ReadmeViewer from '../items/ReadmeViewer.vue';
+import {ReloadOutlined} from '@ant-design/icons-vue';
+import { subscribePaths } from '@/utils/subscription';
+import {useI18n} from 'vue-i18n';
+import Comment from "@/components/items/Comment.vue";
+import {jumpToGitHub} from "@/utils/actions.js";
+
+const {t: $t} = useI18n();
 
 const props = defineProps({
   script: {
@@ -82,19 +96,18 @@ const props = defineProps({
   },
   startPollingUserConfig: Function
 });
-
-const emit = defineEmits([]);
-
-const mode = import.meta.env.VITE_MODE;
-const { copy } = useClipboard();
+const {copy} = useClipboard();
 
 // readme加载状态
 const isLoadingReadme = ref(false);
 const loadError = ref(false);
 const readmeKey = ref(0);
+const commentModalOpen = ref(false);
 
 const isReadme404 = (path) => !!localStorage.getItem('readme404:' + path);
-const setReadme404 = (path) => { if (path) localStorage.setItem('readme404:' + path, '1'); };
+const setReadme404 = (path) => {
+  if (path) localStorage.setItem('readme404:' + path, '1');
+};
 
 const handleReadmeLoaded = (payload) => {
   isLoadingReadme.value = false;
@@ -121,17 +134,17 @@ const retryLoadReadme = () => {
 const handleSubscribe = async (item) => {
   if (!item.path) return;
   try {
-    const result = await subscribePath(item.path);
+    const result = await subscribePaths([item.path]);
     if (result.needsCopy) {
       await copy(result.url);
-      Message.success($t('detail.subscribeSuccess', { name: item.name }));
+      Message.success($t('detail.subscribeSuccess', {name: item.name}));
     }
     if (typeof props.startPollingUserConfig === 'function') {
       props.startPollingUserConfig();
     }
   } catch (error) {
     console.error('Subscribe failed:', error);
-    Message.error($t('detail.subscribeFailedWithMsg', { msg: error.message }));
+    Message.error($t('detail.subscribeFailedWithMsg', {msg: error.message}));
   }
 };
 
@@ -149,7 +162,7 @@ watch(() => props.script, (newScript) => {
     loadError.value = false;
     readmeKey.value++;
   }
-}, { immediate: true });
+}, {immediate: true});
 </script>
 
 <style scoped>
@@ -176,18 +189,13 @@ watch(() => props.script, (newScript) => {
 .header-left {
   flex: 1;
   min-width: 0;
-  margin-right: 5px;
+  padding-right: 30px;
 }
 
 .header-right {
   display: flex;
+  align-items: center;
   gap: 8px;
-}
-
-.subscribed-btn {
-  background: #fff;
-  color: #1677ff;
-  border-color: #1677ff;
 }
 
 .detail-title {
@@ -304,7 +312,6 @@ watch(() => props.script, (newScript) => {
   box-shadow: 0 2px 8px rgba(22, 119, 255, 0.08);
   position: relative;
 }
-
 
 
 .desc-title {

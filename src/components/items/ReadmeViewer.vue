@@ -13,7 +13,7 @@ import MarkdownIt from 'markdown-it';
 import markdownItAnchor from 'markdown-it-anchor';
 import hljs from 'highlight.js';
 import 'highlight.js/styles/github.css';
-import { getWebPath, getRepoPath, getMirrorPath } from '@/utils/basePaths';
+import { getWebPath, getRepoPath, getMirrorPath } from '@/utils/basePaths.js';
 import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
 

@@ -12,7 +12,7 @@
       <template #title="{ title, dataRef }">
         <div class="tree-node-container">
           <div class="tree-node-title">
-            <a-image class="tree-node-icon" v-if="dataRef.showIcon" :src="dataRef.icon" :placeholder="false"
+            <a-image v-if="dataRef.showIcon" :src="dataRef.icon" :placeholder="false"
               @error="dataRef.showIcon = false" />
             <span class="tree-node-title-text">{{ title }}</span>
             <span v-if="dataRef.hasUpdate" class="has-update-dot"></span>
@@ -32,7 +32,7 @@ import { CaretRightOutlined, CaretDownOutlined } from '@ant-design/icons-vue';
 import { useClipboard } from '@vueuse/core';
 import { message as Message } from 'ant-design-vue';
 import { getRepoPath } from '@/utils/basePaths';
-import { subscribePath } from '@/utils/subscription';
+import { subscribePaths } from '@/utils/subscription';
 import { useI18n } from 'vue-i18n';
 import iconUrlMap from '@/assets/icon_url.json';
 const { t: $t } = useI18n();
@@ -128,7 +128,7 @@ const handleSubscribe = async (nodeData) => {
     return;
   }
   try {
-    const result = await subscribePath(nodeData.path);
+    const result = await subscribePaths([nodeData.path]);
     if (result.needsCopy) {
       await copy(result.url);
       Message.success($t('mapTreeList.subscribeSuccess', { name: nodeData.name }));
@@ -155,17 +155,17 @@ const findNodeByKey = (nodes, key) => {
   return null;
 };
 
-// 获取节点图标
-const getIconUrl = (tag) => {
-  const mode = import.meta.env.VITE_MODE;
-  const relPath = tag + '/icon.ico';
-  if (mode === 'single') {
-    // 本地模式下直接拼接回退路径
-    return '../../../Repos/bettergi-scripts-list-git/repo/' + relPath;
-  } else {
-    return getRepoPath() + relPath;
-  }
-};
+// // 获取节点图标
+// const getIconUrl = (tag) => {
+//   const mode = import.meta.env.VITE_MODE;
+//   const relPath = tag + '/icon.ico';
+//   if (mode === 'single') {
+//     // 本地模式下直接拼接回退路径
+//     return '../../../Repos/bettergi-scripts-list-git/repo/' + relPath;
+//   } else {
+//     return getRepoPath() + relPath;
+//   }
+// };
 
 // 递归收集所有 file 节点，并补全 path 字段
 function collectFiles(node, parentPath = '') {
@@ -237,17 +237,22 @@ const processNode = (node, parentKey = '', parentSubscribed = false) => {
   let iconPath = '';
   let showIcon = node.showIcon || false;
   if (node.children && node.children.length > 0) {
-    if (mode === 'single') {
-      if (showIcon) {
-        iconPath = getIconUrl('pathing/' + currentKey);
-      }
-    } else {
-      // web模式根据名称匹配
-      const mappedItem = Array.isArray(iconUrlMap) ? iconUrlMap.find(item => item && item.name === node.name) : undefined;
-      if (mappedItem && mappedItem.link) {
-        iconPath = mappedItem.link;
-        showIcon = true;
-      }
+    // if (mode === 'single') {
+    //   if (showIcon) {
+    //     iconPath = getIconUrl('pathing/' + currentKey);
+    //   }
+    // } else {
+    //   // web模式根据名称匹配
+    //   const mappedItem = Array.isArray(iconUrlMap) ? iconUrlMap.find(item => item && item.name === node.name) : undefined;
+    //   if (mappedItem && mappedItem.link) {
+    //     iconPath = mappedItem.link;
+    //     showIcon = true;
+    //   }
+    // }
+    const mappedItem = Array.isArray(iconUrlMap) ? iconUrlMap.find(item => item && item.name === node.name) : undefined;
+    if (mappedItem && mappedItem.link) {
+      iconPath = mappedItem.link;
+      showIcon = true;
     }
   }
   let files = [];
@@ -556,8 +561,8 @@ function normalize(str) {
 }
 
 :deep(.ant-image-img) {
-  width: 28px;
-  height: 28px;
+  width: 26px;
+  height: 26px;
   border-radius: 10px;
 }
 
@@ -576,10 +581,6 @@ function normalize(str) {
   border: none;
   width: 72px;
   text-align: center;
-}
-
-.subscribed-tag {
-  color: #1677ff;
 }
 
 :deep(.ant-tree) {

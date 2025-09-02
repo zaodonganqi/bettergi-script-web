@@ -115,8 +115,16 @@
   },
   "action": {
     "help": "ヘルプ",
-    "jumpToGitHub": "GitHubにジャンプ",
-    "comment": "コメント"
+    "jumpToGitHub": "GitHub",
+    "comment": "コメント",
+    "subscribe": "ワンクリック更新",
+    "update": "更新を確認",
+    "recent": "最近の更新",
+    "updateAll": "全ての購読を更新しますか？",
+    "clearDot": "赤い点を消す",
+    "subscribed": "購読済み",
+    "confirm": "確認",
+    "cancel": "キャンセル"
   },
   "mapTreeList": {
     "subscribed": "購読済み",

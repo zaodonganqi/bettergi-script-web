@@ -115,8 +115,16 @@
   },
   "action": {
     "help": "Help",
-    "jumpToGitHub": "Jump to GitHub",
-    "comment": "Comment"
+    "jumpToGitHub": "GitHub",
+    "comment": "Comment",
+    "subscribe": "One-Click Update",
+    "update": "Check for Updates",
+    "recent": "Recent Updates",
+    "updateAll": "Update All Subscriptions?",
+    "clearDot": "Clear Red Dot",
+    "subscribed": "Subscribed",
+    "confirm": "Confirm",
+    "cancel": "Cancel"
   },
   "mapTreeList": {
     "subscribed": "Subscribed",

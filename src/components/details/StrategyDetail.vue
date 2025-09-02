@@ -10,8 +10,8 @@
                 {{ $t('detail.author') }}
                 <template v-for="(author, idx) in script.authors" :key="author.name">
                   <template v-if="author.link">
-                    <a :href="author.link" class="author-link" target="_blank" rel="noopener noreferrer">{{ author.name
-                      }}</a>
+                    <a :href="author.link" class="author-link" target="_blank" rel="noopener noreferrer">
+                      {{ author.name }}</a>
                   </template>
                   <template v-else>
                     <span>{{ author.name }}</span>
@@ -24,12 +24,20 @@
           </div>
           <div class="detail-time">{{ script.time }}</div>
         </div>
-        <div class="header-right" style="display: flex; align-items: center; gap: 8px;">
-            <a-button type="primary" v-if="!script.isSubscribed" @click="handleSubscribe(script)">{{ $t('detail.subscribe') }}</a-button>
-            <a-button type="primary" v-if="script.isSubscribed" :disabled="script.isSubscribed"
-              class="subscribed-btn">{{ $t('detail.subscribed') }}</a-button>
-            <a-button type="primary" v-if="script.isSubscribed" @click="handleSubscribe(script)">{{ $t('detail.subscribeAgain') }}</a-button>
-          </div>
+        <div class="header-right">
+          <a-button type="primary" @click="jumpToGitHub(script)">
+            {{ $t('action.jumpToGitHub') }}
+          </a-button>
+          <a-button type="primary" @click="commentModalOpen = true">
+            {{ $t('action.comment') }}
+          </a-button>
+          <a-button type="primary" v-if="!script.isSubscribed" @click="handleSubscribe(script)">
+            {{ $t('detail.subscribe') }}
+          </a-button>
+          <a-button type="primary" v-if="script.isSubscribed" @click="handleSubscribe(script)">
+            {{ $t('detail.subscribeAgain') }}
+          </a-button>
+        </div>
       </div>
       <div class="detail-readme">
         <div v-if="script && script.desc && script.desc.trim()" class="desc-block">
@@ -38,7 +46,7 @@
         </div>
         <transition name="fade-slide-up">
           <div v-if="isLoadingTxt" class="readme-loading-indicator">
-            <a-spin size="small" />
+            <a-spin size="small"/>
             <span>{{ $t('detail.loadingStrategy') }}</span>
           </div>
         </transition>
@@ -46,13 +54,15 @@
           <div v-if="loadTxtError" class="readme-loading-indicator">
             <a-button type="text" size="small" @click="retryLoadTxt">
               <template #icon>
-                <ReloadOutlined />
+                <ReloadOutlined/>
               </template>
             </a-button>
             <span>{{ $t('detail.strategyFailed') }}</span>
           </div>
         </transition>
         <div v-if="txtContent" class="txt-content-plain">{{ txtContent }}</div>
+        <!-- 评论弹窗-->
+        <Comment v-model:commentModalOpen="commentModalOpen" :selected-script="script" />
       </div>
     </template>
     <template v-else>
@@ -62,14 +72,17 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
-import { useClipboard } from '@vueuse/core';
-import { message as Message, Spin as ASpin } from 'ant-design-vue';
-import { ReloadOutlined } from '@ant-design/icons-vue';
-import { getRepoPath } from '@/utils/basePaths';
-import { subscribePath } from '@/utils/subscription';
-import { useI18n } from 'vue-i18n';
-const { t: $t } = useI18n();
+import {ref, watch} from 'vue';
+import {useClipboard} from '@vueuse/core';
+import {message as Message, Spin as ASpin} from 'ant-design-vue';
+import {ReloadOutlined} from '@ant-design/icons-vue';
+import {getRepoPath} from '@/utils/basePaths';
+import { subscribePaths } from '@/utils/subscription';
+import {useI18n} from 'vue-i18n';
+import Comment from "@/components/items/Comment.vue";
+import {jumpToGitHub} from "@/utils/actions.js";
+
+const {t: $t} = useI18n();
 
 const props = defineProps({
   script: {
@@ -78,18 +91,16 @@ const props = defineProps({
   },
   startPollingUserConfig: Function
 });
-
-const emit = defineEmits([]);
-
-const mode = import.meta.env.VITE_MODE;
-const { copy } = useClipboard();
-
+const {copy} = useClipboard();
 const isLoadingTxt = ref(false);
 const loadTxtError = ref(false);
 const txtContent = ref('');
+const commentModalOpen = ref(false);
 
 const isTxt404 = (path) => !!localStorage.getItem('txt404:' + path);
-const setTxt404 = (path) => { if (path) localStorage.setItem('txt404:' + path, '1'); };
+const setTxt404 = (path) => {
+  if (path) localStorage.setItem('txt404:' + path, '1');
+};
 
 const getRawTxtUrl = (path) => {
   if (!path) return '';
@@ -136,7 +147,7 @@ const fetchTxtContent = async (path) => {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 8000);
     try {
-      const response = await fetch(txtUrl, { signal: controller.signal });
+      const response = await fetch(txtUrl, {signal: controller.signal});
       clearTimeout(timeoutId);
       if (response.ok) {
         txt = await response.text();
@@ -173,17 +184,17 @@ const retryLoadTxt = () => {
 const handleSubscribe = async (item) => {
   if (!item.path) return;
   try {
-    const result = await subscribePath(item.path);
+    const result = await subscribePaths([item.path]);
     if (result.needsCopy) {
       await copy(result.url);
-      Message.success($t('detail.subscribeSuccess', { name: item.name }));
+      Message.success($t('detail.subscribeSuccess', {name: item.name}));
     }
     if (typeof props.startPollingUserConfig === 'function') {
       props.startPollingUserConfig();
     }
   } catch (error) {
     console.error('Subscribe failed:', error);
-    Message.error($t('detail.subscribeFailedWithMsg', { msg: error.message }));
+    Message.error($t('detail.subscribeFailedWithMsg', {msg: error.message}));
   }
 };
 
@@ -196,7 +207,7 @@ watch(() => props.script, (newScript) => {
     isLoadingTxt.value = false;
     loadTxtError.value = false;
   }
-}, { immediate: true });
+}, {immediate: true});
 </script>
 
 <style scoped>
@@ -223,11 +234,12 @@ watch(() => props.script, (newScript) => {
 .header-left {
   flex: 1;
   min-width: 0;
-  margin-right: 5px;
+  padding-right: 30px;
 }
 
 .header-right {
   display: flex;
+  align-items: center;
   gap: 8px;
 }
 
@@ -272,22 +284,6 @@ watch(() => props.script, (newScript) => {
   margin-top: 80px;
 }
 
-.detail-input {
-  flex: 1;
-  margin-right: 10px;
-  border-radius: 6px;
-  height: 36px;
-  font-size: 15px;
-}
-
-.detail-send {
-  height: 36px;
-  border-radius: 6px;
-  font-size: 15px;
-  background: #1677ff !important;
-  border: none !important;
-}
-
 .detail-readme {
   flex-grow: 1;
   overflow-y: auto;
@@ -310,24 +306,6 @@ watch(() => props.script, (newScript) => {
   background: rgba(255, 255, 255, 0.9);
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
   z-index: 10;
-}
-
-.readme-error {
-  color: #bbb;
-  text-align: center;
-  margin-top: 40px;
-  font-size: 16px;
-}
-
-.fade-slide-up-enter-active,
-.fade-slide-up-leave-active {
-  transition: all 0.3s cubic-bezier(.55, 0, .1, 1);
-}
-
-.fade-slide-up-enter-from,
-.fade-slide-up-leave-to {
-  opacity: 0;
-  transform: translateY(-10px);
 }
 
 .author-link {
@@ -376,25 +354,5 @@ watch(() => props.script, (newScript) => {
   margin: 0;
   white-space: pre-line;
   word-break: break-word;
-}
-
-.subscribe-btn {
-  color: #1677ff;
-  background: none;
-  border: none;
-  width: 72px;
-  text-align: center;
-}
-
-.subscribe-btn.subscribed {
-  color: #1677ff !important;
-  background: #fff !important;
-  border: 1px solid #1677ff !important;
-}
-
-.subscribe-btn:hover {
-  color: #1677ff;
-  border: 1px solid #1677ff;
-  background: #fff;
 }
 </style>

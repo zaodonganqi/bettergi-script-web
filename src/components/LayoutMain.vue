@@ -11,7 +11,7 @@
           <a-menu v-model:selectedKeys="selectedMenu" mode="vertical" class="custom-menu" @select="handleMenuSelect">
             <a-menu-item v-for="item in menuList" :key="item.key" class="custom-menu-item">
               <span class="menu-icon">
-                <component :is="item.icon" />
+                <component :is="item.icon"/>
               </span>
               <span class="menu-label">{{ item.label }}</span>
               <span v-if="item.count !== undefined" class="menu-count">{{ item.count }}</span>
@@ -21,13 +21,17 @@
         <!-- 外链（需要可自行添加，修改链接即可） -->
         <div class="sider-footer">
           <div class="sider-link" @click="openExternalLink('https://github.com/babalae/better-genshin-impact')">
-            {{ $t('sider.mainRepo') }}</div>
+            {{ $t('sider.mainRepo') }}
+          </div>
           <div class="sider-link" @click="openExternalLink('https://github.com/babalae/bettergi-scripts-list')">
-            {{ $t('sider.scriptRepo') }}</div>
-          <div v-if="mode === 'single'" class="sider-link" @click="openExternalLink('https://bgi.sh')">{{
-            $t('sider.onlineRepo') }}</div>
-            <div class="sider-link" @click="openExternalLink('https://bettergi.com/doc.html')">
-            {{ $t('sider.document') }}</div>
+            {{ $t('sider.scriptRepo') }}
+          </div>
+          <div v-if="mode === 'single'" class="sider-link" @click="openExternalLink('https://bgi.sh')">
+            {{ $t('sider.onlineRepo') }}
+          </div>
+          <div class="sider-link" @click="openExternalLink('https://bettergi.com/doc.html')">
+            {{ $t('sider.document') }}
+          </div>
         </div>
       </div>
       <!-- 最后更新时间 -->
@@ -41,12 +45,6 @@
             <span>{{ $t('sider.lastUpdate') + lastUpdateTime }}</span>
           </template>
         </div>
-        <a-button class="settings-btn" type="text" size="small" @click.stop="showSettingsModal = true"
-          :title="$t('settings.title')">
-          <template #icon>
-            <SettingOutlined />
-          </template>
-        </a-button>
       </div>
     </div>
 
@@ -54,77 +52,85 @@
     <a-layout-sider class="script-sider">
       <div class="script-header">
         <span class="script-title">{{ currentMenuTitle }}</span>
-        <div v-if="mode === 'single'", class="script-actions" style="position:relative;">
+        <div v-if="mode === 'single'" class="script-actions">
           <a-button type="primary" class="script-btn" :class="{ 'script-btn-active': scriptTab === 'all' }"
-            @click="onClickShowAll">{{ $t('button.all') }}</a-button>
+                    @click="onClickShowAll">{{ $t('button.all') }}
+          </a-button>
           <a-button class="script-btn" :class="{ 'script-btn-active': scriptTab === 'subscribed' }"
-            @click="onClickShowSubscribed">{{ $t('button.subscribed') }}</a-button>
+                    @click="onClickShowSubscribed">{{ $t('button.subscribed') }}
+          </a-button>
         </div>
       </div>
       <div class="search-section">
         <a-input v-model:value="search" :placeholder="searchPlaceholder" class="script-search" @search="handleSearch"
-          allow-clear>
+                 allow-clear>
           <template #prefix>
-            <SearchOutlined />
+            <SearchOutlined/>
           </template>
         </a-input>
-        <a-dropdown v-if="selectedMenu[0] !== '1'" placement="bottomLeft" trigger="click" class="sort-dropdown" v-model:open="sortDropdownOpen">
+        <a-dropdown v-if="selectedMenu[0] !== '1'" placement="bottomLeft" trigger="click" class="sort-dropdown"
+                    v-model:open="sortDropdownOpen">
           <a-button class="sort-button" size="middle">
-            <AlignRightOutlined />
+            <AlignRightOutlined/>
           </a-button>
           <template #overlay>
-            <a-menu class="sort-menu" @click="handleSortMenuClick" @mousedown.stop @click.stop>
+            <a-menu class="sort-menu" @click="handleSortMenuClick">
               <a-menu-item-group :title="$t('sort.sortBy')">
                 <a-menu-item key="recommend" :class="{ active: sortType === 'recommend' }">
                   <span>{{ $t('sort.recommend') }}</span>
-                  <CheckOutlined v-if="sortType === 'recommend'" class="check-icon" />
+                  <CheckOutlined v-if="sortType === 'recommend'" class="check-icon"/>
                 </a-menu-item>
                 <a-menu-item key="time" :class="{ active: sortType === 'time' }">
                   <span>{{ $t('sort.time') }}</span>
-                  <CheckOutlined v-if="sortType === 'time'" class="check-icon" />
+                  <CheckOutlined v-if="sortType === 'time'" class="check-icon"/>
                 </a-menu-item>
                 <a-menu-item key="name" :class="{ active: sortType === 'name' }">
                   <span>{{ $t('sort.name') }}</span>
-                  <CheckOutlined v-if="sortType === 'name'" class="check-icon" />
+                  <CheckOutlined v-if="sortType === 'name'" class="check-icon"/>
                 </a-menu-item>
               </a-menu-item-group>
-              <a-menu-divider />
+              <a-menu-divider/>
               <a-menu-item-group :title="$t('sort.sortOrder')">
                 <a-menu-item key="asc" :class="{ active: sortOrder === 'asc' }">
                   <span>{{ $t('sort.ascending') }}</span>
-                  <CheckOutlined v-if="sortOrder === 'asc'" class="check-icon" />
+                  <CheckOutlined v-if="sortOrder === 'asc'" class="check-icon"/>
                 </a-menu-item>
                 <a-menu-item key="desc" :class="{ active: sortOrder === 'desc' }">
                   <span>{{ $t('sort.descending') }}</span>
-                  <CheckOutlined v-if="sortOrder === 'desc'" class="check-icon" />
+                  <CheckOutlined v-if="sortOrder === 'desc'" class="check-icon"/>
                 </a-menu-item>
               </a-menu-item-group>
-              <a-menu-divider v-if="selectedMenu[0] === '3'" />
+              <a-menu-divider v-if="selectedMenu[0] === '3'"/>
               <a-sub-menu v-if="selectedMenu[0] === '3'">
                 <template #title>
                   <span>{{ $t('sort.filterByRole') || '角色筛选' }}</span>
                 </template>
                 <div class="role-filter-panel" @mousedown.stop @click.stop>
-                  <a-input v-model:value="roleFilterSearch" size="middle" class="role-filter-search" :placeholder="$t('sort.searchRole') || '搜索角色'">
+                  <a-input v-model:value="roleFilterSearch" size="middle" class="role-filter-search"
+                           :placeholder="$t('sort.searchRole') || '搜索角色'">
                     <template #prefix>
-                      <SearchOutlined />
+                      <SearchOutlined/>
                     </template>
                   </a-input>
                   <div class="role-filter-list">
                     <a-checkbox
-                      v-for="tag in displayedRoleTags"
-                      :key="tag"
-                      :checked="selectedRoleTags.includes(tag)"
-                      :disabled="!selectedRoleTags.includes(tag) && selectedRoleTags.length >= 4"
-                      class="role-filter-checkbox"
-                      @change="onRoleCheckboxChange(tag, $event)"
+                        v-for="tag in displayedRoleTags"
+                        :key="tag"
+                        :checked="selectedRoleTags.includes(tag)"
+                        :disabled="!selectedRoleTags.includes(tag) && selectedRoleTags.length >= 4"
+                        class="role-filter-checkbox"
+                        @change="onRoleCheckboxChange(tag, $event)"
                     >
                       <span class="role-filter-label">{{ tag }}</span>
                     </a-checkbox>
                   </div>
                   <div class="role-filter-footer">
-                    <a-button size="middle" class="role-filter-btn" @click="resetRoleFilter">{{ $t('common.reset') || '重置' }}</a-button>
-                    <a-button size="middle" type="primary" class="role-filter-btn-primary" @click="confirmRoleFilter">{{ $t('common.confirm') || '确定' }}</a-button>
+                    <a-button size="middle" class="role-filter-btn" @click="resetRoleFilter">
+                      {{ $t('common.reset') || '重置' }}
+                    </a-button>
+                    <a-button size="middle" type="primary" class="role-filter-btn-primary" @click="confirmRoleFilter">
+                      {{ $t('common.confirm') || '确定' }}
+                    </a-button>
                   </div>
                 </div>
               </a-sub-menu>
@@ -135,69 +141,73 @@
       <!-- 地图追踪的树状结构 -->
       <div v-if="selectedMenu[0] === '1'" class="script-list">
         <MapTreeList :search-key="search" :repo-data="repoData" :subscribed-paths="subscribedScriptPaths"
-          :show-subscribed-only="scriptTab === 'subscribed'" ref="mapTreeRef"
-          :start-polling-user-config="startPollingUserConfig" @select="handleMapSelect"
-          @update-has-update="updateScriptHasUpdate" />
+                     :show-subscribed-only="scriptTab === 'subscribed'" ref="mapTreeRef"
+                     :start-polling-user-config="startPollingUserConfig" @select="handleMapSelect"
+                     @update-has-update="updateScriptHasUpdate"/>
       </div>
       <!-- Javascript脚本列表 -->
       <div v-else-if="selectedMenu[0] === '2'" class="script-list">
         <ScriptList :search-key="search" :repo-data="repoData" :subscribed-paths="subscribedScriptPaths"
-          :show-subscribed-only="scriptTab === 'subscribed'" :sort-type="sortType" :sort-order="sortOrder"
-          ref="scriptListRef" @select="handleScriptSelect"
-          @update-has-update="updateScriptHasUpdate" />
+                    :show-subscribed-only="scriptTab === 'subscribed'" :sort-type="sortType" :sort-order="sortOrder"
+                    ref="scriptListRef" @select="handleScriptSelect"
+                    @update-has-update="updateScriptHasUpdate"/>
       </div>
       <!-- 战斗策略列表 -->
       <div v-else-if="selectedMenu[0] === '3'" class="script-list">
         <CombatStrategyList :search-key="search" :repo-data="repoData" :subscribed-paths="subscribedScriptPaths"
-          :show-subscribed-only="scriptTab === 'subscribed'" :sort-type="sortType" :sort-order="sortOrder" :role-tags="appliedRoleTags"
-          ref="combatStrategyRef" @select="handleScriptSelect" @update-has-update="updateScriptHasUpdate" />
+                            :show-subscribed-only="scriptTab === 'subscribed'" :sort-type="sortType"
+                            :sort-order="sortOrder" :role-tags="appliedRoleTags"
+                            ref="combatStrategyRef" @select="handleScriptSelect"
+                            @update-has-update="updateScriptHasUpdate"/>
       </div>
       <!-- 七圣召唤策略列表 -->
       <div v-else-if="selectedMenu[0] === '4'" class="script-list">
         <CardStrategyList :search-key="search" :repo-data="repoData" :subscribed-paths="subscribedScriptPaths"
-          :show-subscribed-only="scriptTab === 'subscribed'" :sort-type="sortType" :sort-order="sortOrder"
-          ref="cardStrategyRef" @select="handleScriptSelect" @update-has-update="updateScriptHasUpdate" />
+                          :show-subscribed-only="scriptTab === 'subscribed'" :sort-type="sortType"
+                          :sort-order="sortOrder"
+                          ref="cardStrategyRef" @select="handleScriptSelect"
+                          @update-has-update="updateScriptHasUpdate"/>
       </div>
     </a-layout-sider>
 
     <!-- 右侧内容区域 -->
     <a-layout>
       <!-- 顶部操作栏 -->
-      <div v-if="selectedScript" class="detail-top-bar">
-          <div class="top-bar-left">
-            <!-- <a-tooltip v-if="mode === 'single'" :title="'一键订阅'">
-              <a-button type="text" class="action-btn" @click="">
-                <DownloadOutlined />
-              </a-button>
-            </a-tooltip> -->
-            <a-tooltip :title="$t('action.jumpToGitHub')">
-              <a-button type="text" class="action-btn" @click="jumpToGitHub">
-                <LinkOutlined />
-              </a-button>
-            </a-tooltip>
-            <a-tooltip :title="$t('action.comment')">
-              <a-button type="text" class="action-btn" @click="commentModalOpen = true">
-                <MessageOutlined />
-              </a-button>
-            </a-tooltip>
-          </div>
-          <div class="top-bar-right">
-            <a-tooltip :title="$t('action.help')">
-              <a-button type="text" class="action-btn" @click="showHelpModal = true">
-                <QuestionCircleOutlined />
-              </a-button>
-            </a-tooltip>
-          </div>
+      <div class="detail-top-bar">
+        <div class="top-bar-left">
+          <a-tooltip v-if="mode === 'single'" :title="$t('action.update')">
+            <a-button type="text" class="action-btn" @click="showUpdateMessageModal = true">
+              <FieldTimeOutlined />
+            </a-button>
+          </a-tooltip>
+          <a-tooltip v-if="mode === 'single'" :title="$t('action.subscribe')">
+            <a-button type="text" class="action-btn" @click="showUpdateSubscribeModal = true">
+              <CloudDownloadOutlined />
+            </a-button>
+          </a-tooltip>
         </div>
+        <div class="top-bar-right">
+          <a-tooltip :title="$t('action.help')">
+            <a-button type="text" class="action-btn" @click="showHelpModal = true">
+              <QuestionCircleOutlined/>
+            </a-button>
+          </a-tooltip>
+          <a-tooltip :title="$t('settings.title')">
+            <a-button type="text" class="action-btn" @click="showSettingsModal = true">
+              <SettingOutlined/>
+            </a-button>
+          </a-tooltip>
+        </div>
+      </div>
       <div v-if="selectedMenu[0] === '1'" class="main-right">
         <MapDetail :script="selectedScript" :subscribed-paths="subscribedScriptPaths"
-          :start-polling-user-config="startPollingUserConfig" />
+                   :start-polling-user-config="startPollingUserConfig"/>
       </div>
       <div v-else-if="selectedMenu[0] === '2'" class="main-right">
-        <ScriptDetail :script="selectedScript" :start-polling-user-config="startPollingUserConfig" />
+        <ScriptDetail :script="selectedScript" :start-polling-user-config="startPollingUserConfig"/>
       </div>
       <div v-else-if="selectedMenu[0] === '3' || selectedMenu[0] === '4'" class="main-right">
-        <StrategyDetail :script="selectedScript" :start-polling-user-config="startPollingUserConfig" />
+        <StrategyDetail :script="selectedScript" :start-polling-user-config="startPollingUserConfig"/>
       </div>
     </a-layout>
 
@@ -206,9 +216,9 @@
       <div class="repo-error-content">
         <div class="repo-error-icon">
           <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-            <circle cx="24" cy="24" r="24" fill="#fdecea" />
-            <path d="M24 14v12" stroke="#f44336" stroke-width="3" stroke-linecap="round" />
-            <circle cx="24" cy="32" r="2.5" fill="#f44336" />
+            <circle cx="24" cy="24" r="24" fill="#fdecea"/>
+            <path d="M24 14v12" stroke="#f44336" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="24" cy="32" r="2.5" fill="#f44336"/>
           </svg>
         </div>
         <div class="repo-error-title">{{ $t('repoError.title') }}</div>
@@ -222,78 +232,22 @@
 
     <!-- 全局加载弹窗 -->
     <div v-if="globalLoading" class="global-loading-modal">
-      <a-spin size="large" :tip="`${$t('loading.repoData')}...`" />
+      <a-spin size="large" :tip="`${$t('loading.repoData')}...`"/>
     </div>
-
-    <!-- 评论弹窗 -->
-    <a-modal v-model:open="commentModalOpen" :title="$t('comment.title')" :footer="null" centered width="90%"
-      :style="{ maxWidth: '1200px' }" @cancel="handleCommentModalCancel" class="comment-modal">
-      <div class="comment-modal-content">
-        <div class="comment-header">
-          <div class="script-title-simple">
-            {{ selectedScript?.title || $t('script.unknownScript') }}
-            <template
-              v-if="selectedScript?.authors && Array.isArray(selectedScript.authors) && selectedScript.authors.length">
-              <span class="script-author">
-                {{ $t('script.author') }}
-                <template v-for="(author, idx) in selectedScript.authors" :key="author.name">
-                  <template v-if="author.link">
-                    <a :href="author.link" class="author-link" target="_blank" rel="noopener noreferrer">{{ author.name
-                    }}</a>
-                  </template>
-                  <template v-else>
-                    <span>{{ author.name }}</span>
-                  </template>
-                  <span v-if="idx < selectedScript.authors.length - 1">，</span>
-                </template>
-              </span>
-            </template>
-            <span v-else-if="selectedScript?.author" class="script-author">{{ $t('script.author') }}{{
-              selectedScript.author
-            }}</span>
-            <span v-else class="script-author">{{ $t('script.noAuthor') }}</span>
-          </div>
-        </div>
-
-        <div class="comments-container">
-          <!-- 本地模式显示提示信息 -->
-          <div v-if="mode === 'single'" class="local-mode-notice">
-            <div class="notice-icon">
-              <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-                <circle cx="24" cy="24" r="24" fill="#e3f2fd" />
-                <path d="M24 12v16" stroke="#2196f3" stroke-width="3" stroke-linecap="round" />
-                <circle cx="24" cy="36" r="2.5" fill="#2196f3" />
-              </svg>
-            </div>
-            <div class="notice-title">{{ $t('comment.localModeNoticeTitle') }}</div>
-            <div class="notice-desc">{{ $t('comment.localModeNoticeDesc') }}</div>
-            <button class="notice-btn" @click="openExternalLink('https://bgi.sh')">{{ $t('comment.onlineRepo')
-            }}</button>
-          </div>
-
-          <!-- Web模式显示giscus评论 -->
-          <Giscus v-else :key="giscusKey" id="comments" :repo="giscusConfig.repo" :repoId="giscusConfig.repoId"
-            :category="giscusConfig.category" :categoryId="giscusConfig.categoryId" :mapping="giscusConfig.mapping"
-            :term="giscusTerm" :strict="giscusConfig.strict" :reactionsEnabled="giscusConfig.reactionsEnabled"
-            :emitMetadata="giscusConfig.emitMetadata" :inputPosition="giscusConfig.inputPosition"
-            :theme="giscusConfig.theme" :lang="giscusConfig.lang" loading="lazy" />
-        </div>
-      </div>
-    </a-modal>
 
     <!-- 彩蛋弹窗 -->
     <a-modal v-model:open="showEggModal" :title="$t('egg.title')" :footer="null" centered width="80%"
-      :style="{ maxWidth: '900px' }" @cancel="showEggModal = false">
+             :style="{ maxWidth: '900px' }" @cancel="showEggModal = false">
       <div class="egg-modal-content">
         <div class="egg-readme-tabs">
           <div v-if="isLoadingEggReadme" class="egg-readme-loading-indicator">
-            <a-spin size="small" />
+            <a-spin size="small"/>
             <span>{{ $t('egg.loading') }}</span>
           </div>
           <div v-else-if="eggReadmeError" class="egg-readme-loading-indicator">
             <a-button type="text" size="small" @click="retryLoadEggReadme">
               <template #icon>
-                <ReloadOutlined />
+                <ReloadOutlined/>
               </template>
             </a-button>
             <span>{{ $t('egg.failed') }}</span>
@@ -301,25 +255,67 @@
         </div>
         <div class="egg-readme-content">
           <ReadmeViewer :key="eggReadmeKey"
-            :path="'https://raw.githubusercontent.com/zaodonganqi/BGI-bsw-egg/main/README.md'" :force-web="true"
-            @loaded="handleEggReadmeLoaded" @error="handleEggReadmeError" />
+                        :path="'https://raw.githubusercontent.com/zaodonganqi/BGI-bsw-egg/main/README.md'"
+                        :force-web="true"
+                        @loaded="handleEggReadmeLoaded" @error="handleEggReadmeError"/>
         </div>
+      </div>
+    </a-modal>
+
+    <!-- 更新信息弹窗 -->
+    <a-modal v-model:open="showUpdateMessageModal" :title="$t('action.recent')" :footer="null" centered width="60%" :style="{ maxWidth: '900px' }">
+      <div class="update-message-content">
+        <a-list :data-source="updatedScripts" size="small">
+          <template #renderItem="{ item, index }">
+            <div class="update-list-item">
+              <div class="item-header">
+                <span class="item-index">{{ index + 1 }}.</span>
+                <span class="item-title">{{ item[0] }}</span>
+              </div>
+              <div class="item-path">{{ item[1] }}</div>
+              <div class="item-time" v-if="item[2]">{{ $t('detail.lastUpdated') }}:{{ item[2] }}</div>
+            </div>
+          </template>
+        </a-list>
+        <div class="update-modal-footer">
+          <a-button type="primary" size="middle" @click="handleClearUpdate" :loading="clearUpdateLoading">
+            {{ $t('action.clearDot') }}
+          </a-button>
+        </div>
+      </div>
+    </a-modal>
+
+    <!-- 一键更新弹窗 -->
+    <a-modal v-model:open="showUpdateSubscribeModal" :title="$t('action.updateAll')" :ok-text="$t('action.confirm')" :cancel-text="$t('action.cancel')" centered width="60%"
+             :style="{ maxWidth: '900px' }" @ok="updateSubscribedScripts">
+      <div class="update-subscribe-content">
+        <a-list :data-source="subscribedScripts" size="small">
+          <template #renderItem="{ item, index }">
+            <div class="update-list-item">
+              <div class="item-header">
+                <span class="item-index">{{ index + 1 }}.</span>
+                <span class="item-title">{{ item[0] }}</span>
+              </div>
+              <div class="item-path">{{ item[1] }}</div>
+            </div>
+          </template>
+        </a-list>
       </div>
     </a-modal>
 
     <!-- 帮助弹窗 -->
     <a-modal v-model:open="showHelpModal" :title="$t('help.title')" :footer="null" centered width="80%"
-      :style="{ maxWidth: '900px' }" @cancel="showHelpModal = false">
-      <Help />
+             :style="{ maxWidth: '900px' }" @cancel="showHelpModal = false">
+      <Help/>
     </a-modal>
 
     <!-- 设置弹窗 -->
     <a-modal v-model:open="showSettingsModal" :title="$t('settings.title')" :footer="null" centered width="400px"
-      @cancel="showSettingsModal = false">
+             @cancel="showSettingsModal = false">
       <div class="settings-row">
         <span class="settings-label">{{ $t('settings.language') }}</span>
         <a-select :value="selectedLocale" size="middle" style="width: 160px;" @change="onLocaleChange"
-          popupClassName="lang-select-dropdown">
+                  popupClassName="lang-select-dropdown">
           <a-select-option value="zh-CN">{{ $t('settings.zhCN') }}</a-select-option>
           <a-select-option value="zh-TW">{{ $t('settings.zhTW') }}</a-select-option>
           <a-select-option value="en-US">{{ $t('settings.enUS') }}</a-select-option>
@@ -327,7 +323,7 @@
           <a-select-option value="fr-FR">{{ $t('settings.frFR') }}</a-select-option>
         </a-select>
       </div>
-      <a-divider v-if="mode === 'single'" />
+      <a-divider v-if="mode === 'single'"/>
       <div v-if="mode === 'single'" class="settings-row">
         <span class="settings-label">{{ $t('settings.clearUpdate') }}</span>
         <a-button type="primary" size="middle" @click="handleClearUpdate" :loading="clearUpdateLoading">
@@ -339,10 +335,22 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted, onUnmounted, watch, nextTick } from 'vue';
-import { FolderOutlined, FileOutlined, CalculatorOutlined, BulbOutlined, SearchOutlined, QuestionCircleOutlined, MessageOutlined, DownloadOutlined, LinkOutlined, ReloadOutlined, SettingOutlined, AlignRightOutlined, CheckOutlined } from '@ant-design/icons-vue';
-import { message as Message } from 'ant-design-vue';
-import Giscus from '@giscus/vue';
+import {ref, reactive, computed, onMounted, onUnmounted, watch, nextTick} from 'vue';
+import {
+  FolderOutlined,
+  FileOutlined,
+  FieldTimeOutlined,
+  CalculatorOutlined,
+  BulbOutlined,
+  SearchOutlined,
+  QuestionCircleOutlined,
+  ReloadOutlined,
+  SettingOutlined,
+  AlignRightOutlined,
+  CheckOutlined,
+  CloudDownloadOutlined
+} from '@ant-design/icons-vue';
+import {message as Message} from 'ant-design-vue';
 import MapTreeList from './lists/MapTreeList.vue';
 import ScriptList from './lists/ScriptList.vue';
 import CombatStrategyList from './lists/CombatStrategyList.vue';
@@ -350,23 +358,26 @@ import CardStrategyList from './lists/CardStrategyList.vue';
 import ScriptDetail from './details/ScriptDetail.vue';
 import StrategyDetail from './details/StrategyDetail.vue';
 import MapDetail from './details/MapDetail.vue';
-import ReadmeViewer from './ReadmeViewer.vue';
-import Help from './Help.vue';
-import { getWebPath, getRawPath, getMirrorPath } from '@/utils/basePaths';
-import { useI18n } from 'vue-i18n';
-import { mapTagsToCanonical } from '@/utils/roleAlias';
+import ReadmeViewer from './items/ReadmeViewer.vue';
+import Help from './items/Help.vue';
+import { getRawPath, getMirrorPath} from '@/utils/basePaths';
+import {useI18n} from 'vue-i18n';
+import {mapTagsToCanonical} from '@/utils/roleAlias';
+import { subscribePaths } from '@/utils/subscription';
 
 const mode = import.meta.env.VITE_MODE;
 const selectedMenu = ref(['1']);
 const search = ref('');
+const showUpdateMessageModal = ref(false);
+const showUpdateSubscribeModal = ref(false);
 
 // 排序相关数据
 const sortType = ref('recommend');
 const sortOrder = ref('desc');
 const sortStateByMenu = reactive({
-  '2': { type: 'recommend', order: 'desc' },
-  '3': { type: 'recommend', order: 'desc' },
-  '4': { type: 'recommend', order: 'desc' }
+  '2': {type: 'recommend', order: 'desc'},
+  '3': {type: 'recommend', order: 'desc'},
+  '4': {type: 'recommend', order: 'desc'}
 });
 
 // 排序下拉显隐
@@ -438,12 +449,12 @@ function applySortForMenu(menuKey) {
 
 function saveSortForMenu(menuKey) {
   if (!['2', '3', '4'].includes(menuKey)) return;
-  sortStateByMenu[menuKey] = { type: sortType.value, order: sortOrder.value };
+  sortStateByMenu[menuKey] = {type: sortType.value, order: sortOrder.value};
 }
 
-const { t: $t } = useI18n();
+const {t: $t} = useI18n();
 
-const { selectedLocale, handleLocaleChange } = defineProps({
+const {selectedLocale, handleLocaleChange} = defineProps({
   selectedLocale: {
     type: String,
     required: true
@@ -455,10 +466,10 @@ const { selectedLocale, handleLocaleChange } = defineProps({
 });
 
 const menuList = computed(() => [
-  { key: '1', label: $t('menu.map'), icon: FolderOutlined, count: menuCounts.value[0] },
-  { key: '2', label: $t('menu.script'), icon: FileOutlined, count: menuCounts.value[1] },
-  { key: '3', label: $t('menu.combat'), icon: CalculatorOutlined, count: menuCounts.value[2] },
-  { key: '4', label: $t('menu.tcg'), icon: BulbOutlined, count: menuCounts.value[3] },
+  {key: '1', label: $t('menu.map'), icon: FolderOutlined, count: menuCounts.value[0]},
+  {key: '2', label: $t('menu.script'), icon: FileOutlined, count: menuCounts.value[1]},
+  {key: '3', label: $t('menu.combat'), icon: CalculatorOutlined, count: menuCounts.value[2]},
+  {key: '4', label: $t('menu.tcg'), icon: BulbOutlined, count: menuCounts.value[3]},
 ]);
 
 const menuCounts = ref([0, 0, 0, 0]);
@@ -543,13 +554,16 @@ async function getRepoJson() {
         }
       }
     } else {
-      // 先获取订阅信息
-      await fetchSubscribedConfig();
       const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
       const json = await repoWebBridge.GetRepoJson();
       repoData.value = typeof json === 'string' ? JSON.parse(json) : json;
+      // 获取订阅信息
+      await fetchSubscribedConfig();
     }
     console.log("json info:", repoData.value)
+    if (mode === 'single') {
+      getUpdatedScripts();
+    }
     menuCounts.value[0] = getMapCount(repoData.value);
     menuCounts.value[1] = getJsCount(repoData.value);
     menuCounts.value[2] = getCombatCount(repoData.value);
@@ -559,6 +573,45 @@ async function getRepoJson() {
     repoError.value = true;
   }
   globalLoading.value = false;
+  return repoData.value;
+}
+
+const updatedScripts = ref([]);
+// 获取所有更新节点信息
+function getUpdatedScripts() {
+  if (!repoData.value || !Array.isArray(repoData.value.indexes)) return;
+  updatedScripts.value = [];
+  // 递归构建完整路径，使用 name 作为标题
+  function dfs(node, currentPath) {
+    if (!node) return;
+    const fullPath = currentPath ? `${currentPath}/${node.name}` : node.name;
+    if (node.hasUpdate && !['pathing', 'js', 'combat', 'tcg'].includes(node.name) && !String(node.type || '').includes('file')) {
+      updatedScripts.value.push([node.name, fullPath, node.lastUpdated || '']);
+    }
+    // 继续向下遍历
+    if (Array.isArray(node.children) && node.children.length > 0) {
+      node.children.forEach(child => dfs(child, fullPath));
+    }
+  }
+  repoData.value.indexes.forEach(index => {
+    dfs(index, '');
+  });
+}
+
+const subscribedScripts = ref([]);
+
+async function updateSubscribedScripts() {
+  try {
+    const result = await subscribePaths(subscribedScriptPaths.value);
+    if (result?.ok) {
+      showUpdateSubscribeModal.value = false;
+      await fetchSubscribedConfig();
+    } else {
+      Message.error($t('detail.subscribeFailed'));
+    }
+  } catch (e) {
+    console.error('subscribePaths failed', e);
+  }
 }
 
 // 计算当前菜单标题
@@ -588,7 +641,7 @@ const handleSearch = (value) => {
 };
 
 // 处理排序菜单点击
-const handleSortMenuClick = ({ key }) => {
+const handleSortMenuClick = ({key}) => {
   if (['recommend', 'time', 'name'].includes(key)) {
     sortType.value = key;
   } else if (['asc', 'desc'].includes(key)) {
@@ -596,10 +649,10 @@ const handleSortMenuClick = ({ key }) => {
   }
   // 保存当前菜单的排序状态
   saveSortForMenu(selectedMenu.value[0]);
-  console.log('排序设置已更新:', { sortType: sortType.value, sortOrder: sortOrder.value });
+  console.log('排序设置已更新:', {sortType: sortType.value, sortOrder: sortOrder.value});
 };
 
-const handleMenuSelect = ({ key }) => {
+const handleMenuSelect = ({key}) => {
   selectedMenu.value = [key];
   search.value = '';
   selectedScript.value = null;
@@ -607,54 +660,6 @@ const handleMenuSelect = ({ key }) => {
 
 const openExternalLink = (link) => {
   window.open(link, '_blank');
-};
-
-// 跳转到GitHub仓库指定位置
-const jumpToGitHub = () => {
-  if (!selectedScript.value) return;
-  const baseUrl = getWebPath();
-  let targetPath = '';
-
-  // 优先使用脚本的path属性
-  if (selectedScript.value.path) {
-    targetPath = selectedScript.value.path;
-  } else {
-    // 如果没有path属性，则根据脚本名称和菜单类型构建路径
-    const scriptName = selectedScript.value.name1 || selectedScript.value.name || selectedScript.value.title;
-    if (!scriptName) return;
-
-    // 根据当前选中的菜单类型构建不同的路径
-    switch (selectedMenu.value[0]) {
-      case '1': // 地图追踪
-        targetPath = `pathing/${scriptName}`;
-        break;
-      case '2': // Javascript脚本
-        targetPath = `js/${scriptName}`;
-        break;
-      case '3': // 战斗策略
-        targetPath = `combat/${scriptName}`;
-        break;
-      case '4': // 七圣召唤策略
-        targetPath = `tcg/${scriptName}`;
-        break;
-      default:
-        targetPath = scriptName;
-    }
-  }
-
-  // 清理路径，移除多余斜杠和点
-  targetPath = targetPath
-    .replace(/\/+/g, '/')
-    .replace(/^\/|\/$/g, '');
-
-  // 对路径进行编码，特别注意编码方括号等特殊字符
-  const encodedPath = encodeURI(targetPath)
-    .replace(/\[/g, '%5B')
-    .replace(/\]/g, '%5D')
-    .replace(/#/g, '%23');
-
-  const githubUrl = baseUrl + encodedPath;
-  openExternalLink(githubUrl);
 };
 
 const selectedScript = ref(null);
@@ -673,13 +678,13 @@ const updateScriptHasUpdate = (scriptPath, hasUpdate) => {
   const findTargetNode = (node, currentPath = '') => {
     // 构建当前节点的完整路径
     const nodePath = currentPath ? `${currentPath}/${node.name}` : node.name;
-    
+
     // 检查是否匹配目标路径
     if (nodePath === scriptPath || scriptPath.endsWith(`/${nodePath}`)) {
       targetNode = node;
       return;
     }
-    
+
     // 如果有子节点，继续递归查找
     if (node.children && node.children.length > 0) {
       for (let child of node.children) {
@@ -692,32 +697,32 @@ const updateScriptHasUpdate = (scriptPath, hasUpdate) => {
   // 递归更新所有子节点的hasUpdate状态
   const updateDescendants = (node) => {
     if (!node) return;
-    
+
     // 先更新所有子节点
     if (node.children && node.children.length > 0) {
       for (let child of node.children) {
         updateDescendants(child);
       }
     }
-    
+
     // 最后更新当前节点
     node.hasUpdate = hasUpdate;
   };
-  
+
   // 先从repoData递归查找目标节点
   for (let index of repoData.value.indexes) {
     findTargetNode(index);
     if (targetNode) break; // 找到目标节点后停止查找
   }
-  
+
   if (targetNode) {
-    
+
     // 先更新所有子节点，最后更新目标节点本身
     updateDescendants(targetNode);
-    
+
     // 强制触发响应式更新
     nextTick(() => {
-      repoData.value = { ...repoData.value };
+      repoData.value = {...repoData.value};
     });
   } else {
     console.log("updateScriptHasUpdate: 未找到匹配节点", scriptPath);
@@ -804,6 +809,26 @@ async function fetchSubscribedConfig() {
         subscribedScriptPaths.value = [];
       } else {
         subscribedScriptPaths.value = paths;
+        console.log(subscribedScriptPaths.value);
+        if (!repoData.value || !Array.isArray(repoData.value.indexes)) return;
+        subscribedScripts.value = [];
+        // 递归构建完整路径，使用 name 作为标题
+        function findNodes(node, currentPath) {
+          if (!node) return;
+          const fullPath = currentPath ? `${currentPath}/${node.name}` : node.name;
+          const isSubscribed = subscribedScriptPaths.value.some(sub => fullPath === sub);
+          const isRoot = ['pathing', 'js', 'combat', 'tcg'].includes(node.name);
+          if (isSubscribed && !isRoot) {
+            subscribedScripts.value.push([node.name, fullPath]);
+          }
+          // 继续向下遍历
+          if (Array.isArray(node.children) && node.children.length > 0) {
+            node.children.forEach(child => findNodes(child, fullPath));
+          }
+        }
+        repoData.value.indexes.forEach(index => {
+          findNodes(index, '');
+        });
         subscribedConfigError.value = false;
       }
     }
@@ -866,6 +891,10 @@ function startPollingUserConfig() {
 
 onMounted(() => {
   getRepoJson();
+  if (['2', '3', '4'].includes(selectedMenu.value[0])) {
+    applySortForMenu(selectedMenu.value[0]);
+  }
+  selectedRoleTags.value = [...appliedRoleTags.value];
 });
 
 onUnmounted(() => {
@@ -874,64 +903,6 @@ onUnmounted(() => {
     fetchTimeoutId = null;
   }
 });
-
-const commentModalOpen = ref(false);
-
-// giscus 配置
-// 测试数据
-//const giscusConfig = {
-//  repo: 'zaodonganqi/bettergi-scripts-web',
-//  repoId: 'R_kgDOOdJNqw',
-//  category: 'General',
-//  categoryId: 'DIC_kwDOOdJNq84CsJV3',
-//  mapping: 'specific', 
-//  strict: '0',
-//  reactionsEnabled: '1',
-//  emitMetadata: '0',
-//  inputPosition: 'top',
-//  theme: 'light',
-//  lang: 'zh-CN'
-//};
-const giscusConfig = {
-  repo: 'babalae/bettergi-script-web-giscus',
-  repoId: 'R_kgDOPbW19A',
-  category: 'General',
-  categoryId: 'DIC_kwDOPbW19M4Ct_3t',
-  mapping: 'specific',
-  strict: '0',
-  reactionsEnabled: '1',
-  emitMetadata: '0',
-  inputPosition: 'top',
-  theme: 'light',
-  lang: 'zh-CN'
-};
-
-// 强制 Giscus 组件重新渲染的 key
-const giscusKey = ref(0);
-
-// 计算 giscus term，用于区分不同脚本的评论
-const giscusTerm = computed(() => {
-  if (!selectedScript.value) return 'default';
-  return selectedScript.value.path || selectedScript.value.title || 'default';
-});
-
-// 监听 giscusTerm 变化，强制重新渲染 Giscus 组件
-watch(giscusTerm, (newTerm, oldTerm) => {
-  if (newTerm !== oldTerm) {
-    giscusKey.value++;
-  }
-});
-
-// 监听评论弹窗打开
-watch(commentModalOpen, (newVal) => {
-  if (newVal) {
-    console.log('Comment modal opened, current script:', selectedScript.value);
-  }
-});
-
-const handleCommentModalCancel = () => {
-  commentModalOpen.value = false;
-};
 
 const showEggModal = ref(false);
 
@@ -991,13 +962,6 @@ watch(selectedMenu, () => {
   applySortForMenu(selectedMenu.value[0]);
   // 同步 combat 面板临时选择
   roleFilterSearch.value = '';
-  selectedRoleTags.value = [...appliedRoleTags.value];
-});
-
-onMounted(() => {
-  if (['2', '3', '4'].includes(selectedMenu.value[0])) {
-    applySortForMenu(selectedMenu.value[0]);
-  }
   selectedRoleTags.value = [...appliedRoleTags.value];
 });
 
@@ -1081,7 +1045,7 @@ const updateAllScriptsHasUpdate = (hasUpdate) => {
 
   // 强制触发响应式更新
   nextTick(() => {
-    repoData.value = { ...repoData.value };
+    repoData.value = {...repoData.value};
   });
 };
 </script>
@@ -1174,11 +1138,6 @@ const updateAllScriptsHasUpdate = (hasUpdate) => {
   height: auto;
 }
 
-.ant-menu-item-selected {
-  background: #181822 !important;
-  color: #000 !important;
-}
-
 .menu-icon {
   margin-right: 10px;
   font-size: 18px;
@@ -1267,6 +1226,7 @@ const updateAllScriptsHasUpdate = (hasUpdate) => {
 }
 
 .script-actions {
+  position:relative;
   display: flex;
   gap: 8px;
 }
@@ -1341,14 +1301,17 @@ const updateAllScriptsHasUpdate = (hasUpdate) => {
   flex-direction: column;
   box-sizing: border-box;
 }
+
 .role-filter-search :deep(.ant-input-affix-wrapper) {
   height: 34px;
   border-radius: 8px;
   border-color: #d9d9d9;
 }
+
 .role-filter-search :deep(.ant-input-prefix) {
   color: #999;
 }
+
 .role-filter-list {
   flex: 1;
   overflow-y: auto;
@@ -1358,21 +1321,26 @@ const updateAllScriptsHasUpdate = (hasUpdate) => {
   grid-template-columns: repeat(3, 1fr);
   gap: 8px 10px;
 }
+
 .role-filter-checkbox :deep(.ant-checkbox) {
   transform: translateY(-1px);
 }
+
 .role-filter-checkbox :deep(.ant-checkbox-checked .ant-checkbox-inner) {
   background-color: #1677ff;
   border-color: #1677ff;
 }
+
 .role-filter-checkbox:hover {
   color: #1677ff;
 }
+
 .role-filter-label {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
 .role-filter-footer {
   display: flex;
   justify-content: flex-end;
@@ -1381,10 +1349,12 @@ const updateAllScriptsHasUpdate = (hasUpdate) => {
   border-top: 1px solid #f0f0f0;
   background: #fff;
 }
+
 .role-filter-btn {
   border-radius: 8px;
   padding: 0 12px;
 }
+
 .role-filter-btn-primary {
   border-radius: 8px;
   padding: 0 14px;
@@ -1446,15 +1416,16 @@ const updateAllScriptsHasUpdate = (hasUpdate) => {
   justify-content: space-between;
   align-items: center;
   padding: 0 16px;
-  flex-shrink: 0;
 }
 
 .top-bar-left {
   display: flex;
+  margin-left: 1px;
   gap: 8px;
 }
 
 .top-bar-right {
+  margin-left: auto;
   display: flex;
   gap: 8px;
 }
@@ -1462,15 +1433,13 @@ const updateAllScriptsHasUpdate = (hasUpdate) => {
 .action-btn {
   color: #444;
   border: none;
-  padding: 6px 8px;
+  padding: 3px 8px;
   border-radius: 6px;
   transition: all 0.2s;
-  font-size: 19px;
-  height: 32px !important;
-  width: 32px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .action-btn:hover {
@@ -1478,81 +1447,14 @@ const updateAllScriptsHasUpdate = (hasUpdate) => {
   background: rgba(24, 144, 255, 0.1);
 }
 
-.main-right>div:last-child {
+.main-right > div:last-child {
   flex: 1;
   overflow: hidden;
-}
-
-.strategy-tabs {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
 }
 
 .strategy-tabs :deep(.ant-tabs-content) {
   flex: 1;
   overflow-y: auto;
-}
-
-.strategy-list {
-  padding: 8px;
-}
-
-.strategy-item {
-  background: #fff;
-  border-radius: 8px;
-  padding: 12px;
-  margin-bottom: 12px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s;
-}
-
-.strategy-item:hover {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  transform: translateY(-1px);
-}
-
-.strategy-item-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
-}
-
-.strategy-title {
-  font-size: 16px;
-  font-weight: 500;
-  color: #222;
-}
-
-.strategy-tag {
-  font-size: 12px;
-  color: #1890ff;
-  background: rgba(24, 144, 255, 0.1);
-  padding: 2px 8px;
-  border-radius: 4px;
-}
-
-.strategy-desc {
-  font-size: 14px;
-  color: #666;
-  margin-bottom: 8px;
-  line-height: 1.5;
-}
-
-.strategy-meta {
-  display: flex;
-  justify-content: space-between;
-  font-size: 12px;
-  color: #999;
-}
-
-.strategy-author {
-  color: #1890ff;
-}
-
-.strategy-date {
-  color: #999;
 }
 
 .repo-error-modal {
@@ -1651,189 +1553,9 @@ const updateAllScriptsHasUpdate = (hasUpdate) => {
   justify-content: center;
 }
 
-.comment-modal {
-  border-radius: 12px;
-  overflow: hidden;
-}
-
-.comment-modal :deep(.ant-modal-content) {
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
-}
-
-.comment-modal :deep(.ant-modal-header) {
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-  border-bottom: 1px solid #e5e7eb;
-  padding: 20px 24px;
-}
-
-.comment-modal :deep(.ant-modal-title) {
-  font-size: 18px;
-  font-weight: 600;
-  color: #1a1a1a;
-}
-
-.comment-modal :deep(.ant-modal-body) {
-  padding: 0;
-  max-height: 90vh;
-  overflow: hidden;
-}
-
-.comment-modal-content {
-  padding: 0;
-  max-width: 100%;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-
-.comment-header {
-  margin: 0;
-  padding: 16px 24px;
-  background: #f8f9fa;
-  border-bottom: 1px solid #e5e7eb;
-  flex-shrink: 0;
-}
-
-.script-title-simple {
-  font-size: 18px;
-  font-weight: 600;
-  color: #1a1a1a;
-  line-height: 1.4;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.script-author {
-  font-size: 14px;
-  font-weight: 400;
-  color: #666;
-  opacity: 0.8;
-}
-
-.author-link {
-  color: #1677ff;
-  text-decoration: none;
-}
-
-.author-link:hover {
-  text-decoration: underline;
-}
-
-.comments-container {
-  flex: 1;
-  max-height: calc(90vh - 60px);
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding: 0;
-  position: relative;
-  width: 100%;
-}
-
-.comments-container :deep(.giscus) {
-  border: none;
-  border-radius: 0;
-  background: transparent;
-  width: 100%;
-  min-width: 100%;
-}
-
-@media (max-width: 1400px) {
-  .comment-modal {
-    width: 95% !important;
-    margin: 10px;
-  }
-
-  .comment-modal :deep(.ant-modal-body) {
-    max-height: 85vh;
-  }
-
-  .comments-container {
-    max-height: calc(85vh - 60px);
-  }
-}
-
-@media (max-width: 768px) {
-  .comment-modal {
-    width: 98% !important;
-    margin: 5px;
-  }
-
-  .comment-modal :deep(.ant-modal-body) {
-    max-height: 90vh;
-  }
-
-  .comments-container {
-    max-height: calc(90vh - 60px);
-  }
-
-  .comment-header {
-    padding: 12px 16px;
-  }
-
-  .script-title-simple {
-    font-size: 16px;
-  }
-}
-
-.local-mode-notice {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 60px 20px;
-  text-align: center;
-  height: 100%;
-  min-height: 400px;
-}
-
-.notice-icon {
-  margin-bottom: 24px;
-}
-
-.notice-title {
-  font-size: 20px;
-  font-weight: 600;
-  color: #1a1a1a;
-  margin-bottom: 12px;
-}
-
-.notice-desc {
-  font-size: 16px;
-  color: #666;
-  margin-bottom: 32px;
-  line-height: 1.5;
-}
-
-.notice-btn {
-  background: linear-gradient(135deg, #1677ff 0%, #096dd9 100%);
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 12px 32px;
-  font-size: 16px;
-  font-weight: 500;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(24, 144, 255, 0.3);
-  transition: all 0.3s ease;
-}
-
-.notice-btn:hover {
-  background: linear-gradient(135deg, #096dd9 0%, #0050b3 100%);
-  box-shadow: 0 6px 16px rgba(24, 144, 255, 0.4);
-  transform: translateY(-1px);
-}
-
-.notice-btn:active {
-  transform: translateY(0);
-}
-
 .egg-modal-content {
   max-height: 65vh;
-  overflow-y: overlay;
+  overflow-y: auto;
   padding-left: 15px;
   padding-right: 15px;
   font-size: clamp(14px, 1.5vw, 16px);
@@ -1846,25 +1568,6 @@ const updateAllScriptsHasUpdate = (hasUpdate) => {
   justify-content: center;
   margin-bottom: 16px;
   gap: 10px;
-}
-
-
-.egg-readme-loading {
-  text-align: center;
-  padding: 48px 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 16px;
-}
-
-.egg-readme-error {
-  text-align: center;
-  padding: 48px 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 16px;
 }
 
 .egg-readme-loading-indicator {
@@ -1881,19 +1584,64 @@ const updateAllScriptsHasUpdate = (hasUpdate) => {
   overflow-x: hidden;
 }
 
-.fade-slide-up-enter-active,
-.fade-slide-up-leave-active {
-  transition: all 0.3s ease;
+.update-message-content {
+  display: flex;
+  flex-direction: column;
+  max-height: 60vh;
+  overflow-y: auto;
 }
 
-.fade-slide-up-enter-from {
-  opacity: 0;
-  transform: translateY(20px);
+.update-list-item {
+  padding: 12px 16px;
+  border-bottom: 1px solid #f0f0f0;
 }
 
-.fade-slide-up-leave-to {
-  opacity: 0;
-  transform: translateY(-20px);
+.update-list-item:last-child {
+  border-bottom: none;
+}
+
+.item-header {
+  font-size: 16px;
+  font-weight: 600;
+  color: #222;
+  display: flex;
+  align-items: center;
+}
+
+.item-index {
+  color: #000000;
+  font-size: 15px;
+  font-weight: bold;
+  margin-right: 6px;
+}
+
+.item-title {
+  word-break: break-all;
+}
+
+.item-path {
+  font-size: 13px;
+  color: #666;
+  margin-top: 4px;
+  word-break: break-all;
+}
+
+.item-time {
+  font-size: 13px;
+  color: #666;
+  margin-top: 4px;
+  word-break: break-all;
+}
+
+.update-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 12px;
+}
+
+.update-subscribe-content {
+  max-height: 60vh;
+  overflow-y: auto;
 }
 
 .repo-error-btn-group {
@@ -1926,55 +1674,6 @@ const updateAllScriptsHasUpdate = (hasUpdate) => {
   color: #fff !important;
   border: 1px solid #1677ff !important;
 }
-
-.script-actions-mask {
-  position: absolute;
-  left: -8px;
-  top: -8px;
-  width: calc(100% + 16px);
-  height: calc(100% + 16px);
-  background: rgba(255, 255, 255, 0.88);
-  z-index: 2;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 15px;
-  color: #888;
-  border-radius: 10px;
-  pointer-events: all;
-  box-sizing: border-box;
-  padding: 8px 0;
-}
-
-.subscribed-error-msg {
-  font-size: 15px;
-}
-
-.sider-settings-btn-wrap {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 16px 0 12px 0;
-  background: #f7f8fa;
-  border-top: 1px solid #ececec;
-}
-
-.settings-btn {
-  margin-left: auto;
-  color: #888;
-  font-size: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 36px;
-  width: 36px;
-}
-
-.settings-btn:hover {
-  background: #f0f5ff;
-}
-
 .settings-row {
   display: flex;
   align-items: center;
@@ -1986,10 +1685,6 @@ const updateAllScriptsHasUpdate = (hasUpdate) => {
   font-size: 15px;
   color: #222;
   font-weight: 500;
-}
-
-.lang-select-dropdown {
-  font-size: 15px;
 }
 
 .update-label {
@@ -2005,13 +1700,6 @@ const updateAllScriptsHasUpdate = (hasUpdate) => {
   line-height: 1.2;
 }
 
-.last-update-time {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-}
-
 .update-content {
   display: flex;
   flex-direction: row;
@@ -2025,3 +1713,4 @@ const updateAllScriptsHasUpdate = (hasUpdate) => {
   gap: 0;
 }
 </style>
+

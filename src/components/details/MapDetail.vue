@@ -11,8 +11,9 @@
                   {{ $t('detail.author') }}
                   <template v-for="(author, idx) in script.authors" :key="author.name">
                     <template v-if="author.link">
-                      <a :href="author.link" class="author-link" target="_blank" rel="noopener noreferrer">{{
-                        author.name }}</a>
+                      <a :href="author.link" class="author-link" target="_blank" rel="noopener noreferrer">
+                        {{ author.name }}
+                      </a>
                     </template>
                     <template v-else>
                       <span>{{ author.name }}</span>
@@ -23,27 +24,35 @@
               </template>
               <span v-else class="detail-author">{{ $t('detail.noAuthor') }}</span>
             </div>
-            <div class="detail-time">{{ script.type === 'directory' && script.lastUpdated ? script.lastUpdated :
-              script.time
-            }}</div>
+            <div class="detail-time">
+              {{ script.type === 'directory' && script.lastUpdated ? script.lastUpdated : script.time }}
+            </div>
           </div>
-          <div class="header-right" style="display: flex; align-items: center; gap: 8px;">
-            <a-button type="primary" v-if="!script.isSubscribed" @click="handleSubscribe(script)">{{ $t('detail.subscribe') }}</a-button>
-            <a-button type="primary" v-if="script.isSubscribed" :disabled="script.isSubscribed"
-              class="subscribed-btn">{{ $t('detail.subscribed') }}</a-button>
-            <a-button type="primary" v-if="script.isSubscribed" @click="handleSubscribe(script)">{{ $t('detail.subscribeAgain') }}</a-button>
+          <div class="header-right">
+            <a-button type="primary" @click="jumpToGitHub(script)">
+              {{ $t('action.jumpToGitHub') }}
+            </a-button>
+            <a-button type="primary" @click="commentModalOpen = true">
+              {{ $t('action.comment') }}
+            </a-button>
+            <a-button type="primary" v-if="!script.isSubscribed" @click="handleSubscribe(script)">
+              {{ $t('detail.subscribe') }}
+            </a-button>
+            <a-button type="primary" v-if="script.isSubscribed" @click="handleSubscribe(script)">
+              {{ $t('detail.subscribeAgain') }}
+            </a-button>
           </div>
         </div>
         <div class="detail-tabs">
-          <a-segmented v-model:value="activeTab" :options="tabOptions" size="large" class="detail-tab-btns" />
+          <a-segmented v-model:value="activeTab" :options="tabOptions" size="large" class="detail-tab-btns"/>
           <div v-if="isLoadingReadme" class="readme-loading-indicator">
-            <a-spin size="small" />
+            <a-spin size="small"/>
             <span>{{ $t('detail.loadingReadme') }}</span>
           </div>
           <div v-else-if="loadError" class="readme-loading-indicator">
             <a-button type="text" size="small" @click="retryLoadReadme">
               <template #icon>
-                <ReloadOutlined />
+                <ReloadOutlined/>
               </template>
             </a-button>
             <span>{{ $t('detail.readmeFailed') }}</span>
@@ -57,14 +66,15 @@
                   <div class="desc-title">{{ $t('detail.desc') }}</div>
                   <div class="desc-content">{{ script.desc }}</div>
                 </div>
-                <ReadmeViewer :key="readmeKey" :path="script.path" :desc="null" :showDescTitle="false" :showNoDesc="true" @loaded="handleReadmeLoaded"
-                  @error="handleReadmeError" @hasContent="handleReadmeHasContent" />
+                <ReadmeViewer :key="readmeKey" :path="script.path" :desc="null" :showDescTitle="false"
+                              :showNoDesc="true" @loaded="handleReadmeLoaded"
+                              @error="handleReadmeError" @hasContent="handleReadmeHasContent"/>
               </div>
               <div v-else class="tab-pane files-pane">
                 <div class="table-pagination-outer" v-if="script.type === 'directory' && files && files.length > 0">
                   <div class="table-scroll-container" ref="tableScrollRef">
                     <a-table :columns="columns" :data-source="pagedData" row-key="hash" :bordered="true"
-                      :pagination="false", :sticky="true" @change="onTableChange">
+                             :pagination="false" , :sticky="true" @change="onTableChange">
                       <template #bodyCell="{ column, record }">
                         <template v-if="column.dataIndex === 'name'">
                           <a-popover v-if="record.description" :content="record.description">
@@ -74,16 +84,18 @@
                         </template>
                         <template v-else-if="column.dataIndex === 'tags'">
                           <div class="tags-container">
-                            <a-tag v-for="tag in record.tags" :key="tag" :color="getTagColor(tag)" class="tag-item">{{
-                              tag }}</a-tag>
+                            <a-tag v-for="tag in record.tags" :key="tag" :color="getTagColor(tag)" class="tag-item">
+                              {{ tag }}
+                            </a-tag>
                           </div>
                         </template>
                         <template v-else-if="column.key === 'operations'">
                           <a-space size="small" wrap>
                             <a-button class="subscribe-btn-bordered" type="default" size="small"
-                              :disabled="record.isSubscribed && !record._hover"
-                              @mouseenter="onSubscribeBtnHover(record)" @mouseleave="onSubscribeBtnLeave(record)"
-                              @click="handleSubscribe(record)">
+                                      :disabled="record.isSubscribed && !record._hover"
+                                      @mouseenter="onSubscribeBtnHover(record)"
+                                      @mouseleave="onSubscribeBtnLeave(record)"
+                                      @click="handleSubscribe(record)">
                               <template v-if="record.isSubscribed">
                                 <span v-if="!record._hover">{{ $t('detail.subscribed') }}</span>
                                 <span v-else class="subscribe-btn-hover">{{ $t('detail.subscribeAgain') }}</span>
@@ -92,7 +104,9 @@
                                 {{ $t('detail.subscribe') }}
                               </template>
                             </a-button>
-                            <a-button class="more-detail" size="small" @click="showDetails(record)">{{ $t('detail.showDetails') }}</a-button>
+                            <a-button class="more-detail" size="small" @click="showDetails(record)">
+                              {{ $t('detail.showDetails') }}
+                            </a-button>
                           </a-space>
                         </template>
                         <template v-else>
@@ -103,8 +117,8 @@
                   </div>
                   <div class="custom-pagination">
                     <a-pagination :current="currentPage" :page-size="pageSize" :total="filteredSortedData.length"
-                      @change="onPageChange" @showSizeChange="onPageSizeChange" :show-size-changer="true"
-                      :page-size-options="['10', '20', '50', '100']" />
+                                  @change="onPageChange" @showSizeChange="onPageSizeChange" :show-size-changer="true"
+                                  :page-size-options="['10', '20', '50', '100']"/>
                   </div>
                 </div>
                 <div v-else class="no-files">{{ $t('detail.noFiles') }}</div>
@@ -112,6 +126,10 @@
             </div>
           </transition>
         </div>
+
+        <!-- 评论弹窗-->
+        <Comment v-model:commentModalOpen="commentModalOpen" :selected-script="script" />
+
         <!-- 详情弹窗 -->
         <a-modal v-model:open="modalOpen" :title="$t('detail.modalTitle')" :footer="null" width="480" centered>
           <a-descriptions bordered size="small" :column="1">
@@ -137,15 +155,28 @@
 </template>
 
 <script setup>
-import { ref, watch, computed } from 'vue';
-import { message as Message } from 'ant-design-vue';
-import { Table as ATable, Tag as ATag, Popover as APopover, Space as ASpace, Modal as AModal, Descriptions as ADescriptions, DescriptionsItem as ADescriptionsItem, Segmented as ASegmented, Spin as ASpin } from 'ant-design-vue';
-import { ReloadOutlined } from '@ant-design/icons-vue';
-import ReadmeViewer from '../ReadmeViewer.vue';
-import { useClipboard } from '@vueuse/core';
-import { subscribePath } from '@/utils/subscription';
-import { useI18n } from 'vue-i18n';
-const { t: $t, locale } = useI18n();
+import {ref, watch, computed} from 'vue';
+import {message as Message} from 'ant-design-vue';
+import {
+  Table as ATable,
+  Tag as ATag,
+  Popover as APopover,
+  Space as ASpace,
+  Modal as AModal,
+  Descriptions as ADescriptions,
+  DescriptionsItem as ADescriptionsItem,
+  Segmented as ASegmented,
+  Spin as ASpin
+} from 'ant-design-vue';
+import {ReloadOutlined} from '@ant-design/icons-vue';
+import ReadmeViewer from '../items/ReadmeViewer.vue';
+import {useClipboard} from '@vueuse/core';
+import { subscribePaths } from '@/utils/subscription';
+import {useI18n} from 'vue-i18n';
+import {jumpToGitHub} from "@/utils/actions.js";
+import Comment from "@/components/items/Comment.vue";
+
+const {t: $t, locale} = useI18n();
 
 const props = defineProps({
   script: {
@@ -156,9 +187,10 @@ const props = defineProps({
 });
 
 const mode = import.meta.env.VITE_MODE;
-const { copy } = useClipboard();
+const {copy} = useClipboard();
 const currentPage = ref(1);
 const pageSize = ref(10);
+const commentModalOpen = ref(false);
 
 // 筛选与排序状态
 const columnFilters = ref({
@@ -221,11 +253,11 @@ const onTableChange = (pagination, filters, sorter) => {
   // 排序
   if (Array.isArray(sorter)) {
     const s = sorter.find(s => s.field === 'lastUpdated');
-    currentSorter.value = s ? { field: s.field, order: s.order } : { field: null, order: null };
+    currentSorter.value = s ? {field: s.field, order: s.order} : {field: null, order: null};
   } else if (sorter && sorter.field) {
-    currentSorter.value = { field: sorter.field, order: sorter.order };
+    currentSorter.value = {field: sorter.field, order: sorter.order};
   } else {
-    currentSorter.value = { field: null, order: null };
+    currentSorter.value = {field: null, order: null};
   }
 
   // 变更后回到第一页
@@ -237,19 +269,79 @@ const tableScrollRef = ref(null);
 const columns = computed(() => {
   if (mode === 'single') {
     return [
-      { title: $t('detail.name'), dataIndex: 'name', width: '30%' },
-      { title: $t('detail.scriptAuthor'), dataIndex: 'author', width: '13%', onFilter: (value, record) => record.author === value, filters: buildAuthorFilters(files.value), filterSearch: true, filterMultiple: true, filteredValue: columnFilters.value.author },
-      { title: $t('detail.tags'), dataIndex: 'tags', width: '24%', onFilter: (value, record) => record.tags && record.tags.includes(value), filters: buildTagFilters(files.value), filterSearch: true, filterMultiple: true, filteredValue: columnFilters.value.tags },
-      { title: $t('detail.lastUpdated'), dataIndex: 'lastUpdated', width: '16%', sorter: (a, b) => new Date(a.lastUpdated) - new Date(b.lastUpdated), sortOrder: currentSorter.value.field === 'lastUpdated' ? currentSorter.value.order : null },
-      { title: $t('detail.operations'), key: 'operations', width: '17%' }
+      {
+        title: $t('detail.name'),
+        dataIndex: 'name',
+        width: '30%'},
+      {
+        title: $t('detail.scriptAuthor'),
+        dataIndex: 'author',
+        width: '13%',
+        onFilter: (value, record) => record.author === value,
+        filters: buildAuthorFilters(files.value),
+        filterSearch: true,
+        filterMultiple: true,
+        filteredValue: columnFilters.value.author
+      },
+      {
+        title: $t('detail.tags'),
+        dataIndex: 'tags',
+        width: '24%',
+        onFilter: (value, record) => record.tags && record.tags.includes(value),
+        filters: buildTagFilters(files.value),
+        filterSearch: true,
+        filterMultiple: true,
+        filteredValue: columnFilters.value.tags
+      },
+      {
+        title: $t('detail.lastUpdated'),
+        dataIndex: 'lastUpdated',
+        width: '16%',
+        sorter: (a, b) => new Date(a.lastUpdated) - new Date(b.lastUpdated),
+        sortOrder: currentSorter.value.field === 'lastUpdated' ? currentSorter.value.order : null
+      },
+      {
+        title: $t('detail.operations'),
+        key: 'operations',
+        width: '17%'}
     ]
   } else {
     return [
-      { title: $t('detail.name'), dataIndex: 'name', width: '30%' },
-      { title: $t('detail.scriptAuthor'), dataIndex: 'author', width: '10%', onFilter: (value, record) => record.author === value, filters: buildAuthorFilters(files.value), filterSearch: true, filterMultiple: true, filteredValue: columnFilters.value.author },
-      { title: $t('detail.tags'), dataIndex: 'tags', width: '24%', onFilter: (value, record) => record.tags && record.tags.includes(value), filters: buildTagFilters(files.value), filterSearch: true, filterMultiple: true, filteredValue: columnFilters.value.tags },
-      { title: $t('detail.lastUpdated'), dataIndex: 'lastUpdated', width: '16%', sorter: (a, b) => new Date(a.lastUpdated) - new Date(b.lastUpdated), sortOrder: currentSorter.value.field === 'lastUpdated' ? currentSorter.value.order : null },
-      { title: $t('detail.operations'), key: 'operations', width: '20%' }
+      {
+        title: $t('detail.name'),
+        dataIndex: 'name',
+        width: '30%'},
+      {
+        title: $t('detail.scriptAuthor'),
+        dataIndex: 'author',
+        width: '10%',
+        onFilter: (value, record) => record.author === value,
+        filters: buildAuthorFilters(files.value),
+        filterSearch: true,
+        filterMultiple: true,
+        filteredValue: columnFilters.value.author
+      },
+      {
+        title: $t('detail.tags'),
+        dataIndex: 'tags',
+        width: '24%',
+        onFilter: (value, record) => record.tags && record.tags.includes(value),
+        filters: buildTagFilters(files.value),
+        filterSearch: true,
+        filterMultiple: true,
+        filteredValue: columnFilters.value.tags
+      },
+      {
+        title: $t('detail.lastUpdated'),
+        dataIndex: 'lastUpdated',
+        width: '16%',
+        sorter: (a, b) => new Date(a.lastUpdated) - new Date(b.lastUpdated),
+        sortOrder: currentSorter.value.field === 'lastUpdated' ? currentSorter.value.order : null
+      },
+      {
+        title: $t('detail.operations'),
+        key: 'operations',
+        width: '20%'}
     ]
   }
 });
@@ -262,11 +354,11 @@ function isReadme404(path) {
 const tabOptions = computed(() => [
   {
     label: (isReadme404(props.script?.path) || !hasReadmeContent.value)
-      ? $t('detail.tabReadme')
-      : 'README',
+        ? $t('detail.tabReadme')
+        : 'README',
     value: 'readme'
   },
-  { label: $t('detail.tabFiles'), value: 'files' }
+  {label: $t('detail.tabFiles'), value: 'files'}
 ]);
 const activeTab = ref('readme');
 
@@ -326,7 +418,7 @@ const checkAndSwitchToFiles = () => {
   if (props.script && props.script.path && activeTab.value === 'readme' && !hasAutoSwitched.value) {
     const is404 = isReadme404(props.script.path);
     const hasDesc = props.script.desc && props.script.desc.trim() !== '';
-    
+
     if (!hasDesc && is404 && !hasReadmeContent.value && files.value.length > 0) {
       activeTab.value = 'files';
       hasAutoSwitched.value = true;
@@ -372,30 +464,30 @@ function getTagColor(tag) {
 function buildAuthorFilters(fileList) {
   const authors = fileList.map(f => f.author).filter(Boolean);
   const uniqueAuthors = Array.from(new Set(authors)).sort((a, b) => String(a).localeCompare(String(b)));
-  return uniqueAuthors.map(author => ({ text: author, value: author }));
+  return uniqueAuthors.map(author => ({text: author, value: author}));
 }
 
 // tag筛选项
 function buildTagFilters(fileList) {
   const tags = fileList.flatMap(f => f.tags || []).filter(Boolean);
   const uniqueTags = Array.from(new Set(tags)).sort((a, b) => String(a).localeCompare(String(b)));
-  return uniqueTags.map(tag => ({ text: tag, value: tag }));
+  return uniqueTags.map(tag => ({text: tag, value: tag}));
 }
 
 const handleSubscribe = async (item) => {
   if (!item.path) return;
   try {
-    const result = await subscribePath(item.path);
+    const result = await subscribePaths([item.path]);
     if (result.needsCopy) {
       await copy(result.url);
-      Message.success($t('detail.subscribeSuccess', { name: item.name }));
+      Message.success($t('detail.subscribeSuccess', {name: item.name}));
     }
     if (typeof props.startPollingUserConfig === 'function') {
       props.startPollingUserConfig();
     }
   } catch (error) {
     console.error('Subscribe failed:', error);
-    Message.error($t('detail.subscribeFailedWithMsg', { msg: error.message }));
+    Message.error($t('detail.subscribeFailedWithMsg', {msg: error.message}));
   }
 };
 
@@ -413,8 +505,8 @@ watch(() => props.script, (newScript) => {
     currentPage.value = 1;
     pageSize.value = 10;
     // 重置筛选与排序
-    columnFilters.value = { author: [], tags: [] };
-    currentSorter.value = { field: null, order: null };
+    columnFilters.value = {author: [], tags: []};
+    currentSorter.value = {field: null, order: null};
     files.value = Array.isArray(newScript.files) ? newScript.files : [];
     // 只有script变化时才重置和加载README
     if (newScript.path) {
@@ -462,6 +554,7 @@ const retryLoadReadme = () => {
 function onSubscribeBtnHover(node) {
   node._hover = true;
 }
+
 function onSubscribeBtnLeave(node) {
   node._hover = false;
 }
@@ -499,11 +592,12 @@ function onSubscribeBtnLeave(node) {
 .header-left {
   flex: 1;
   min-width: 0;
-  margin-right: 5px;
+  padding-right: 30px;
 }
 
 .header-right {
   display: flex;
+  align-items: center;
   gap: 8px;
 }
 
@@ -617,137 +711,6 @@ function onSubscribeBtnLeave(node) {
   color: #999;
 }
 
-.slide-left-enter-active,
-.slide-left-leave-active,
-.slide-right-enter-active,
-.slide-right-leave-active {
-  transition: all 0.3s cubic-bezier(.55, 0, .1, 1);
-}
-
-.slide-left-enter-from {
-  transform: translateX(100%);
-  opacity: 1;
-  z-index: 2;
-}
-
-.slide-left-leave-to {
-  transform: translateX(-100%);
-  opacity: 1;
-  z-index: 1;
-}
-
-.slide-right-enter-from {
-  transform: translateX(-100%);
-  opacity: 1;
-  z-index: 2;
-}
-
-.slide-right-leave-to {
-  transform: translateX(100%);
-  opacity: 1;
-  z-index: 1;
-}
-
-.detail-input-wrap {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  margin: 0 0 0 0;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  background: #f7f8fa;
-  border-radius: 8px;
-  padding: 10px 16px;
-  box-shadow: 0 2px 8px #f2f3f5;
-  z-index: 10;
-}
-
-.detail-input {
-  flex: 1;
-  margin-right: 10px;
-  border-radius: 6px;
-  height: 36px;
-  font-size: 15px;
-}
-
-.detail-send {
-  height: 36px;
-  border-radius: 6px;
-  font-size: 15px;
-  background: #1677ff !important;
-  border: none !important;
-}
-
-.detail-table-wrap {
-  margin-bottom: 16px;
-  padding-bottom: 80px;
-}
-
-/*
-:deep(.ant-table-thead > tr > th),
-:deep(.ant-table-tbody > tr > td) {
-  // border: 1px solid #c5c5c5 !important; // 表格线条颜色和粗细
-  word-break: break-all;
-  white-space: normal;
-  text-align: left;
-}
-
-:deep(.ant-table-thead > tr > th) {
-  // background: #f2f3f5; // 表头背景色
-}
-*/
-
-.comment-float-btn {
-  position: fixed;
-  right: 60px;
-  bottom: 60px;
-  z-index: 1001;
-  box-shadow: 0 2px 8px #e6e6e6;
-  padding: 0 22px 0 18px;
-  height: 48px;
-  border-radius: 24px;
-  background: #e6f0ff;
-  color: #1677ff;
-  font-size: 18px;
-  display: flex;
-  align-items: center;
-  border: none;
-  transition: background 0.2s, color 0.2s;
-}
-
-.comment-float-btn:hover {
-  background: #1677ff;
-  color: #fff;
-}
-
-.comment-round-btn {
-  border-radius: 24px !important;
-}
-
-.comment-modal-content {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  padding: 10px 0;
-}
-
-.detail-input {
-  flex: 1;
-  border-radius: 6px;
-  height: 36px;
-  font-size: 15px;
-}
-
-.detail-send {
-  height: 36px;
-  border-radius: 6px;
-  font-size: 15px;
-  background: #1677ff !important;
-  border: none !important;
-}
-
 .table-pagination-outer {
   display: flex;
   flex-direction: column;
@@ -787,13 +750,7 @@ function onSubscribeBtnLeave(node) {
   padding: 6px 12px 0 0;
 }
 
-.ant-table-cell {
-  word-break: break-all !important;
-  white-space: normal !important;
-  vertical-align: top !important;
-}
-
-.ant-table-thead>tr>th {
+.ant-table-thead > tr > th {
   word-break: break-all !important;
   white-space: normal !important;
 }
@@ -814,52 +771,22 @@ function onSubscribeBtnLeave(node) {
   cursor: pointer;
 }
 
-.a-button[disabled],
-.subscribe-btn[disabled] {
-  background: #f6ffed !important;
-  color: #1677ff !important;
-  border-color: #1677ff !important;
-  cursor: default !important;
-}
-
 :deep(.ant-table-cell.operations-cell) {
   white-space: nowrap;
-}
-
-.subscribe-btn {
-  color: #1677ff;
-  background: none;
-  border: none;
-  width: 72px;
-  text-align: center;
-}
-
-.subscribe-btn[disabled] {
-  color: #1677ff !important;
 }
 
 .subscribe-btn-hover {
   color: #1677ff;
 }
 
-.subscribed-btn {
-  /* background: #fff; */
-  color: #1677ff;
-  border-color: #1677ff;
-}
-
 .subscribe-btn-bordered {
   color: #1677ff;
-  /* border: 1px solid #1677ff; */
-  /* background: #fff; */
   width: 72px;
   text-align: center;
 }
 
 .subscribe-btn-bordered[disabled] {
   color: #1677ff !important;
-  /* border-color: #1677ff !important; */
-  /* background: #fff !important; */
 }
 
 .more-detail {

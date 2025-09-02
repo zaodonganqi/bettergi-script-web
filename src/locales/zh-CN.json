@@ -114,8 +114,16 @@
     },
     "action": {
         "help": "帮助",
-        "jumpToGitHub": "跳转到GitHub",
-        "comment": "评论"
+        "jumpToGitHub": "GitHub",
+        "comment": "评论",
+        "subscribe": "一键更新",
+        "update": "查看更新",
+        "recent": "以下脚本最近有更新",
+        "updateAll": "是否一键更新所有已订阅项",
+        "clearDot": "清除红点提示",
+        "subscribed": "已订阅",
+        "confirm": "确定",
+        "cancel": "取消"
     },
     "mapTreeList": {
         "subscribed": "已订阅",

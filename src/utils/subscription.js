@@ -17,9 +17,3 @@ export async function subscribePaths(paths) {
   // Web 模式由调用方自行复制 URL
   return { ok: true, url, needsCopy: true };
 }
-
-export async function subscribePath(path) {
-  return subscribePaths([path]);
-}
-
-

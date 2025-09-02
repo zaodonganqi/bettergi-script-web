@@ -115,8 +115,16 @@
   },
   "action": {
     "help": "Aide",
-    "jumpToGitHub": "Aller sur GitHub",
-    "comment": "Commentaire"
+    "jumpToGitHub": "GitHub",
+    "comment": "Commentaire",
+    "subscribe": "Mise à jour en un clic",
+    "update": "Vérifier les mises à jour",
+    "recent": "Mises à jour récentes",
+    "updateAll": "Mettre à jour tous les abonnements ?",
+    "clearDot": "Effacer le point rouge",
+    "subscribed": "Abonné",
+    "confirm": "Confirmer",
+    "cancel": "Annuler"
   },
   "mapTreeList": {
     "subscribed": "Abonné",
