@@ -142,7 +142,7 @@
         <a-modal v-model:open="modalOpen" :title="$t('detail.modalTitle')" :footer="null" width="480" centered>
           <a-descriptions bordered size="small" :column="1">
             <a-descriptions-item :label="$t('detail.name')">{{ modalRecord.name }}</a-descriptions-item>
-            <a-descriptions-item :label="$t('detail.author')">
+            <a-descriptions-item :label="$t('detail.scriptAuthor')">
               <template v-if="Array.isArray(modalRecord.authors)">
                 {{ modalRecord.authors.map(a => a.name || a).join($t('common.comma')) }}
               </template>

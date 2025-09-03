@@ -277,11 +277,11 @@
             </div>
           </template>
         </a-list>
-        <div class="update-modal-footer">
-          <a-button type="primary" size="middle" @click="handleClearUpdate" :loading="clearUpdateLoading">
-            {{ $t('action.clearDot') }}
-          </a-button>
-        </div>
+      </div>
+      <div class="update-modal-footer">
+        <a-button type="primary" size="middle" @click="handleClearUpdate" :loading="clearUpdateLoading">
+          {{ $t('action.clearDot') }}
+        </a-button>
       </div>
     </a-modal>
 
@@ -606,6 +606,11 @@ async function updateSubscribedScripts() {
     if (result?.ok) {
       showUpdateSubscribeModal.value = false;
       await fetchSubscribedConfig();
+      const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
+      for (const path of subscribedScriptPaths.value) {
+        await repoWebBridge.UpdateSubscribed(path);
+        updateScriptHasUpdate(path, false)
+      }
     } else {
       Message.error($t('detail.subscribeFailed'));
     }
