@@ -13,7 +13,7 @@ import MarkdownIt from 'markdown-it';
 import markdownItAnchor from 'markdown-it-anchor';
 import hljs from 'highlight.js';
 import 'highlight.js/styles/github.css';
-import { getWebPath, getRepoPath, getMirrorPath } from '@/utils/basePaths.js';
+import {getWebPath, getRepoPath, getMirrorPath, getMirror} from '@/utils/basePaths.js';
 import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
 
@@ -224,6 +224,10 @@ function getReadmeUrl(path) {
 
   // 检查是否已经是外链（以 http:// 或 https:// 开头）
   if (/^https?:\/\//i.test(path)) {
+    // 外链是否需要加速
+    if (useMirror.value) {
+      return getMirror() + path;
+    }
     return path;
   }
   // 检查是否需要加速

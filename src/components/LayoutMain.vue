@@ -604,13 +604,13 @@ async function updateSubscribedScripts() {
   try {
     const result = await subscribePaths(subscribedScriptPaths.value);
     if (result?.ok) {
-      showUpdateSubscribeModal.value = false;
       await fetchSubscribedConfig();
       const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
       for (const path of subscribedScriptPaths.value) {
         await repoWebBridge.UpdateSubscribed(path);
         updateScriptHasUpdate(path, false)
       }
+      showUpdateSubscribeModal.value = false;
     } else {
       Message.error($t('detail.subscribeFailed'));
     }
@@ -1021,6 +1021,7 @@ const handleClearUpdate = async () => {
     Message.error($t('settings.clearUpdateFailed'));
   } finally {
     clearUpdateLoading.value = false;
+    showUpdateMessageModal.value = false;
   }
 };
 
