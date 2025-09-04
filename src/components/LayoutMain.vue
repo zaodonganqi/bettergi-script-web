@@ -263,7 +263,7 @@
     </a-modal>
 
     <!-- 更新信息弹窗 -->
-    <a-modal v-model:open="showUpdateMessageModal" :title="$t('action.recent')" :footer="null" centered width="60%" :style="{ maxWidth: '900px' }">
+    <a-modal v-model:open="showUpdateMessageModal" :title="$t('action.recent')" :footer="null" centered width="50%" :style="{ maxWidth: '900px' }">
       <div class="update-message-content">
         <a-list :data-source="updatedScripts" size="small">
           <template #renderItem="{ item, index }">
@@ -286,7 +286,7 @@
     </a-modal>
 
     <!-- 一键更新弹窗 -->
-    <a-modal v-model:open="showUpdateSubscribeModal" :title="$t('action.updateAll')" :ok-text="$t('action.confirm')" :cancel-text="$t('action.cancel')" centered width="60%"
+    <a-modal v-model:open="showUpdateSubscribeModal" :title="$t('action.updateAll')" :ok-text="$t('action.confirm')" :cancel-text="$t('action.cancel')" centered width="50%"
              :style="{ maxWidth: '900px' }" @ok="updateSubscribedScripts">
       <div class="update-subscribe-content">
         <a-list :data-source="subscribedScripts" size="small">
