@@ -601,22 +601,25 @@ function getUpdatedScripts() {
 const subscribedScripts = ref([]);
 
 async function updateSubscribedScripts() {
-  try {
-    const result = await subscribePaths(subscribedScriptPaths.value);
-    if (result?.ok) {
-      await fetchSubscribedConfig();
-      const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
-      for (const path of subscribedScriptPaths.value) {
-        await repoWebBridge.UpdateSubscribed(path);
-        updateScriptHasUpdate(path, false)
+  if (subscribedScriptPaths.value.length > 0) {
+    try {
+      const result = await subscribePaths(subscribedScriptPaths.value);
+      if (result?.ok) {
+        await fetchSubscribedConfig();
+        const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
+        for (const path of subscribedScriptPaths.value) {
+          await repoWebBridge.UpdateSubscribed(path);
+          updateScriptHasUpdate(path, false)
+        }
+        showUpdateSubscribeModal.value = false;
+      } else {
+        Message.error($t('detail.subscribeFailed'));
       }
-      showUpdateSubscribeModal.value = false;
-    } else {
-      Message.error($t('detail.subscribeFailed'));
+    } catch (e) {
+      console.error('subscribePaths failed', e);
     }
-  } catch (e) {
-    console.error('subscribePaths failed', e);
   }
+  showUpdateSubscribeModal.value = false;
 }
 
 // 计算当前菜单标题
