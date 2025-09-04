@@ -62,7 +62,7 @@
         </transition>
         <div v-if="txtContent" class="txt-content-plain">{{ txtContent }}</div>
         <!-- 评论弹窗-->
-        <Comment v-model:commentModalOpen="commentModalOpen" :selected-script="script" />
+        <Comment v-model="commentModalOpen" :selected-script="script" />
       </div>
     </template>
     <template v-else>

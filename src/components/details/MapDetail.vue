@@ -59,7 +59,7 @@
           </div>
         </div>
         <div class="tab-content-slider">
-          <transition :name="tabTransitionName">
+          <transition :name="tabTransitionName" mode="out-in">
             <div :key="activeTab" class="tab-content-inner">
               <div v-if="activeTab === 'readme'" class="tab-pane readme-pane">
                 <div v-if="script && script.desc && script.desc.trim()" class="desc-block">
@@ -72,7 +72,7 @@
               </div>
               <div v-else class="tab-pane files-pane">
                 <div class="table-pagination-outer" v-if="script.type === 'directory' && files && files.length > 0">
-                  <div class="table-scroll-container" ref="tableScrollRef">
+                  <div class="table-scroll-container">
                     <a-table :columns="columns" :data-source="pagedData" row-key="hash" :bordered="true"
                              :pagination="false" :sticky="true" @change="onTableChange">
                       <template #bodyCell="{ column, record }">
@@ -136,7 +136,7 @@
         </div>
 
         <!-- 评论弹窗-->
-        <Comment v-model:commentModalOpen="commentModalOpen" :selected-script="script" />
+        <Comment v-model="commentModalOpen" :selected-script="script" />
 
         <!-- 详情弹窗 -->
         <a-modal v-model:open="modalOpen" :title="$t('detail.modalTitle')" :footer="null" width="480" centered>
@@ -283,8 +283,6 @@ const onTableChange = (pagination, filters, sorter) => {
   // 变更后回到第一页
   currentPage.value = 1;
 };
-
-const tableScrollRef = ref(null);
 
 const columns = computed(() => {
   if (mode === 'single') {
@@ -859,5 +857,33 @@ function onSubscribeBtnLeave(node) {
   margin: 0;
   white-space: pre-line;
   word-break: break-word;
+}
+
+/* tab 切换过渡动画 */
+.slide-left-enter-active,
+.slide-left-leave-active,
+.slide-right-enter-active,
+.slide-right-leave-active {
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+/* 从左向右进入 */
+.slide-left-enter-from {
+  transform: translateX(40px);
+  opacity: 0;
+}
+.slide-left-leave-to {
+  transform: translateX(-40px);
+  opacity: 0;
+}
+
+/* 从右向左进入 */
+.slide-right-enter-from {
+  transform: translateX(-40px);
+  opacity: 0;
+}
+.slide-right-leave-to {
+  transform: translateX(40px);
+  opacity: 0;
 }
 </style>

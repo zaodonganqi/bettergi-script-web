@@ -67,7 +67,7 @@
                       :showNoDesc="!script.desc"
                       @loaded="handleReadmeLoaded" @error="handleReadmeError"/>
         <!-- 评论弹窗-->
-        <Comment v-model:commentModalOpen="commentModalOpen" :selected-script="script" />
+        <Comment v-model="commentModalOpen" :selected-script="script" />
       </div>
     </template>
     <template v-else>

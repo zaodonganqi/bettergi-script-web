@@ -10,22 +10,11 @@ const props = defineProps({
   selectedScript: {
     type: Object,
     default: null
-  },
-  commentModalOpen: {
-    type: Boolean,
-    default: false
   }
 });
-
-const emit = defineEmits(['update:commentModalOpen']);
+const commentModalOpen = defineModel()
 
 const mode = import.meta.env.VITE_MODE;
-
-// 处理双向绑定
-const isModalOpen = computed({
-  get: () => props.commentModalOpen,
-  set: (value) => emit('update:commentModalOpen', value)
-});
 
 const giscusConfig = {
   repo: 'babalae/bettergi-script-web-giscus',
@@ -65,7 +54,7 @@ const openExternalLink = (url) => {
 
 <template>
   <!-- 评论弹窗 -->
-  <a-modal v-model:open="isModalOpen" :title="$t('comment.title')" :footer="null" centered width="90%"
+  <a-modal v-model:open="commentModalOpen" :title="$t('comment.title')" :footer="null" centered width="90%"
            :style="{ maxWidth: '1200px' }" class="comment-modal">
     <div class="comment-modal-content">
       <div class="comment-header">
@@ -77,8 +66,9 @@ const openExternalLink = (url) => {
                 {{ $t('script.author') }}
                 <template v-for="(author, idx) in selectedScript.authors" :key="author.name">
                   <template v-if="author.link">
-                    <a :href="author.link" class="author-link" target="_blank" rel="noopener noreferrer">{{ author.name
-                      }}</a>
+                    <a :href="author.link" class="author-link" target="_blank" rel="noopener noreferrer">
+                      {{ author.name }}
+                    </a>
                   </template>
                   <template v-else>
                     <span>{{ author.name }}</span>
