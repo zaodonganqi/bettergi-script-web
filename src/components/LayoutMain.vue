@@ -141,7 +141,7 @@
       <!-- 地图追踪的树状结构 -->
       <div v-if="selectedMenu[0] === '1'" class="script-list">
         <MapTreeList :search-key="search" :repo-data="repoData" :subscribed-paths="subscribedScriptPaths"
-                     :show-subscribed-only="scriptTab === 'subscribed'" ref="mapTreeRef"
+                     :show-subscribed-only="scriptTab === 'subscribed'"
                      :start-polling-user-config="startPollingUserConfig" @select="handleMapSelect"
                      @update-has-update="updateScriptHasUpdate"/>
       </div>
@@ -149,7 +149,7 @@
       <div v-else-if="selectedMenu[0] === '2'" class="script-list">
         <ScriptList :search-key="search" :repo-data="repoData" :subscribed-paths="subscribedScriptPaths"
                     :show-subscribed-only="scriptTab === 'subscribed'" :sort-type="sortType" :sort-order="sortOrder"
-                    ref="scriptListRef" @select="handleScriptSelect"
+                    @select="handleScriptSelect"
                     @update-has-update="updateScriptHasUpdate"/>
       </div>
       <!-- 战斗策略列表 -->
@@ -157,7 +157,7 @@
         <CombatStrategyList :search-key="search" :repo-data="repoData" :subscribed-paths="subscribedScriptPaths"
                             :show-subscribed-only="scriptTab === 'subscribed'" :sort-type="sortType"
                             :sort-order="sortOrder" :role-tags="appliedRoleTags"
-                            ref="combatStrategyRef" @select="handleScriptSelect"
+                            @select="handleScriptSelect"
                             @update-has-update="updateScriptHasUpdate"/>
       </div>
       <!-- 七圣召唤策略列表 -->
@@ -165,7 +165,7 @@
         <CardStrategyList :search-key="search" :repo-data="repoData" :subscribed-paths="subscribedScriptPaths"
                           :show-subscribed-only="scriptTab === 'subscribed'" :sort-type="sortType"
                           :sort-order="sortOrder"
-                          ref="cardStrategyRef" @select="handleScriptSelect"
+                          @select="handleScriptSelect"
                           @update-has-update="updateScriptHasUpdate"/>
       </div>
     </a-layout-sider>
@@ -741,11 +741,6 @@ const updateScriptHasUpdate = (scriptPath, hasUpdate) => {
 const handleMapSelect = (location) => {
   selectedScript.value = location;
 };
-
-const mapTreeRef = ref(null);
-const scriptListRef = ref(null);
-const combatStrategyRef = ref(null);
-const cardStrategyRef = ref(null);
 
 // 按分类统计脚本数量
 function countCategoryLeaves(repo, categoryName, isLeaf) {
