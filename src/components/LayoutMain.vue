@@ -299,6 +299,7 @@
       :maskClosable="!updatingSubscribed"
       :keyboard="!updatingSubscribed"
       :closable="!updatingSubscribed"
+      :cancelButtonProps="{ disabled: updatingSubscribed }"
     >
       <div class="update-subscribe-content">
         <a-list :data-source="subscribedScripts" size="small">
