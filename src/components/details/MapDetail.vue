@@ -794,7 +794,6 @@ function onSubscribeBtnLeave(node) {
   height: 100%;
   color: #bbb;
   text-align: center;
-  margin-top: 80px;
 }
 
 .author-link {

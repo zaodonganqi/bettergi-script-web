@@ -243,12 +243,6 @@ watch(() => props.script, (newScript) => {
   gap: 8px;
 }
 
-.subscribed-btn {
-  background: #fff;
-  color: #1677ff;
-  border-color: #1677ff;
-}
-
 .detail-title {
   font-size: 20px;
   font-weight: 700;
@@ -281,7 +275,6 @@ watch(() => props.script, (newScript) => {
   height: 100%;
   color: #bbb;
   text-align: center;
-  margin-top: 80px;
 }
 
 .detail-readme {

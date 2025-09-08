@@ -286,8 +286,20 @@
     </a-modal>
 
     <!-- 一键更新弹窗 -->
-    <a-modal v-model:open="showUpdateSubscribeModal" :title="$t('action.updateAll')" :ok-text="$t('action.confirm')" :cancel-text="$t('action.cancel')" centered width="50%"
-             :style="{ maxWidth: '900px' }" @ok="updateSubscribedScripts">
+    <a-modal
+      v-model:open="showUpdateSubscribeModal"
+      :title="$t('action.updateAll')"
+      :ok-text="$t('action.confirm')"
+      :cancel-text="$t('action.cancel')"
+      centered
+      width="50%"
+      :style="{ maxWidth: '900px' }"
+      @ok="updateSubscribedScripts"
+      :confirmLoading="updatingSubscribed"
+      :maskClosable="!updatingSubscribed"
+      :keyboard="!updatingSubscribed"
+      :closable="!updatingSubscribed"
+    >
       <div class="update-subscribe-content">
         <a-list :data-source="subscribedScripts" size="small">
           <template #renderItem="{ item, index }">
@@ -599,27 +611,44 @@ function getUpdatedScripts() {
 }
 
 const subscribedScripts = ref([]);
+const updatingSubscribed = ref(false);
 
 async function updateSubscribedScripts() {
-  if (subscribedScriptPaths.value.length > 0) {
-    try {
-      const result = await subscribePaths(subscribedScriptPaths.value);
-      if (result?.ok) {
-        await fetchSubscribedConfig();
-        const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
-        for (const path of subscribedScriptPaths.value) {
-          await repoWebBridge.UpdateSubscribed(path);
-          updateScriptHasUpdate(path, false)
-        }
-        showUpdateSubscribeModal.value = false;
-      } else {
-        Message.error($t('detail.subscribeFailed'));
-      }
-    } catch (e) {
-      console.error('subscribePaths failed', e);
-    }
+  if (updatingSubscribed.value) return;
+  if (subscribedScriptPaths.value.length === 0) {
+    showUpdateSubscribeModal.value = false;
+    return;
   }
-  showUpdateSubscribeModal.value = false;
+
+  updatingSubscribed.value = true;
+  try {
+    const result = await subscribePaths(subscribedScriptPaths.value);
+    if (!result?.ok) {
+      Message.error($t('detail.subscribeFailed'));
+      return;
+    }
+
+    const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
+    const paths = [...subscribedScriptPaths.value];
+    const batchSize = 10;
+    for (let i = 0; i < paths.length; i += batchSize) {
+      const slice = paths.slice(i, i + batchSize);
+      await Promise.all(slice.map(p => repoWebBridge.UpdateSubscribed(p)));
+    }
+
+    for (const p of paths) {
+      updateScriptHasUpdate(p, false);
+    }
+
+    await fetchSubscribedConfig();
+
+    showUpdateSubscribeModal.value = false;
+  } catch (e) {
+    console.error('updateSubscribedScripts failed', e);
+    Message.error($t('detail.subscribeFailed'));
+  } finally {
+    updatingSubscribed.value = false;
+  }
 }
 
 // 计算当前菜单标题
@@ -812,7 +841,6 @@ async function fetchSubscribedConfig() {
         subscribedScriptPaths.value = [];
       } else {
         subscribedScriptPaths.value = paths;
-        console.log(subscribedScriptPaths.value);
         if (!repoData.value || !Array.isArray(repoData.value.indexes)) return;
         subscribedScripts.value = [];
         // 递归构建完整路径，使用 name 作为标题

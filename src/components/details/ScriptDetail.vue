@@ -236,23 +236,6 @@ watch(() => props.script, (newScript) => {
   height: 100%;
   color: #bbb;
   text-align: center;
-  margin-top: 80px;
-}
-
-.detail-input {
-  flex: 1;
-  margin-right: 10px;
-  border-radius: 6px;
-  height: 36px;
-  font-size: 15px;
-}
-
-.detail-send {
-  height: 36px;
-  border-radius: 6px;
-  font-size: 15px;
-  background: #1677ff !important;
-  border: none !important;
 }
 
 .detail-readme {
