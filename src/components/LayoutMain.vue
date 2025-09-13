@@ -348,20 +348,20 @@
 </template>
 
 <script setup>
-import {ref, reactive, computed, onMounted, onUnmounted, watch, nextTick} from 'vue';
+import {computed, nextTick, onMounted, onUnmounted, reactive, ref, watch} from 'vue';
 import {
-  FolderOutlined,
-  FileOutlined,
-  FieldTimeOutlined,
-  CalculatorOutlined,
+  AlignRightOutlined,
   BulbOutlined,
-  SearchOutlined,
+  CalculatorOutlined,
+  CheckOutlined,
+  CloudDownloadOutlined,
+  FieldTimeOutlined,
+  FileOutlined,
+  FolderOutlined,
   QuestionCircleOutlined,
   ReloadOutlined,
-  SettingOutlined,
-  AlignRightOutlined,
-  CheckOutlined,
-  CloudDownloadOutlined
+  SearchOutlined,
+  SettingOutlined
 } from '@ant-design/icons-vue';
 import {message as Message} from 'ant-design-vue';
 import MapTreeList from './lists/MapTreeList.vue';
@@ -373,34 +373,50 @@ import StrategyDetail from './details/StrategyDetail.vue';
 import MapDetail from './details/MapDetail.vue';
 import ReadmeViewer from './items/ReadmeViewer.vue';
 import Help from './items/Help.vue';
-import { getRawPath, getMirrorPath} from '@/utils/basePaths';
+import {getMirrorPath, getRawPath} from '@/utils/basePaths';
 import {useI18n} from 'vue-i18n';
 import {mapTagsToCanonical} from '@/utils/roleAlias';
-import { subscribePaths } from '@/utils/subscription';
+import {subscribePaths} from '@/utils/subscription';
 
+// 当前运行环境
 const mode = import.meta.env.VITE_MODE;
+// 采用vue-i18n组件获取选中语言的文本
+const {t: $t} = useI18n();
+// 选择的菜单目录项
 const selectedMenu = ref(['1']);
+// 搜索框文本
 const search = ref('');
+// 控制更新信息汇总弹窗显示
 const showUpdateMessageModal = ref(false);
+// 控制一键订阅弹窗显示
 const showUpdateSubscribeModal = ref(false);
 
 // 排序相关数据
-const sortType = ref('recommend');
-const sortOrder = ref('desc');
+const sortType = ref('recommend'); // 推荐排序
+const sortOrder = ref('desc'); // 排序顺序
+// 除地图追踪外的排序选项（相互独立）
 const sortStateByMenu = reactive({
   '2': {type: 'recommend', order: 'desc'},
   '3': {type: 'recommend', order: 'desc'},
   '4': {type: 'recommend', order: 'desc'}
 });
 
-// 排序下拉显隐
+// 一级排序下拉彩蛋显隐
 const sortDropdownOpen = ref(false);
 
 // 战斗策略角色筛选
 const roleFilterSearch = ref('');
-const selectedRoleTags = ref([]); // 面板中的临时选择（≤4）
-const appliedRoleTags = ref([]);  // 确认后生效
+// 角色复选框选中项数组（≤4）
+const selectedRoleTags = ref([]);
+// 生效的选中角色数组
+const appliedRoleTags = ref([]);
 
+// 修改搜索框文本
+const handleSearch = (value) => {
+  search.value = value;
+};
+
+// 获取排序后的角色列表（映射角色名后的）（战斗策略）
 function collectCombatTags(repo) {
   if (!repo?.indexes) return [];
   const combat = repo.indexes.find(i => i.name === 'combat');
@@ -419,14 +435,17 @@ function collectCombatTags(repo) {
   dfs(combat.children);
   return Array.from(new Set(all)).sort((a, b) => String(a).localeCompare(String(b)));
 }
-
+// 映射后的角色列表（战斗策略）
 const allRoleTags = computed(() => collectCombatTags(repoData.value));
+
+// 搜索角色结果列表（实际展示的数据）（战斗策略）
 const displayedRoleTags = computed(() => {
   const kw = (roleFilterSearch.value || '').trim().toLowerCase();
   if (!kw) return allRoleTags.value;
   return allRoleTags.value.filter(t => String(t).toLowerCase().includes(kw));
 });
 
+// 更新复选框选中后的角色状态（战斗策略）
 function onRoleCheckboxChange(tag, evt) {
   const checked = evt?.target?.checked;
   const current = new Set(selectedRoleTags.value);
@@ -439,16 +458,19 @@ function onRoleCheckboxChange(tag, evt) {
   appliedRoleTags.value = [...selectedRoleTags.value];
 }
 
+// 重置选中角色（战斗策略）
 function resetRoleFilter() {
   selectedRoleTags.value = [];
   appliedRoleTags.value = [];
 }
 
+// 点击确定后关闭二级菜单（战斗策略）
 function confirmRoleFilter() {
   appliedRoleTags.value = [...selectedRoleTags.value];
   sortDropdownOpen.value = false;
 }
 
+// 切换目录后更换排序选项
 function applySortForMenu(menuKey) {
   const state = sortStateByMenu[menuKey];
   if (state) {
@@ -460,13 +482,13 @@ function applySortForMenu(menuKey) {
   }
 }
 
+// 保存不同菜单下排序选项状态
 function saveSortForMenu(menuKey) {
   if (!['2', '3', '4'].includes(menuKey)) return;
-  sortStateByMenu[menuKey] = {type: sortType.value, order: sortOrder.value};
+  sortStateByMenu[menuKey] = { type: sortType.value, order: sortOrder.value };
 }
 
-const {t: $t} = useI18n();
-
+// 接收App.vue中传递的选中的语言
 const {selectedLocale, handleLocaleChange} = defineProps({
   selectedLocale: {
     type: String,
@@ -478,6 +500,7 @@ const {selectedLocale, handleLocaleChange} = defineProps({
   }
 });
 
+// 定义左侧菜单项
 const menuList = computed(() => [
   {key: '1', label: $t('menu.map'), icon: FolderOutlined, count: menuCounts.value[0]},
   {key: '2', label: $t('menu.script'), icon: FileOutlined, count: menuCounts.value[1]},
@@ -485,12 +508,18 @@ const menuList = computed(() => [
   {key: '4', label: $t('menu.tcg'), icon: BulbOutlined, count: menuCounts.value[3]},
 ]);
 
+// 每个菜单项包含的脚本数
 const menuCounts = ref([0, 0, 0, 0]);
 
+// 仓库json文件解构后数据
 const repoData = ref({});
+// 仓库加载失败状态（一般在线仓库才会生效）
 const repoError = ref(false);
+// 仓库加载中状态
 const globalLoading = ref(false);
+// 是否启用镜像加速
 const useMirror = ref(false);
+// 加载超时计时器
 let fetchTimeoutId = null;
 
 // 格式化时间
@@ -527,16 +556,20 @@ function clearReadme404Cache() {
   });
 }
 
+// 获取仓库json文件并解构
 async function getRepoJson() {
   clearReadme404Cache();
   repoError.value = false;
   globalLoading.value = true;
+
   try {
     console.log("Current mode:", mode)
+    // 在线仓库模式
     if (mode === 'web') {
       const controller = new AbortController();
       let didTimeout = false;
       if (fetchTimeoutId) clearTimeout(fetchTimeoutId);
+      // 设置10秒定时器
       fetchTimeoutId = setTimeout(() => {
         didTimeout = true;
         controller.abort();
@@ -566,17 +599,18 @@ async function getRepoJson() {
           throw err;
         }
       }
-    } else {
+    } else { // 本地仓库模式
       const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
       const json = await repoWebBridge.GetRepoJson();
       repoData.value = typeof json === 'string' ? JSON.parse(json) : json;
       // 获取订阅信息
       await fetchSubscribedConfig();
-    }
-    console.log("json info:", repoData.value)
-    if (mode === 'single') {
+      // 获取有更新的脚本列表
       getUpdatedScripts();
     }
+    console.log("json info:", repoData.value)
+
+    // 获取脚本数量计数
     menuCounts.value[0] = getMapCount(repoData.value);
     menuCounts.value[1] = getJsCount(repoData.value);
     menuCounts.value[2] = getCombatCount(repoData.value);
@@ -589,7 +623,9 @@ async function getRepoJson() {
   return repoData.value;
 }
 
+// 有更新的脚本列表
 const updatedScripts = ref([]);
+
 // 获取所有更新节点信息
 function getUpdatedScripts() {
   if (!repoData.value || !Array.isArray(repoData.value.indexes)) return;
@@ -611,9 +647,14 @@ function getUpdatedScripts() {
   });
 }
 
+// 已订阅脚本列表
 const subscribedScripts = ref([]);
+// 已订阅脚本路径列表
+const subscribedScriptPaths = ref([]);
+// 更新订阅脚本中状态
 const updatingSubscribed = ref(false);
 
+// 更新已订阅的脚本
 async function updateSubscribedScripts() {
   if (updatingSubscribed.value) return;
   if (subscribedScriptPaths.value.length === 0) {
@@ -652,13 +693,13 @@ async function updateSubscribedScripts() {
   }
 }
 
-// 计算当前菜单标题
+// 获取当前菜单标题
 const currentMenuTitle = computed(() => {
   const current = menuList.value.find(item => item.key === selectedMenu.value[0]);
   return current ? current.label : '';
 });
 
-// 计算搜索框占位符
+// 搜索框占位符
 const searchPlaceholder = computed(() => {
   switch (selectedMenu.value[0]) {
     case '1':
@@ -674,10 +715,6 @@ const searchPlaceholder = computed(() => {
   }
 });
 
-const handleSearch = (value) => {
-  search.value = value;
-};
-
 // 处理排序菜单点击
 const handleSortMenuClick = ({key}) => {
   if (['recommend', 'time', 'name'].includes(key)) {
@@ -690,18 +727,21 @@ const handleSortMenuClick = ({key}) => {
   console.log('排序设置已更新:', {sortType: sortType.value, sortOrder: sortOrder.value});
 };
 
+// 切换菜单
 const handleMenuSelect = ({key}) => {
   selectedMenu.value = [key];
   search.value = '';
   selectedScript.value = null;
 };
 
+// 使用新窗口打开外链
 const openExternalLink = (link) => {
   window.open(link, '_blank');
 };
 
+// 当前选中的脚本
 const selectedScript = ref(null);
-
+// 切换当前选中的脚本
 const handleScriptSelect = (script) => {
   selectedScript.value = script;
 };
@@ -802,6 +842,7 @@ function countCategoryLeaves(repo, categoryName, isLeaf) {
   return dfs(category.children);
 }
 
+// 四个菜单的获取脚本数量方法
 function getJsCount(repo) {
   return countCategoryLeaves(repo, 'js');
 }
@@ -819,7 +860,7 @@ function getCardCount(repo) {
   return countCategoryLeaves(repo, 'tcg', (node) => node.type === 'file');
 }
 
-const subscribedScriptPaths = ref([]);
+
 // 订阅信息获取失败标志
 const subscribedConfigError = ref(false);
 
@@ -888,6 +929,7 @@ let pollingTimer = null;
 let pollingTimeout = null;
 let lastConfigStr = '';
 
+// 暴露给其他组件使用的拉取用户配置信息方法
 function startPollingUserConfig() {
   if (pollingTimer) clearInterval(pollingTimer);
   if (pollingTimeout) clearTimeout(pollingTimeout);
@@ -921,6 +963,7 @@ function startPollingUserConfig() {
   }, 8000);
 }
 
+// 挂载时获取仓库数据并应用部分排序
 onMounted(() => {
   getRepoJson();
   if (['2', '3', '4'].includes(selectedMenu.value[0])) {
@@ -929,6 +972,7 @@ onMounted(() => {
   selectedRoleTags.value = [...appliedRoleTags.value];
 });
 
+// 取消挂载时清空计时器
 onUnmounted(() => {
   if (fetchTimeoutId) {
     clearTimeout(fetchTimeoutId);
@@ -936,6 +980,7 @@ onUnmounted(() => {
   }
 });
 
+// 彩蛋弹窗显示状态
 const showEggModal = ref(false);
 
 // 彩蛋 README 加载状态
@@ -943,17 +988,19 @@ const isLoadingEggReadme = ref(false);
 const eggReadmeError = ref(false);
 const eggReadmeKey = ref(0);
 
+// 彩蛋弹窗加载完成
 const handleEggReadmeLoaded = () => {
   isLoadingEggReadme.value = false;
   eggReadmeError.value = false;
 };
 
+// 彩蛋弹窗加载失败
 const handleEggReadmeError = () => {
   console.log('Egg README load failed');
   isLoadingEggReadme.value = false;
   eggReadmeError.value = true;
 };
-
+// 重试加载彩蛋弹窗
 const retryLoadEggReadme = () => {
   console.log('Retry loading egg README');
   isLoadingEggReadme.value = true;
@@ -971,10 +1018,13 @@ watch(showEggModal, (newVal) => {
   }
 });
 
+// 帮助弹窗显示状态
 const showHelpModal = ref(false);
 
+// 列表筛选项：全部、已订阅（本地模式）
 const scriptTab = ref('all');
 
+// 切换全部与已订阅状态
 const onClickShowAll = () => {
   if (mode === 'web') return;
   scriptTab.value = 'all';
@@ -988,6 +1038,7 @@ const onClickShowSubscribed = () => {
   scriptTab.value = 'subscribed';
 };
 
+// 监听选择菜单变化
 watch(selectedMenu, () => {
   scriptTab.value = 'all';
   // 切换菜单时恢复该菜单上次会话内的排序状态
@@ -997,6 +1048,7 @@ watch(selectedMenu, () => {
   selectedRoleTags.value = [...appliedRoleTags.value];
 });
 
+// 监听已订阅脚本路径
 watch(subscribedScriptPaths, (newPaths) => {
   if (!selectedScript.value) return;
 
@@ -1010,16 +1062,18 @@ watch(subscribedScriptPaths, (newPaths) => {
   if (selectedScript.value.type === 'directory' && selectedScript.value.files && Array.isArray(selectedScript.value.files)) {
     selectedScript.value.files.forEach(file => {
       if (file.path) {
-        const fileIsSubscribed = newPaths.some(p => file.path === p || file.path.startsWith(p + '/'));
-        file.isSubscribed = fileIsSubscribed;
+        file.isSubscribed = newPaths.some(p => file.path === p || file.path.startsWith(p + '/'));
       }
     });
   }
 });
 
+// 设置弹窗显示状态
 const showSettingsModal = ref(false);
+// 清除更新提示加载窗状态
 const clearUpdateLoading = ref(false);
 
+// 选择语言切换
 function onLocaleChange(val) {
   handleLocaleChange(val);
   showSettingsModal.value = false;
