@@ -24,15 +24,15 @@ export function getWebPath() {
 }
 // 仓库原始文件根路径
 export function getRepoPath() {
-    return RepoPathMain;
+    return RepoPathRelease
 }
 // 仓库 raw 根路径
 export function getRawPath() {
-    return RawPathMain;
+    return RawPathRelease;
 }
 // 镜像 raw 根路径
 export function getMirrorPath() {
-    return MirrorPathMain;
+    return MirrorPathRelease;
 }
 // 镜像加速站点
 export function getMirror() {

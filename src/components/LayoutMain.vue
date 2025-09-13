@@ -363,6 +363,7 @@ import {
   SearchOutlined,
   SettingOutlined
 } from '@ant-design/icons-vue';
+import pako from "pako";
 import {message as Message} from 'ant-design-vue';
 import MapTreeList from './lists/MapTreeList.vue';
 import ScriptList from './lists/ScriptList.vue';
@@ -578,9 +579,9 @@ async function getRepoJson() {
         let repoPath = '';
         if (useMirror.value) {
           console.log("Using mirror for fetching repo.json");
-          repoPath = getMirrorPath() + 'repo.json';
+          repoPath = getMirrorPath() + 'repo.json.gz';
         } else {
-          repoPath = getRawPath() + 'repo.json';
+          repoPath = getRawPath() + 'repo.json.gz';
         }
         const response = await fetch(repoPath, {
           signal: controller.signal
@@ -588,7 +589,13 @@ async function getRepoJson() {
         clearTimeout(fetchTimeoutId);
         fetchTimeoutId = null;
         if (!response.ok) throw new Error('Network request failed');
-        repoData.value = await response.json();
+        // 获取gzip文件后解压，减少数据传输量
+        const arrayBuffer = await response.arrayBuffer();
+        console.log(arrayBuffer)
+        const unit8ArrayData = new Uint8Array(arrayBuffer);
+        const deUnit8ArrayData = pako.ungzip(unit8ArrayData);
+        const jsonString = new TextDecoder().decode(deUnit8ArrayData);
+        repoData.value = JSON.parse(jsonString);
       } catch (err) {
         useMirror.value = true; // 下次使用镜像
         clearTimeout(fetchTimeoutId);
