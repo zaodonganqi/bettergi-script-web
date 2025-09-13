@@ -591,7 +591,6 @@ async function getRepoJson() {
         if (!response.ok) throw new Error('Network request failed');
         // 获取gzip文件后解压，减少数据传输量
         const arrayBuffer = await response.arrayBuffer();
-        console.log(arrayBuffer)
         const unit8ArrayData = new Uint8Array(arrayBuffer);
         const deUnit8ArrayData = pako.ungzip(unit8ArrayData);
         const jsonString = new TextDecoder().decode(deUnit8ArrayData);

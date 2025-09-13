@@ -25,7 +25,7 @@
               <span v-else class="detail-author">{{ $t('detail.noAuthor') }}</span>
             </div>
             <div class="detail-time">
-              {{ script.type === 'directory' && script.lastUpdated ? script.lastUpdated : script.time }}
+              {{ script.lastUpdated }}
             </div>
           </div>
           <div class="header-right">
@@ -513,8 +513,7 @@ const handleSubscribe = async (item) => {
     if (result.needsCopy) {
       await copy(result.url);
       Message.success($t('detail.subscribeSuccess', {name: item.name}));
-    }
-    if (typeof props.startPollingUserConfig === 'function') {
+    } else if (typeof props.startPollingUserConfig === 'function') {
       props.startPollingUserConfig();
     }
   } catch (error) {

@@ -25,7 +25,7 @@
           <div class="detail-version" v-if="script.version">
             {{ $t('detail.version') }}：{{ script.version }}
           </div>
-          <div class="detail-time">{{ script.time }}</div>
+          <div class="detail-time">{{ script.lastUpdated }}</div>
         </div>
         <div class="header-right">
           <a-button type="primary" @click="jumpToGitHub(script)">
@@ -138,8 +138,7 @@ const handleSubscribe = async (item) => {
     if (result.needsCopy) {
       await copy(result.url);
       Message.success($t('detail.subscribeSuccess', {name: item.name}));
-    }
-    if (typeof props.startPollingUserConfig === 'function') {
+    } else if (typeof props.startPollingUserConfig === 'function') {
       props.startPollingUserConfig();
     }
   } catch (error) {

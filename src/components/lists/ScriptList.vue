@@ -26,7 +26,7 @@
           <div class="item-tags">
             <a-tag v-for="tag in item.tags" :key="tag" color="#e6f0ff" class="item-tag">{{ tag }}</a-tag>
           </div>
-          <div class="item-time">{{ item.time }}</div>
+          <div class="item-time">{{ item.lastUpdated }}</div>
         </div>
       </template>
     </a-list>
@@ -122,7 +122,7 @@ const scripts = ref(
     authors: item.authors || [],
     desc: item.description,
     tags: item.tags || [],
-    time: item.lastUpdated || '',
+    lastUpdated: item.lastUpdated || '',
     unread: false,
     version: item.version,
     path: item.fullPath || `js/${item.name}`,
@@ -146,7 +146,7 @@ watch(
           authors: item.authors || [],
           desc: item.description,
           tags: item.tags || [],
-          time: item.lastUpdated || '',
+          lastUpdated: item.lastUpdated || '',
           unread: false,
           version: item.version,
           path: item.fullPath || `js/${item.name}`,
@@ -207,8 +207,8 @@ const sortScripts = (scriptList) => {
   } else if (props.sortType === 'time') {
     // 按时间排序
     sorted.sort((a, b) => {
-      const timeA = a.time || '';
-      const timeB = b.time || '';
+      const timeA = a.lastUpdated || '';
+      const timeB = b.lastUpdated || '';
       return props.sortOrder === 'asc' ? timeA.localeCompare(timeB) : timeB.localeCompare(timeA);
     });
   }
