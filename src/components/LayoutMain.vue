@@ -270,10 +270,10 @@
             <div class="update-list-item">
               <div class="item-header">
                 <span class="item-index">{{ index + 1 }}.</span>
-                <span class="item-title">{{ item[0] }}</span>
+                <span class="item-title">{{ item.name }}</span>
               </div>
-              <div class="item-path">{{ item[1] }}</div>
-              <div class="item-time" v-if="item[2]">{{ $t('detail.lastUpdated') }}:{{ item[2] }}</div>
+              <div class="item-path">{{ item.path }}</div>
+              <div class="item-time" v-if="item.lastUpdated">{{ $t('detail.lastUpdated') }}:{{ item.lastUpdated }}</div>
             </div>
           </template>
         </a-list>
@@ -641,7 +641,8 @@ function getUpdatedScripts() {
     if (!node) return;
     const fullPath = currentPath ? `${currentPath}/${node.name}` : node.name;
     if (node.hasUpdate && !['pathing', 'js', 'combat', 'tcg'].includes(node.name) && !String(node.type || '').includes('file')) {
-      updatedScripts.value.push([node.name, fullPath, node.lastUpdated || '']);
+      node.path = fullPath;
+      updatedScripts.value.push(node);
     }
     // 继续向下遍历
     if (Array.isArray(node.children) && node.children.length > 0) {
@@ -651,6 +652,7 @@ function getUpdatedScripts() {
   repoData.value.indexes.forEach(index => {
     dfs(index, '');
   });
+  updatedScripts.value.sort((a, b) => { return String(b.lastUpdated).localeCompare(String(a.lastUpdated))});
 }
 
 // 已订阅脚本列表
