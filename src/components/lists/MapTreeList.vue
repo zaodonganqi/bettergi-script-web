@@ -477,13 +477,6 @@ function normalize(str) {
   width: 24px;
 }
 
-.tree-node-title {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  padding-right: 62px;
-}
-
 :deep(.ant-image-img) {
   width: 26px;
   height: 26px;
