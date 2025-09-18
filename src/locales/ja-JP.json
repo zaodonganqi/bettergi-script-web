@@ -206,7 +206,7 @@
   "sort": {
     "sortBy": "並び順",
     "sortOrder": "ソート順序",
-    "recommend": "おすすめ",
+    "random": "ランダム",
     "time": "時間",
     "name": "名前",
     "ascending": "昇順",

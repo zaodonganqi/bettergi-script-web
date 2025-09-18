@@ -58,7 +58,7 @@ const props = defineProps({
   },
   sortType: {
     type: String,
-    default: 'recommend'
+    default: 'time'
   },
   sortOrder: {
     type: String,
@@ -191,8 +191,8 @@ function normalize(str) {
 }
 
 const sortScripts = (scriptList) => {
-  if (props.sortType === 'recommend') {
-    return [...scriptList];
+  if (props.sortType === 'random') {
+    return [...scriptList].sort(() => Math.random() - 0.5);
   }
   
   const sorted = [...scriptList];

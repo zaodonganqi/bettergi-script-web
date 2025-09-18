@@ -76,13 +76,13 @@
           <template #overlay>
             <a-menu class="sort-menu" @click="handleSortMenuClick">
               <a-menu-item-group :title="$t('sort.sortBy')">
-                <a-menu-item key="recommend" :class="{ active: sortType === 'recommend' }">
-                  <span>{{ $t('sort.recommend') }}</span>
-                  <CheckOutlined v-if="sortType === 'recommend'" class="check-icon"/>
-                </a-menu-item>
                 <a-menu-item key="time" :class="{ active: sortType === 'time' }">
                   <span>{{ $t('sort.time') }}</span>
                   <CheckOutlined v-if="sortType === 'time'" class="check-icon"/>
+                </a-menu-item>
+                <a-menu-item key="random" :class="{ active: sortType === 'random' }">
+                  <span>{{ $t('sort.random') }}</span>
+                  <CheckOutlined v-if="sortType === 'random'" class="check-icon"/>
                 </a-menu-item>
                 <a-menu-item key="name" :class="{ active: sortType === 'name' }">
                   <span>{{ $t('sort.name') }}</span>
@@ -393,13 +393,13 @@ const showUpdateMessageModal = ref(false);
 const showUpdateSubscribeModal = ref(false);
 
 // 排序相关数据
-const sortType = ref('recommend'); // 推荐排序
+const sortType = ref('time'); // 时间排序
 const sortOrder = ref('desc'); // 排序顺序
 // 除地图追踪外的排序选项（相互独立）
 const sortStateByMenu = reactive({
-  '2': {type: 'recommend', order: 'desc'},
-  '3': {type: 'recommend', order: 'desc'},
-  '4': {type: 'recommend', order: 'desc'}
+  '2': {type: 'time', order: 'desc'},
+  '3': {type: 'time', order: 'desc'},
+  '4': {type: 'time', order: 'desc'}
 });
 
 // 一级排序下拉彩蛋显隐
@@ -475,10 +475,10 @@ function confirmRoleFilter() {
 function applySortForMenu(menuKey) {
   const state = sortStateByMenu[menuKey];
   if (state) {
-    sortType.value = state.type || 'recommend';
+    sortType.value = state.type || 'time';
     sortOrder.value = state.order || 'desc';
   } else {
-    sortType.value = 'recommend';
+    sortType.value = 'time';
     sortOrder.value = 'desc';
   }
 }
@@ -629,6 +629,31 @@ async function getRepoJson() {
   return repoData.value;
 }
 
+// 获取该节点内最晚的更新时间
+const findLatestTime = (node) => {
+  if (!node || typeof node !== 'object') return '';
+
+  let latest = '';
+
+  if (node.lastUpdated) {
+    const currentTime = node.lastUpdated;
+    if (!latest || new Date(currentTime) >= new Date(latest)) {
+      latest = currentTime;
+    }
+  }
+
+  if (node.children && Array.isArray(node.children) && node.children.length > 0) {
+    for (const child of node.children) {
+      const childLatest = findLatestTime(child);
+      if (childLatest && (!latest || new Date(childLatest) > new Date(latest))) {
+        latest = childLatest;
+      }
+    }
+  }
+
+  return latest;
+};
+
 // 有更新的脚本列表
 const updatedScripts = ref([]);
 
@@ -652,6 +677,7 @@ function getUpdatedScripts() {
   repoData.value.indexes.forEach(index => {
     dfs(index, '');
   });
+  updatedScripts.value.forEach(item => { item.lastUpdated = findLatestTime(item) });
   updatedScripts.value.sort((a, b) => { return String(b.lastUpdated).localeCompare(String(a.lastUpdated))});
 }
 
@@ -725,7 +751,7 @@ const searchPlaceholder = computed(() => {
 
 // 处理排序菜单点击
 const handleSortMenuClick = ({key}) => {
-  if (['recommend', 'time', 'name'].includes(key)) {
+  if ([ 'time','random', 'name'].includes(key)) {
     sortType.value = key;
   } else if (['asc', 'desc'].includes(key)) {
     sortOrder.value = key;

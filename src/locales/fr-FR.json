@@ -206,7 +206,7 @@
   "sort": {
     "sortBy": "Trier par",
     "sortOrder": "Ordre de tri",
-    "recommend": "Recommandé",
+    "random": "Aléatoire",
     "time": "Temps",
     "name": "Nom",
     "ascending": "Croissant",

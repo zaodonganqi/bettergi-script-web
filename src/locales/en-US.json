@@ -206,7 +206,7 @@
   "sort": {
     "sortBy": "Sort By",
     "sortOrder": "Sort Order",
-    "recommend": "Recommended",
+    "random": "Random",
     "time": "Time",
     "name": "Name",
     "ascending": "Ascending",

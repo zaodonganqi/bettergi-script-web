@@ -56,7 +56,7 @@ const props = defineProps({
   },
   sortType: {
     type: String,
-    default: 'recommend'
+    default: 'time'
   },
   sortOrder: {
     type: String,
@@ -187,8 +187,8 @@ const selectStrategy = async (id) => {
 };
 
 const sortStrategies = (strategyList) => {
-  if (props.sortType === 'recommend') {
-    return [...strategyList];
+  if (props.sortType === 'random') {
+    return [...strategyList].sort(() => Math.random() - 0.5);
   }
 
   const sorted = [...strategyList];

@@ -206,7 +206,7 @@
   "sort": {
     "sortBy": "排序方式",
     "sortOrder": "排序順序",
-    "recommend": "推薦",
+    "random": "隨機",
     "time": "時間",
     "name": "名稱",
     "ascending": "正序",
