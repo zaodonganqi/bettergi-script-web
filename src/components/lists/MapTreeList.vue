@@ -1,7 +1,7 @@
 <template>
   <div class="list-container">
     <a-tree :treeData="filteredTreeData" :expandedKeys="expandedKeys" :selectedKeys="selectedKeys"
-      @select="handleSelect" @expand="handleExpand">
+      @select="handleSelect" @expand="handleExpand" :block-node="true">
       <template #switcherIcon="{ expanded, dataRef }">
         <span v-if="hasExpandableChildren(dataRef)">
           <CaretDownOutlined v-if="expanded" />
@@ -466,11 +466,10 @@ function normalize(str) {
 }
 
 .tree-node-container {
-  display: grid;
-  grid-template-columns: 1fr auto;
+  display: flex;
   align-items: center;
   width: 100%;
-  gap: 8px;
+  transition: all 0.2s ease;
 }
 
 .empty-switcher {
@@ -497,10 +496,7 @@ function normalize(str) {
 }
 
 .subscribe-btn {
-  position: absolute;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
+  margin-left: auto;
   color: #1677ff;
   background: none;
   border: none;
@@ -516,11 +512,6 @@ function normalize(str) {
 :deep(.ant-tree-treenode) {
   width: 100%;
   padding: 5px;
-}
-
-:deep(.ant-tree-node-content-wrapper) {
-  width: 100%;
-  transition: all 0.2s ease;
 }
 
 .subscribe-btn[disabled] {
