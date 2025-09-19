@@ -187,6 +187,11 @@
           </a-tooltip>
         </div>
         <div class="top-bar-right">
+          <a-tooltip :title="$t('action.plan')">
+            <a-button type="text" class="action-btn" @click="showPlanModal = true">
+              <EditOutlined />
+            </a-button>
+          </a-tooltip>
           <a-tooltip :title="$t('action.help')">
             <a-button type="text" class="action-btn" @click="showHelpModal = true">
               <QuestionCircleOutlined/>
@@ -316,6 +321,12 @@
       </div>
     </a-modal>
 
+    <!-- 更新计划弹窗 -->
+    <a-modal v-model:open="showPlanModal" :title="$t('plan.title')" :footer="null" centered width="80%"
+             :style="{ maxWidth: '900px' }" @cancel="showPlanModal = false">
+      <Plan/>
+    </a-modal>
+
     <!-- 帮助弹窗 -->
     <a-modal v-model:open="showHelpModal" :title="$t('help.title')" :footer="null" centered width="80%"
              :style="{ maxWidth: '900px' }" @cancel="showHelpModal = false">
@@ -354,6 +365,7 @@ import {
   BulbOutlined,
   CalculatorOutlined,
   CheckOutlined,
+  EditOutlined,
   CloudDownloadOutlined,
   FieldTimeOutlined,
   FileOutlined,
@@ -378,6 +390,7 @@ import {getMirrorPath, getRawPath} from '@/utils/basePaths';
 import {useI18n} from 'vue-i18n';
 import {mapTagsToCanonical} from '@/utils/roleAlias';
 import {subscribePaths} from '@/utils/subscription';
+import Plan from "./items/Plan.vue";
 
 // 当前运行环境
 const mode = import.meta.env.VITE_MODE;
@@ -1051,6 +1064,9 @@ watch(showEggModal, (newVal) => {
     eggReadmeKey.value++;
   }
 });
+
+// 更新计划弹窗显示状态
+const showPlanModal = ref(false);
 
 // 帮助弹窗显示状态
 const showHelpModal = ref(false);

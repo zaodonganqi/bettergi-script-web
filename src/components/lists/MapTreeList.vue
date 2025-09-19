@@ -11,7 +11,7 @@
       </template>
       <template #title="{ title, dataRef }">
         <div class="tree-node-container">
-          <div class="tree-node-title">
+          <div>
             <a-image v-if="dataRef.showIcon" :src="dataRef.icon" :placeholder="false"
               @error="dataRef.showIcon = false" />
             <span class="tree-node-title-text">{{ title }}</span>

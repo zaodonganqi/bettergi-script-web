@@ -49,6 +49,46 @@
     "loading": "L'easter egg fait de son mieux pour charger...",
     "error": "Échec du chargement malgré tous les efforts, veuillez réessayer"
   },
+  "plan": {
+    "title": "Plan de Mise à Jour",
+    "desc": "Voici quelques plans de mise à jour futurs. Toutes les contributions ou aides pour leur mise en œuvre sont les bienvenues. Pour le moment, je suis le seul auteur, donc la vitesse de mise à jour ne sera pas très rapide. Merci de votre compréhension !",
+    "link": "URL du Dépôt : https://github.com/zaodonganqi/bettergi-script-web",
+    "author": "Email de l'Auteur : anqi4051{'@'}gmail.com",
+    "planList": [
+      {
+        "desc": "Support des Couleurs de Thème",
+        "content": "La configuration des couleurs actuellement utilisée dans le projet est encore fragmentée. Nous prévoyons de consolider les couleurs pour prendre en charge une configuration globale des couleurs de thème. Les solutions en attente incluent le mode sombre et le mode translucide (pour prendre en charge l'affichage d'arrière-plan personnalisé)."
+      },
+      {
+        "desc": "Renforcer l'Abonnement en un Clic",
+        "content": "Trouvez les scripts que vous avez déjà abonnés parmi les scripts mis à jour pour filtrer ceux qui peuvent être mis à jour en un clic. Bien sûr, mettre à jour tous les scripts aveuglément n'est pas très lent de toute façon."
+      },
+      {
+        "desc": "Ajouter une Documentation de Tutoriel Interne",
+        "content": "Ajoutez un tutoriel d'utilisation du dépôt dans la barre d'outils pour les novices en informatique, sauf pour ceux qui ne savent pas lire."
+      },
+      {
+        "desc": "Zones de Contenu Déplaçables",
+        "content": "Modifiez les vues comme les listes pour qu'elles soient redimensionnables par glisser-déposer plutôt que fixes, et enregistrez les données localement (envisagez d'ajouter un fichier de configuration dans le corps principal si la mise en cache n'est pas fiable)."
+      },
+      {
+        "desc": "Recherche Plus Puissante",
+        "content": "Améliorez la fonction de recherche. La recherche actuelle n'est qu'une détection de mots-clés ; une correspondance approximative doit être envisagée (cet élément a une faible priorité, car c'est beaucoup d'effort pour peu de résultats)."
+      },
+      {
+        "desc": "Animations Plus Avancées",
+        "content": "Fournissez plus d'effets d'animation pour les interactions de l'interface utilisateur."
+      },
+      {
+        "desc": "Améliorer la Liste des Scripts Mis à Jour",
+        "content": "Ajoutez un mécanisme de type routage (mais pas un routage réel) à la page, permettant de naviguer par un clic dans la vue des mises à jour."
+      },
+      {
+        "desc": "Confidence de l'Auteur",
+        "content": "Je n'écrirai pas la confidence dans le titre, héhé ! Actuellement, l'auteur est assez occupé à jongler avec des projets personnels, des études et du travail. S'il vous plaît, ne me blâmez pas pour les mises à jour lentes, wuwuwu. La meilleure façon de me pousser à mettre à jour est de sponsoriser l'auteur ou de donner une étoile à cet humble auteur (si vous ne savez pas ce qu'est une étoile, oubliez ça)."
+      }
+    ]
+  },
   "help": {
     "title": "FAQ Q&A",
     "modalTitle": "Note : Toute question doit être réfléchie ou documentée avant d'être posée",

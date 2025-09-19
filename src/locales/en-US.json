@@ -49,6 +49,46 @@
     "loading": "Easter egg is trying its best to load...",
     "error": "Failed to load despite best efforts, please retry"
   },
+  "plan": {
+    "title": "Update Plan",
+    "desc": "The following lists some future update plans. Everyone is welcome to contribute or help implement them. Currently, I am the only author, so the update speed may not be very fast. Thank you for your understanding!",
+    "link": "Repository URL: https://github.com/zaodonganqi/bettergi-script-web",
+    "author": "Author's Email: anqi4051{'@'}gmail.com",
+    "planList": [
+      {
+        "desc": "Theme Color Support",
+        "content": "The color configuration currently used in the project is still fragmented. We plan to consolidate the colors to support overall theme color configuration. Pending solutions include dark mode and translucent mode (to support custom background display)."
+      },
+      {
+        "desc": "Enhance One-Click Subscription",
+        "content": "Find scripts you have already subscribed to among the updated scripts to filter those that can be updated with one click. Of course, blindly updating all of them isn't very slow right now anyway."
+      },
+      {
+        "desc": "Add Internal Tutorial Documentation",
+        "content": "Add a repository usage tutorial on the toolbar for computer novices, except for those who can't read words."
+      },
+      {
+        "desc": "Draggable Content Areas",
+        "content": "Modify views like lists to be resizable by dragging rather than fixed values, and save the data locally (consider adding a configuration file in the main body if caching is unreliable)."
+      },
+      {
+        "desc": "More Powerful Search",
+        "content": "Enhance the search function. The current search is only keyword detection; fuzzy matching needs to be considered (this item has low priority, as it's a lot of effort for little reward)."
+      },
+      {
+        "desc": "More Advanced Animations",
+        "content": "Provide more animation effects for UI interactions."
+      },
+      {
+        "desc": "Improve the Updated Scripts List",
+        "content": "Add a route-like mechanism (but not actual routing) to the page, allowing click-to-navigate within the update view."
+      },
+      {
+        "desc": "Author's Whisper",
+        "content": "I won't write the whisper in the title, ehe! Currently, the author is quite busy juggling personal projects, studies, and work. Please don't blame me for the slow updates, wuwuwu. The best way to urge me to update is to sponsor the author or give this humble author a star (if you don't know what a star is, just forget it)."
+      }
+    ]
+  },
   "help": {
     "title": "FAQ Q&A",
     "modalTitle": "Note: Any questions should be thought through or documented before asking",
