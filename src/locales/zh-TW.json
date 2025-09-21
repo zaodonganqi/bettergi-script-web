@@ -151,7 +151,8 @@
     "loadFailed": "載入失敗",
     "clickToViewFile": "點擊查看GitHub倉庫中的檔案",
     "clickToViewDir": "點擊查看GitHub倉庫中的目錄",
-    "invalidLinkHint": "（這個作者很笨，把連結寫錯了，去提醒ta修改吧）"
+    "invalidLinkHint": "（這個作者很笨，把連結寫錯了，去提醒ta修改吧）",
+    "iframeNotice": "由於安全限制，無法直接顯示此內容，請使用本地倉庫查看"
   },
   "action": {
     "help": "說明",

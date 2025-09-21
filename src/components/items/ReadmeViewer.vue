@@ -421,13 +421,12 @@ const fetchAndRenderReadme = async (path) => {
     return `![](${isHttpUrl ? cleanPath : baseImageUrl + cleanPath})`;
   });
   
-  // 处理HTML iframe标签
+  // 处理HTML iframe标签 - 因跨域问题，在线模式仅提醒
+  const iframeNoticeText = t('readmeViewer.iframeNotice') || '由于安全限制，无法直接显示此内容，请使用本地仓库查看';
   markdown = markdown.replace(/<iframe\s+[^>]*src=["']([^"']+)["'][^>]*>/gi, (match, iframePath) => {
-    let cleanPath = iframePath.trim().replace(/\\/g, '/');
-    // 检查是否为完整的HTTP/HTTPS链接或data URL
-    const isHttpUrl = /^https?:\/\/[\S]+$/i.test(cleanPath);
-    const isDataUrl = cleanPath.startsWith('data:');
-    return match.replace(iframePath, (isHttpUrl || isDataUrl) ? cleanPath : baseImageUrl + cleanPath);
+    return `<div class="iframe-notice">
+      <p>⚠️ ${iframeNoticeText}</p>
+    </div>`;
   });
   markdown = processFootnotes(markdown);
   readmeContent.value = md.render(markdown);
@@ -606,5 +605,21 @@ watch(
   font-size: 15px;
   white-space: pre-line;
   word-break: break-word;
+}
+
+.readme-content :deep(.iframe-notice) {
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: 6px;
+  padding: 16px;
+  margin: 16px 0;
+  text-align: center;
+  color: #856404;
+}
+
+.readme-content :deep(.iframe-notice p) {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
 }
 </style>

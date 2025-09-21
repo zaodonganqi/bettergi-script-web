@@ -151,7 +151,8 @@
     "loadFailed": "Load failed",
     "clickToViewFile": "Click to view file in GitHub repository",
     "clickToViewDir": "Click to view directory in GitHub repository",
-    "invalidLinkHint": "(This author is stupid and wrote the link wrong, go remind them to fix it)"
+    "invalidLinkHint": "(This author is stupid and wrote the link wrong, go remind them to fix it)",
+    "iframeNotice": "Due to security restrictions, this content cannot be displayed directly. Please use local repository to view"
   },
   "action": {
     "help": "Help",

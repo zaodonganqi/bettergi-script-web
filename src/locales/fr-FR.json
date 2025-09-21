@@ -151,7 +151,8 @@
     "loadFailed": "Échec du chargement",
     "clickToViewFile": "Cliquez pour voir le fichier dans le dépôt GitHub",
     "clickToViewDir": "Cliquez pour voir le répertoire dans le dépôt GitHub",
-    "invalidLinkHint": "(Cet auteur est stupide et a mal écrit le lien, allez lui rappeler de le corriger)"
+    "invalidLinkHint": "(Cet auteur est stupide et a mal écrit le lien, allez lui rappeler de le corriger)",
+    "iframeNotice": "En raison des restrictions de sécurité, ce contenu ne peut pas être affiché directement. Veuillez utiliser le dépôt local pour le visualiser"
   },
   "action": {
     "help": "Aide",

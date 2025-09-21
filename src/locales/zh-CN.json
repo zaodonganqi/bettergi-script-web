@@ -163,7 +163,8 @@
         "loadFailed": "加载失败",
         "clickToViewFile": "点击查看GitHub仓库中的文件",
         "clickToViewDir": "点击查看GitHub仓库中的目录",
-        "invalidLinkHint": "（这个作者很笨，把链接写错了，去提醒ta修改吧）"
+        "invalidLinkHint": "（这个作者很笨，把链接写错了，去提醒ta修改吧）",
+        "iframeNotice": "由于安全限制，无法直接显示此内容，请使用本地仓库查看"
     },
     "action": {
         "help": "帮助",
