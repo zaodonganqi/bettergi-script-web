@@ -301,10 +301,6 @@ const fetchAndRenderReadme = async (path) => {
       // 检查是否为完整的HTTP/HTTPS链接或data URL
       const isHttpUrl = /^https?:\/\/[\S]+$/i.test(cleanPath);
       const isDataUrl = cleanPath.startsWith('data:');
-      if (!cleanPath.startsWith('assets/') && !isHttpUrl && !isDataUrl) {
-        const currentDir = props.path ? props.path.replace(/\\/g, '/') : '';
-        cleanPath = currentDir ? `${currentDir}/${cleanPath}` : cleanPath;
-      }
       return `![${alt}](${(isHttpUrl || isDataUrl) ? cleanPath : baseImageUrl + cleanPath})`;
     });
     markdown = markdown.replace(/<img\s+[^>]*src=["']([^"']+)["'][^>]*>/gi, (match, imgPath) => {
@@ -312,31 +308,27 @@ const fetchAndRenderReadme = async (path) => {
       // 检查是否为完整的HTTP/HTTPS链接或data URL
       const isHttpUrl = /^https?:\/\/[\S]+$/i.test(cleanPath);
       const isDataUrl = cleanPath.startsWith('data:');
-      if (!cleanPath.startsWith('assets/') && !isHttpUrl && !isDataUrl) {
-        const currentDir = props.path ? props.path.replace(/\\/g, '/') : '';
-        cleanPath = currentDir ? `${currentDir}/${cleanPath}` : cleanPath;
-      }
       return match.replace(imgPath, (isHttpUrl || isDataUrl) ? cleanPath : baseImageUrl + cleanPath);
     });
     markdown = markdown.replace(/`([^`\n]+\.(?:png|jpg|jpeg|gif|webp|svg))`/gi, (imgPath) => {
       let cleanPath = imgPath.trim().replace(/\\/g, '/');
       // 检查是否为完整的HTTP/HTTPS链接
       const isHttpUrl = /^https?:\/\/[\S]+$/i.test(cleanPath);
-      if (!cleanPath.startsWith('assets/') && !isHttpUrl) {
-        const currentDir = props.path ? props.path.replace(/\\/g, '/') : '';
-        cleanPath = currentDir ? `${currentDir}/${cleanPath}` : cleanPath;
-      }
       return `![](${isHttpUrl ? cleanPath : baseImageUrl + cleanPath})`;
     });
     markdown = markdown.replace(/```\s*([^`\n]+\.(?:png|jpg|jpeg|gif|webp|svg))\s*```/gi, (imgPath) => {
       let cleanPath = imgPath.trim().replace(/\\/g, '/');
       // 检查是否为完整的HTTP/HTTPS链接
       const isHttpUrl = /^https?:\/\/[\S]+$/i.test(cleanPath);
-      if (!cleanPath.startsWith('assets/') && !isHttpUrl) {
-        const currentDir = props.path ? props.path.replace(/\\/g, '/') : '';
-        cleanPath = currentDir ? `${currentDir}/${cleanPath}` : cleanPath;
-      }
       return `![](${isHttpUrl ? cleanPath : baseImageUrl + cleanPath})`;
+    });
+    // 处理HTML iframe标签
+    markdown = markdown.replace(/<iframe\s+[^>]*src=["']([^"']+)["'][^>]*>/gi, (match, iframePath) => {
+      let cleanPath = iframePath.trim().replace(/\\/g, '/');
+      // 检查是否为完整的HTTP/HTTPS链接或data URL
+      const isHttpUrl = /^https?:\/\/[\S]+$/i.test(cleanPath);
+      const isDataUrl = cleanPath.startsWith('data:');
+      return match.replace(iframePath, (isHttpUrl || isDataUrl) ? cleanPath : baseImageUrl + cleanPath);
     });
     markdown = processFootnotes(markdown);
     readmeContent.value = md.render(markdown);
@@ -401,10 +393,6 @@ const fetchAndRenderReadme = async (path) => {
     let cleanPath = imgPath.trim().replace(/\\/g, '/');
     // 检查是否为完整的HTTP/HTTPS链接
     const isHttpUrl = /^https?:\/\/[\S]+$/i.test(cleanPath);
-    if (!props.forceWeb && !cleanPath.startsWith('assets/') && !isHttpUrl) {
-      const currentDir = props.path ? props.path.replace(/\\/g, '/') : '';
-      cleanPath = currentDir ? `${currentDir}/${cleanPath}` : cleanPath;
-    }
     return match.replace(imgPath, isHttpUrl ? cleanPath : baseImageUrl + cleanPath);
   });
 
@@ -414,10 +402,6 @@ const fetchAndRenderReadme = async (path) => {
     // 检查是否为完整的HTTP/HTTPS链接或data URL
     const isHttpUrl = /^https?:\/\/[\S]+$/i.test(cleanPath);
     const isDataUrl = cleanPath.startsWith('data:');
-    if (!props.forceWeb && !cleanPath.startsWith('assets/') && !isHttpUrl && !isDataUrl) {
-      const currentDir = props.path ? props.path.replace(/\\/g, '/') : '';
-      cleanPath = currentDir ? `${currentDir}/${cleanPath}` : cleanPath;
-    }
     return match.replace(imgPath, (isHttpUrl || isDataUrl) ? cleanPath : baseImageUrl + cleanPath);
   });
 
@@ -426,10 +410,6 @@ const fetchAndRenderReadme = async (path) => {
     let cleanPath = imgPath.trim().replace(/\\/g, '/');
     // 检查是否为完整的HTTP/HTTPS链接
     const isHttpUrl = /^https?:\/\/[\S]+$/i.test(cleanPath);
-    if (!props.forceWeb && !cleanPath.startsWith('assets/') && !isHttpUrl) {
-      const currentDir = props.path ? props.path.replace(/\\/g, '/') : '';
-      cleanPath = currentDir ? `${currentDir}/${cleanPath}` : cleanPath;
-    }
     return `![](${isHttpUrl ? cleanPath : baseImageUrl + cleanPath})`;
   });
 
@@ -438,11 +418,16 @@ const fetchAndRenderReadme = async (path) => {
     let cleanPath = imgPath.trim().replace(/\\/g, '/');
     // 检查是否为完整的HTTP/HTTPS链接
     const isHttpUrl = /^https?:\/\/[\S]+$/i.test(cleanPath);
-    if (!props.forceWeb && !cleanPath.startsWith('assets/') && !isHttpUrl) {
-      const currentDir = props.path ? props.path.replace(/\\/g, '/') : '';
-      cleanPath = currentDir ? `${currentDir}/${cleanPath}` : cleanPath;
-    }
     return `![](${isHttpUrl ? cleanPath : baseImageUrl + cleanPath})`;
+  });
+  
+  // 处理HTML iframe标签
+  markdown = markdown.replace(/<iframe\s+[^>]*src=["']([^"']+)["'][^>]*>/gi, (match, iframePath) => {
+    let cleanPath = iframePath.trim().replace(/\\/g, '/');
+    // 检查是否为完整的HTTP/HTTPS链接或data URL
+    const isHttpUrl = /^https?:\/\/[\S]+$/i.test(cleanPath);
+    const isDataUrl = cleanPath.startsWith('data:');
+    return match.replace(iframePath, (isHttpUrl || isDataUrl) ? cleanPath : baseImageUrl + cleanPath);
   });
   markdown = processFootnotes(markdown);
   readmeContent.value = md.render(markdown);
