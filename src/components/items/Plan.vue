@@ -25,19 +25,19 @@ const { t: $t, tm } = useI18n();
 .plan-title {
   font-size: 25px;
   font-weight: bold;
-  color: #000000;
   margin-bottom: 24px;
   letter-spacing: 2px;
 }
 .repo-link {
   font-size: 15px;
-  color: #000000;
   margin-bottom: 20px;
+  color: var(--text-base2);
+
 }
 .author-title {
   font-size: 15px;
-  color: #000000;
   margin-bottom: 20px;
+  color: var(--text-base2);
 }
 .plan-item {
   margin-bottom: 28px;
@@ -45,25 +45,23 @@ const { t: $t, tm } = useI18n();
 .plan-desc {
   font-size: 20px;
   font-weight: 600;
-  color: #222;
   margin-bottom: 6px;
   display: flex;
   align-items: center;
 }
 .plan-index {
-  color: #000000;
   font-size: 18px;
   font-weight: bold;
   margin-right: 6px;
 }
 .plan-content {
   font-size: 15px;
-  color: #666;
   line-height: 1.7;
   padding-left: 8px;
+  color: var(--text-base2);
 }
 .plan-divider {
-  border-bottom: 1px solid #ececec;
+  border-bottom: 1px solid var(--border-base);
   margin: 18px 0 0 0;
 }
 </style> 

@@ -448,10 +448,11 @@ watch(
 <style scoped>
 .readme-viewer {
   width: 100%;
+  margin-top: 10px;
+  padding-left: 10px;
 }
 
 .readme-content {
-  color: #000;
   font-size: 15px;
   line-height: 1.8;
   word-break: break-word;
@@ -504,22 +505,19 @@ watch(
 }
 
 .readme-content :deep(.text-only-link) {
-  color: #1890ff !important;
+  color: var(--color-primary);
   text-decoration: none !important;
   pointer-events: none;
   cursor: default;
 }
 
 .readme-content :deep(.internal-link) {
-  color: #1890ff;
   text-decoration: none;
-  border-bottom: 1px dashed #1890ff;
+  border-bottom: 1px dashed;
   transition: all 0.3s ease;
 }
 
 .readme-content :deep(.internal-link:hover) {
-  color: #40a9ff;
-  border-bottom-color: #40a9ff;
   text-decoration: none;
 }
 
@@ -541,9 +539,9 @@ watch(
 }
 
 .readme-content :deep(pre) {
-  background-color: #f6f8fa;
-  border-radius: 6px;
-  padding: 16px;
+  background: var(--color-shadow);
+  border-radius: 10px;
+  padding: 16px 20px;
   overflow: auto;
   margin-bottom: 1.5em;
 }
@@ -558,8 +556,8 @@ watch(
 }
 
 .readme-content :deep(blockquote) {
-  border-left: 0.25em solid #dfe2e5;
-  color: #6a737d;
+  border-left: 0.25em solid var(--text-base3);
+  color: var(--text-base2);
   padding: 0 1em;
   margin-left: 0;
 }
@@ -571,17 +569,27 @@ watch(
   overflow-x: auto;
 }
 
+.readme-content :deep(hr) {
+  height: 1px;
+  background-color: var(--border-base);
+  border-color: var(--border-base);
+}
+
 .readme-content :deep(tr) {
-  border-top: 1px solid #c6cbd1;
+  border: 1px solid var(--border-base);
 }
 
 .readme-content :deep(tr:nth-child(2n)) {
-  background-color: #f6f8fa;
+  background-color: var(--bg-menu);
+}
+
+.readme-content :deep(tbody) {
+  border-color: var(--border-base);
 }
 
 .readme-content :deep(th),
 .readme-content :deep(td) {
-  border: 1px solid #dfe2e5;
+  border: 1px solid var(--border-base);
   padding: 0.6em 1em;
 }
 
@@ -593,7 +601,7 @@ watch(
 }
 
 .readme-empty {
-  color: #bbb;
+  color: var(--text-base4);
   text-align: center;
   margin-top: 40px;
   font-size: 16px;
@@ -601,7 +609,6 @@ watch(
 
 .detail-desc {
   padding-top: 16px;
-  color: #000;
   font-size: 15px;
   white-space: pre-line;
   word-break: break-word;

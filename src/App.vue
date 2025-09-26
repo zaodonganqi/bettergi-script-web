@@ -1,5 +1,6 @@
 <script setup>
-import { ref, watch,onMounted } from 'vue';
+import {ref, watch, onMounted, reactive} from 'vue';
+import {getThemeByName, getTheme, applyThemeToCSS} from './styles/theme'
 import LayoutMain from './components/LayoutMain.vue';
 import zhCN from 'ant-design-vue/es/locale/zh_CN';
 import zhTW from 'ant-design-vue/es/locale/zh_TW';
@@ -50,15 +51,62 @@ onMounted(() => {
   }
   currentAntdLocale.value = antdLocales[selectedLocale.value] || zhCN;
 });
+
+// antd 主题对象
+const antdTheme = ref(getThemeByName(getTheme()));
+
+// 当主题对象变化时，自动写入 CSS 变量
+watch(antdTheme, (val) => {
+  applyThemeToCSS(val)
+}, { immediate: true, deep: true })
+
+// 设置 JSON
+function setAntdThemeJson(json) {
+  if (json && typeof json === 'object') {
+    antdTheme.value = json
+  }
+}
 </script>
 
 <template>
-  <a-config-provider :locale="currentAntdLocale">
+  <a-config-provider :locale="currentAntdLocale" :theme="antdTheme">
     <LayoutMain :selected-locale="selectedLocale" :handle-locale-change="handleLocaleChange" />
   </a-config-provider>
 </template>
 
 <style>
+:root {
+  --color-primary: #1677ff;
+  --border-base: #d9d9d9;
+  --text-base2: #666;
+  --text-base3: #999;
+  --text-base4: #bbb;
+  --text-light: #ffffff;
+  --bg-container: #ffffff;
+  --bg-menu: #ffffff;
+  --bg-item-selected: #e6f4ff;
+  --bg-shadow-light: #1677ff14;
+  --bg-desc: #f8fbff;
+  --color-shadow: #e6f0ff;
+  --color-update: #52c41a;
+  --text-error: #ff4d4f;
+}
+
+::-webkit-scrollbar-track {
+  display: none;
+  padding: 10px 0;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  background-color: var(--bg-menu);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--text-base3);
+  border-radius: 20px;
+}
+
 header {
   line-height: 1.5;
   max-height: 100vh;
@@ -72,20 +120,6 @@ body {
   height: 100%;
   margin: 0;
   padding: 0;
-  background: #f0f2f5;
-}
-
-.content-placeholder {
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
-  color: #999;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
+  background: transparent;
 }
 </style>

@@ -11,7 +11,7 @@
       </template>
       <template #title="{ title, dataRef }">
         <div class="tree-node-container">
-          <div>
+          <div class="tree-node-left">
             <a-image v-if="dataRef.showIcon" :src="dataRef.icon" :placeholder="false"
               @error="dataRef.showIcon = false" />
             <span class="tree-node-title-text">{{ title }}</span>
@@ -461,7 +461,7 @@ function normalize(str) {
   height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 4px 0px 4px 0px;
+  padding: 4px 0 4px 0;
   scrollbar-gutter: stable both-edges;
 }
 
@@ -472,9 +472,19 @@ function normalize(str) {
   transition: all 0.2s ease;
 }
 
+.tree-node-left {
+  display: flex;
+  align-content: center;
+}
+
 .empty-switcher {
   display: inline-block;
   width: 24px;
+}
+
+:deep(.ant-image) {
+  align-content: center;
+  justify-content: center;
 }
 
 :deep(.ant-image-img) {
@@ -484,22 +494,23 @@ function normalize(str) {
 }
 
 .tree-node-title-text {
+  flex: 1;
   font-size: 14px;
   margin-left: 5px;
 }
 
 .subscribe-btn {
   margin-left: auto;
-  color: #1677ff;
   background: none;
   border: none;
   width: 72px;
   text-align: center;
+  color: var(--color-primary);
 }
 
 :deep(.ant-tree) {
   width: calc(100% - 10px);
-  background: #f7f8fa;
+  background: var(--bg-menu);
 }
 
 :deep(.ant-tree-treenode) {
@@ -507,10 +518,11 @@ function normalize(str) {
   padding: 5px;
 }
 
+:deep(.ant-tree .ant-tree-node-content-wrapper.ant-tree-node-selected) {
+  background: var(--bg-item-selected);
+}
+
 .subscribe-btn[disabled] {
-  background: #fff !important;
-  color: #1677ff !important;
-  border-color: #1677ff !important;
   cursor: default !important;
 }
 
@@ -518,7 +530,7 @@ function normalize(str) {
   display: inline-block;
   width: 6px;
   height: 6px;
-  background: #00b96b;
+  background: var(--color-update);
   border-radius: 50%;
   margin-left: 6px;
   vertical-align: middle;

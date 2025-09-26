@@ -212,7 +212,7 @@ watch(() => props.script, (newScript) => {
 <style scoped>
 .script-detail {
   height: 100%;
-  background: #fff;
+  background: var(--bg-container);
   position: relative;
   padding: 16px 10px 16px 10px;
   display: flex;
@@ -222,8 +222,8 @@ watch(() => props.script, (newScript) => {
 
 .detail-header {
   margin-bottom: 8px;
-  padding: 0px 26px 2px 26px;
-  border-bottom: 1px solid #ddd;
+  padding: 0 26px 2px 26px;
+  border-bottom: 1px solid var(--border-base);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -245,12 +245,11 @@ watch(() => props.script, (newScript) => {
 .detail-title {
   font-size: 20px;
   font-weight: 700;
-  color: #222;
   margin-bottom: 4px;
 }
 
 .detail-meta {
-  color: #888;
+  color: var(--text-base3);
   font-size: 14px;
   margin-top: 10px;
   margin-bottom: 10px;
@@ -261,7 +260,7 @@ watch(() => props.script, (newScript) => {
 }
 
 .detail-time {
-  color: #aaa;
+  color: var(--text-base4);
   font-size: 13px;
   margin-bottom: 10px;
   word-break: break-word;
@@ -271,8 +270,8 @@ watch(() => props.script, (newScript) => {
   display: flex;
   justify-content: center;
   align-items: center;
+  color: var(--text-base4);
   height: 100%;
-  color: #bbb;
   text-align: center;
 }
 
@@ -289,20 +288,19 @@ watch(() => props.script, (newScript) => {
   top: 0;
   right: 0;
   display: flex;
+  background: var(--bg-container);
   align-items: center;
   gap: 8px;
   font-size: 12px;
-  color: #666;
   padding: 4px 8px;
+  border-color: var(--bg-desc);
   border-radius: 4px;
-  background: rgba(255, 255, 255, 0.9);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 4px var(--bg-shadow-light);
   z-index: 10;
 }
 
 .author-link {
   text-decoration: underline;
-  color: #1677ff;
   cursor: pointer;
 }
 
@@ -316,19 +314,19 @@ watch(() => props.script, (newScript) => {
 
 .desc-block {
   margin-bottom: 20px;
-  background: linear-gradient(135deg, #f8fbff 0%, #f0f7ff 100%);
-  border: 1px solid #e6f0ff;
+  border: 1px solid var(--color-shadow);
+  background: var(--bg-desc);
   border-radius: 8px;
   padding: 16px 20px;
-  box-shadow: 0 2px 8px rgba(22, 119, 255, 0.08);
+  box-shadow: 0 2px 8px var(--bg-shadow-light);
   position: relative;
 }
 
 .desc-title {
   font-weight: 600;
-  color: #1677ff;
   margin-bottom: 8px;
   font-size: 16px;
+  color: var(--text-base2);
   display: flex;
   align-items: center;
 }
@@ -340,7 +338,6 @@ watch(() => props.script, (newScript) => {
 }
 
 .desc-content {
-  color: #2c3e50;
   font-size: 15px;
   line-height: 1.8;
   margin: 0;

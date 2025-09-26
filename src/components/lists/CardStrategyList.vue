@@ -253,27 +253,27 @@ const filteredStrategies = computed(() => {
 }
 
 .script-item {
-  background: #fff;
   border-radius: 10px;
   margin: 10px 12px;
   padding: 16px 18px 12px 18px;
-  box-shadow: 0 2px 8px 0 #f2f3f5;
-  border: 1.5px solid #e5e7eb;
+  background: var(--bg-container);
+  box-shadow: 0 2px 8px 0 var(--color-shadow);
+  border: 1.5px solid var(--border-base);
   cursor: pointer;
   transition: box-shadow 0.2s, border 0.2s;
   position: relative;
 }
 
 .script-item.active {
-  border: 1.5px solid #1677ff;
-  background: #f5faff;
-  box-shadow: 0 4px 16px 0 #e6f0ff;
+  border: 1px solid var(--color-primary);
+  box-shadow: 0 4px 16px 0 var(--color-shadow);
+  background: var(--bg-item-selected);
 }
 
 .script-item:hover {
-  background: #f0f6ff;
-  box-shadow: 0 4px 16px 0 #e6f0ff;
-  border-color: #1677ff;
+  box-shadow: 0 4px 16px 0 var(--color-shadow);
+  background: var(--bg-item-selected);
+  border-color: var(--color-primary);
 }
 
 .item-header {
@@ -297,7 +297,6 @@ const filteredStrategies = computed(() => {
   min-width: 0;
   font-size: 16px;
   font-weight: 700;
-  color: #222;
   line-height: 1.4;
   white-space: nowrap;
   overflow: hidden;
@@ -308,12 +307,11 @@ const filteredStrategies = computed(() => {
   display: inline-block;
   margin-left: 4px;
   transform: translateY(-2px);
-  background: #fff;
-  color: #00b96b;
   font-size: 10px;
   padding: 1px 3px;
   border-radius: 8px;
-  border: 1px solid #00b96b;
+  color: var(--color-update);
+  border: 1px solid var(--color-update);
   vertical-align: middle;
 }
 
@@ -321,37 +319,26 @@ const filteredStrategies = computed(() => {
   display: inline-block;
   margin-left: 1px;
   transform: translateY(-2px) translateX(8px);
-  background: #fff;
-  color: #1677ff;
   font-size: 10px;
   padding: 1px 3px;
   border-radius: 8px;
-  border: 1px solid #1677ff;
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary);
   vertical-align: middle;
 }
 
 .item-dot {
   width: 8px;
   height: 8px;
-  background: #1677ff;
   border-radius: 50%;
   margin-left: 8px;
   display: inline-block;
 }
 
 .item-author {
-  color: #888;
   font-size: 13px;
   margin-bottom: 4px;
-}
-
-.item-desc {
-  color: #555;
-  font-size: 13px;
-  margin-bottom: 4px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  color: var(--text-base2);
 }
 
 .item-tags {
@@ -359,18 +346,18 @@ const filteredStrategies = computed(() => {
 }
 
 .item-tag {
-  background: #e6f0ff !important;
-  color: #1677ff !important;
   border-radius: 6px !important;
   font-size: 12px;
+  background: var(--color-shadow);
+  color: var(--color-primary);
   margin-right: 4px;
   padding: 0 8px;
   border: none !important;
 }
 
 .item-time {
-  color: #aaa;
   font-size: 12px;
   margin-top: 2px;
+  color: var(--text-base3);
 }
 </style>

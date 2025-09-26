@@ -93,9 +93,9 @@ const openExternalLink = (url) => {
           </div>
           <div class="notice-title">{{ $t('comment.localModeNoticeTitle') }}</div>
           <div class="notice-desc">{{ $t('comment.localModeNoticeDesc') }}</div>
-          <button class="notice-btn" @click="openExternalLink('https://bgi.sh')">
+          <a-button type="primary" class="notice-btn" @click="openExternalLink('https://bgi.sh')">
             {{ $t('comment.onlineRepo') }}
-          </button>
+          </a-button>
         </div>
 
         <!-- Web模式显示giscus评论 -->
@@ -119,19 +119,17 @@ const openExternalLink = (url) => {
 .comment-modal :deep(.ant-modal-content) {
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 8px 32px;
 }
 
 .comment-modal :deep(.ant-modal-header) {
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid;
   padding: 20px 24px;
 }
 
 .comment-modal :deep(.ant-modal-title) {
   font-size: 18px;
   font-weight: 600;
-  color: #1a1a1a;
 }
 
 .comment-modal :deep(.ant-modal-body) {
@@ -170,8 +168,7 @@ const openExternalLink = (url) => {
 
 .comment-header {
   padding: 16px 20px;
-  border-bottom: 1px solid #f0f0f0;
-  background: #fafafa;
+  border-bottom: 1px solid var(--border-base);
 }
 
 .script-title-simple {
@@ -184,19 +181,16 @@ const openExternalLink = (url) => {
 .script-title {
   font-size: 18px;
   font-weight: 600;
-  color: #1a1a1a;
   line-height: 1.4;
 }
 
 .script-author {
   font-size: 14px;
   font-weight: 400;
-  color: #666;
   opacity: 0.8;
 }
 
 .author-link {
-  color: #1677ff;
   text-decoration: none;
 }
 
@@ -222,33 +216,27 @@ const openExternalLink = (url) => {
 .notice-title {
   font-size: 20px;
   font-weight: 600;
-  color: #1a1a1a;
   margin-bottom: 12px;
 }
 
 .notice-desc {
   font-size: 16px;
-  color: #666;
   margin-bottom: 32px;
   line-height: 1.5;
 }
 
 .notice-btn {
-  background: linear-gradient(135deg, #1677ff 0%, #096dd9 100%);
-  color: #fff;
+  height: 50px;
+  width: 200px;
   border: none;
-  border-radius: 8px;
   padding: 12px 32px;
   font-size: 16px;
   font-weight: 500;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(24, 144, 255, 0.3);
   transition: all 0.3s ease;
 }
 
 .notice-btn:hover {
-  background: linear-gradient(135deg, #096dd9 0%, #0050b3 100%);
-  box-shadow: 0 6px 16px rgba(24, 144, 255, 0.4);
   transform: translateY(-1px);
 }
 

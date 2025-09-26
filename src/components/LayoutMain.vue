@@ -53,10 +53,12 @@
       <div class="script-header">
         <span class="script-title">{{ currentMenuTitle }}</span>
         <div v-if="mode === 'single'" class="script-actions">
-          <a-button type="primary" class="script-btn" :class="{ 'script-btn-active': scriptTab === 'all' }"
+          <a-button :type="scriptTab === 'all' ? 'primary' : 'default'"
+                    class="script-btn"
                     @click="onClickShowAll">{{ $t('button.all') }}
           </a-button>
-          <a-button class="script-btn" :class="{ 'script-btn-active': scriptTab === 'subscribed' }"
+          <a-button :type="scriptTab === 'subscribed' ? 'primary' : 'default'"
+                    class="script-btn"
                     @click="onClickShowSubscribed">{{ $t('button.subscribed') }}
           </a-button>
         </div>
@@ -229,8 +231,8 @@
         <div class="repo-error-title">{{ $t('repoError.title') }}</div>
         <div class="repo-error-desc">{{ $t('repoError.desc') }}</div>
         <div class="repo-error-btn-group">
-          <button class="repo-error-btn" @click="getRepoJson">{{ $t('repoError.refresh') }}</button>
-          <button class="repo-help-btn" @click="showHelpModal = true">{{ $t('repoError.help') }}</button>
+          <a-button class="repo-error-btn" @click="getRepoJson" type="primary" danger>{{ $t('repoError.refresh') }}</a-button>
+          <a-button class="repo-help-btn" @click="showHelpModal = true" type="primary">{{ $t('repoError.help') }}</a-button>
         </div>
       </div>
     </div>
@@ -482,6 +484,7 @@ function resetRoleFilter() {
 function confirmRoleFilter() {
   appliedRoleTags.value = [...selectedRoleTags.value];
   sortDropdownOpen.value = false;
+
 }
 
 // 切换目录后更换排序选项
@@ -1192,15 +1195,14 @@ const updateAllScriptsHasUpdate = (hasUpdate) => {
   height: 100vh;
   width: 100%;
   margin: 0;
-  background: #fff;
   display: flex;
+  flex-flow: row;
 }
 
 .custom-sider {
   width: 18% !important;
   max-width: 300px !important;
-  background: #f7f8fa !important;
-  border-right: 1px solid #e5e7eb;
+  border-right: 1px solid var(--border-base);
   display: flex;
   flex-direction: column;
   padding: 0;
@@ -1214,8 +1216,7 @@ const updateAllScriptsHasUpdate = (hasUpdate) => {
   padding: 0 16px;
   font-weight: 600;
   font-size: 18px;
-  color: #222;
-  border-bottom: 1px solid #ececec;
+  border-bottom: 1px solid var(--border-base);
   width: 100%;
   flex-shrink: 0;
   position: relative;
@@ -1238,7 +1239,6 @@ const updateAllScriptsHasUpdate = (hasUpdate) => {
 .repo-title {
   font-size: 16px;
   font-weight: 600;
-  color: #222;
   margin-left: 10px;
   align-items: center;
 }
@@ -1259,20 +1259,24 @@ const updateAllScriptsHasUpdate = (hasUpdate) => {
 }
 
 .custom-menu {
-  background: transparent !important;
   width: 100%;
+  background-color: var(--bg-menu);
 }
 
 .custom-menu-item {
   display: flex;
   align-items: center;
   font-size: 15px;
-  color: #222;
   border-radius: 8px;
   margin: 0 8px;
   padding: 0 16px !important;
   min-width: 0;
   height: auto;
+}
+
+:deep(.ant-menu-item-selected) {
+  background: var(--bg-item-selected);
+  color: var(--color-primary);
 }
 
 .menu-icon {
@@ -1287,17 +1291,17 @@ const updateAllScriptsHasUpdate = (hasUpdate) => {
 }
 
 .menu-count {
-  color: #b0b0b0;
   font-size: 13px;
   margin-left: 8px;
   flex-shrink: 0;
+  color: var(--text-base3);
 }
 
 .sider-footer {
   padding: 24px 16px;
-  color: #999;
   font-size: 14px;
-  border-top: 1px solid #ececec;
+  border-top: 1px solid var(--border-base);
+  color: var(--text-base3);
   width: 100%;
   flex-shrink: 0;
 }
@@ -1309,9 +1313,9 @@ const updateAllScriptsHasUpdate = (hasUpdate) => {
 
 .last-update-time {
   padding: 12px 25px;
-  color: #999;
   font-size: 12px;
-  border-top: 1px solid #ececec;
+  border-top: 1px solid var(--border-base);
+  color: var(--text-base2);
   width: 100%;
   flex-shrink: 0;
   height: 60px;
@@ -1333,7 +1337,6 @@ const updateAllScriptsHasUpdate = (hasUpdate) => {
 }
 
 .last-update-time span {
-  color: #666;
   font-size: 15px;
 }
 
@@ -1341,10 +1344,13 @@ const updateAllScriptsHasUpdate = (hasUpdate) => {
   width: 23% !important;
   min-width: 23% !important;
   max-width: 23% !important;
-  background: #f7f8fa !important;
-  border-right: 1px solid #e5e7eb;
+  border-right: 1px solid var(--border-base);
   height: 100%;
   position: relative;
+}
+
+:deep(.ant-layout-sider) {
+  background: var(--bg-menu);
 }
 
 .script-header {
@@ -1353,13 +1359,12 @@ const updateAllScriptsHasUpdate = (hasUpdate) => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #ececec;
+  border-bottom: 1px solid var(--border-base);
 }
 
 .script-title {
   font-size: 16px;
   font-weight: 600;
-  color: #222;
 }
 
 .script-actions {
@@ -1369,14 +1374,9 @@ const updateAllScriptsHasUpdate = (hasUpdate) => {
 }
 
 .script-btn {
-  height: 28px;
+  height: 30px;
   padding: 0 12px;
   font-size: 14px;
-  border-radius: 4px;
-  background: #fff !important;
-  color: #1677ff !important;
-  border: 1px solid #1677ff !important;
-  transition: background 0.2s, color 0.2s;
 }
 
 .search-section {
@@ -1385,7 +1385,7 @@ const updateAllScriptsHasUpdate = (hasUpdate) => {
   align-items: center;
   height: 60px;
   padding: 10px 16px;
-  border-bottom: 1px solid #ececec;
+  border-bottom: 1px solid var(--border-base);
   gap: 8px;
 }
 
@@ -1401,28 +1401,21 @@ const updateAllScriptsHasUpdate = (hasUpdate) => {
 .sort-button {
   height: 40px;
   width: 40px;
-  background: #fff !important;
-  border: 1px solid #d9d9d9 !important;
+  border: 1px solid var(--border-base);
   border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #666;
   font-size: 16px;
   padding: 0;
   box-shadow: none;
   transition: all 0.2s;
 }
 
-.sort-button:hover {
-  border-color: #4096ff !important;
-  color: #4096ff;
-}
-
 .sort-button:focus {
-  border-color: #4096ff !important;
   outline: none;
-  box-shadow: 0 0 0 2px rgba(64, 150, 255, 0.2);
+  color: var(--color-primary);
+  border-color: var(--color-primary);
 }
 
 .sort-menu {
@@ -1442,11 +1435,6 @@ const updateAllScriptsHasUpdate = (hasUpdate) => {
 .role-filter-search :deep(.ant-input-affix-wrapper) {
   height: 34px;
   border-radius: 8px;
-  border-color: #d9d9d9;
-}
-
-.role-filter-search :deep(.ant-input-prefix) {
-  color: #999;
 }
 
 .role-filter-list {
@@ -1463,15 +1451,6 @@ const updateAllScriptsHasUpdate = (hasUpdate) => {
   transform: translateY(-1px);
 }
 
-.role-filter-checkbox :deep(.ant-checkbox-checked .ant-checkbox-inner) {
-  background-color: #1677ff;
-  border-color: #1677ff;
-}
-
-.role-filter-checkbox:hover {
-  color: #1677ff;
-}
-
 .role-filter-label {
   white-space: nowrap;
   overflow: hidden;
@@ -1483,8 +1462,7 @@ const updateAllScriptsHasUpdate = (hasUpdate) => {
   justify-content: flex-end;
   gap: 8px;
   padding-top: 8px;
-  border-top: 1px solid #f0f0f0;
-  background: #fff;
+  border-top: 1px solid var(--border-base);
 }
 
 .role-filter-btn {
@@ -1504,13 +1482,8 @@ const updateAllScriptsHasUpdate = (hasUpdate) => {
   padding: 8px 16px;
 }
 
-.sort-menu .ant-menu-item.active {
-  background-color: #f0f5ff;
-  color: #1677ff;
-}
-
 .sort-menu .check-icon {
-  color: #1677ff;
+  color: var(--color-primary);
   font-size: 14px;
   margin-left: 8px;
 }
@@ -1518,7 +1491,6 @@ const updateAllScriptsHasUpdate = (hasUpdate) => {
 .sort-menu .ant-menu-item-group-title {
   font-size: 13px;
   font-weight: 600;
-  color: #666;
   padding: 8px 16px 4px 16px;
 }
 
@@ -1531,13 +1503,11 @@ const updateAllScriptsHasUpdate = (hasUpdate) => {
   width: 100%;
   overflow-x: hidden;
   overflow-y: auto;
-  background: #f7f8fa;
 }
 
 .main-right {
   flex: 1;
   height: 100%;
-  background: #f5f6fa;
   padding: 0;
   overflow-y: auto;
   overflow-x: hidden;
@@ -1547,8 +1517,7 @@ const updateAllScriptsHasUpdate = (hasUpdate) => {
 
 .detail-top-bar {
   height: 60px;
-  background: #f7f8fa;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--border-base);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -1568,7 +1537,6 @@ const updateAllScriptsHasUpdate = (hasUpdate) => {
 }
 
 .action-btn {
-  color: #444;
   border: none;
   padding: 3px 8px;
   border-radius: 6px;
@@ -1577,11 +1545,6 @@ const updateAllScriptsHasUpdate = (hasUpdate) => {
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.action-btn:hover {
-  color: #1890ff;
-  background: rgba(24, 144, 255, 0.1);
 }
 
 .main-right > div:last-child {
@@ -1619,12 +1582,11 @@ const updateAllScriptsHasUpdate = (hasUpdate) => {
 }
 
 .repo-error-content {
-  background: #fff;
-  color: #d32f2f;
   font-size: 18px;
   padding: 36px 48px 32px 48px;
   border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+  box-shadow: 0 8px 32px var(--border-base);
+  background: var(--bg-container);
   text-align: center;
   min-width: 320px;
   max-width: 90vw;
@@ -1651,30 +1613,42 @@ const updateAllScriptsHasUpdate = (hasUpdate) => {
   font-size: 22px;
   font-weight: bold;
   margin-bottom: 8px;
-  color: #f44336;
+  color: var(--text-error);
 }
 
 .repo-error-desc {
   font-size: 15px;
-  color: #666;
   margin-bottom: 24px;
+  color: var(--text-base2);
+}
+
+.repo-error-btn-group {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  justify-content: center;
+  margin-top: 8px;
 }
 
 .repo-error-btn {
-  background: linear-gradient(90deg, #ff6a6a 0%, #f44336 100%);
-  color: #fff;
+  height: 40px;
+  width: 120px;
   border: none;
   border-radius: 6px;
-  padding: 10px 32px;
   font-size: 16px;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(244, 67, 54, 0.12);
   transition: background 0.2s, box-shadow 0.2s;
 }
 
-.repo-error-btn:hover {
-  background: linear-gradient(90deg, #f44336 0%, #ff6a6a 100%);
-  box-shadow: 0 4px 16px rgba(244, 67, 54, 0.18);
+.repo-help-btn {
+  height: 40px;
+  width: 120px;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  justify-content: center;
+  transition: background 0.2s, box-shadow 0.2s;
 }
 
 .global-loading-modal {
@@ -1711,7 +1685,6 @@ const updateAllScriptsHasUpdate = (hasUpdate) => {
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #666;
   font-size: 14px;
 }
 
@@ -1730,7 +1703,7 @@ const updateAllScriptsHasUpdate = (hasUpdate) => {
 
 .update-list-item {
   padding: 12px 16px;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--border-base);
 }
 
 .update-list-item:last-child {
@@ -1740,13 +1713,11 @@ const updateAllScriptsHasUpdate = (hasUpdate) => {
 .item-header {
   font-size: 16px;
   font-weight: 600;
-  color: #222;
   display: flex;
   align-items: center;
 }
 
 .item-index {
-  color: #000000;
   font-size: 15px;
   font-weight: bold;
   margin-right: 6px;
@@ -1758,15 +1729,15 @@ const updateAllScriptsHasUpdate = (hasUpdate) => {
 
 .item-path {
   font-size: 13px;
-  color: #666;
   margin-top: 4px;
+  color: var(--text-base2);
   word-break: break-all;
 }
 
 .item-time {
   font-size: 13px;
-  color: #666;
   margin-top: 4px;
+  color: var(--text-base2);
   word-break: break-all;
 }
 
@@ -1781,36 +1752,6 @@ const updateAllScriptsHasUpdate = (hasUpdate) => {
   overflow-y: auto;
 }
 
-.repo-error-btn-group {
-  display: flex;
-  flex-direction: row;
-  gap: 16px;
-  justify-content: center;
-  margin-top: 8px;
-}
-
-.repo-help-btn {
-  background: linear-gradient(90deg, #1677ff 0%, #40a9ff 100%);
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  padding: 10px 32px;
-  font-size: 16px;
-  cursor: pointer;
-  box-shadow: 0 2px 8px rgba(24, 144, 255, 0.12);
-  transition: background 0.2s, box-shadow 0.2s;
-}
-
-.repo-help-btn:hover {
-  background: linear-gradient(90deg, #40a9ff 0%, #1677ff 100%);
-  box-shadow: 0 4px 16px rgba(24, 144, 255, 0.18);
-}
-
-.script-btn-active {
-  background: #1677ff !important;
-  color: #fff !important;
-  border: 1px solid #1677ff !important;
-}
 .settings-row {
   display: flex;
   align-items: center;
@@ -1820,19 +1761,16 @@ const updateAllScriptsHasUpdate = (hasUpdate) => {
 
 .settings-label {
   font-size: 15px;
-  color: #222;
   font-weight: 500;
 }
 
 .update-label {
   font-size: 15px;
-  color: #666;
   line-height: 1.2;
 }
 
 .update-time {
   font-size: 14px;
-  color: #888;
   margin-top: 2px;
   line-height: 1.2;
 }

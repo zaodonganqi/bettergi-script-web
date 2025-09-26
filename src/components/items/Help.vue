@@ -24,14 +24,13 @@ const { t: $t, tm } = useI18n();
 .help-title {
   font-size: 30px;
   font-weight: bold;
-  color: #000000;
   margin-bottom: 24px;
   letter-spacing: 2px;
 }
 .author-title {
   font-size: 15px;
-  color: #000000;
   margin-bottom: 20px;
+  color: var(--text-base2);
 }
 .qa-item {
   margin-bottom: 28px;
@@ -39,25 +38,23 @@ const { t: $t, tm } = useI18n();
 .qa-question {
   font-size: 20px;
   font-weight: 600;
-  color: #222;
   margin-bottom: 6px;
   display: flex;
   align-items: center;
 }
 .qa-index {
-  color: #000000;
   font-size: 18px;
   font-weight: bold;
   margin-right: 6px;
 }
 .qa-answer {
   font-size: 15px;
-  color: #666;
   line-height: 1.7;
   padding-left: 8px;
+  color: var(--text-base2);
 }
 .qa-divider {
-  border-bottom: 1px solid #ececec;
+  border-bottom: 1px solid var(--border-base);
   margin: 18px 0 0 0;
 }
 </style> 

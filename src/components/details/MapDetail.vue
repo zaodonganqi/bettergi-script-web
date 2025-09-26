@@ -595,7 +595,7 @@ function onSubscribeBtnLeave(node) {
 <style scoped>
 .map-detail {
   height: 100%;
-  background: #fff;
+  background: var(--bg-container);
   position: relative;
   padding: 16px 10px 16px 10px;
   display: flex;
@@ -612,8 +612,8 @@ function onSubscribeBtnLeave(node) {
 
 .detail-header {
   margin-bottom: 8px;
-  padding: 0px 26px 2px 26px;
-  border-bottom: 1px solid #ddd;
+  padding: 0 26px 2px 26px;
+  border-bottom: 1px solid var(--border-base);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -635,13 +635,12 @@ function onSubscribeBtnLeave(node) {
 .detail-title {
   font-size: 20px;
   font-weight: 700;
-  color: #222;
   margin-bottom: 4px;
   word-break: break-word;
 }
 
 .detail-meta {
-  color: #888;
+  color: var(--text-base3);
   font-size: 14px;
   margin-top: 10px;
   margin-bottom: 10px;
@@ -650,24 +649,24 @@ function onSubscribeBtnLeave(node) {
 
 .detail-author {
   margin-right: 12px;
+  color: var(--text-base2);
 }
 
 .detail-time {
-  color: #aaa;
+  color: var(--text-base3);
   font-size: 13px;
   margin-bottom: 10px;
   word-break: break-word;
 }
 
 .detail-tabs {
-  margin: 12px 0 0 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-top: 2px;
   margin-bottom: 10px;
   margin-left: 5px;
-  padding: 0px 10px 0px 10px;
+  padding: 0 10px 0 10px;
   flex-shrink: 0;
 }
 
@@ -676,21 +675,17 @@ function onSubscribeBtnLeave(node) {
   position: relative;
 }
 
-:deep(.ant-segmented-item-selected) {
-  background: #1677ff;
-  color: #fff;
-}
-
 .readme-loading-indicator {
   display: flex;
+  background: var(--bg-container);
   align-items: center;
   gap: 8px;
   font-size: 12px;
-  color: #666;
   padding: 4px 8px;
+  border-color: var(--bg-desc);
   border-radius: 4px;
-  background: rgba(255, 255, 255, 0.9);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 4px var(--bg-shadow-light);
+  z-index: 10;
   margin-left: auto;
 }
 
@@ -699,14 +694,14 @@ function onSubscribeBtnLeave(node) {
   min-height: 0;
   position: relative;
   overflow: hidden;
-  padding: 0px 16px 0px 10px;
+  padding: 0 16px 0 10px;
 }
 
 .tab-content-inner {
   width: 100%;
   height: 100%;
   position: absolute;
-  padding: 0px 0px 0px 10px;
+  padding: 0 0 0 10px;
   top: 0;
   left: 0;
 }
@@ -720,6 +715,11 @@ function onSubscribeBtnLeave(node) {
   padding-bottom: 5px;
   display: flex;
   flex-direction: column;
+}
+
+:deep(.ant-segmented-item-selected) {
+  background: var(--color-primary);
+  color: var(--text-light);
 }
 
 .readme-pane {
@@ -739,7 +739,6 @@ function onSubscribeBtnLeave(node) {
 .no-files {
   text-align: center;
   padding: 40px 0;
-  color: #999;
 }
 
 .table-pagination-outer {
@@ -775,7 +774,6 @@ function onSubscribeBtnLeave(node) {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  background: #fff;
   z-index: 10;
   margin-top: 10px;
   padding: 6px 12px 0 0;
@@ -789,15 +787,14 @@ function onSubscribeBtnLeave(node) {
 .detail-empty {
   display: flex;
   justify-content: center;
+  color: var(--text-base4);
   align-items: center;
   height: 100%;
-  color: #bbb;
   text-align: center;
 }
 
 .author-link {
   text-decoration: underline;
-  color: #1890ff;
   cursor: pointer;
 }
 
@@ -805,18 +802,14 @@ function onSubscribeBtnLeave(node) {
   white-space: nowrap;
 }
 
-.subscribe-btn-hover {
-  color: #1677ff;
-}
-
 .subscribe-btn-bordered {
-  color: #1677ff;
   width: 72px;
+  color: var(--color-primary);
   text-align: center;
 }
 
 .subscribe-btn-bordered[disabled] {
-  color: #1677ff !important;
+  color: var(--color-primary);
 }
 
 .more-detail {
@@ -825,17 +818,16 @@ function onSubscribeBtnLeave(node) {
 
 .desc-block {
   margin-bottom: 20px;
-  background: linear-gradient(135deg, #f8fbff 0%, #f0f7ff 100%);
-  border: 1px solid #e6f0ff;
+  border: 1px solid var(--color-shadow);
+  background: var(--bg-desc);
   border-radius: 8px;
   padding: 16px 20px;
-  box-shadow: 0 2px 8px rgba(22, 119, 255, 0.08);
+  box-shadow: 0 2px 8px var(--bg-shadow-light);
   position: relative;
 }
 
 .desc-title {
   font-weight: 600;
-  color: #1677ff;
   margin-bottom: 8px;
   font-size: 16px;
   display: flex;
@@ -849,10 +841,10 @@ function onSubscribeBtnLeave(node) {
 }
 
 .desc-content {
-  color: #2c3e50;
   font-size: 15px;
   line-height: 1.8;
   margin: 0;
+  color: var(--text-base2);
   white-space: pre-line;
   word-break: break-word;
 }
