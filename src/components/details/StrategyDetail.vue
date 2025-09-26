@@ -257,6 +257,7 @@ watch(() => props.script, (newScript) => {
 
 .detail-author {
   margin-right: 12px;
+  color: var(--text-base2);
 }
 
 .detail-time {
@@ -326,7 +327,7 @@ watch(() => props.script, (newScript) => {
   font-weight: 600;
   margin-bottom: 8px;
   font-size: 16px;
-  color: var(--text-base2);
+  color: var(--color-primary);
   display: flex;
   align-items: center;
 }
@@ -341,6 +342,7 @@ watch(() => props.script, (newScript) => {
   font-size: 15px;
   line-height: 1.8;
   margin: 0;
+  color: var(--text-base2);
   white-space: pre-line;
   word-break: break-word;
 }
