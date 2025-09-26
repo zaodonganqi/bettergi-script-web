@@ -99,6 +99,7 @@ function setAntdThemeJson(json) {
 
 ::-webkit-scrollbar {
   width: 8px;
+  height: 8px;
   background-color: var(--bg-menu);
 }
 

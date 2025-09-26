@@ -539,20 +539,22 @@ watch(
 }
 
 .readme-content :deep(pre) {
-  background: var(--color-shadow);
+  background: var(--bg-desc);
   border-radius: 10px;
   padding: 16px 20px;
   overflow: auto;
   margin-bottom: 1.5em;
+  font-size: 90%;
+  line-height: 1.5;
 }
 
 .readme-content :deep(pre code) {
-  display: block;
+  display: inline;
   background: none;
   margin: 0;
   padding: 0;
-  font-size: 1em;
-  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+  line-height: inherit;
+  word-wrap: normal;
 }
 
 .readme-content :deep(blockquote) {
