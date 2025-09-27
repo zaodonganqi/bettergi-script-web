@@ -371,7 +371,7 @@ const filteredScripts = computed(() => {
 .item-tag {
   border-radius: 6px !important;
   font-size: 12px;
-  background: var(--color-shadow);
+  background: var(--bg-item-selected);
   color: var(--color-primary);
   margin-right: 4px;
   padding: 0 8px;

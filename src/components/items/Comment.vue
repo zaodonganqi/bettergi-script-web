@@ -1,57 +1,3 @@
-<script setup>
-import Giscus from "@giscus/vue";
-import {computed, ref, watch} from "vue";
-import {useI18n} from "vue-i18n";
-import {Modal as AModal} from "ant-design-vue";
-
-const {t: $t} = useI18n();
-
-const props = defineProps({
-  selectedScript: {
-    type: Object,
-    default: null
-  }
-});
-const commentModalOpen = defineModel()
-
-const mode = import.meta.env.VITE_MODE;
-
-const giscusConfig = {
-  repo: 'babalae/bettergi-script-web-giscus',
-  repoId: 'R_kgDOPbW19A',
-  category: 'General',
-  categoryId: 'DIC_kwDOPbW19M4Ct_3t',
-  mapping: 'specific',
-  strict: '0',
-  reactionsEnabled: '1',
-  emitMetadata: '0',
-  inputPosition: 'top',
-  theme: 'light',
-  lang: 'zh-CN'
-};
-
-// 强制 Giscus 组件重新渲染的 key
-const giscusKey = ref(0);
-
-// 计算 giscus term，用于区分不同脚本的评论
-const giscusTerm = computed(() => {
-  if (!props.selectedScript) return 'default';
-  return props.selectedScript.path || props.selectedScript.title || 'default';
-});
-
-// 监听 giscusTerm 变化，强制重新渲染 Giscus 组件
-watch(giscusTerm, (newTerm, oldTerm) => {
-  if (newTerm !== oldTerm) {
-    giscusKey.value++;
-  }
-});
-
-// 打开外部链接
-const openExternalLink = (url) => {
-  window.open(url, '_blank', 'noopener,noreferrer');
-};
-</script>
-
 <template>
   <!-- 评论弹窗 -->
   <a-modal v-model:open="commentModalOpen" :title="$t('comment.title')" :footer="null" centered width="90%"
@@ -109,6 +55,72 @@ const openExternalLink = (url) => {
     </div>
   </a-modal>
 </template>
+
+<script setup>
+import Giscus from "@giscus/vue";
+import {computed, ref, watch} from "vue";
+import {useI18n} from "vue-i18n";
+import {Modal as AModal} from "ant-design-vue";
+import {getThemeName} from "@/styles/theme.js";
+
+const {t: $t} = useI18n();
+
+const props = defineProps({
+  selectedScript: {
+    type: Object,
+    default: null
+  }
+});
+const commentModalOpen = defineModel()
+
+const mode = import.meta.env.VITE_MODE;
+const { locale } = useI18n();
+const localeToUse = {
+  'zh-CN': 'zh-CN',
+  'en-US': 'en-',
+  'fr-FR': 'fr',
+  'ja-JP': 'ja',
+  'zh-TW': 'zh-TW',
+}
+const theme = getThemeName();
+const themePath = `https://giscus.app/themes/${theme}.css`;
+
+const giscusConfig = {
+  repo: 'babalae/bettergi-script-web-giscus',
+  repoId: 'R_kgDOPbW19A',
+  category: 'General',
+  categoryId: 'DIC_kwDOPbW19M4Ct_3t',
+  mapping: 'specific',
+  strict: '0',
+  reactionsEnabled: '1',
+  emitMetadata: '0',
+  inputPosition: 'top',
+  theme: themePath,
+  lang: localeToUse[locale.value]
+};
+
+// 强制 Giscus 组件重新渲染的 key
+const giscusKey = ref(0);
+
+// 计算 giscus term，用于区分不同脚本的评论
+const giscusTerm = computed(() => {
+  if (!props.selectedScript) return 'default';
+  return props.selectedScript.path || props.selectedScript.title || 'default';
+});
+
+
+// 监听 giscusTerm 变化，强制重新渲染 Giscus 组件
+watch(giscusTerm, (newTerm, oldTerm) => {
+  if (newTerm !== oldTerm) {
+    giscusKey.value++;
+  }
+});
+
+// 打开外部链接
+const openExternalLink = (url) => {
+  window.open(url, '_blank', 'noopener,noreferrer');
+};
+</script>
 
 <style scoped>
 .comment-modal {

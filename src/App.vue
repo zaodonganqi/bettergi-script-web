@@ -21,6 +21,7 @@ const { locale } = useI18n();
 // 从localStorage读取语言，如果没有则使用i18n的当前语言
 const savedLocale = localStorage.getItem('user-locale');
 const selectedLocale = ref(savedLocale || locale.value);
+console.log(selectedLocale.value);
 
 // 确保i18n的语言设置与localStorage同步
 if (savedLocale && savedLocale !== locale.value) {
@@ -54,6 +55,7 @@ onMounted(() => {
 
 // antd 主题对象
 const selectedThemeName = ref(getThemeName());
+console.log(selectedThemeName.value);
 const antdTheme = ref(getThemeByName(selectedThemeName));
 
 function handleThemeNameChange(name) {
