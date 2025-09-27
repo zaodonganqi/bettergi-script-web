@@ -106,7 +106,7 @@
                                       @click="handleSubscribe(record)">
                               <template v-if="record.isSubscribed">
                                 <span v-if="!record._hover">{{ $t('detail.subscribed') }}</span>
-                                <span v-else class="subscribe-btn-hover">{{ $t('detail.subscribeAgain') }}</span>
+                                <span v-else >{{ $t('detail.subscribeAgain') }}</span>
                               </template>
                               <template v-else>
                                 {{ $t('detail.subscribe') }}
@@ -796,6 +796,7 @@ function onSubscribeBtnLeave(node) {
 .author-link {
   text-decoration: underline;
   cursor: pointer;
+  color: var(--color-primary);
 }
 
 :deep(.ant-table-cell.operations-cell) {

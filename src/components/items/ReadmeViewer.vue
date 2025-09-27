@@ -497,6 +497,10 @@ watch(
   margin-bottom: 16px;
 }
 
+.readme-content :deep(a) {
+  color: var(--color-primary);
+}
+
 .readme-content :deep(.invalid-link) {
   color: #ff4d4f;
   text-decoration: line-through;
@@ -562,6 +566,18 @@ watch(
   color: var(--text-base2);
   padding: 0 1em;
   margin-left: 0;
+}
+
+:deep(.hljs-punctuation) {
+  color: var(--text-base);
+}
+
+:deep(.hljs-string) {
+ color: var(--text-base2);
+}
+
+:deep(.hljs-attr) {
+  color: var(--color-primary);
 }
 
 .readme-content :deep(table) {

@@ -21,7 +21,7 @@
           </div>
           <div class="item-desc">{{ item.desc }}</div>
           <div class="item-tags">
-            <a-tag v-for="tag in item.tags" :key="tag" color="#e6f0ff" class="item-tag">{{ tag }}</a-tag>
+            <a-tag v-for="tag in item.tags" :key="tag" class="item-tag">{{ tag }}</a-tag>
           </div>
           <div class="item-time">{{ item.lastUpdated }}</div>
         </div>

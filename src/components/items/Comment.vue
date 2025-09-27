@@ -192,6 +192,7 @@ const openExternalLink = (url) => {
 
 .author-link {
   text-decoration: none;
+  color: var(--color-primary);
 }
 
 .author-link:hover {

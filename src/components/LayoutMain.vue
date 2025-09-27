@@ -349,6 +349,15 @@
           <a-select-option value="fr-FR">{{ $t('settings.frFR') }}</a-select-option>
         </a-select>
       </div>
+      <a-divider/>
+      <div class="settings-row">
+        <span class="settings-label">{{ $t('settings.theme') }}</span>
+        <a-select :value="selectedThemeName" size="middle" style="width: 160px;" @change="onThemeChange"
+                  popupClassName="lang-select-dropdown">
+          <a-select-option value="light">{{ $t('settings.light') }}</a-select-option>
+          <a-select-option value="dark">{{ $t('settings.dark') }}</a-select-option>
+        </a-select>
+      </div>
       <a-divider v-if="mode === 'single'"/>
       <div v-if="mode === 'single'" class="settings-row">
         <span class="settings-label">{{ $t('settings.clearUpdate') }}</span>
@@ -504,18 +513,6 @@ function saveSortForMenu(menuKey) {
   if (!['2', '3', '4'].includes(menuKey)) return;
   sortStateByMenu[menuKey] = { type: sortType.value, order: sortOrder.value };
 }
-
-// 接收App.vue中传递的选中的语言
-const {selectedLocale, handleLocaleChange} = defineProps({
-  selectedLocale: {
-    type: String,
-    required: true
-  },
-  handleLocaleChange: {
-    type: Function,
-    required: true
-  }
-});
 
 // 定义左侧菜单项
 const menuList = computed(() => [
@@ -1126,12 +1123,6 @@ const showSettingsModal = ref(false);
 // 清除更新提示加载窗状态
 const clearUpdateLoading = ref(false);
 
-// 选择语言切换
-function onLocaleChange(val) {
-  handleLocaleChange(val);
-  showSettingsModal.value = false;
-}
-
 // 清除更新提示
 const handleClearUpdate = async () => {
   if (mode !== 'single') return;
@@ -1188,6 +1179,37 @@ const updateAllScriptsHasUpdate = (hasUpdate) => {
     repoData.value = {...repoData.value};
   });
 };
+
+// 接收App.vue中传递的选中的语言
+const {selectedLocale, handleLocaleChange, selectedThemeName, handleThemeNameChange} = defineProps({
+  selectedLocale: {
+    type: String,
+    required: true
+  },
+  handleLocaleChange: {
+    type: Function,
+    required: true
+  },
+  selectedThemeName: {
+    type: String,
+    required: true
+  },
+  handleThemeNameChange: {
+    type: Function,
+    required: true
+  }
+});
+
+// 选择语言切换
+function onLocaleChange(val) {
+  handleLocaleChange(val);
+  showSettingsModal.value = false;
+}
+
+function onThemeChange(name) {
+  handleThemeNameChange(name);
+  showSettingsModal.value = false;
+}
 </script>
 
 <style scoped>
@@ -1540,6 +1562,7 @@ const updateAllScriptsHasUpdate = (hasUpdate) => {
   border: none;
   padding: 3px 8px;
   border-radius: 6px;
+  color: var(--text-base2);
   transition: all 0.2s;
   font-size: 22px;
   display: flex;

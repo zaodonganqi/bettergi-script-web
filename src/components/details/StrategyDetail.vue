@@ -303,11 +303,11 @@ watch(() => props.script, (newScript) => {
 .author-link {
   text-decoration: underline;
   cursor: pointer;
+  color: var(--color-primary);
 }
 
 .txt-content-plain {
   margin-top: 10px;
-  color: #222;
   font-size: 15px;
   white-space: pre-wrap;
   word-break: break-all;

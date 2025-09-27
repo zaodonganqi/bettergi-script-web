@@ -1,6 +1,6 @@
 <script setup>
-import {ref, watch, onMounted, reactive} from 'vue';
-import {getThemeByName, getTheme, applyThemeToCSS} from './styles/theme'
+import {ref, watch, onMounted} from 'vue';
+import {getThemeByName, getThemeName, setTheme} from './styles/theme'
 import LayoutMain from './components/LayoutMain.vue';
 import zhCN from 'ant-design-vue/es/locale/zh_CN';
 import zhTW from 'ant-design-vue/es/locale/zh_TW';
@@ -53,24 +53,29 @@ onMounted(() => {
 });
 
 // antd 主题对象
-const antdTheme = ref(getThemeByName(getTheme()));
+const selectedThemeName = ref(getThemeName());
+const antdTheme = ref(getThemeByName(selectedThemeName));
 
-// 当主题对象变化时，自动写入 CSS 变量
-watch(antdTheme, (val) => {
-  applyThemeToCSS(val)
+function handleThemeNameChange(name) {
+  selectedThemeName.value = name;
+}
+
+// 当主题变化时，自动写入 CSS 变量
+watch(selectedThemeName, (name) => {
+  setTheme(name);
+  antdTheme.value = getThemeByName(name);
 }, { immediate: true, deep: true })
 
-// 设置 JSON
-function setAntdThemeJson(json) {
-  if (json && typeof json === 'object') {
-    antdTheme.value = json
-  }
-}
 </script>
 
 <template>
   <a-config-provider :locale="currentAntdLocale" :theme="antdTheme">
-    <LayoutMain :selected-locale="selectedLocale" :handle-locale-change="handleLocaleChange" />
+    <LayoutMain
+        :selected-locale="selectedLocale"
+        :handle-locale-change="handleLocaleChange"
+        :selected-theme-name="selectedThemeName"
+        :handle-theme-name-change="handleThemeNameChange"
+    ></LayoutMain>
   </a-config-provider>
 </template>
 
@@ -78,6 +83,7 @@ function setAntdThemeJson(json) {
 :root {
   --color-primary: #1677ff;
   --border-base: #d9d9d9;
+  --text-base: #141414FF;
   --text-base2: #666;
   --text-base3: #999;
   --text-base4: #bbb;
@@ -100,7 +106,7 @@ function setAntdThemeJson(json) {
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
-  background-color: var(--bg-menu);
+  background-color: transparent;
 }
 
 ::-webkit-scrollbar-thumb {

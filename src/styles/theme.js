@@ -3,7 +3,7 @@ const STORAGE_KEYS = {
     THEME_LIST: 'app-theme-list'
 };
 
-// AntD 主题配置
+// AntD 主题配置（如需制作深色主题的配色请使用dark为基准修改，避免一些情况发生）
 export const antdThemes = {
     light: {
         token: {
@@ -13,6 +13,7 @@ export const antdThemes = {
             colorInfoBg: '#e6f0ff', // 信息色的浅色背景颜色（阴影色，tag背景色，详情中简介块边框色）
             colorBgLayout: '#f7f8fa', // 布局背景色（菜单、列表背景色，除纯色外的主要背景色）
             colorBgContainer: '#ffffff', // 组件容器背景色（小组件背景色，详情区域背景色，与上面那条做色差的背景色之一）
+            colorPrimaryBg: '#e6f4ff', // 主色浅色背景色 深色模式有用 按钮阴影色
             controlItemBgActive: '#f3f8ff', // 不知道怎么描述，借用了日历的选中背景色（详情中简介背景色，列表悬浮态背景色）
             colorPrimaryBgHover: '#1677ff14', // 主色浅色背景悬浮态（加载readme小弹窗边框色）
             colorItemBgSelected: '#e6f4ff', // 菜单选中色（列表选中色）
@@ -32,18 +33,21 @@ export const antdThemes = {
         token: {
             // 括号前为主题编辑器内颜色，括号内为项目中使用颜色，无括号则表示项目中未绑定但需要此值
             colorPrimary: '#1677ff', // 主色（主体组件颜色）
-            colorInfo: '#1677ff', // 信息色 部分文本会用到
-            colorInfoBg: '#e6f0ff', // 信息色的浅色背景颜色（阴影色，tag背景色，详情中简介块边框色）
-            colorBgLayout: '#f7f8fa', // 布局背景色（菜单、列表背景色，除纯色外的主要背景色）
-            colorBgContainer: '#ffffff', // 组件容器背景色（小组件背景色，详情区域背景色，与上面那条做色差的背景色之一）
-            controlItemBgActive: '#f3f8ff', // 不知道怎么描述，借用了日历的选中背景色（详情中简介背景色，列表悬浮态背景色）
+            colorInfo: '#383838', // 信息色 部分文本会用到
+            colorInfoBg: '#787878', // 信息色的浅色背景颜色（阴影色，tag背景色，详情中简介块边框色）
+            colorBgLayout: '#1b1b1c', // 布局背景色（菜单、列表背景色，除纯色外的主要背景色）
+            colorBgContainer: '#151517', // 组件容器背景色（小组件背景色，详情区域背景色，与上面那条做色差的背景色之一）
+            colorBgElevated: '#1b1b1c', // 弹窗背景色
+            controlItemBgActive: '#43454a', // 不知道怎么描述，借用了日历的选中背景色（详情中简介背景色，列表悬浮态背景色）
+            colorPrimaryBg: '#1b1b1c', // 主色浅色背景色
             colorPrimaryBgHover: '#1677ff14', // 主色浅色背景悬浮态（加载readme小弹窗边框色）
-            colorItemBgSelected: '#e6f4ff', // 菜单选中色（列表选中色）
-            colorBorder: '#dfe2e5', // 一级边框色（几乎各类浅色线框的边框色，包括表格）
-            colorText: '#141414FF', // 一级文本色
-            colorTextSecondary: '#666', // 二级文本色
-            colorTextTertiary: '#999', // 三级文本色
-            colorTextQuaternary: '#bbb', // 四级文本色
+            colorItemBgSelected: '#353638', // 菜单选中色（列表选中色）
+            colorBorder: '#303030', // 一级边框色（几乎各类浅色线框的边框色，包括表格）
+            colorBorderSecondary: '#404040', // 二级边框色
+            colorText: '#ffffff', // 一级文本色
+            colorTextSecondary: 'rgba(255, 255, 255, 0.65)', // 二级文本色
+            colorTextTertiary: 'rgba(255, 255, 255, 0.45)', // 三级文本色
+            colorTextQuaternary: 'rgba(255, 255, 255, 0.25)', // 四级文本色
             colorTextLightSolid: '#ffffff', // 主题色按钮中的文本色（有色按钮中的文本色，只在地图追踪详情的切换滑块中定义了亮色文本，如主题色较黑建议将.ant-menu-item-selected的color改为此映射）
             colorSuccessText: '#52c41a', // 成功色（有更新提示色）
 
@@ -63,6 +67,7 @@ const tokenToCssVar = {
     colorPrimaryBgHover: '--bg-shadow-light',
     colorItemBgSelected: '--bg-item-selected',
     controlItemBgActive: '--bg-desc',
+    colorText: '--text-base',
     colorTextSecondary: '--text-base2',
     colorTextTertiary: '--text-base3',
     colorTextQuaternary: '--text-base4',
@@ -105,14 +110,18 @@ export function registerTheme(name) {
 }
 
 // 当前主题管理
-export function getTheme() {
+export function getThemeName() {
     return localStorage.getItem(STORAGE_KEYS.THEME) || DEFAULT_THEME;
 }
 
 export function setTheme(name) {
-    const themeName = name || DEFAULT_THEME;
-    localStorage.setItem(STORAGE_KEYS.THEME, themeName);
-    registerTheme(themeName);
+    // const themeName = name || DEFAULT_THEME;
+    // localStorage.setItem(STORAGE_KEYS.THEME, themeName);
+    // registerTheme(themeName);
+    if (DEFAULT_THEMES.includes(name))  {
+        applyThemeToCSS(name);
+        localStorage.setItem(STORAGE_KEYS.THEME, name);
+    }
 }
 
 // 应用主题到 CSS 变量

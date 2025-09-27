@@ -264,6 +264,7 @@ watch(() => props.script, (newScript) => {
 .author-link {
   text-decoration: underline;
   cursor: pointer;
+  color: var(--color-primary);
 }
 
 .desc-block {
