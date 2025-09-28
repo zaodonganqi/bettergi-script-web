@@ -250,7 +250,7 @@ watch(() => props.script, (newScript) => {
   top: 0;
   right: 0;
   display: flex;
-  background: var(--bg-container);
+  background: var(--bg-menu);
   align-items: center;
   gap: 8px;
   font-size: 12px;

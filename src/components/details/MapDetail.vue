@@ -677,7 +677,7 @@ function onSubscribeBtnLeave(node) {
 
 .readme-loading-indicator {
   display: flex;
-  background: var(--bg-container);
+  background: var(--bg-menu);
   align-items: center;
   gap: 8px;
   font-size: 12px;
