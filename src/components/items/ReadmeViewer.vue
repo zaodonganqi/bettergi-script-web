@@ -561,6 +561,10 @@ watch(
   word-wrap: normal;
 }
 
+.readme-content :deep(.hljs) {
+  color: var(--text-base);
+}
+
 .readme-content :deep(blockquote) {
   border-left: 0.25em solid var(--text-base3);
   color: var(--text-base2);

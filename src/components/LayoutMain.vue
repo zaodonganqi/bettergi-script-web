@@ -1681,7 +1681,7 @@ function onThemeChange(name) {
   right: 0;
   bottom: 0;
   z-index: 99999;
-  background: rgba(0, 0, 0, 0.18);
+  background: rgba(0, 0, 0, 0.30);
   display: flex;
   align-items: center;
   justify-content: center;
