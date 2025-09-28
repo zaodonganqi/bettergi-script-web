@@ -1,3 +1,5 @@
+import egg from "@/styles/egg.js";
+
 const STORAGE_KEYS = {
     THEME: 'app-theme',
     THEME_LIST: 'app-theme-list'
@@ -54,6 +56,28 @@ export const antdThemes = {
             // 以下颜色不建议更改
             colorErrorText: '#ff4d4f' // 不用说了，错误色
         }
+    },
+    egg: {
+        token: {
+            // 菌子中毒级RGB炫彩！（这里只是基底，真操作请去egg.js）
+            colorPrimary: '#FF00FF', // 死亡芭比粉
+            colorInfo: '#39FF14', // 霓虹绿
+            colorInfoBg: '#FF073A20', // 血腥红透明
+            colorBgLayout: '#CC00FF20', // 电光紫透明
+            colorBgContainer: '#00FFCC20', // 赛博青透明
+            colorPrimaryBg: '#FF00FF20', // 死亡芭比粉透明
+            controlItemBgActive: '#FF000020', // 纯红透明选中
+            colorPrimaryBgHover: '#00FF0020', // 荧光绿透明悬浮
+            colorItemBgSelected: '#0000FF20', // 纯蓝透明菜单选中
+            colorBorder: '#6eff75', // 荧光绿
+            colorText: '#FF0000', // 纯红文本
+            colorTextSecondary: '#00FF00', // 纯绿二级文本
+            colorTextTertiary: '#0000FF', // 纯蓝三级文本
+            colorTextQuaternary: '#FFFF00', // 纯黄四级文本
+            colorTextLightSolid: '#FFFFFF', // 白色按钮文本
+            colorSuccessText: '#FF00FF', // 死亡芭比粉成功色
+            colorErrorText: '#00FFFF' // 荧光青错误色
+        }
     }
 };
 
@@ -79,7 +103,7 @@ const tokenToCssVar = {
 };
 
 const DEFAULT_THEME = 'light';
-const DEFAULT_THEMES = ['light', 'dark'];
+const DEFAULT_THEMES = ['light', 'dark','egg'];
 
 // 存储操作
 function saveToStorage(key, data) {
@@ -120,7 +144,15 @@ export function setTheme(name) {
     // registerTheme(themeName);
     if (DEFAULT_THEMES.includes(name))  {
         applyThemeToCSS(name);
-        localStorage.setItem(STORAGE_KEYS.THEME, name);
+        // 彩蛋配色千万不能存缓存
+        if (!'egg'.includes(name)) {
+            localStorage.setItem(STORAGE_KEYS.THEME, name);
+        } else {
+            egg.start();
+            setTimeout(() => {
+                egg.stop();
+            }, 10000);
+        }
     }
 }
 

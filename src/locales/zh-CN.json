@@ -255,6 +255,7 @@
         "theme": "设置主题",
         "light": "浅色",
         "dark": "深色",
+        "egg": "千万别点！",
         "clearUpdate": "清除更新提示",
         "clearUpdateBtn": "清除",
         "clearUpdateSuccess": "清除更新提示成功",

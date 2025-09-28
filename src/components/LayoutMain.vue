@@ -356,6 +356,7 @@
                   popupClassName="lang-select-dropdown">
           <a-select-option value="light">{{ $t('settings.light') }}</a-select-option>
           <a-select-option value="dark">{{ $t('settings.dark') }}</a-select-option>
+          <a-select-option value="egg">{{ $t('settings.egg') }}</a-select-option>
         </a-select>
       </div>
       <a-divider v-if="mode === 'single'"/>
