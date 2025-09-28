@@ -15,7 +15,7 @@ export const antdThemes = {
             colorBgContainer: '#ffffff', // 组件容器背景色（小组件背景色，详情区域背景色，与上面那条做色差的背景色之一）
             colorPrimaryBg: '#e6f4ff', // 主色浅色背景色 深色模式有用 按钮阴影色
             controlItemBgActive: '#f3f8ff', // 不知道怎么描述，借用了日历的选中背景色（详情中简介背景色，列表悬浮态背景色）
-            colorPrimaryBgHover: '#1677ff14', // 主色浅色背景悬浮态（加载readme小弹窗边框色）
+            colorPrimaryBgHover: '#1677ff14', // 主色浅色背景悬浮态（加载readme小弹窗阴影色）
             colorItemBgSelected: '#e6f4ff', // 菜单选中色（列表选中色）
             colorBorder: '#dfe2e5', // 一级边框色（几乎各类浅色线框的边框色，包括表格）
             colorText: '#141414FF', // 一级文本色
@@ -40,7 +40,7 @@ export const antdThemes = {
             colorBgElevated: '#1b1b1c', // 弹窗背景色
             controlItemBgActive: '#43454a', // 不知道怎么描述，借用了日历的选中背景色（详情中简介背景色，列表悬浮态背景色）
             colorPrimaryBg: '#1b1b1c', // 主色浅色背景色
-            colorPrimaryBgHover: '#1677ff14', // 主色浅色背景悬浮态（加载readme小弹窗边框色）
+            colorPrimaryBgHover: '#1677ff14', // 主色浅色背景悬浮态（加载readme小弹窗阴影色）
             colorItemBgSelected: '#353638', // 菜单选中色（列表选中色）
             colorBorder: '#303030', // 一级边框色（几乎各类浅色线框的边框色，包括表格）
             colorBorderSecondary: '#404040', // 二级边框色

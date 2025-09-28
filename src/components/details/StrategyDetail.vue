@@ -286,8 +286,8 @@ watch(() => props.script, (newScript) => {
 
 .readme-loading-indicator {
   position: absolute;
-  top: 0;
-  right: 0;
+  top: 6px;
+  right: 20px;
   display: flex;
   background: var(--bg-menu);
   align-items: center;

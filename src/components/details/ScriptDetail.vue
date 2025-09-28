@@ -247,8 +247,8 @@ watch(() => props.script, (newScript) => {
 
 .readme-loading-indicator {
   position: absolute;
-  top: 0;
-  right: 0;
+  top: 6px;
+  right: 20px;
   display: flex;
   background: var(--bg-menu);
   align-items: center;
@@ -256,7 +256,7 @@ watch(() => props.script, (newScript) => {
   font-size: 12px;
   padding: 4px 8px;
   border-color: var(--bg-desc);
-  border-radius: 4px;
+  border-radius: 5px;
   box-shadow: 0 1px 4px var(--bg-shadow-light);
   z-index: 10;
 }
