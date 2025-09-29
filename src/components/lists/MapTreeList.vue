@@ -220,6 +220,10 @@ const getLatestUpdateTime = (files) => {
   }, '');
 };
 
+// 国家图标仅用于地方特产直接子目录下
+const countries = ["蒙德", "璃月", "稻妻", "枫丹", "纳塔", "挪德卡莱", "至冬"];
+const countriesParentNode = "地方特产";
+
 // 处理节点数据
 const processNode = (node, parentKey = '', parentSubscribed = false) => {
   const currentKey = parentKey ? `${parentKey}/${node.name}` : node.name;
@@ -230,11 +234,16 @@ const processNode = (node, parentKey = '', parentSubscribed = false) => {
   const children = node.children?.map(child => processNode(child, currentKey, isSubscribed)) || [];
   let iconPath = '';
   let showIcon = node.showIcon || false;
+  // 添加图标路径
   if (node.children && node.children.length > 0) {
     const mappedItem = Array.isArray(iconUrlMap) ? iconUrlMap.find(item => item && item.name === node.name) : undefined;
     if (mappedItem && mappedItem.link) {
       iconPath = mappedItem.link;
       showIcon = true;
+    }
+    if (countries.some(country => node.name.includes(country)) && !parentKey.includes(countriesParentNode)) {
+      iconPath = '';
+      showIcon = false;
     }
   }
   let files = [];
