@@ -257,7 +257,6 @@ const filteredScripts = computed(() => {
   return sortedScored;
 });
 
-// 计数由父组件根据 repoData 直接计算
 </script>
 
 <style scoped>

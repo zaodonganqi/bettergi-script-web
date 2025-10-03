@@ -367,11 +367,35 @@
         </a-button>
       </div>
     </a-modal>
+    
+    <!-- 安全声明弹窗 -->
+    <a-modal
+      v-model:open="safetyStore.showSafetyModal"
+      :title="$t('settings.eggSafetyTitle')"
+      :ok-text="$t('settings.eggSafetyOk')"
+      :cancel-text="$t('settings.eggSafetyCancel') || $t('action.cancel')"
+      centered
+      width="520px"
+      @ok="() => {
+        const name = safetyStore.confirmSafety();
+        if (name) {
+          handleThemeNameChange(name);
+          showSettingsModal = false;
+        }
+      }"
+      @cancel="() => safetyStore.cancelSafety()"
+    >
+      <div class="safety-modal-content">
+        <div class="safety-warning-icon" aria-hidden="true">⚠</div>
+        <div class="safety-text">{{ $t('settings.eggSafetyDesc') }}</div>
+      </div>
+    </a-modal>
   </a-layout>
 </template>
 
 <script setup>
 import {computed, nextTick, onMounted, onUnmounted, reactive, ref, watch} from 'vue';
+import { useSafetyStore } from '@/stores/safety.js';
 import {
   AlignRightOutlined,
   BulbOutlined,
@@ -1207,10 +1231,17 @@ function onLocaleChange(val) {
   showSettingsModal.value = false;
 }
 
+// 主题切换（拦截 egg）
+const safetyStore = useSafetyStore();
 function onThemeChange(name) {
+  if (name === 'egg') {
+    safetyStore.requestSafetyConfirm(name);
+    return;
+  }
   handleThemeNameChange(name);
   showSettingsModal.value = false;
 }
+
 </script>
 
 <style scoped>
@@ -1810,6 +1841,24 @@ function onThemeChange(name) {
   flex-direction: column;
   align-items: flex-start;
   gap: 0;
+}
+
+.safety-modal-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.safety-warning-icon {
+  font-size: 22px;
+  line-height: 1;
+  color: var(--text-error);
+  margin-top: 2px;
+}
+
+.safety-text {
+  color: var(--text-base);
+  font-size: 14px;
 }
 </style>
 
