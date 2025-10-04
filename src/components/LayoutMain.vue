@@ -29,8 +29,8 @@
           <div v-if="mainStore.isModeSingle" class="sider-link" @click="mainStore.openExternalLink('https://bgi.sh')">
             {{ $t('sider.onlineRepo') }}
           </div>
-          <div class="sider-link" @click="mainStore.openExternalLink('https://bettergi.com/doc.html')">
-            {{ $t('sider.document') }}
+          <div class="sider-link" @click="mainStore.openExternalLink('https://bettergi.com/open.html')">
+            {{ $t('sider.otherExtensions') }}
           </div>
           <div class="sider-link" @click="mainStore.openExternalLink('https://bettergi.com/doc.html')">
             {{ $t('sider.document') }}

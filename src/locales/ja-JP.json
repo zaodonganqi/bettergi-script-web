@@ -19,6 +19,7 @@
     "mainRepo": "BetterGIメインリポジトリにアクセス",
     "scriptRepo": "BetterGIスクリプトリポジトリにアクセス",
     "onlineRepo": "オンラインリポジトリにアクセス",
+    "otherExtensions": "その他の拡張機能",
     "lastUpdate": "最終更新：",
     "document": "公式ドキュメントを確認する"
   },

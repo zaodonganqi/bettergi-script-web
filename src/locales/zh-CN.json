@@ -19,6 +19,7 @@
         "mainRepo": "访问BetterGI主仓库",
         "scriptRepo": "访问BetterGI脚本仓库",
         "onlineRepo": "访问在线仓库",
+        "otherExtensions": "其它扩展程序",
         "document": "查看官方文档",
         "lastUpdate": "最近更新："
     },
