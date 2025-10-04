@@ -3,7 +3,7 @@
     <!-- 左侧菜单 -->
     <div class="custom-sider">
       <div class="sider-header">
-        <div class="sider-logo" :title="$t('sider.document')" @click="openExternalLink('https://bettergi.com/')"></div>
+        <div class="sider-logo" :title="$t('sider.document')" @click="mainStore.openExternalLink('https://bettergi.com/')"></div>
         <span class="repo-title">{{ $t('sider.repoTitle') }}</span>
       </div>
       <div class="sider-menu-wrap">
@@ -20,16 +20,19 @@
         </div>
         <!-- 外链（需要可自行添加，修改链接即可） -->
         <div class="sider-footer">
-          <div class="sider-link" @click="openExternalLink('https://github.com/babalae/better-genshin-impact')">
+          <div class="sider-link" @click="mainStore.openExternalLink('https://github.com/babalae/better-genshin-impact')">
             {{ $t('sider.mainRepo') }}
           </div>
-          <div class="sider-link" @click="openExternalLink('https://github.com/babalae/bettergi-scripts-list')">
+          <div class="sider-link" @click="mainStore.openExternalLink('https://github.com/babalae/bettergi-scripts-list')">
             {{ $t('sider.scriptRepo') }}
           </div>
-          <div v-if="mainStore.isModeSingle" class="sider-link" @click="openExternalLink('https://bgi.sh')">
+          <div v-if="mainStore.isModeSingle" class="sider-link" @click="mainStore.openExternalLink('https://bgi.sh')">
             {{ $t('sider.onlineRepo') }}
           </div>
-          <div class="sider-link" @click="openExternalLink('https://bettergi.com/doc.html')">
+          <div class="sider-link" @click="mainStore.openExternalLink('https://bettergi.com/doc.html')">
+            {{ $t('sider.document') }}
+          </div>
+          <div class="sider-link" @click="mainStore.openExternalLink('https://bettergi.com/doc.html')">
             {{ $t('sider.document') }}
           </div>
         </div>
