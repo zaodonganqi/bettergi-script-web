@@ -2,7 +2,7 @@
   <div class="list-container">
     <a-list :data-source="filteredStrategies">
       <template #renderItem="{ item }">
-        <div :class="['script-item', { active: item.id === selectedId }]" @click="selectStrategy(item.id)">
+        <div :class="['script-item', { active: item.id === listStore.selectedId }]" @click="selectStrategy(item.id)">
           <div class="item-header">
             <div class="item-title-wrap">
               <span class="item-title-main">{{ item.title }}</span>
@@ -31,40 +31,15 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, nextTick } from 'vue';
-import { useI18n } from 'vue-i18n';
+import {computed} from 'vue';
+import {useI18n} from 'vue-i18n';
+import {useMainStore} from "@/stores/mainStore.js";
+import {useListStore} from "@/stores/listStore.js";
+
 const { t: $t } = useI18n();
 
-const props = defineProps({
-  searchKey: {
-    type: String,
-    default: ''
-  },
-  repoData: {
-    type: Object,
-    required: true,
-    default: null
-  },
-  subscribedPaths: {
-    type: Array,
-    default: () => []
-  },
-  showSubscribedOnly: {
-    type: Boolean,
-    default: false
-  },
-  sortType: {
-    type: String,
-    default: 'time'
-  },
-  sortOrder: {
-    type: String,
-    default: 'desc'
-  }
-});
-const { repoData } = props;
-
-const emit = defineEmits(['select', 'updateHasUpdate']);
+const mainStore = useMainStore();
+const listStore = useListStore();
 
 function getTcgStrategiesFromRepo(repo, subscribedPaths = [], parentSubscribed = false, currentPath = 'tcg') {
   const tcgNode = repo.indexes.find(item => item.name === 'tcg');
@@ -89,8 +64,7 @@ function getTcgStrategiesFromRepo(repo, subscribedPaths = [], parentSubscribed =
           }
         }
         child.fullPath = `${currentPath}/${child.name}`;
-        const authors = Array.isArray(child.authors) ? child.authors : [];
-        child.authors = authors;
+        child.authors = Array.isArray(child.authors) ? child.authors : [];
         result.push({
           ...child,
           isSubscribed: isSubscribed,
@@ -107,12 +81,9 @@ function removeFileSuffix(name) {
   return name.replace(/\.[^.]+$/, '');
 }
 
-function normalize(str) {
-  return (str || '').toLowerCase().replace(/[\s【】\[\]（）()·,，.。!！?？\-_]/g, '');
-}
-
-const strategies = ref(
-  getTcgStrategiesFromRepo(repoData, props.subscribedPaths).map((item, idx) => ({
+const strategies = computed(() => {
+  if (!mainStore.repoData || !mainStore.repoData.indexes) return [];
+  return getTcgStrategiesFromRepo(mainStore.repoData, mainStore.subscribedScriptPaths).map((item, idx) => ({
     id: idx + 1,
     title: removeFileSuffix(item.name),
     name: item.name,
@@ -125,55 +96,20 @@ const strategies = ref(
     path: item.fullPath || `tcg/${item.name}`,
     isSubscribed: item.isSubscribed,
     hasUpdate: item.hasUpdate || false
-  }))
-);
-
-// 监听 repoData 和 subscribedPaths 变化，重新生成 strategies
-watch(
-  [() => props.repoData, () => props.subscribedPaths],
-  ([newRepoData, newSubscribedPaths]) => {
-    if (newRepoData && newRepoData.indexes) {
-      nextTick(() => {
-        strategies.value = getTcgStrategiesFromRepo(newRepoData, newSubscribedPaths).map((item, idx) => ({
-          id: idx + 1,
-          title: removeFileSuffix(item.name),
-          name: item.name,
-          authors: item.authors || [],
-          desc: item.description,
-          tags: item.tags || [],
-          lastUpdated: item.lastUpdated || '',
-          unread: false,
-          version: item.version,
-          path: item.fullPath || `tcg/${item.name}`,
-          isSubscribed: item.isSubscribed,
-          hasUpdate: item.hasUpdate || false
-        }));
-
-        if (strategies.value.length > 0) {
-          const prevSelected = selectedId.value;
-          const stillExists = strategies.value.some(s => s.id === prevSelected);
-          selectedId.value = stillExists ? prevSelected : null;
-        } else {
-          selectedId.value = null;
-        }
-      });
-    }
-  }
-);
-
-const selectedId = ref(null);
+  }));
+});
 
 const selectStrategy = async (id) => {
-  selectedId.value = id;
   const strategy = strategies.value.find(strategy => strategy.id === id);
-  emit('select', strategy);
-  const mode = import.meta.env.VITE_MODE;
-  if (mode === 'single') {
+  listStore.selectItem(id, strategy);
+  // 选择策略
+  mainStore.handleScriptSelect(strategy);
+  if (mainStore.isModeSingle) {
     const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
     const result = await repoWebBridge.UpdateSubscribed(strategy.path);
     if (result) {
-      // 通知父组件更新repoData中的hasUpdate状态
-      emit('updateHasUpdate', strategy.path, false);
+      // 更新hasUpdate状态
+      listStore.updateItemHasUpdate(strategy.path, false);
     } else {
       console.error('Failed to update subscription:');
     }
@@ -181,67 +117,13 @@ const selectStrategy = async (id) => {
   console.log("Node selected", strategy);
 };
 
-const sortStrategies = (strategyList) => {
-  if (props.sortType === 'random') {
-    return [...strategyList].sort(() => Math.random() - 0.5);
-  }
-  
-  const sorted = [...strategyList];
-  
-  if (props.sortType === 'name') {
-    // 按title排序
-    sorted.sort((a, b) => {
-      const nameA = (a.title || '').toLowerCase();
-      const nameB = (b.title || '').toLowerCase();
-      return props.sortOrder === 'asc' ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA);
-    });
-  } else if (props.sortType === 'time') {
-    // 按时间排序
-    sorted.sort((a, b) => {
-      const timeA = a.lastUpdated || '';
-      const timeB = b.lastUpdated || '';
-      return props.sortOrder === 'asc' ? timeA.localeCompare(timeB) : timeB.localeCompare(timeA);
-    });
-  }
-  
-  return sorted;
-};
-
 const filteredStrategies = computed(() => {
-  let baseList = strategies.value;
-  if (props.showSubscribedOnly) {
-    if (!props.subscribedPaths || props.subscribedPaths.length === 0) {
-      return [];
-    }
-    baseList = baseList.filter(strategy => props.subscribedPaths.includes(strategy.path));
-  }
-  
-  if (!props.searchKey) {
-    return sortStrategies(baseList);
-  }
-  
-  const keyword = normalize(props.searchKey.trim());
-  // 完全匹配优先
-  const nameMatches = baseList.filter(s =>
-    normalize(s.title) === keyword ||
-    (s.authors && s.authors.some(a => normalize(a.name) === keyword))
-  );
-  if (nameMatches.length) return sortStrategies(nameMatches);
-  
-  // 相关性分数排序
-  const scored = baseList.map(s => {
-    let score = 0;
-    if (normalize(s.title).includes(keyword)) score += 3;
-    if (s.authors && s.authors.some(a => normalize(a.name).includes(keyword))) score += 2;
-    if ((s.tags || []).some(tag => normalize(tag).includes(keyword))) score += 2;
-    if (normalize(s.desc).includes(keyword)) score += 1;
-    return { ...s, _score: score };
-  }).filter(s => s._score > 0);
-  scored.sort((a, b) => b._score - a._score);
-  
-  // 对搜索结果应用排序
-  const sortedScored = sortStrategies(scored);
-  return sortedScored;
+  return listStore.processItems(strategies.value, {
+    searchKey: mainStore.search,
+    showSubscribedOnly: mainStore.scriptTab === 'subscribed',
+    sortType: mainStore.sortType,
+    sortOrder: mainStore.sortOrder
+  });
 });
 </script>
 

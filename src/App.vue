@@ -1,84 +1,21 @@
 <script setup>
-import {ref, watch, onMounted} from 'vue';
-import {getThemeByName, getThemeName, setTheme} from './styles/theme'
 import LayoutMain from './components/LayoutMain.vue';
-import zhCN from 'ant-design-vue/es/locale/zh_CN';
-import zhTW from 'ant-design-vue/es/locale/zh_TW';
-import enUS from 'ant-design-vue/es/locale/en_US';
-import jaJP from 'ant-design-vue/es/locale/ja_JP';
-import frFR from 'ant-design-vue/es/locale/fr_FR';
-import { useI18n } from 'vue-i18n';
+import { useSettingsStore } from '@/stores/settingsStore.js'
+import {onMounted} from "vue";
 
-const antdLocales = {
-  'zh-CN': zhCN,
-  'zh-TW': zhTW,
-  'en-US': enUS,
-  'ja-JP': jaJP,
-  'fr-FR': frFR
-};
-
-const { locale } = useI18n();
-// 从localStorage读取语言，如果没有则使用i18n的当前语言
-const savedLocale = localStorage.getItem('user-locale');
-const selectedLocale = ref(savedLocale || locale.value);
-console.log(selectedLocale.value);
-
-// 确保i18n的语言设置与localStorage同步
-if (savedLocale && savedLocale !== locale.value) {
-  locale.value = savedLocale;
-  selectedLocale.value = savedLocale;
-}
-
-const currentAntdLocale = ref(antdLocales[selectedLocale.value] || zhCN);
-
-watch(selectedLocale, (newLocale) => {
-  locale.value = newLocale;
-  currentAntdLocale.value = antdLocales[newLocale] || zhCN;
-  // 保存到localStorage
-  localStorage.setItem('user-locale', newLocale);
-});
-
-function handleLocaleChange(val) {
-  selectedLocale.value = val;
-}
+const settings = useSettingsStore();
 
 onMounted(() => {
-  // 确保在组件挂载时正确设置语言
-  const savedLocale = localStorage.getItem('user-locale');
-  
-  if (savedLocale && savedLocale !== locale.value) {
-    locale.value = savedLocale;
-    selectedLocale.value = savedLocale;
-  }
-  currentAntdLocale.value = antdLocales[selectedLocale.value] || zhCN;
+  console.log(settings.selectedLocale);
+  console.log(settings.selectedThemeName);
 });
-
-// antd 主题对象
-const selectedThemeName = ref(getThemeName());
-console.log(selectedThemeName.value);
-const antdTheme = ref(getThemeByName(selectedThemeName));
-
-function handleThemeNameChange(name) {
-  selectedThemeName.value = name;
-}
-
-// 当主题变化时，自动写入 CSS 变量
-watch(selectedThemeName, (name) => {
-  setTheme(name);
-  antdTheme.value = getThemeByName(name);
-}, { immediate: true, deep: true })
-
 </script>
 
 <template>
-  <a-config-provider :locale="currentAntdLocale" :theme="antdTheme">
-    <LayoutMain
-        :selected-locale="selectedLocale"
-        :handle-locale-change="handleLocaleChange"
-        :selected-theme-name="selectedThemeName"
-        :handle-theme-name-change="handleThemeNameChange"
-    ></LayoutMain>
+  <a-config-provider :locale="settings.currentAntdLocale" :theme="settings.antdTheme">
+    <LayoutMain />
   </a-config-provider>
+  
 </template>
 
 <style>

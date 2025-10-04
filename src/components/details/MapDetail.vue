@@ -32,7 +32,7 @@
             <a-button type="primary" @click="jumpToGitHub(script)">
               {{ $t('action.jumpToGitHub') }}
             </a-button>
-            <a-button type="primary" @click="commentModalOpen = true">
+            <a-button type="primary" @click="mainStore.showCommentModal = true">
               {{ $t('action.comment') }}
             </a-button>
             <a-button type="primary" v-if="!script.isSubscribed" @click="handleSubscribe(script)">
@@ -136,7 +136,7 @@
         </div>
 
         <!-- 评论弹窗-->
-        <Comment v-model="commentModalOpen" :selected-script="script" />
+        <Comment />
 
         <!-- 详情弹窗 -->
         <a-modal v-model:open="modalOpen" :title="$t('detail.modalTitle')" :footer="null" width="480" centered>
@@ -190,22 +190,17 @@ import { subscribePaths } from '@/utils/subscription';
 import {useI18n} from 'vue-i18n';
 import {jumpToGitHub} from "@/utils/actions.js";
 import Comment from "@/components/items/Comment.vue";
+import {useMainStore} from "@/stores/mainStore.js";
 
 const {t: $t, locale} = useI18n();
 
-const props = defineProps({
-  script: {
-    type: Object,
-    default: null
-  },
-  startPollingUserConfig: Function
-});
+// 获取script数据
+const script = computed(() => mainStore.selectedScript);
 
-const mode = import.meta.env.VITE_MODE;
+const mainStore = useMainStore();
 const {copy} = useClipboard();
 const currentPage = ref(1);
 const pageSize = ref(10);
-const commentModalOpen = ref(false);
 
 // 筛选与排序状态
 const columnFilters = ref({
@@ -257,13 +252,13 @@ const onPageChange = (page) => {
   currentPage.value = page;
 };
 
-const onPageSizeChange = (current, size) => {
+const onPageSizeChange = (size) => {
   pageSize.value = size;
   currentPage.value = 1;
 };
 
 // 表格筛选/排序
-const onTableChange = (pagination, filters, sorter) => {
+const onTableChange = (filters, sorter) => {
   // 筛选
   columnFilters.value = {
     authors: (filters && (filters.authors || filters['authors'])) || [],
@@ -285,7 +280,7 @@ const onTableChange = (pagination, filters, sorter) => {
 };
 
 const columns = computed(() => {
-  if (mode === 'single') {
+  if (mainStore.isModeSingle) {
     return [
       {
         title: $t('detail.name'),
@@ -381,7 +376,7 @@ function isReadme404(path) {
 
 const tabOptions = computed(() => [
   {
-    label: (isReadme404(props.script?.path) || !hasReadmeContent.value)
+    label: (isReadme404(script.value?.path) || !hasReadmeContent.value)
         ? $t('detail.tabReadme')
         : 'README',
     value: 'readme'
@@ -403,8 +398,8 @@ const hasAutoSwitched = ref(false); // 标记是否已经自动切换过
 const handleReadmeLoaded = (payload) => {
   isLoadingReadme.value = false;
   loadError.value = false;
-  if (payload && payload.status === '404' && props.script && props.script.path) {
-    setReadme404(props.script.path);
+  if (payload && payload.status === '404' && script.value && script.value.path) {
+    setReadme404(script.value.path);
     // README为404时检查是否需要自动切换
     checkAndSwitchToFiles();
   } else if (payload && payload.status === 'error') {
@@ -430,8 +425,8 @@ const handleReadmeError = (error) => {
     if (error.status === 404) is404 = true;
     if (error.message && error.message.includes('404')) is404 = true;
   }
-  if (props.script && props.script.path && is404) {
-    setReadme404(props.script.path);
+  if (script.value && script.value.path && is404) {
+    setReadme404(script.value.path);
     // README为404时检查是否需要自动切换
     checkAndSwitchToFiles();
   }
@@ -443,9 +438,9 @@ const handleReadmeHasContent = (hasContent) => {
 
 // 检查是否需要自动切换到文件列表
 const checkAndSwitchToFiles = () => {
-  if (props.script && props.script.path && activeTab.value === 'readme' && !hasAutoSwitched.value) {
-    const is404 = isReadme404(props.script.path);
-    const hasDesc = props.script.desc && props.script.desc.trim() !== '';
+  if (script.value && script.value.path && activeTab.value === 'readme' && !hasAutoSwitched.value) {
+    const is404 = isReadme404(script.value.path);
+    const hasDesc = script.value.desc && script.value.desc.trim() !== '';
 
     if (!hasDesc && is404 && !hasReadmeContent.value && files.value.length > 0) {
       activeTab.value = 'files';
@@ -513,8 +508,8 @@ const handleSubscribe = async (item) => {
     if (result.needsCopy) {
       await copy(result.url);
       Message.success($t('detail.subscribeSuccess', {name: item.name}));
-    } else if (typeof props.startPollingUserConfig === 'function') {
-      props.startPollingUserConfig();
+    } else {
+      mainStore.startPollingUserConfig();
     }
   } catch (error) {
     console.error('Subscribe failed:', error);
@@ -528,7 +523,7 @@ const tabTransitionName = computed(() => {
 });
 
 // 切换节点时重置 tab
-watch(() => props.script, (newScript) => {
+watch(() => script.value, (newScript) => {
   if (newScript) {
     activeTab.value = 'readme';
     hasAutoSwitched.value = false; // 重置自动切换标记
@@ -589,7 +584,6 @@ function onSubscribeBtnHover(node) {
 function onSubscribeBtnLeave(node) {
   node._hover = false;
 }
-
 </script>
 
 <style scoped>

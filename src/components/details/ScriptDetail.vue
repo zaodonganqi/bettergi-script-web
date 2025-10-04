@@ -31,7 +31,7 @@
           <a-button type="primary" @click="jumpToGitHub(script)">
             {{ $t('action.jumpToGitHub') }}
           </a-button>
-          <a-button type="primary" @click="commentModalOpen = true">
+          <a-button type="primary" @click="mainStore.showCommentModal = true">
             {{ $t('action.comment') }}
           </a-button>
           <a-button type="primary" v-if="!script.isSubscribed" @click="handleSubscribe(script)">
@@ -67,7 +67,7 @@
                       :showNoDesc="!script.desc"
                       @loaded="handleReadmeLoaded" @error="handleReadmeError"/>
         <!-- 评论弹窗-->
-        <Comment v-model="commentModalOpen" :selected-script="script" />
+        <Comment />
       </div>
     </template>
     <template v-else>
@@ -77,7 +77,7 @@
 </template>
 
 <script setup>
-import {ref, watch} from 'vue';
+import {ref, watch, computed} from 'vue';
 import {useClipboard} from '@vueuse/core';
 import {message as Message, Spin as ASpin} from 'ant-design-vue';
 import ReadmeViewer from '../items/ReadmeViewer.vue';
@@ -86,23 +86,19 @@ import { subscribePaths } from '@/utils/subscription';
 import {useI18n} from 'vue-i18n';
 import Comment from "@/components/items/Comment.vue";
 import {jumpToGitHub} from "@/utils/actions.js";
+import { useMainStore } from "@/stores/mainStore.js";
 
 const {t: $t} = useI18n();
+const mainStore = useMainStore();
 
-const props = defineProps({
-  script: {
-    type: Object,
-    default: null
-  },
-  startPollingUserConfig: Function
-});
+// 获取script数据
+const script = computed(() => mainStore.selectedScript);
 const {copy} = useClipboard();
 
 // readme加载状态
 const isLoadingReadme = ref(false);
 const loadError = ref(false);
 const readmeKey = ref(0);
-const commentModalOpen = ref(false);
 
 const isReadme404 = (path) => !!localStorage.getItem('readme404:' + path);
 const setReadme404 = (path) => {
@@ -112,8 +108,8 @@ const setReadme404 = (path) => {
 const handleReadmeLoaded = (payload) => {
   isLoadingReadme.value = false;
   loadError.value = false;
-  if (payload && payload.status === '404' && props.script && props.script.path) {
-    setReadme404(props.script.path);
+  if (payload && payload.status === '404' && script.value && script.value.path) {
+    setReadme404(script.value.path);
     // 404时不显示弹窗，ReadmeViewer内部会优先显示desc
   } else if (payload && payload.status === 'error') {
     loadError.value = true;
@@ -138,8 +134,8 @@ const handleSubscribe = async (item) => {
     if (result.needsCopy) {
       await copy(result.url);
       Message.success($t('detail.subscribeSuccess', {name: item.name}));
-    } else if (typeof props.startPollingUserConfig === 'function') {
-      props.startPollingUserConfig();
+    } else {
+      mainStore.startPollingUserConfig();
     }
   } catch (error) {
     console.error('Subscribe failed:', error);
@@ -148,7 +144,7 @@ const handleSubscribe = async (item) => {
 };
 
 // 监听脚本变化，设置加载状态
-watch(() => props.script, (newScript) => {
+watch(() => script.value, (newScript) => {
   if (newScript && newScript.path) {
     if (isReadme404(newScript.path)) {
       // 已知404，不再加载

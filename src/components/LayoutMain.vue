@@ -8,8 +8,8 @@
       </div>
       <div class="sider-menu-wrap">
         <div class="menu-content">
-          <a-menu v-model:selectedKeys="selectedMenu" mode="vertical" class="custom-menu" @select="handleMenuSelect">
-            <a-menu-item v-for="item in menuList" :key="item.key" class="custom-menu-item">
+          <a-menu v-model:selectedKeys="mainStore.selectedMenu" mode="vertical" class="custom-menu" @select="mainStore.handleMenuSelect">
+            <a-menu-item v-for="item in mainStore.menuList" :key="item.key" class="custom-menu-item">
               <span class="menu-icon">
                 <component :is="item.icon"/>
               </span>
@@ -26,7 +26,7 @@
           <div class="sider-link" @click="openExternalLink('https://github.com/babalae/bettergi-scripts-list')">
             {{ $t('sider.scriptRepo') }}
           </div>
-          <div v-if="mode === 'single'" class="sider-link" @click="openExternalLink('https://bgi.sh')">
+          <div v-if="mainStore.isModeSingle" class="sider-link" @click="openExternalLink('https://bgi.sh')">
             {{ $t('sider.onlineRepo') }}
           </div>
           <div class="sider-link" @click="openExternalLink('https://bettergi.com/doc.html')">
@@ -35,14 +35,14 @@
         </div>
       </div>
       <!-- 最后更新时间 -->
-      <div v-if="lastUpdateTime" class="last-update-time" @click="showEggModal = true">
-        <div class="update-content" :class="{ 'column-mode': mode === 'single' }">
-          <template v-if="mode === 'single'">
+      <div v-if="mainStore.lastUpdateTime" class="last-update-time" @click="mainStore.showEggModal = true">
+        <div class="update-content" :class="{ 'column-mode': mainStore.isModeSingle }">
+          <template v-if="mainStore.isModeSingle">
             <div class="update-label">{{ $t('sider.lastUpdate') }}</div>
-            <div class="update-time">{{ lastUpdateTime }}</div>
+            <div class="update-time">{{ mainStore.lastUpdateTime }}</div>
           </template>
           <template v-else>
-            <span>{{ $t('sider.lastUpdate') + lastUpdateTime }}</span>
+            <span>{{ $t('sider.lastUpdate') + mainStore.lastUpdateTime }}</span>
           </template>
         </div>
       </div>
@@ -51,87 +51,87 @@
     <!-- 中间内容区域 -->
     <a-layout-sider class="script-sider">
       <div class="script-header">
-        <span class="script-title">{{ currentMenuTitle }}</span>
-        <div v-if="mode === 'single'" class="script-actions">
-          <a-button :type="scriptTab === 'all' ? 'primary' : 'default'"
+        <span class="script-title">{{ mainStore.currentMenuTitle }}</span>
+        <div v-if="mainStore.isModeSingle" class="script-actions">
+          <a-button :type="mainStore.scriptTab === 'all' ? 'primary' : 'default'"
                     class="script-btn"
-                    @click="onClickShowAll">{{ $t('button.all') }}
+                    @click="mainStore.onClickShowAll">{{ $t('button.all') }}
           </a-button>
-          <a-button :type="scriptTab === 'subscribed' ? 'primary' : 'default'"
+          <a-button :type="mainStore.scriptTab === 'subscribed' ? 'primary' : 'default'"
                     class="script-btn"
-                    @click="onClickShowSubscribed">{{ $t('button.subscribed') }}
+                    @click="mainStore.onClickShowSubscribed">{{ $t('button.subscribed') }}
           </a-button>
         </div>
       </div>
       <div class="search-section">
-        <a-input v-model:value="search" :placeholder="searchPlaceholder" class="script-search" @search="handleSearch"
+        <a-input v-model:value="mainStore.search" :placeholder="mainStore.searchPlaceholder" class="script-search" @search="mainStore.handleSearch"
                  allow-clear>
           <template #prefix>
             <SearchOutlined/>
           </template>
         </a-input>
-        <a-dropdown v-if="selectedMenu[0] !== '1'" placement="bottomLeft" trigger="click" class="sort-dropdown"
-                    v-model:open="sortDropdownOpen">
+        <a-dropdown v-if="mainStore.selectedMenu[0] !== '1'" placement="bottomLeft" :trigger="'click'" class="sort-dropdown"
+                    v-model:open="mainStore.sortDropdownOpen">
           <a-button class="sort-button" size="middle">
             <AlignRightOutlined/>
           </a-button>
           <template #overlay>
-            <a-menu class="sort-menu" @click="handleSortMenuClick">
+            <a-menu class="sort-menu" @click="mainStore.handleSortMenuClick">
               <a-menu-item-group :title="$t('sort.sortBy')">
-                <a-menu-item key="time" :class="{ active: sortType === 'time' }">
+                <a-menu-item key="time" :class="{ active: mainStore.sortType === 'time' }">
                   <span>{{ $t('sort.time') }}</span>
-                  <CheckOutlined v-if="sortType === 'time'" class="check-icon"/>
+                  <CheckOutlined v-if="mainStore.sortType === 'time'" class="check-icon"/>
                 </a-menu-item>
-                <a-menu-item key="random" :class="{ active: sortType === 'random' }">
+                <a-menu-item key="random" :class="{ active: mainStore.sortType === 'random' }">
                   <span>{{ $t('sort.random') }}</span>
-                  <CheckOutlined v-if="sortType === 'random'" class="check-icon"/>
+                  <CheckOutlined v-if="mainStore.sortType === 'random'" class="check-icon"/>
                 </a-menu-item>
-                <a-menu-item key="name" :class="{ active: sortType === 'name' }">
+                <a-menu-item key="name" :class="{ active: mainStore.sortType === 'name' }">
                   <span>{{ $t('sort.name') }}</span>
-                  <CheckOutlined v-if="sortType === 'name'" class="check-icon"/>
+                  <CheckOutlined v-if="mainStore.sortType === 'name'" class="check-icon"/>
                 </a-menu-item>
               </a-menu-item-group>
               <a-menu-divider/>
-              <a-menu-item-group :title="$t('sort.sortOrder')">
-                <a-menu-item key="asc" :class="{ active: sortOrder === 'asc' }">
+              <a-menu-item-group :title="$t('sort.sortOrder')" :t>
+                <a-menu-item key="asc" :class="{ active: mainStore.sortOrder === 'asc' }">
                   <span>{{ $t('sort.ascending') }}</span>
-                  <CheckOutlined v-if="sortOrder === 'asc'" class="check-icon"/>
+                  <CheckOutlined v-if="mainStore.sortOrder === 'asc'" class="check-icon"/>
                 </a-menu-item>
-                <a-menu-item key="desc" :class="{ active: sortOrder === 'desc' }">
+                <a-menu-item key="desc" :class="{ active: mainStore.sortOrder === 'desc' }">
                   <span>{{ $t('sort.descending') }}</span>
-                  <CheckOutlined v-if="sortOrder === 'desc'" class="check-icon"/>
+                  <CheckOutlined v-if="mainStore.sortOrder === 'desc'" class="check-icon"/>
                 </a-menu-item>
               </a-menu-item-group>
-              <a-menu-divider v-if="selectedMenu[0] === '3'"/>
-              <a-sub-menu v-if="selectedMenu[0] === '3'">
+              <a-menu-divider v-if="mainStore.selectedMenu[0] === '3'"/>
+              <a-sub-menu v-if="mainStore.selectedMenu[0] === '3'">
                 <template #title>
-                  <span>{{ $t('sort.filterByRole') || '角色筛选' }}</span>
+                  <span>{{ $t('sort.filterByRole') }}</span>
                 </template>
                 <div class="role-filter-panel" @mousedown.stop @click.stop>
-                  <a-input v-model:value="roleFilterSearch" size="middle" class="role-filter-search"
-                           :placeholder="$t('sort.searchRole') || '搜索角色'">
+                  <a-input v-model:value="mainStore.roleFilterSearch" size="middle" class="role-filter-search"
+                           :placeholder="$t('sort.searchRole')">
                     <template #prefix>
                       <SearchOutlined/>
                     </template>
                   </a-input>
                   <div class="role-filter-list">
                     <a-checkbox
-                        v-for="tag in displayedRoleTags"
+                        v-for="tag in mainStore.displayedRoleTags"
                         :key="tag"
-                        :checked="selectedRoleTags.includes(tag)"
-                        :disabled="!selectedRoleTags.includes(tag) && selectedRoleTags.length >= 4"
+                        :checked="mainStore.selectedRoleTags.includes(tag)"
+                        :disabled="!mainStore.selectedRoleTags.includes(tag) && mainStore.selectedRoleTags.length >= 4"
                         class="role-filter-checkbox"
-                        @change="onRoleCheckboxChange(tag, $event)"
+                        @change="mainStore.onRoleCheckboxChange(tag, $event)"
                     >
                       <span class="role-filter-label">{{ tag }}</span>
                     </a-checkbox>
                   </div>
                   <div class="role-filter-footer">
-                    <a-button size="middle" class="role-filter-btn" @click="resetRoleFilter">
-                      {{ $t('common.reset') || '重置' }}
+                    <a-button size="middle" class="role-filter-btn" @click="mainStore.resetRoleFilter">
+                      {{ $t('common.reset') }}
                     </a-button>
-                    <a-button size="middle" type="primary" class="role-filter-btn-primary" @click="confirmRoleFilter">
-                      {{ $t('common.confirm') || '确定' }}
+                    <a-button size="middle" type="primary" class="role-filter-btn-primary" @click="mainStore.confirmRoleFilter">
+                      {{ $t('common.confirm') }}
                     </a-button>
                   </div>
                 </div>
@@ -141,34 +141,20 @@
         </a-dropdown>
       </div>
       <!-- 地图追踪的树状结构 -->
-      <div v-if="selectedMenu[0] === '1'" class="script-list">
-        <MapTreeList :search-key="search" :repo-data="repoData" :subscribed-paths="subscribedScriptPaths"
-                     :show-subscribed-only="scriptTab === 'subscribed'"
-                     :start-polling-user-config="startPollingUserConfig" @select="handleMapSelect"
-                     @update-has-update="updateScriptHasUpdate"/>
+      <div v-if="mainStore.selectedMenu[0] === '1'" class="script-list">
+        <MapTreeList/>
       </div>
       <!-- Javascript脚本列表 -->
-      <div v-else-if="selectedMenu[0] === '2'" class="script-list">
-        <ScriptList :search-key="search" :repo-data="repoData" :subscribed-paths="subscribedScriptPaths"
-                    :show-subscribed-only="scriptTab === 'subscribed'" :sort-type="sortType" :sort-order="sortOrder"
-                    @select="handleScriptSelect"
-                    @update-has-update="updateScriptHasUpdate"/>
+      <div v-else-if="mainStore.selectedMenu[0] === '2'" class="script-list">
+        <ScriptList/>
       </div>
       <!-- 战斗策略列表 -->
-      <div v-else-if="selectedMenu[0] === '3'" class="script-list">
-        <CombatStrategyList :search-key="search" :repo-data="repoData" :subscribed-paths="subscribedScriptPaths"
-                            :show-subscribed-only="scriptTab === 'subscribed'" :sort-type="sortType"
-                            :sort-order="sortOrder" :role-tags="appliedRoleTags"
-                            @select="handleScriptSelect"
-                            @update-has-update="updateScriptHasUpdate"/>
+      <div v-else-if="mainStore.selectedMenu[0] === '3'" class="script-list">
+        <CombatStrategyList/>
       </div>
       <!-- 七圣召唤策略列表 -->
-      <div v-else-if="selectedMenu[0] === '4'" class="script-list">
-        <CardStrategyList :search-key="search" :repo-data="repoData" :subscribed-paths="subscribedScriptPaths"
-                          :show-subscribed-only="scriptTab === 'subscribed'" :sort-type="sortType"
-                          :sort-order="sortOrder"
-                          @select="handleScriptSelect"
-                          @update-has-update="updateScriptHasUpdate"/>
+      <div v-else-if="mainStore.selectedMenu[0] === '4'" class="script-list">
+        <CardStrategyList/>
       </div>
     </a-layout-sider>
 
@@ -177,49 +163,49 @@
       <!-- 顶部操作栏 -->
       <div class="detail-top-bar">
         <div class="top-bar-left">
-          <a-tooltip v-if="mode === 'single'" :title="$t('action.update')">
-            <a-button type="text" class="action-btn" @click="showUpdateMessageModal = true">
+          <a-tooltip v-if="mainStore.isModeSingle" :title="$t('action.update')">
+            <a-button type="text" class="action-btn" @click="settings.showUpdateMessageModal = true">
               <FieldTimeOutlined />
             </a-button>
           </a-tooltip>
-          <a-tooltip v-if="mode === 'single'" :title="$t('action.subscribe')">
-            <a-button type="text" class="action-btn" @click="showUpdateSubscribeModal = true">
+          <a-tooltip v-if="mainStore.isModeSingle" :title="$t('action.subscribe')">
+            <a-button type="text" class="action-btn" @click="mainStore.showUpdateSubscribeModal = true">
               <CloudDownloadOutlined />
             </a-button>
           </a-tooltip>
         </div>
         <div class="top-bar-right">
           <a-tooltip :title="$t('action.plan')">
-            <a-button type="text" class="action-btn" @click="showPlanModal = true">
+            <a-button type="text" class="action-btn" @click="mainStore.showPlanModal = true">
               <EditOutlined />
             </a-button>
           </a-tooltip>
           <a-tooltip :title="$t('action.help')">
-            <a-button type="text" class="action-btn" @click="showHelpModal = true">
+            <a-button type="text" class="action-btn" @click="mainStore.showHelpModal = true">
               <QuestionCircleOutlined/>
             </a-button>
           </a-tooltip>
           <a-tooltip :title="$t('settings.title')">
-            <a-button type="text" class="action-btn" @click="showSettingsModal = true">
+            <a-button type="text" class="action-btn" @click="settings.showSettingsModal = true">
               <SettingOutlined/>
             </a-button>
           </a-tooltip>
         </div>
       </div>
-      <div v-if="selectedMenu[0] === '1'" class="main-right">
-        <MapDetail :script="selectedScript" :subscribed-paths="subscribedScriptPaths"
-                   :start-polling-user-config="startPollingUserConfig"/>
+      <div v-if="mainStore.selectedMenu[0] === '1'" class="main-right">
+        <MapDetail/>
       </div>
-      <div v-else-if="selectedMenu[0] === '2'" class="main-right">
-        <ScriptDetail :script="selectedScript" :start-polling-user-config="startPollingUserConfig"/>
+      <div v-else-if="mainStore.selectedMenu[0] === '2'" class="main-right">
+        <ScriptDetail/>
       </div>
-      <div v-else-if="selectedMenu[0] === '3' || selectedMenu[0] === '4'" class="main-right">
-        <StrategyDetail :script="selectedScript" :start-polling-user-config="startPollingUserConfig"/>
+      <div v-else-if="mainStore.selectedMenu[0] === '3' || mainStore.selectedMenu[0] === '4'" class="main-right">
+        <StrategyDetail/>
       </div>
     </a-layout>
 
     <!-- 错误弹窗 -->
-    <div v-if="repoError" class="repo-error-modal">
+    <div v-if="mainStore.repoError"
+         class="repo-error-modal">
       <div class="repo-error-content">
         <div class="repo-error-icon">
           <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
@@ -231,28 +217,34 @@
         <div class="repo-error-title">{{ $t('repoError.title') }}</div>
         <div class="repo-error-desc">{{ $t('repoError.desc') }}</div>
         <div class="repo-error-btn-group">
-          <a-button class="repo-error-btn" @click="getRepoJson" type="primary" danger>{{ $t('repoError.refresh') }}</a-button>
-          <a-button class="repo-help-btn" @click="showHelpModal = true" type="primary">{{ $t('repoError.help') }}</a-button>
+          <a-button class="repo-error-btn" @click="mainStore.getRepoJson" type="primary" danger>{{ $t('repoError.refresh') }}</a-button>
+          <a-button class="repo-help-btn" @click="mainStore.showHelpModal = true" type="primary">{{ $t('repoError.help') }}</a-button>
         </div>
       </div>
     </div>
 
     <!-- 全局加载弹窗 -->
-    <div v-if="globalLoading" class="global-loading-modal">
+    <div v-if="mainStore.globalLoading"
+         class="global-loading-modal">
       <a-spin size="large" :tip="`${$t('loading.repoData')}...`"/>
     </div>
 
     <!-- 彩蛋弹窗 -->
-    <a-modal v-model:open="showEggModal" :title="$t('egg.title')" :footer="null" centered width="80%"
-             :style="{ maxWidth: '900px' }" @cancel="showEggModal = false">
+    <a-modal v-model:open="mainStore.showEggModal"
+             :title="$t('egg.title')"
+             :footer="null"
+             centered width="80%"
+             :style="{ maxWidth: '900px' }"
+             :destroyOnClose="true"
+             @cancel="mainStore.showEggModal = false">
       <div class="egg-modal-content">
         <div class="egg-readme-tabs">
-          <div v-if="isLoadingEggReadme" class="egg-readme-loading-indicator">
+          <div v-if="mainStore.isLoadingEggReadme" class="egg-readme-loading-indicator">
             <a-spin size="small"/>
             <span>{{ $t('egg.loading') }}</span>
           </div>
-          <div v-else-if="eggReadmeError" class="egg-readme-loading-indicator">
-            <a-button type="text" size="small" @click="retryLoadEggReadme">
+          <div v-else-if="mainStore.eggReadmeError" class="egg-readme-loading-indicator">
+            <a-button type="text" size="small" @click="mainStore.retryLoadEggReadme">
               <template #icon>
                 <ReloadOutlined/>
               </template>
@@ -261,18 +253,22 @@
           </div>
         </div>
         <div class="egg-readme-content">
-          <ReadmeViewer :key="eggReadmeKey"
-                        :path="'https://raw.githubusercontent.com/zaodonganqi/BGI-bsw-egg/main/README.md'"
+          <ReadmeViewer :path="'https://raw.githubusercontent.com/zaodonganqi/BGI-bsw-egg/main/README.md'"
                         :force-web="true"
-                        @loaded="handleEggReadmeLoaded" @error="handleEggReadmeError"/>
+                        @loaded="mainStore.handleEggReadmeLoaded"
+                        @error="mainStore.handleEggReadmeError"/>
         </div>
       </div>
     </a-modal>
 
     <!-- 更新信息弹窗 -->
-    <a-modal v-model:open="showUpdateMessageModal" :title="$t('action.recent')" :footer="null" centered width="50%" :style="{ maxWidth: '900px' }">
+    <a-modal v-model:open="settings.showUpdateMessageModal"
+             :title="$t('action.recent')"
+             :footer="null"
+             centered width="50%"
+             :style="{ maxWidth: '900px' }">
       <div class="update-message-content">
-        <a-list :data-source="updatedScripts" size="small">
+        <a-list :data-source="mainStore.updatedScripts" size="small">
           <template #renderItem="{ item, index }">
             <div class="update-list-item">
               <div class="item-header">
@@ -286,7 +282,7 @@
         </a-list>
       </div>
       <div class="update-modal-footer">
-        <a-button type="primary" size="middle" @click="handleClearUpdate" :loading="clearUpdateLoading">
+        <a-button type="primary" size="middle" @click="settings.handleClearUpdate(mainStore)" :loading="settings.clearUpdateLoading">
           {{ $t('action.clearDot') }}
         </a-button>
       </div>
@@ -294,22 +290,22 @@
 
     <!-- 一键更新弹窗 -->
     <a-modal
-      v-model:open="showUpdateSubscribeModal"
+      v-model:open="mainStore.showUpdateSubscribeModal"
       :title="$t('action.updateAll')"
       :ok-text="$t('action.confirm')"
       :cancel-text="$t('action.cancel')"
       centered
       width="50%"
       :style="{ maxWidth: '900px' }"
-      @ok="updateSubscribedScripts"
-      :confirmLoading="updatingSubscribed"
-      :maskClosable="!updatingSubscribed"
-      :keyboard="!updatingSubscribed"
-      :closable="!updatingSubscribed"
-      :cancelButtonProps="{ disabled: updatingSubscribed }"
+      @ok="mainStore.updateSubscribedScripts"
+      :confirmLoading="mainStore.updatingSubscribed"
+      :maskClosable="!mainStore.updatingSubscribed"
+      :keyboard="!mainStore.updatingSubscribed"
+      :closable="!mainStore.updatingSubscribed"
+      :cancelButtonProps="{ disabled: mainStore.updatingSubscribed }"
     >
       <div class="update-subscribe-content">
-        <a-list :data-source="subscribedScripts" size="small">
+        <a-list :data-source="mainStore.subscribedScripts" size="small">
           <template #renderItem="{ item, index }">
             <div class="update-list-item">
               <div class="item-header">
@@ -324,23 +320,34 @@
     </a-modal>
 
     <!-- 更新计划弹窗 -->
-    <a-modal v-model:open="showPlanModal" :title="$t('plan.title')" :footer="null" centered width="80%"
-             :style="{ maxWidth: '900px' }" @cancel="showPlanModal = false">
+    <a-modal v-model:open="mainStore.showPlanModal"
+             :title="$t('plan.title')"
+             :footer="null"
+             centered width="80%"
+             :style="{ maxWidth: '900px' }"
+             @cancel="mainStore.showPlanModal = false">
       <Plan/>
     </a-modal>
 
     <!-- 帮助弹窗 -->
-    <a-modal v-model:open="showHelpModal" :title="$t('help.title')" :footer="null" centered width="80%"
-             :style="{ maxWidth: '900px' }" @cancel="showHelpModal = false">
+    <a-modal v-model:open="mainStore.showHelpModal"
+             :title="$t('help.title')"
+             :footer="null"
+             centered width="80%"
+             :style="{ maxWidth: '900px' }"
+             @cancel="mainStore.showHelpModal = false">
       <Help/>
     </a-modal>
 
     <!-- 设置弹窗 -->
-    <a-modal v-model:open="showSettingsModal" :title="$t('settings.title')" :footer="null" centered width="400px"
-             @cancel="showSettingsModal = false">
+    <a-modal v-model:open="settings.showSettingsModal"
+             :title="$t('settings.title')"
+             :footer="null"
+             centered width="400px"
+             @cancel="settings.showSettingsModal = false">
       <div class="settings-row">
         <span class="settings-label">{{ $t('settings.language') }}</span>
-        <a-select :value="selectedLocale" size="middle" style="width: 160px;" @change="onLocaleChange"
+        <a-select :value="settings.selectedLocale" size="middle" style="width: 160px;" @change="onLocaleChange"
                   popupClassName="lang-select-dropdown">
           <a-select-option value="zh-CN">{{ $t('settings.zhCN') }}</a-select-option>
           <a-select-option value="zh-TW">{{ $t('settings.zhTW') }}</a-select-option>
@@ -352,17 +359,17 @@
       <a-divider/>
       <div class="settings-row">
         <span class="settings-label">{{ $t('settings.theme') }}</span>
-        <a-select :value="selectedThemeName" size="middle" style="width: 160px;" @change="onThemeChange"
+        <a-select :value="settings.selectedThemeName" size="middle" style="width: 160px;" @change="settings.onThemeChange"
                   popupClassName="lang-select-dropdown">
           <a-select-option value="light">{{ $t('settings.light') }}</a-select-option>
           <a-select-option value="dark">{{ $t('settings.dark') }}</a-select-option>
           <a-select-option value="egg">{{ $t('settings.egg') }}</a-select-option>
         </a-select>
       </div>
-      <a-divider v-if="mode === 'single'"/>
-      <div v-if="mode === 'single'" class="settings-row">
+      <a-divider v-if="mainStore.isModeSingle"/>
+      <div v-if="mainStore.isModeSingle" class="settings-row">
         <span class="settings-label">{{ $t('settings.clearUpdate') }}</span>
-        <a-button type="primary" size="middle" @click="handleClearUpdate" :loading="clearUpdateLoading">
+        <a-button type="primary" size="middle" @click="settings.handleClearUpdate(mainStore)" :loading="settings.clearUpdateLoading">
           {{ $t('settings.clearUpdateBtn') }}
         </a-button>
       </div>
@@ -370,20 +377,14 @@
     
     <!-- 安全声明弹窗 -->
     <a-modal
-      v-model:open="safetyStore.showSafetyModal"
+      v-model:open="settings.showSafetyModal"
       :title="$t('settings.eggSafetyTitle')"
       :ok-text="$t('settings.eggSafetyOk')"
       :cancel-text="$t('settings.eggSafetyCancel') || $t('action.cancel')"
       centered
       width="520px"
-      @ok="() => {
-        const name = safetyStore.confirmSafety();
-        if (name) {
-          handleThemeNameChange(name);
-          showSettingsModal = false;
-        }
-      }"
-      @cancel="() => safetyStore.cancelSafety()"
+      @ok="settings.useTheme()"
+      @cancel="() => settings.cancelSafety()"
     >
       <div class="safety-modal-content">
         <div class="safety-warning-icon" aria-hidden="true">⚠</div>
@@ -394,25 +395,19 @@
 </template>
 
 <script setup>
-import {computed, nextTick, onMounted, onUnmounted, reactive, ref, watch} from 'vue';
-import { useSafetyStore } from '@/stores/safety.js';
+import {onMounted} from 'vue';
+import { useSettingsStore } from '@/stores/settingsStore.js';
 import {
   AlignRightOutlined,
-  BulbOutlined,
-  CalculatorOutlined,
   CheckOutlined,
   EditOutlined,
   CloudDownloadOutlined,
   FieldTimeOutlined,
-  FileOutlined,
-  FolderOutlined,
   QuestionCircleOutlined,
   ReloadOutlined,
   SearchOutlined,
   SettingOutlined
 } from '@ant-design/icons-vue';
-import pako from "pako";
-import {message as Message} from 'ant-design-vue';
 import MapTreeList from './lists/MapTreeList.vue';
 import ScriptList from './lists/ScriptList.vue';
 import CombatStrategyList from './lists/CombatStrategyList.vue';
@@ -422,826 +417,31 @@ import StrategyDetail from './details/StrategyDetail.vue';
 import MapDetail from './details/MapDetail.vue';
 import ReadmeViewer from './items/ReadmeViewer.vue';
 import Help from './items/Help.vue';
-import {getMirrorPath, getRawPath} from '@/utils/basePaths';
 import {useI18n} from 'vue-i18n';
-import {mapTagsToCanonical} from '@/utils/roleAlias';
-import {subscribePaths} from '@/utils/subscription';
 import Plan from "./items/Plan.vue";
+import { useMainStore } from "@/stores/mainStore.js";
 
-// 当前运行环境
-const mode = import.meta.env.VITE_MODE;
+const mainStore = useMainStore();
+const settings = useSettingsStore();
+
 // 采用vue-i18n组件获取选中语言的文本
 const {t: $t} = useI18n();
-// 选择的菜单目录项
-const selectedMenu = ref(['1']);
-// 搜索框文本
-const search = ref('');
-// 控制更新信息汇总弹窗显示
-const showUpdateMessageModal = ref(false);
-// 控制一键订阅弹窗显示
-const showUpdateSubscribeModal = ref(false);
-
-// 排序相关数据
-const sortType = ref('time'); // 时间排序
-const sortOrder = ref('desc'); // 排序顺序
-// 除地图追踪外的排序选项（相互独立）
-const sortStateByMenu = reactive({
-  '2': {type: 'time', order: 'desc'},
-  '3': {type: 'time', order: 'desc'},
-  '4': {type: 'time', order: 'desc'}
-});
-
-// 一级排序下拉彩蛋显隐
-const sortDropdownOpen = ref(false);
-
-// 战斗策略角色筛选
-const roleFilterSearch = ref('');
-// 角色复选框选中项数组（≤4）
-const selectedRoleTags = ref([]);
-// 生效的选中角色数组
-const appliedRoleTags = ref([]);
-
-// 修改搜索框文本
-const handleSearch = (value) => {
-  search.value = value;
-};
-
-// 获取排序后的角色列表（映射角色名后的）（战斗策略）
-function collectCombatTags(repo) {
-  if (!repo?.indexes) return [];
-  const combat = repo.indexes.find(i => i.name === 'combat');
-  if (!combat || !Array.isArray(combat.children)) return [];
-  const all = [];
-  const dfs = (nodes) => {
-    for (const node of nodes) {
-      if (node.children && node.children.length > 0) {
-        dfs(node.children);
-      } else {
-        const tags = mapTagsToCanonical(Array.isArray(node.tags) ? node.tags : []);
-        for (const tag of tags) if (tag && typeof tag === 'string') all.push(tag);
-      }
-    }
-  };
-  dfs(combat.children);
-  return Array.from(new Set(all)).sort((a, b) => String(a).localeCompare(String(b)));
-}
-// 映射后的角色列表（战斗策略）
-const allRoleTags = computed(() => collectCombatTags(repoData.value));
-
-// 搜索角色结果列表（实际展示的数据）（战斗策略）
-const displayedRoleTags = computed(() => {
-  const kw = (roleFilterSearch.value || '').trim().toLowerCase();
-  if (!kw) return allRoleTags.value;
-  return allRoleTags.value.filter(t => String(t).toLowerCase().includes(kw));
-});
-
-// 更新复选框选中后的角色状态（战斗策略）
-function onRoleCheckboxChange(tag, evt) {
-  const checked = evt?.target?.checked;
-  const current = new Set(selectedRoleTags.value);
-  if (checked) {
-    if (!current.has(tag) && current.size < 4) current.add(tag);
-  } else {
-    current.delete(tag);
-  }
-  selectedRoleTags.value = Array.from(current);
-  appliedRoleTags.value = [...selectedRoleTags.value];
-}
-
-// 重置选中角色（战斗策略）
-function resetRoleFilter() {
-  selectedRoleTags.value = [];
-  appliedRoleTags.value = [];
-}
-
-// 点击确定后关闭二级菜单（战斗策略）
-function confirmRoleFilter() {
-  appliedRoleTags.value = [...selectedRoleTags.value];
-  sortDropdownOpen.value = false;
-
-}
-
-// 切换目录后更换排序选项
-function applySortForMenu(menuKey) {
-  const state = sortStateByMenu[menuKey];
-  if (state) {
-    sortType.value = state.type || 'time';
-    sortOrder.value = state.order || 'desc';
-  } else {
-    sortType.value = 'time';
-    sortOrder.value = 'desc';
-  }
-}
-
-// 保存不同菜单下排序选项状态
-function saveSortForMenu(menuKey) {
-  if (!['2', '3', '4'].includes(menuKey)) return;
-  sortStateByMenu[menuKey] = { type: sortType.value, order: sortOrder.value };
-}
-
-// 定义左侧菜单项
-const menuList = computed(() => [
-  {key: '1', label: $t('menu.map'), icon: FolderOutlined, count: menuCounts.value[0]},
-  {key: '2', label: $t('menu.script'), icon: FileOutlined, count: menuCounts.value[1]},
-  {key: '3', label: $t('menu.combat'), icon: CalculatorOutlined, count: menuCounts.value[2]},
-  {key: '4', label: $t('menu.tcg'), icon: BulbOutlined, count: menuCounts.value[3]},
-]);
-
-// 每个菜单项包含的脚本数
-const menuCounts = ref([0, 0, 0, 0]);
-
-// 仓库json文件解构后数据
-const repoData = ref({});
-// 仓库加载失败状态（一般在线仓库才会生效）
-const repoError = ref(false);
-// 仓库加载中状态
-const globalLoading = ref(false);
-// 是否启用镜像加速
-const useMirror = ref(false);
-// 加载超时计时器
-let fetchTimeoutId = null;
-
-// 格式化时间
-const formatTime = (timeString) => {
-  if (!timeString) return '';
-  const year = timeString.substring(0, 4);
-  const month = timeString.substring(4, 6);
-  const day = timeString.substring(6, 8);
-  const hour = timeString.substring(8, 10);
-  const minute = timeString.substring(10, 12);
-  const second = timeString.substring(12, 14);
-
-  return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
-};
-
-// 计算最后更新时间
-const lastUpdateTime = computed(() => {
-  if (repoData.value && repoData.value.time) {
-    // 区分本地与web模式，如需更改最后更新时间格式请更改此处
-    if (mode === 'web') {
-      return `${formatTime(repoData.value.time)}`;
-    }
-    return `${formatTime(repoData.value.time)}`;
-  }
-  return '';
-});
-
-// 清理所有readme404缓存
-function clearReadme404Cache() {
-  Object.keys(localStorage).forEach(key => {
-    if (key.startsWith('readme404:')) {
-      localStorage.removeItem(key);
-    }
-  });
-}
-
-// 获取仓库json文件并解构
-async function getRepoJson() {
-  clearReadme404Cache();
-  repoError.value = false;
-  globalLoading.value = true;
-
-  try {
-    console.log("Current mode:", mode)
-    // 在线仓库模式
-    if (mode === 'web') {
-      const controller = new AbortController();
-      let didTimeout = false;
-      if (fetchTimeoutId) clearTimeout(fetchTimeoutId);
-      // 设置10秒定时器
-      fetchTimeoutId = setTimeout(() => {
-        didTimeout = true;
-        controller.abort();
-      }, 10000);
-      try {
-        let repoPath = '';
-        if (useMirror.value) {
-          console.log("Using mirror for fetching repo.json");
-          repoPath = getMirrorPath() + 'repo.json.gz';
-        } else {
-          repoPath = getRawPath() + 'repo.json.gz';
-        }
-        const response = await fetch(repoPath, {
-          signal: controller.signal
-        });
-        clearTimeout(fetchTimeoutId);
-        fetchTimeoutId = null;
-        if (!response.ok) throw new Error('Network request failed');
-        // 获取gzip文件后解压，减少数据传输量
-        const arrayBuffer = await response.arrayBuffer();
-        const unit8ArrayData = new Uint8Array(arrayBuffer);
-        const deUnit8ArrayData = pako.ungzip(unit8ArrayData);
-        const jsonString = new TextDecoder().decode(deUnit8ArrayData);
-        repoData.value = JSON.parse(jsonString);
-      } catch (err) {
-        useMirror.value = true; // 下次使用镜像
-        clearTimeout(fetchTimeoutId);
-        fetchTimeoutId = null;
-        if (didTimeout) {
-          throw new Error('Request timed out');
-        } else {
-          throw err;
-        }
-      }
-    } else { // 本地仓库模式
-      const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
-      const json = await repoWebBridge.GetRepoJson();
-      repoData.value = typeof json === 'string' ? JSON.parse(json) : json;
-      // 获取订阅信息
-      await fetchSubscribedConfig();
-      // 获取有更新的脚本列表
-      getUpdatedScripts();
-    }
-    console.log("json info:", repoData.value)
-
-    // 获取脚本数量计数
-    menuCounts.value[0] = getMapCount(repoData.value);
-    menuCounts.value[1] = getJsCount(repoData.value);
-    menuCounts.value[2] = getCombatCount(repoData.value);
-    menuCounts.value[3] = getCardCount(repoData.value);
-  } catch (e) {
-    console.error('Failed to fetch repo info', e);
-    repoError.value = true;
-  }
-  globalLoading.value = false;
-  return repoData.value;
-}
-
-// 获取该节点内最晚的更新时间
-const findLatestTime = (node) => {
-  if (!node || typeof node !== 'object') return '';
-
-  let latest = '';
-
-  if (node.lastUpdated) {
-    const currentTime = node.lastUpdated;
-    if (!latest || new Date(currentTime) >= new Date(latest)) {
-      latest = currentTime;
-    }
-  }
-
-  if (node.children && Array.isArray(node.children) && node.children.length > 0) {
-    for (const child of node.children) {
-      const childLatest = findLatestTime(child);
-      if (childLatest && (!latest || new Date(childLatest) > new Date(latest))) {
-        latest = childLatest;
-      }
-    }
-  }
-
-  return latest;
-};
-
-// 有更新的脚本列表
-const updatedScripts = ref([]);
-
-// 获取所有更新节点信息
-function getUpdatedScripts() {
-  if (!repoData.value || !Array.isArray(repoData.value.indexes)) return;
-  updatedScripts.value = [];
-  // 递归构建完整路径，使用 name 作为标题
-  function dfs(node, currentPath) {
-    if (!node) return;
-    const fullPath = currentPath ? `${currentPath}/${node.name}` : node.name;
-    if (node.hasUpdate && !['pathing', 'js', 'combat', 'tcg'].includes(node.name) && !String(node.type || '').includes('file')) {
-      node.path = fullPath;
-      updatedScripts.value.push(node);
-    }
-    // 继续向下遍历
-    if (Array.isArray(node.children) && node.children.length > 0) {
-      node.children.forEach(child => dfs(child, fullPath));
-    }
-  }
-  repoData.value.indexes.forEach(index => {
-    dfs(index, '');
-  });
-  updatedScripts.value.forEach(item => { item.lastUpdated = findLatestTime(item) });
-  updatedScripts.value.sort((a, b) => { return String(b.lastUpdated).localeCompare(String(a.lastUpdated))});
-}
-
-// 已订阅脚本列表
-const subscribedScripts = ref([]);
-// 已订阅脚本路径列表
-const subscribedScriptPaths = ref([]);
-// 更新订阅脚本中状态
-const updatingSubscribed = ref(false);
-
-// 更新已订阅的脚本
-async function updateSubscribedScripts() {
-  if (updatingSubscribed.value) return;
-  if (subscribedScriptPaths.value.length === 0) {
-    showUpdateSubscribeModal.value = false;
-    return;
-  }
-
-  updatingSubscribed.value = true;
-  try {
-    const result = await subscribePaths(subscribedScriptPaths.value);
-    if (!result?.ok) {
-      Message.error($t('detail.subscribeFailed'));
-      return;
-    }
-
-    const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
-    const paths = [...subscribedScriptPaths.value];
-    const batchSize = 10;
-    for (let i = 0; i < paths.length; i += batchSize) {
-      const slice = paths.slice(i, i + batchSize);
-      await Promise.all(slice.map(p => repoWebBridge.UpdateSubscribed(p)));
-    }
-
-    for (const p of paths) {
-      updateScriptHasUpdate(p, false);
-    }
-
-    await fetchSubscribedConfig();
-
-    showUpdateSubscribeModal.value = false;
-  } catch (e) {
-    console.error('updateSubscribedScripts failed', e);
-    Message.error($t('detail.subscribeFailed'));
-  } finally {
-    updatingSubscribed.value = false;
-  }
-}
-
-// 获取当前菜单标题
-const currentMenuTitle = computed(() => {
-  const current = menuList.value.find(item => item.key === selectedMenu.value[0]);
-  return current ? current.label : '';
-});
-
-// 搜索框占位符
-const searchPlaceholder = computed(() => {
-  switch (selectedMenu.value[0]) {
-    case '1':
-      return $t('script.searchMap');
-    case '2':
-      return $t('script.searchScript');
-    case '3':
-      return $t('script.searchCombat');
-    case '4':
-      return $t('script.searchTCG');
-    default:
-      return $t('script.searchDefault');
-  }
-});
-
-// 处理排序菜单点击
-const handleSortMenuClick = ({key}) => {
-  if ([ 'time','random', 'name'].includes(key)) {
-    sortType.value = key;
-  } else if (['asc', 'desc'].includes(key)) {
-    sortOrder.value = key;
-  }
-  // 保存当前菜单的排序状态
-  saveSortForMenu(selectedMenu.value[0]);
-  console.log('排序设置已更新:', {sortType: sortType.value, sortOrder: sortOrder.value});
-};
-
-// 切换菜单
-const handleMenuSelect = ({key}) => {
-  selectedMenu.value = [key];
-  search.value = '';
-  selectedScript.value = null;
-};
-
-// 使用新窗口打开外链
-const openExternalLink = (link) => {
-  window.open(link, '_blank');
-};
-
-// 当前选中的脚本
-const selectedScript = ref(null);
-// 切换当前选中的脚本
-const handleScriptSelect = (script) => {
-  selectedScript.value = script;
-};
-
-// 更新repoData中指定脚本的hasUpdate状态
-const updateScriptHasUpdate = (scriptPath, hasUpdate) => {
-  if (!repoData.value || !repoData.value.indexes) return;
-
-  let targetNode = null;
-
-  // 递归查找目标节点
-  const findTargetNode = (node, currentPath = '') => {
-    // 构建当前节点的完整路径
-    const nodePath = currentPath ? `${currentPath}/${node.name}` : node.name;
-
-    // 检查是否匹配目标路径
-    if (nodePath === scriptPath || scriptPath.endsWith(`/${nodePath}`)) {
-      targetNode = node;
-      return;
-    }
-
-    // 如果有子节点，继续递归查找
-    if (node.children && node.children.length > 0) {
-      for (let child of node.children) {
-        findTargetNode(child, nodePath);
-        // 不return，继续查找所有分支
-      }
-    }
-  };
-
-  // 递归更新所有子节点的hasUpdate状态
-  const updateDescendants = (node) => {
-    if (!node) return;
-
-    // 先更新所有子节点
-    if (node.children && node.children.length > 0) {
-      for (let child of node.children) {
-        updateDescendants(child);
-      }
-    }
-
-    // 最后更新当前节点
-    node.hasUpdate = hasUpdate;
-  };
-
-  // 先从repoData递归查找目标节点
-  for (let index of repoData.value.indexes) {
-    findTargetNode(index);
-    if (targetNode) break; // 找到目标节点后停止查找
-  }
-
-  if (targetNode) {
-
-    // 先更新所有子节点，最后更新目标节点本身
-    updateDescendants(targetNode);
-
-    // 强制触发响应式更新
-    nextTick(() => {
-      repoData.value = {...repoData.value};
-    });
-  } else {
-    console.log("updateScriptHasUpdate: 未找到匹配节点", scriptPath);
-  }
-};
-
-// 地图追踪板块
-const handleMapSelect = (location) => {
-  selectedScript.value = location;
-};
-
-// 按分类统计脚本数量
-function countCategoryLeaves(repo, categoryName, isLeaf) {
-  if (!repo?.indexes) return 0;
-  const category = repo.indexes.find(item => item.name === categoryName);
-  if (!category || !Array.isArray(category.children)) return 0;
-
-  const hasExpandableChildren = (node) => {
-    if (!node?.children || node.children.length === 0) return false;
-    return node.children.some(child => child.type === 'directory');
-  };
-
-  const defaultIsLeaf = (node) => !hasExpandableChildren(node);
-  const leafPredicate = typeof isLeaf === 'function' ? isLeaf : defaultIsLeaf;
-
-  function dfs(nodes) {
-    if (!nodes) return 0;
-    let total = 0;
-    for (const node of nodes) {
-      if (leafPredicate(node)) {
-        total++;
-      } else if (node.children && node.children.length > 0) {
-        total += dfs(node.children);
-      }
-    }
-    return total;
-  }
-
-  return dfs(category.children);
-}
-
-// 四个菜单的获取脚本数量方法
-function getJsCount(repo) {
-  return countCategoryLeaves(repo, 'js');
-}
-
-function getMapCount(repo) {
-  return countCategoryLeaves(repo, 'pathing');
-}
-
-function getCombatCount(repo) {
-  return countCategoryLeaves(repo, 'combat');
-}
-
-function getCardCount(repo) {
-  // tcg 的叶子是文件节点
-  return countCategoryLeaves(repo, 'tcg', (node) => node.type === 'file');
-}
-
-
-// 订阅信息获取失败标志
-const subscribedConfigError = ref(false);
-
-// 获取订阅信息
-async function fetchSubscribedConfig() {
-  if (mode !== 'single') return;
-  try {
-    const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
-    const json = await repoWebBridge.GetUserConfigJson();
-    let config = {};
-    try {
-      config = typeof json === 'string' ? JSON.parse(json) : json;
-    } catch (e) {
-      config = {};
-    }
-    const paths = Array.from(new Set(config.scriptConfig?.subscribedScriptPaths || []));
-    if (JSON.stringify(paths) !== JSON.stringify(subscribedScriptPaths.value)) {
-      if (!paths.length) {
-        subscribedConfigError.value = true;
-        subscribedScriptPaths.value = [];
-      } else {
-        subscribedScriptPaths.value = paths;
-        if (!repoData.value || !Array.isArray(repoData.value.indexes)) return;
-        subscribedScripts.value = [];
-        // 递归构建完整路径，使用 name 作为标题
-        function findNodes(node, currentPath) {
-          if (!node) return;
-          const fullPath = currentPath ? `${currentPath}/${node.name}` : node.name;
-          const isSubscribed = subscribedScriptPaths.value.some(sub => fullPath === sub);
-          const isRoot = ['pathing', 'js', 'combat', 'tcg'].includes(node.name);
-          if (isSubscribed && !isRoot) {
-            subscribedScripts.value.push([node.name, fullPath]);
-          }
-          // 继续向下遍历
-          if (Array.isArray(node.children) && node.children.length > 0) {
-            node.children.forEach(child => findNodes(child, fullPath));
-          }
-        }
-        repoData.value.indexes.forEach(index => {
-          findNodes(index, '');
-        });
-        subscribedConfigError.value = false;
-      }
-    }
-  } catch (e) {
-    subscribedConfigError.value = true;
-  }
-}
-
-// 静默刷新已订阅
-async function refreshSubscribedConfigSilently(paths) {
-  try {
-    if (!paths.length) {
-      subscribedConfigError.value = true;
-      subscribedScriptPaths.value = [];
-    } else {
-      subscribedScriptPaths.value = paths;
-      subscribedConfigError.value = false;
-    }
-  } catch (e) {
-    subscribedConfigError.value = true;
-  }
-}
-
-let pollingTimer = null;
-let pollingTimeout = null;
-let lastConfigStr = '';
-
-// 暴露给其他组件使用的拉取用户配置信息方法
-function startPollingUserConfig() {
-  if (pollingTimer) clearInterval(pollingTimer);
-  if (pollingTimeout) clearTimeout(pollingTimeout);
-
-  lastConfigStr = JSON.stringify(subscribedScriptPaths.value);
-
-  pollingTimer = setInterval(async () => {
-    const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
-    const json = await repoWebBridge.GetUserConfigJson();
-    if (json) {
-      let config = {};
-      try {
-        config = typeof json === 'string' ? JSON.parse(json) : json;
-      } catch (e) {
-        config = {};
-      }
-      const paths = Array.from(new Set(config.scriptConfig?.subscribedScriptPaths || []));
-      const newConfigStr = JSON.stringify(paths);
-      if (newConfigStr !== lastConfigStr) {
-        // config有变化，静默刷新
-        await refreshSubscribedConfigSilently(paths);
-        lastConfigStr = newConfigStr;
-      }
-    }
-  }, 1000);
-
-  pollingTimeout = setTimeout(() => {
-    if (pollingTimer) clearInterval(pollingTimer);
-    pollingTimer = null;
-    pollingTimeout = null;
-  }, 8000);
-}
 
 // 挂载时获取仓库数据并应用部分排序
 onMounted(() => {
-  getRepoJson();
-  if (['2', '3', '4'].includes(selectedMenu.value[0])) {
-    applySortForMenu(selectedMenu.value[0]);
+  mainStore.getRepoJson();
+  if (['2', '3', '4'].includes(mainStore.selectedMenu[0])) {
+    mainStore.applySortForMenu(mainStore.selectedMenu[0]);
   }
-  selectedRoleTags.value = [...appliedRoleTags.value];
-});
-
-// 取消挂载时清空计时器
-onUnmounted(() => {
-  if (fetchTimeoutId) {
-    clearTimeout(fetchTimeoutId);
-    fetchTimeoutId = null;
-  }
-});
-
-// 彩蛋弹窗显示状态
-const showEggModal = ref(false);
-
-// 彩蛋 README 加载状态
-const isLoadingEggReadme = ref(false);
-const eggReadmeError = ref(false);
-const eggReadmeKey = ref(0);
-
-// 彩蛋弹窗加载完成
-const handleEggReadmeLoaded = () => {
-  isLoadingEggReadme.value = false;
-  eggReadmeError.value = false;
-};
-
-// 彩蛋弹窗加载失败
-const handleEggReadmeError = () => {
-  console.log('Egg README load failed');
-  isLoadingEggReadme.value = false;
-  eggReadmeError.value = true;
-};
-// 重试加载彩蛋弹窗
-const retryLoadEggReadme = () => {
-  console.log('Retry loading egg README');
-  isLoadingEggReadme.value = true;
-  eggReadmeError.value = false;
-  eggReadmeKey.value++;
-};
-
-// 监听彩蛋弹窗打开，重置加载状态
-watch(showEggModal, (newVal) => {
-  if (newVal) {
-    // 重置状态
-    isLoadingEggReadme.value = true;
-    eggReadmeError.value = false;
-    eggReadmeKey.value++;
-  }
-});
-
-// 更新计划弹窗显示状态
-const showPlanModal = ref(false);
-
-// 帮助弹窗显示状态
-const showHelpModal = ref(false);
-
-// 列表筛选项：全部、已订阅（本地模式）
-const scriptTab = ref('all');
-
-// 切换全部与已订阅状态
-const onClickShowAll = () => {
-  if (mode === 'web') return;
-  scriptTab.value = 'all';
-};
-const onClickShowSubscribed = () => {
-  if (mode === 'web') return;
-  if (subscribedConfigError.value || subscribedScriptPaths.value.length === 0) {
-    scriptTab.value = 'subscribed';
-    return;
-  }
-  scriptTab.value = 'subscribed';
-};
-
-// 监听选择菜单变化
-watch(selectedMenu, () => {
-  scriptTab.value = 'all';
-  // 切换菜单时恢复该菜单上次会话内的排序状态
-  applySortForMenu(selectedMenu.value[0]);
-  // 同步 combat 面板临时选择
-  roleFilterSearch.value = '';
-  selectedRoleTags.value = [...appliedRoleTags.value];
-});
-
-// 监听已订阅脚本路径
-watch(subscribedScriptPaths, (newPaths) => {
-  if (!selectedScript.value) return;
-
-  if (selectedScript.value.path) {
-    const isSubscribed = newPaths.some(p => selectedScript.value.path === p || selectedScript.value.path.startsWith(p + '/'));
-    if (selectedScript.value.isSubscribed !== isSubscribed) {
-      selectedScript.value.isSubscribed = isSubscribed;
-    }
-  }
-
-  if (selectedScript.value.type === 'directory' && selectedScript.value.files && Array.isArray(selectedScript.value.files)) {
-    selectedScript.value.files.forEach(file => {
-      if (file.path) {
-        file.isSubscribed = newPaths.some(p => file.path === p || file.path.startsWith(p + '/'));
-      }
-    });
-  }
-});
-
-// 设置弹窗显示状态
-const showSettingsModal = ref(false);
-// 清除更新提示加载窗状态
-const clearUpdateLoading = ref(false);
-
-// 清除更新提示
-const handleClearUpdate = async () => {
-  if (mode !== 'single') return;
-
-  clearUpdateLoading.value = true;
-  try {
-    const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
-    const result = await repoWebBridge.ClearUpdate();
-
-    if (result) {
-      // 清除成功，更新所有脚本的hasUpdate状态
-      updateAllScriptsHasUpdate(false);
-      // 显示成功消息
-      Message.success($t('settings.clearUpdateSuccess'));
-    } else {
-      // 清除失败
-      Message.error($t('settings.clearUpdateFailed'));
-    }
-  } catch (error) {
-    console.error('ClearUpdate failed:', error);
-    Message.error($t('settings.clearUpdateFailed'));
-  } finally {
-    clearUpdateLoading.value = false;
-    showUpdateMessageModal.value = false;
-  }
-};
-
-// 更新所有脚本的hasUpdate状态
-const updateAllScriptsHasUpdate = (hasUpdate) => {
-  if (!repoData.value || !repoData.value.indexes) return;
-
-  const updateNodeHasUpdate = (nodes) => {
-    for (let node of nodes) {
-      if (node.children && node.children.length > 0) {
-        // 如果是目录，递归更新
-        updateNodeHasUpdate(node.children);
-        node.hasUpdate = hasUpdate;
-      } else {
-        // 如果是文件，更新hasUpdate状态
-        node.hasUpdate = hasUpdate;
-      }
-    }
-  };
-
-  // 更新所有类型的脚本
-  repoData.value.indexes.forEach(index => {
-    if (index.children) {
-      updateNodeHasUpdate(index.children);
-    }
-  });
-
-  // 强制触发响应式更新
-  nextTick(() => {
-    repoData.value = {...repoData.value};
-  });
-};
-
-// 接收App.vue中传递的选中的语言
-const {selectedLocale, handleLocaleChange, selectedThemeName, handleThemeNameChange} = defineProps({
-  selectedLocale: {
-    type: String,
-    required: true
-  },
-  handleLocaleChange: {
-    type: Function,
-    required: true
-  },
-  selectedThemeName: {
-    type: String,
-    required: true
-  },
-  handleThemeNameChange: {
-    type: Function,
-    required: true
-  }
+  mainStore.selectedRoleTags = [...mainStore.appliedRoleTags];
 });
 
 // 选择语言切换
 function onLocaleChange(val) {
-  handleLocaleChange(val);
-  showSettingsModal.value = false;
+  mainStore.onLocaleChange(val);
+  settings.setLocale(val);
+  settings.showSettingsModal = false;
 }
-
-// 主题切换（拦截 egg）
-const safetyStore = useSafetyStore();
-function onThemeChange(name) {
-  if (name === 'egg') {
-    safetyStore.requestSafetyConfirm(name);
-    return;
-  }
-  handleThemeNameChange(name);
-  showSettingsModal.value = false;
-}
-
 </script>
 
 <style scoped>
@@ -1693,6 +893,10 @@ function onThemeChange(name) {
   font-size: 16px;
   cursor: pointer;
   transition: background 0.2s, box-shadow 0.2s;
+}
+
+:deep(.ant-btn-primary.ant-btn-dangerous) {
+  box-shadow: none;
 }
 
 .repo-help-btn {

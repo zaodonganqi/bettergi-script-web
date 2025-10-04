@@ -28,7 +28,7 @@
           <a-button type="primary" @click="jumpToGitHub(script)">
             {{ $t('action.jumpToGitHub') }}
           </a-button>
-          <a-button type="primary" @click="commentModalOpen = true">
+          <a-button type="primary" @click="mainStore.showCommentModal = true">
             {{ $t('action.comment') }}
           </a-button>
           <a-button type="primary" v-if="!script.isSubscribed" @click="handleSubscribe(script)">
@@ -62,7 +62,7 @@
         </transition>
         <div v-if="txtContent" class="txt-content-plain">{{ txtContent }}</div>
         <!-- 评论弹窗-->
-        <Comment v-model="commentModalOpen" :selected-script="script" />
+        <Comment />
       </div>
     </template>
     <template v-else>
@@ -72,7 +72,7 @@
 </template>
 
 <script setup>
-import {ref, watch} from 'vue';
+import {computed, ref, watch} from 'vue';
 import {useClipboard} from '@vueuse/core';
 import {message as Message, Spin as ASpin} from 'ant-design-vue';
 import {ReloadOutlined} from '@ant-design/icons-vue';
@@ -81,21 +81,18 @@ import { subscribePaths } from '@/utils/subscription';
 import {useI18n} from 'vue-i18n';
 import Comment from "@/components/items/Comment.vue";
 import {jumpToGitHub} from "@/utils/actions.js";
+import {useMainStore} from "@/stores/mainStore.js";
 
 const {t: $t} = useI18n();
 
-const props = defineProps({
-  script: {
-    type: Object,
-    default: null
-  },
-  startPollingUserConfig: Function
-});
+const mainStore = useMainStore();
+
+// 获取script数据
+const script = computed(() => mainStore.selectedScript);
 const {copy} = useClipboard();
 const isLoadingTxt = ref(false);
 const loadTxtError = ref(false);
 const txtContent = ref('');
-const commentModalOpen = ref(false);
 
 const isTxt404 = (path) => !!localStorage.getItem('txt404:' + path);
 const setTxt404 = (path) => {
@@ -125,10 +122,9 @@ const fetchTxtContent = async (path) => {
   isLoadingTxt.value = true;
   loadTxtError.value = false;
   txtContent.value = '';
-  const mode = import.meta.env.VITE_MODE;
   let txt = '';
   let fetchError = null;
-  if (mode === 'single') {
+  if (mainStore.isModeSingle) {
     try {
       const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
       txt = await repoWebBridge.GetFile(path.replace(/\\/g, '/'));
@@ -176,8 +172,8 @@ const fetchTxtContent = async (path) => {
 };
 
 const retryLoadTxt = () => {
-  if (props.script && props.script.path) {
-    fetchTxtContent(props.script.path);
+  if (script.value && script.value.path) {
+    fetchTxtContent(script.value.path);
   }
 };
 
@@ -188,8 +184,8 @@ const handleSubscribe = async (item) => {
     if (result.needsCopy) {
       await copy(result.url);
       Message.success($t('detail.subscribeSuccess', {name: item.name}));
-    } else if (typeof props.startPollingUserConfig === 'function') {
-      props.startPollingUserConfig();
+    } else {
+      mainStore.startPollingUserConfig();
     }
   } catch (error) {
     console.error('Subscribe failed:', error);
@@ -198,7 +194,7 @@ const handleSubscribe = async (item) => {
 };
 
 // 监听脚本变化，设置加载状态
-watch(() => props.script, (newScript) => {
+watch(() => script.value, (newScript) => {
   if (newScript && newScript.path) {
     fetchTxtContent(newScript.path);
   } else {

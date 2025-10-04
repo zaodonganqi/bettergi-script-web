@@ -4,29 +4,7 @@ import App from './App.vue'
 import Antd from 'ant-design-vue'
 import 'ant-design-vue/dist/reset.css'
 
-import { createI18n } from 'vue-i18n'
-import zhCN from './locales/zh-CN'
-import zhTW from './locales/zh-TW'
-import enUS from './locales/en-US'
-import jaJP from './locales/ja-JP'
-import frFR from './locales/fr-FR'
-
-// 从localStorage读取用户的语言偏好
-const savedLocale = localStorage.getItem('user-locale') || 'zh-CN';
-
-const i18n = createI18n({
-    legacy: false,
-    locale: savedLocale,
-    fallbackLocale: 'zh-CN',
-    messages: {
-        'zh': zhCN,
-        'zh-CN': zhCN,
-        'zh-TW': zhTW,
-        'en-US': enUS,
-        'ja-JP': jaJP,
-        'fr-FR': frFR
-    }
-})
+import { i18n } from '@/utils/i18n.js'
 
 const app = createApp(App)
 const pinia = createPinia()

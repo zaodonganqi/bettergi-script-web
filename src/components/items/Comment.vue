@@ -1,7 +1,13 @@
 <template>
   <!-- 评论弹窗 -->
-  <a-modal v-model:open="commentModalOpen" :title="$t('comment.title')" :footer="null" centered width="90%"
-           :style="{ maxWidth: '1200px' }" class="comment-modal">
+  <a-modal v-model:open="mainStore.showCommentModal"
+           :title="$t('comment.title')"
+           :footer="null"
+           centered width="90%"
+           :style="{ maxWidth: '1200px' }"
+           class="comment-modal"
+           :destroyOnClose="true"
+           @cancel="mainStore.showCommentModal = false">
     <div class="comment-modal-content">
       <div class="comment-header">
         <div class="script-title-simple">
@@ -29,7 +35,7 @@
 
       <div class="comments-container">
         <!-- 本地模式显示提示信息 -->
-        <div v-if="mode === 'single'" class="local-mode-notice">
+        <div v-if="mainStore.isModeSingle" class="local-mode-notice">
           <div class="notice-icon">
             <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
               <circle cx="24" cy="24" r="24" fill="#e3f2fd"/>
@@ -39,7 +45,7 @@
           </div>
           <div class="notice-title">{{ $t('comment.localModeNoticeTitle') }}</div>
           <div class="notice-desc">{{ $t('comment.localModeNoticeDesc') }}</div>
-          <a-button type="primary" class="notice-btn" @click="openExternalLink('https://bgi.sh')">
+          <a-button type="primary" class="notice-btn" @click="mainStore.openExternalLink('https://bgi.sh')">
             {{ $t('comment.onlineRepo') }}
           </a-button>
         </div>
@@ -48,43 +54,58 @@
         <Giscus v-else :key="giscusKey" :repo="giscusConfig.repo" :repoId="giscusConfig.repoId"
                 :category="giscusConfig.category" :categoryId="giscusConfig.categoryId"
                 :mapping="giscusConfig.mapping"
-                :term="giscusTerm" :strict="giscusConfig.strict" :reactionsEnabled="giscusConfig.reactionsEnabled"
-                :emitMetadata="giscusConfig.emitMetadata" :inputPosition="giscusConfig.inputPosition"
-                :theme="giscusConfig.theme" :lang="giscusConfig.lang" loading="lazy"/>
+                :term="giscusTerm"
+                :strict="giscusConfig.strict"
+                :reactionsEnabled="giscusConfig.reactionsEnabled"
+                :emitMetadata="giscusConfig.emitMetadata"
+                :inputPosition="giscusConfig.inputPosition"
+                :theme="themePath"
+                :lang="localeToUse[locale] || 'zh-CN'"
+                :loading="giscusConfig.loading"
+                ref="giscusRef"/>
       </div>
     </div>
   </a-modal>
 </template>
 
 <script setup>
-import Giscus from "@giscus/vue";
-import {computed, ref, watch} from "vue";
-import {useI18n} from "vue-i18n";
-import {Modal as AModal} from "ant-design-vue";
-import {getThemeName} from "@/styles/theme.js";
+import { ref, computed } from 'vue';
+import { useI18n } from "vue-i18n";
+import { Modal as AModal } from "ant-design-vue";
+import { useMainStore } from "@/stores/mainStore.js";
+import { useSettingsStore } from "@/stores/settingsStore.js";
+import Giscus from '@giscus/vue';
 
-const {t: $t} = useI18n();
+const { t: $t } = useI18n();
 
-const props = defineProps({
-  selectedScript: {
-    type: Object,
-    default: null
-  }
-});
-const commentModalOpen = defineModel()
-
-const mode = import.meta.env.VITE_MODE;
+const mainStore = useMainStore();
+const settings = useSettingsStore();
 const { locale } = useI18n();
+
+// 获取selectedScript
+const selectedScript = computed(() => mainStore.selectedScript);
+
+// Giscus组件引用
+const giscusRef = ref(null);
+
+// 强制 Giscus 组件重新渲染的 key
+const giscusKey = ref(0);
+
+// 语言映射
 const localeToUse = {
   'zh-CN': 'zh-CN',
   'en-US': 'en-',
   'fr-FR': 'fr',
+  'de-DE': 'de',
   'ja-JP': 'ja',
   'zh-TW': 'zh-TW',
 }
-const theme = getThemeName();
+
+// 主题配置
+const theme = settings.selectedThemeName;
 const themePath = `https://giscus.app/themes/${theme}.css`;
 
+// Giscus配置
 const giscusConfig = {
   repo: 'babalae/bettergi-script-web-giscus',
   repoId: 'R_kgDOPbW19A',
@@ -99,27 +120,11 @@ const giscusConfig = {
   lang: localeToUse[locale.value]
 };
 
-// 强制 Giscus 组件重新渲染的 key
-const giscusKey = ref(0);
-
 // 计算 giscus term，用于区分不同脚本的评论
 const giscusTerm = computed(() => {
-  if (!props.selectedScript) return 'default';
-  return props.selectedScript.path || props.selectedScript.title || 'default';
+  if (!selectedScript.value) return 'default';
+  return selectedScript.value.path || selectedScript.value.title || 'default';
 });
-
-
-// 监听 giscusTerm 变化，强制重新渲染 Giscus 组件
-watch(giscusTerm, (newTerm, oldTerm) => {
-  if (newTerm !== oldTerm) {
-    giscusKey.value++;
-  }
-});
-
-// 打开外部链接
-const openExternalLink = (url) => {
-  window.open(url, '_blank', 'noopener,noreferrer');
-};
 </script>
 
 <style scoped>

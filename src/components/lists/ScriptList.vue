@@ -2,7 +2,7 @@
   <div class="list-container">
     <a-list :data-source="filteredScripts">
       <template #renderItem="{ item }">
-        <div :class="['script-item', { active: item.id === selectedId }]" @click="selectScript(item.id)">
+        <div :class="['script-item', { active: item.id === listStore.selectedId }]" @click="selectScript(item.id)">
           <div class="item-header">
             <div class="item-title-wrap">
               <span class="item-title-main">{{ item.name1 }}</span>
@@ -36,38 +36,13 @@
 <script setup>
 import { ref, computed, watch, nextTick } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useMainStore } from "@/stores/mainStore.js";
+import { useListStore } from "@/stores/listStore.js";
+
 const { t: $t } = useI18n();
 
-const props = defineProps({
-  searchKey: {
-    type: String,
-    default: ''
-  },
-  repoData: {
-    type: Object,
-    required: true,
-    default: null
-  },
-  subscribedPaths: {
-    type: Array,
-    default: () => []
-  },
-  showSubscribedOnly: {
-    type: Boolean,
-    default: false
-  },
-  sortType: {
-    type: String,
-    default: 'time'
-  },
-  sortOrder: {
-    type: String,
-    default: 'desc'
-  }
-});
-const { repoData } = props;
-
-const emit = defineEmits(['select', 'updateHasUpdate']);
+const mainStore = useMainStore();
+const listStore = useListStore();
 
 function getJsScriptsFromRepo(repo, subscribedPaths = [], parentSubscribed = false, currentPath = 'js') {
   const jsNode = repo.indexes.find(item => item.name === 'js');
@@ -112,8 +87,9 @@ function getJsScriptsFromRepo(repo, subscribedPaths = [], parentSubscribed = fal
   return result;
 }
 
-const scripts = ref(
-  getJsScriptsFromRepo(repoData, props.subscribedPaths).map((item, idx) => ({
+const scripts = computed(() => {
+  if (!mainStore.repoData || !mainStore.repoData.indexes) return [];
+  return getJsScriptsFromRepo(mainStore.repoData, mainStore.subscribedScriptPaths).map((item, idx) => ({
     id: idx + 1,
     title: item.title,
     name: item.name,
@@ -128,57 +104,20 @@ const scripts = ref(
     path: item.fullPath || `js/${item.name}`,
     isSubscribed: item.isSubscribed,
     hasUpdate: item.hasUpdate || false
-  }))
-);
-
-// 监听 repoData 和 subscribedPaths 变化，重新生成 scripts
-watch(
-  [() => props.repoData, () => props.subscribedPaths],
-  ([newRepoData, newSubscribedPaths]) => {
-    if (newRepoData && newRepoData.indexes) {
-      nextTick(() => {
-        scripts.value = getJsScriptsFromRepo(newRepoData, newSubscribedPaths).map((item, idx) => ({
-          id: idx + 1,
-          title: item.title,
-          name: item.name,
-          name1: item.name1,
-          name2: item.name2,
-          authors: item.authors || [],
-          desc: item.description,
-          tags: item.tags || [],
-          lastUpdated: item.lastUpdated || '',
-          unread: false,
-          version: item.version,
-          path: item.fullPath || `js/${item.name}`,
-          isSubscribed: item.isSubscribed,
-          hasUpdate: item.hasUpdate || false
-        }));
-
-        if (scripts.value.length > 0) {
-          const prevSelected = selectedId.value;
-          const stillExists = scripts.value.some(s => s.id === prevSelected);
-          selectedId.value = stillExists ? prevSelected : null;
-        } else {
-          selectedId.value = null;
-        }
-      });
-    }
-  }
-);
-
-const selectedId = ref(null);
+  }));
+});
 
 const selectScript = async (id) => {
-  selectedId.value = id;
   const script = scripts.value.find(script => script.id === id);
-  emit('select', script);
-  const mode = import.meta.env.VITE_MODE;
-  if (mode === 'single') {
+  listStore.selectItem(id, script);
+  // 选择脚本
+  mainStore.handleScriptSelect(script);
+  if (mainStore.isModeSingle) {
     const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
     const result = await repoWebBridge.UpdateSubscribed(script.path);
     if (result) {
-      // 通知父组件更新repoData中的hasUpdate状态
-      emit('updateHasUpdate', script.path, false);
+      // 更新hasUpdate状态
+      listStore.updateItemHasUpdate(script.path, false);
     } else {
       console.error('Failed to update subscription:');
     }
@@ -186,77 +125,14 @@ const selectScript = async (id) => {
   console.log("Node selected", script);
 };
 
-function normalize(str) {
-  return (str || '').toLowerCase().replace(/[\s【】\[\]（）()·,，.。!！?？\-_]/g, '');
-}
-
-const sortScripts = (scriptList) => {
-  if (props.sortType === 'random') {
-    return [...scriptList].sort(() => Math.random() - 0.5);
-  }
-  
-  const sorted = [...scriptList];
-  
-  if (props.sortType === 'name') {
-    // 按name1排序
-    sorted.sort((a, b) => {
-      const nameA = (a.name1 || '').toLowerCase();
-      const nameB = (b.name1 || '').toLowerCase();
-      return props.sortOrder === 'asc' ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA);
-    });
-  } else if (props.sortType === 'time') {
-    // 按时间排序
-    sorted.sort((a, b) => {
-      const timeA = a.lastUpdated || '';
-      const timeB = b.lastUpdated || '';
-      return props.sortOrder === 'asc' ? timeA.localeCompare(timeB) : timeB.localeCompare(timeA);
-    });
-  }
-  
-  return sorted;
-};
-
 const filteredScripts = computed(() => {
-  let baseList = scripts.value;
-  if (props.showSubscribedOnly) {
-    if (!props.subscribedPaths || props.subscribedPaths.length === 0) {
-      return [];
-    }
-    baseList = baseList.filter(script => props.subscribedPaths.includes(script.path));
-  }
-  
-  if (!props.searchKey) {
-    return sortScripts(baseList);
-  }
-  
-  const keyword = normalize(props.searchKey.trim());
-  // 完全匹配优先，name1和name2权重一样
-  const nameMatches = baseList.filter(s =>
-    normalize(s.title) === keyword ||
-    normalize(s.name1) === keyword ||
-    normalize(s.name2) === keyword ||
-    (s.authors && s.authors.some(a => normalize(a.name) === keyword))
-  );
-  if (nameMatches.length) return sortScripts(nameMatches);
-  
-  // 相关性分数排序，name1和name2权重一样
-  const scored = baseList.map(s => {
-    let score = 0;
-    if (normalize(s.title).includes(keyword)) score += 3;
-    if (normalize(s.name1).includes(keyword)) score += 3;
-    if (normalize(s.name2).includes(keyword)) score += 3;
-    if (s.authors && s.authors.some(a => normalize(a.name).includes(keyword))) score += 2;
-    if ((s.tags || []).some(tag => normalize(tag).includes(keyword))) score += 2;
-    if (normalize(s.desc).includes(keyword)) score += 1;
-    return { ...s, _score: score };
-  }).filter(s => s._score > 0);
-  scored.sort((a, b) => b._score - a._score);
-  
-  // 对搜索结果应用排序
-  const sortedScored = sortScripts(scored);
-  return sortedScored;
+  return listStore.processItems(scripts.value, {
+    searchKey: mainStore.search,
+    showSubscribedOnly: mainStore.scriptTab === 'subscribed',
+    sortType: mainStore.sortType,
+    sortOrder: mainStore.sortOrder
+  });
 });
-
 </script>
 
 <style scoped>

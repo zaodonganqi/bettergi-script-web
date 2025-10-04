@@ -34,50 +34,30 @@ import {message as Message} from 'ant-design-vue';
 import {subscribePaths} from '@/utils/subscription';
 import {useI18n} from 'vue-i18n';
 import iconUrlMap from '@/assets/icon_url.json';
+import {useMainStore} from "@/stores/mainStore.js";
 
 const { t: $t } = useI18n();
 
-const props = defineProps({
-  searchKey: {
-    type: String,
-    default: ''
-  },
-  repoData: {
-    type: Object,
-    required: true,
-    default: null
-  },
-  subscribedPaths: {
-    type: Array,
-    default: () => []
-  },
-  showSubscribedOnly: {
-    type: Boolean,
-    default: false
-  },
-  startPollingUserConfig: Function
-});
 const { copy } = useClipboard();
-const mode = import.meta.env.VITE_MODE;
-const emit = defineEmits(['select', 'updateHasUpdate']);
+const mainStore = useMainStore();
 const expandedKeys = ref([]);
 const selectedKeys = ref([]);
 const treeData = ref([]);
 
 onMounted(() => {
-  treeData.value = generateTreeData(props.repoData);
+  treeData.value = generateTreeData(mainStore.repoData);
 });
 
-watch(() => props.repoData, (val) => {
+watch(() => mainStore.repoData, (val) => {
   treeData.value = generateTreeData(val);
 }, { deep: true });
 
-watch(() => props.subscribedPaths, (newPaths) => {
-  treeData.value = generateTreeData(props.repoData);
+watch(() => mainStore.subscribedScriptPaths, (newPaths) => {
+  treeData.value = generateTreeData(mainStore.repoData);
 });
 
 // 监听 showSubscribedOnly 变化，重置树展开状态
-watch(() => props.showSubscribedOnly, () => {
+watch(() => mainStore.scriptTab === 'subscribed', () => {
   expandedKeys.value = [];
   selectedKeys.value = [];
 });
@@ -103,15 +83,16 @@ const handleSelect = async (selectedKeysList) => {
   const selectedNode = findNodeByKey(filteredTreeData.value, selectedKeysList[0]);
   if (!selectedNode) return;
 
-  emit('select', selectedNode);
+  // 使用mainStore的方法选择节点
+  mainStore.handleMapSelect(selectedNode);
   selectedKeys.value = selectedNode.key ? [selectedNode.key] : [];
 
-  if (selectedNode.hasUpdate && mode === 'single') {
+  if (selectedNode.hasUpdate && mainStore.isModeSingle) {
     const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
     const result = await repoWebBridge.UpdateSubscribed(selectedNode.path);
     if (result) {
-      // 通知父组件更新repoData中的hasUpdate状态
-      emit('updateHasUpdate', selectedNode.path, false);
+      // 使用mainStore的方法更新hasUpdate状态
+      mainStore.updateScriptHasUpdate(selectedNode.path, false);
     } else {
       console.error('Failed to update subscription:');
     }
@@ -132,8 +113,8 @@ const handleSubscribe = async (nodeData) => {
     if (result.needsCopy) {
       await copy(result.url);
       Message.success($t('mapTreeList.subscribeSuccess', { name: nodeData.name }));
-    } else if (typeof props.startPollingUserConfig === 'function') {
-      props.startPollingUserConfig();
+    } else {
+      mainStore.startPollingUserConfig();
     }
   } catch (error) {
     console.error('Subscribe failed:', error);
@@ -153,18 +134,6 @@ const findNodeByKey = (nodes, key) => {
   }
   return null;
 };
-
-// // 获取节点图标
-// const getIconUrl = (tag) => {
-//   const mode = import.meta.env.VITE_MODE;
-//   const relPath = tag + '/icon.ico';
-//   if (mode === 'single') {
-//     // 本地模式下直接拼接回退路径
-//     return '../../../Repos/bettergi-scripts-list-git/repo/' + relPath;
-//   } else {
-//     return getRepoPath() + relPath;
-//   }
-// };
 
 // 递归收集所有 file 节点，并补全 path 字段
 function collectFiles(node, parentPath = '') {
@@ -228,7 +197,7 @@ const countriesParentNode = "地方特产";
 const processNode = (node, parentKey = '', parentSubscribed = false) => {
   const currentKey = parentKey ? `${parentKey}/${node.name}` : node.name;
   // 先判断自身是否订阅
-  const selfSubscribed = props.subscribedPaths.some(sub => (`pathing/${currentKey}`).startsWith(sub));
+  const selfSubscribed = mainStore.subscribedScriptPaths.some(sub => (`pathing/${currentKey}`).startsWith(sub));
   // 如果父节点已订阅，自己也视为已订阅
   const isSubscribed = parentSubscribed || selfSubscribed;
   const children = node.children?.map(child => processNode(child, currentKey, isSubscribed)) || [];
@@ -251,7 +220,7 @@ const processNode = (node, parentKey = '', parentSubscribed = false) => {
   if (node.type === 'directory') {
     // 传递父级路径，不包含当前目录名
     files = collectFiles(node, parentKey);
-    files = markFilesSubscribed(files, props.subscribedPaths);
+    files = markFilesSubscribed(files, mainStore.subscribedScriptPaths);
     // 目录显示最新文件时间
     lastUpdated = getLatestUpdateTime(files);
   } else if (node.type === 'file') {
@@ -356,11 +325,11 @@ const filteredTreeData = computed(() => {
   }
 
   // 只显示已订阅
-  if (props.showSubscribedOnly) {
-    if (!props.subscribedPaths || props.subscribedPaths.length === 0) {
+  if (mainStore.scriptTab === 'subscribed') {
+    if (!mainStore.subscribedScriptPaths || mainStore.subscribedScriptPaths.length === 0) {
       return [];
     }
-    const pathingSubs = props.subscribedPaths.filter(p => p.startsWith('pathing/'));
+    const pathingSubs = mainStore.subscribedScriptPaths.filter(p => p.startsWith('pathing/'));
     function filterTreeBySubscribedPaths(nodes, subscribedPaths) {
       if (!nodes) return [];
       return nodes.map(node => {
@@ -382,9 +351,9 @@ const filteredTreeData = computed(() => {
     }
     // 只在已订阅节点中做搜索
     let baseTree = filterTreeBySubscribedPaths(treeData.value, pathingSubs);
-    if (!props.searchKey) return baseTree;
+    if (!mainStore.search) return baseTree;
     // 搜索框输入
-    const keyword = props.searchKey.trim().toLowerCase();
+    const keyword = mainStore.search.trim().toLowerCase();
     let filtered = filterAndScore(baseTree, keyword);
 
     const allLeaf = flatten(filtered);
@@ -401,9 +370,9 @@ const filteredTreeData = computed(() => {
       return [];
     }
   } else {
-    if (!props.searchKey) return treeData.value;
+    if (!mainStore.search) return treeData.value;
     // 搜索框输入
-    const keyword = props.searchKey.trim().toLowerCase();
+    const keyword = mainStore.search.trim().toLowerCase();
     let filtered = filterAndScore(treeData.value, keyword);
 
     const allLeaf = flatten(filtered);
@@ -452,7 +421,7 @@ const updateExpandedKeysForSearch = (newSearchKey) => {
 }
 
 watch(
-  () => props.searchKey,
+  () => mainStore.search,
   (newSearchKey) => {
     updateExpandedKeysForSearch(newSearchKey);
   }

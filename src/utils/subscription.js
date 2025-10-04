@@ -1,5 +1,7 @@
 // 订阅工具：构建订阅 URL，并在本地模式下执行导入
 
+import {useMainStore} from "@/stores/mainStore.js";
+
 export function buildSubscriptionUrl(paths) {
   const jsonString = JSON.stringify(paths);
   const base64String = btoa(encodeURIComponent(jsonString));
@@ -8,8 +10,8 @@ export function buildSubscriptionUrl(paths) {
 
 export async function subscribePaths(paths) {
   const url = buildSubscriptionUrl(paths);
-  const mode = import.meta.env.VITE_MODE;
-  if (mode === 'single') {
+  const mainStore = useMainStore();
+  if (mainStore.isModeSingle) {
     const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
     await repoWebBridge.ImportUri(url);
     return { ok: true, url };
