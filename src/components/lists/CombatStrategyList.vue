@@ -104,7 +104,7 @@ const selectStrategy = async (id) => {
   listStore.selectItem(id, strategy);
   // 选择策略
   mainStore.handleScriptSelect(strategy);
-  if (mainStore.isModeSingle) {
+  if (mainStore.isModeSingle && strategy.hasUpdate) {
     const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
     const result = await repoWebBridge.UpdateSubscribed(strategy.path);
     if (result) {

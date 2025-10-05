@@ -112,7 +112,7 @@ const selectScript = async (id) => {
   listStore.selectItem(id, script);
   // 选择脚本
   mainStore.handleScriptSelect(script);
-  if (mainStore.isModeSingle) {
+  if (mainStore.isModeSingle && script.hasUpdate) {
     const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
     const result = await repoWebBridge.UpdateSubscribed(script.path);
     if (result) {
