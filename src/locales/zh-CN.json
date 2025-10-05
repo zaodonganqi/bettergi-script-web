@@ -269,6 +269,7 @@
     "sort": {
         "sortBy": "排序方式",
         "sortOrder": "排序顺序",
+        "relevance": "相关性",
         "random": "随机",
         "time": "时间",
         "name": "名称",

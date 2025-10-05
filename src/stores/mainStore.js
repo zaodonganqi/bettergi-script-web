@@ -411,8 +411,20 @@ export const useMainStore = defineStore('mainStore', () => {
     });
 
     // 修改搜索框文本
-    const handleSearch = (value) => {
+    const handleSearch = (e) => {
+        const value = e.target ? e.target.value : e;
         search.value = value;
+        
+        // 开始搜索时，切换到相关性排序
+        if (value && value.trim()) {
+            sortType.value = 'relevance';
+            saveSortForMenu(selectedMenu.value[0]);
+        }
+        // 清空搜索时，恢复到时间排序
+        else if (!value) {
+            sortType.value = 'time';
+            saveSortForMenu(selectedMenu.value[0]);
+        }
     };
 
     // 排序筛选
@@ -438,20 +450,20 @@ export const useMainStore = defineStore('mainStore', () => {
 
     // 处理排序菜单点击
     const handleSortMenuClick = ({key}) => {
-        if ([ 'time','random', 'name'].includes(key)) {
+        if ([ 'relevance', 'time','random', 'name' ].includes(key)) {
             sortType.value = key;
         } else if (['asc', 'desc'].includes(key)) {
             sortOrder.value = key;
         }
         // 保存当前菜单的排序状态
         saveSortForMenu(selectedMenu.value[0]);
-        console.log('排序设置已更新:', {sortType: sortType.value, sortOrder: sortOrder.value});
     };
 
     // 保存不同菜单下排序选项状态
     function saveSortForMenu(menuKey) {
         if (!['2', '3', '4'].includes(menuKey)) return;
         sortStateByMenu[menuKey] = { type: sortType.value, order: sortOrder.value };
+        console.log('排序设置已更新:', {sortType: sortType.value, sortOrder: sortOrder.value});
     }
 
     // 搜索角色结果列表（实际展示的数据）（战斗策略）

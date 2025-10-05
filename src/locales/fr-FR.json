@@ -252,6 +252,7 @@
   "sort": {
     "sortBy": "Trier par",
     "sortOrder": "Ordre de tri",
+    "relevance": "Pertinence",
     "random": "Aléatoire",
     "time": "Temps",
     "name": "Nom",

@@ -67,7 +67,7 @@
         </div>
       </div>
       <div class="search-section">
-        <a-input v-model:value="mainStore.search" :placeholder="mainStore.searchPlaceholder" class="script-search" @search="mainStore.handleSearch"
+        <a-input v-model:value="mainStore.search" :placeholder="mainStore.searchPlaceholder" class="script-search" @change="mainStore.handleSearch"
                  allow-clear>
           <template #prefix>
             <SearchOutlined/>
@@ -81,6 +81,10 @@
           <template #overlay>
             <a-menu class="sort-menu" @click="mainStore.handleSortMenuClick">
               <a-menu-item-group :title="$t('sort.sortBy')">
+                <a-menu-item v-if="hasSearchKey" key="relevance" :class="{ active: mainStore.sortType === 'relevance' }">
+                  <span>{{ $t('sort.relevance') }}</span>
+                  <CheckOutlined v-if="mainStore.sortType === 'relevance'" class="check-icon"/>
+                </a-menu-item>
                 <a-menu-item key="time" :class="{ active: mainStore.sortType === 'time' }">
                   <span>{{ $t('sort.time') }}</span>
                   <CheckOutlined v-if="mainStore.sortType === 'time'" class="check-icon"/>
@@ -95,7 +99,7 @@
                 </a-menu-item>
               </a-menu-item-group>
               <a-menu-divider/>
-              <a-menu-item-group :title="$t('sort.sortOrder')" :t>
+              <a-menu-item-group :title="$t('sort.sortOrder')">
                 <a-menu-item key="asc" :class="{ active: mainStore.sortOrder === 'asc' }">
                   <span>{{ $t('sort.ascending') }}</span>
                   <CheckOutlined v-if="mainStore.sortOrder === 'asc'" class="check-icon"/>
@@ -398,7 +402,7 @@
 </template>
 
 <script setup>
-import {onMounted} from 'vue';
+import {onMounted, computed} from 'vue';
 import { useSettingsStore } from '@/stores/settingsStore.js';
 import {
   AlignRightOutlined,
@@ -426,6 +430,11 @@ import { useMainStore } from "@/stores/mainStore.js";
 
 const mainStore = useMainStore();
 const settings = useSettingsStore();
+
+// 判断是否有搜索关键词
+const hasSearchKey = computed(() => {
+  return mainStore.search && mainStore.search.trim() !== '';
+});
 
 // 采用vue-i18n组件获取选中语言的文本
 const {t: $t} = useI18n();

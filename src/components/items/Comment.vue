@@ -60,7 +60,7 @@
                 :emitMetadata="giscusConfig.emitMetadata"
                 :inputPosition="giscusConfig.inputPosition"
                 :theme="themePath"
-                :lang="localeToUse[locale] || 'zh-CN'"
+                :lang="currentLang"
                 :loading="giscusConfig.loading"
                 ref="giscusRef"/>
       </div>
@@ -69,7 +69,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch, nextTick } from 'vue';
 import { useI18n } from "vue-i18n";
 import { Modal as AModal } from "ant-design-vue";
 import { useMainStore } from "@/stores/mainStore.js";
@@ -102,8 +102,11 @@ const localeToUse = {
 }
 
 // 主题配置
-const theme = settings.selectedThemeName;
-const themePath = `https://giscus.app/themes/${theme}.css`;
+const theme = computed(() => settings.selectedThemeName);
+const themePath = computed(() => `https://giscus.app/themes/${theme.value}.css`);
+
+// 当前语言
+const currentLang = computed(() => localeToUse[locale.value] || 'zh-CN');
 
 // Giscus配置
 const giscusConfig = {
@@ -116,14 +119,51 @@ const giscusConfig = {
   reactionsEnabled: '1',
   emitMetadata: '0',
   inputPosition: 'top',
-  theme: themePath,
-  lang: localeToUse[locale.value]
+  theme: themePath.value,
+  lang: currentLang.value
 };
 
 // 计算 giscus term，用于区分不同脚本的评论
 const giscusTerm = computed(() => {
   if (!selectedScript.value) return 'default';
   return selectedScript.value.path || selectedScript.value.title || 'default';
+});
+
+// 动态更新 giscus 配置的函数
+const updateGiscusConfig = async (config) => {
+  if (!giscusRef.value) return;
+  
+  try {
+    // 等待下一个 tick 确保 giscus 组件已加载
+    await nextTick();
+    
+    // 使用 sendMessage 动态更新配置
+    if (giscusRef.value.sendMessage) {
+      giscusRef.value.sendMessage({
+        setConfig: config
+      });
+    }
+  } catch (error) {
+    console.warn('Failed to update giscus config:', error);
+  }
+};
+
+// 监听主题变化
+watch(themePath, (newTheme) => {
+  if (mainStore.showCommentModal && !mainStore.isModeSingle) {
+    updateGiscusConfig({
+      theme: newTheme
+    });
+  }
+});
+
+// 监听语言变化
+watch(currentLang, (newLang) => {
+  if (mainStore.showCommentModal && !mainStore.isModeSingle) {
+    updateGiscusConfig({
+      lang: newLang
+    });
+  }
 });
 </script>
 

@@ -39,39 +39,24 @@ export const useListStore = defineStore('listStore', () => {
     const filterBySearchKey = (items, searchKey) => {
         if (!searchKey) return items
         
-        const keyword = normalize(searchKey.trim())
-        
-        // 完全匹配优先
-        const exactMatches = items.filter(item => {
-            const title = normalize(item.title || item.name1 || item.name || '')
-            const name1 = normalize(item.name1 || '')
-            const name2 = normalize(item.name2 || '')
-            const authors = (item.authors || []).map(a => normalize(a.name))
-            
-            return title === keyword ||
-                   name1 === keyword ||
-                   name2 === keyword ||
-                   authors.some(author => author === keyword)
-        })
-        
-        if (exactMatches.length > 0) return exactMatches
+        const keyword = normalize(String(searchKey).trim())
         
         // 相关性分数排序
         const scored = items.map(item => {
             let score = 0
-            const title = normalize(item.title || item.name1 || item.name || '')
+            const name = normalize(item.name || '')
             const name1 = normalize(item.name1 || '')
             const name2 = normalize(item.name2 || '')
             const desc = normalize(item.desc || '')
             const authors = (item.authors || []).map(a => normalize(a.name))
             const tags = (item.tags || []).map(tag => normalize(tag))
-            
-            if (title.includes(keyword)) score += 3
-            if (name1.includes(keyword)) score += 3
-            if (name2.includes(keyword)) score += 3
-            if (authors.some(author => author.includes(keyword))) score += 2
-            if (tags.some(tag => tag.includes(keyword))) score += 2
-            if (desc.includes(keyword)) score += 1
+
+            if (name.includes(keyword)) score += 8
+            if (name1.includes(keyword)) score += 8
+            if (name2.includes(keyword)) score += 8
+            if (authors.some(author => author.includes(keyword))) score += 4
+            if (tags.some(tag => tag.includes(keyword))) score += 3
+            if (desc.includes(keyword)) score += 2
             
             return { ...item, _score: score }
         }).filter(item => item._score > 0)
@@ -132,7 +117,11 @@ export const useListStore = defineStore('listStore', () => {
         let processedItems = [...items]
         
         // 应用搜索过滤
-        processedItems = filterBySearchKey(processedItems, searchKey)
+        const hasSearchKey = searchKey && String(searchKey).trim()
+        if (hasSearchKey) {
+            // 有搜索关键词时，按相关性排序
+            processedItems = filterBySearchKey(processedItems, searchKey)
+        }
         
         // 应用订阅过滤
         processedItems = filterSubscribedItems(processedItems, showSubscribedOnly)
@@ -143,7 +132,12 @@ export const useListStore = defineStore('listStore', () => {
         }
         
         // 应用排序
-        processedItems = sortItems(processedItems, sortType, sortOrder)
+        if (sortType === 'relevance' && hasSearchKey) {
+
+        } else {
+            // 其他排序类型：应用用户选择的排序
+            processedItems = sortItems(processedItems, sortType, sortOrder)
+        }
         
         return processedItems
     }

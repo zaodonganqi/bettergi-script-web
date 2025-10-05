@@ -255,6 +255,7 @@
   "sort": {
     "sortBy": "並び順",
     "sortOrder": "ソート順序",
+    "relevance": "関連性",
     "random": "ランダム",
     "time": "時間",
     "name": "名前",

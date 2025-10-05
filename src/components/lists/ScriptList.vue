@@ -92,7 +92,6 @@ const scripts = computed(() => {
   return getJsScriptsFromRepo(mainStore.repoData, mainStore.subscribedScriptPaths).map((item, idx) => ({
     id: idx + 1,
     title: item.title,
-    name: item.name,
     name1: item.name1,
     name2: item.name2,
     authors: item.authors || [],
