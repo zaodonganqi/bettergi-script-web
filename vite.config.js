@@ -11,7 +11,7 @@ export default defineConfig({
         viteSingleFile(),
         inlineFavicon()
     ],
-    base: process.env.NODE_ENV === 'production' ? '/bettergi-script-web-new/' : '/bettergi-script-web-new/',
+    base: process.env.NODE_ENV === 'production' ? '/bettergi-script-web/' : '/bettergi-script-web/',
     resolve: {
         alias: {
             '@': fileURLToPath(new URL('./src', import.meta.url))
