@@ -94,9 +94,8 @@ const giscusKey = ref(0);
 // 语言映射
 const localeToUse = {
   'zh-CN': 'zh-CN',
-  'en-US': 'en-',
+  'en-US': 'en',
   'fr-FR': 'fr',
-  'de-DE': 'de',
   'ja-JP': 'ja',
   'zh-TW': 'zh-TW',
 }
