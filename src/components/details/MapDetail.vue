@@ -252,13 +252,13 @@ const onPageChange = (page) => {
   currentPage.value = page;
 };
 
-const onPageSizeChange = (size) => {
+const onPageSizeChange = (current, size) => {
   pageSize.value = size;
   currentPage.value = 1;
 };
 
 // 表格筛选/排序
-const onTableChange = (filters, sorter) => {
+const onTableChange = (pagination, filters, sorter) => {
   // 筛选
   columnFilters.value = {
     authors: (filters && (filters.authors || filters['authors'])) || [],
