@@ -418,12 +418,10 @@ export const useMainStore = defineStore('mainStore', () => {
         // 开始搜索时，切换到相关性排序
         if (value && value.trim()) {
             sortType.value = 'relevance';
-            saveSortForMenu(selectedMenu.value[0]);
         }
-        // 清空搜索时，恢复到时间排序
+        // 清空搜索时，应用回之前的排序方式
         else if (!value) {
-            sortType.value = 'time';
-            saveSortForMenu(selectedMenu.value[0]);
+            applySortForMenu(selectedMenu.value[0]);
         }
     };
 
@@ -452,11 +450,17 @@ export const useMainStore = defineStore('mainStore', () => {
     const handleSortMenuClick = ({key}) => {
         if ([ 'relevance', 'time','random', 'name' ].includes(key)) {
             sortType.value = key;
+            // 名称排序默认使用正序
+            if (key === 'name') {
+                sortOrder.value = 'asc';
+            }
         } else if (['asc', 'desc'].includes(key)) {
             sortOrder.value = key;
         }
         // 保存当前菜单的排序状态
-        saveSortForMenu(selectedMenu.value[0]);
+        if (!search.value) {
+            saveSortForMenu(selectedMenu.value[0]);
+        }
     };
 
     // 保存不同菜单下排序选项状态
