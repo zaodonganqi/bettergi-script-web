@@ -453,6 +453,8 @@ export const useMainStore = defineStore('mainStore', () => {
             // 名称排序默认使用正序
             if (key === 'name') {
                 sortOrder.value = 'asc';
+            } else if (key === 'time') {
+                sortOrder.value = 'desc';
             }
         } else if (['asc', 'desc'].includes(key)) {
             sortOrder.value = key;
