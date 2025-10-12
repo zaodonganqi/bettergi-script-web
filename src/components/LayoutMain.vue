@@ -441,7 +441,12 @@ const isResizing = ref(false);
 // 宽度限制常量
 const SCRIPT_MIN_WIDTH = 250;
 const SCRIPT_MAX_WIDTH = 700;
-const TWO_COLUMN_THRESHOLD = 500; // 两列布局阈值
+
+// 动态计算两列布局阈值
+const getTwoColumnThreshold = () => {
+  const windowWidth = window.innerWidth;
+  return Math.max(windowWidth * 0.20, 400);
+};
 
 // 缓存键名
 const SCRIPT_WIDTH_CACHE_KEY = 'script-slider-width';
@@ -483,7 +488,7 @@ const initLayoutWidths = () => {
   scriptSliderWidth.value = newWidth;
   
   // 初始化时设置两列布局状态判断
-  mainStore.isListTwoColumn = newWidth >= TWO_COLUMN_THRESHOLD;
+  mainStore.isListTwoColumn = newWidth >= getTwoColumnThreshold();
 };
 
 // 拖动处理（第二栏和第三栏之间）
@@ -502,7 +507,7 @@ const handleResize = (e) => {
   scriptSliderWidth.value = newWidth;
   
   // 更新 mainStore 中的两列布局状态
-  mainStore.isListTwoColumn = newWidth >= TWO_COLUMN_THRESHOLD;
+  mainStore.isListTwoColumn = newWidth >= getTwoColumnThreshold();
   
   // 保存宽度到缓存
   saveWidthToCache(newWidth);
@@ -727,8 +732,6 @@ function onLocaleChange(val) {
 }
 
 .script-slider {
-  min-width: 200px !important;
-  max-width: 600px !important;
   border-right: 1px solid var(--border-base);
   background: var(--bg-menu);
   height: 100%;
