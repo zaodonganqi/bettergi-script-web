@@ -43,6 +43,9 @@ export const useMainStore = defineStore('mainStore', () => {
     
     // 评论弹窗显示状态
     const showCommentModal = ref(false);
+    
+    // 列表两列布局状态
+    const isListTwoColumn = ref(false);
 
     // 获取仓库json文件并解构
     async function getRepoJson() {
@@ -627,6 +630,7 @@ export const useMainStore = defineStore('mainStore', () => {
         updatedScripts,
         showUpdateSubscribeModal,
         selectedScript,
+        isListTwoColumn,
         getRepoJson,
         updateSubscribedScripts,
         updateScriptHasUpdate,

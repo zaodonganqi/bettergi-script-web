@@ -52,7 +52,7 @@
     </div>
 
     <!-- 中间内容区域 -->
-    <a-layout-sider class="script-sider">
+    <div class="script-slider" :style="{ width: scriptSliderWidth + 'px' }">
       <div class="script-header">
         <span class="script-title">{{ mainStore.currentMenuTitle }}</span>
         <div v-if="mainStore.isModeSingle" class="script-actions">
@@ -163,10 +163,13 @@
       <div v-else-if="mainStore.selectedMenu[0] === '4'" class="script-list">
         <CardStrategyList/>
       </div>
-    </a-layout-sider>
+    </div>
+
+    <!-- 拖动分隔条 -->
+    <div class="resize-handle" @mousedown="startResize"></div>
 
     <!-- 右侧内容区域 -->
-    <a-layout>
+    <a-layout class="main-right">
       <!-- 顶部操作栏 -->
       <div class="detail-top-bar">
         <div class="top-bar-left">
@@ -199,13 +202,13 @@
           </a-tooltip>
         </div>
       </div>
-      <div v-if="mainStore.selectedMenu[0] === '1'" class="main-right">
+      <div v-if="mainStore.selectedMenu[0] === '1'" class="main-right-container">
         <MapDetail/>
       </div>
-      <div v-else-if="mainStore.selectedMenu[0] === '2'" class="main-right">
+      <div v-else-if="mainStore.selectedMenu[0] === '2'" class="main-right-container">
         <ScriptDetail/>
       </div>
-      <div v-else-if="mainStore.selectedMenu[0] === '3' || mainStore.selectedMenu[0] === '4'" class="main-right">
+      <div v-else-if="mainStore.selectedMenu[0] === '3' || mainStore.selectedMenu[0] === '4'" class="main-right-container">
         <StrategyDetail/>
       </div>
     </a-layout>
@@ -402,13 +405,13 @@
 </template>
 
 <script setup>
-import {onMounted, computed} from 'vue';
-import { useSettingsStore } from '@/stores/settingsStore.js';
+import {computed, onMounted, onUnmounted, ref} from 'vue';
+import {useSettingsStore} from '@/stores/settingsStore.js';
 import {
   AlignRightOutlined,
   CheckOutlined,
-  EditOutlined,
   CloudDownloadOutlined,
+  EditOutlined,
   FieldTimeOutlined,
   QuestionCircleOutlined,
   ReloadOutlined,
@@ -426,10 +429,112 @@ import ReadmeViewer from './items/ReadmeViewer.vue';
 import Help from './items/Help.vue';
 import {useI18n} from 'vue-i18n';
 import Plan from "./items/Plan.vue";
-import { useMainStore } from "@/stores/mainStore.js";
+import {useMainStore} from "@/stores/mainStore.js";
 
 const mainStore = useMainStore();
 const settings = useSettingsStore();
+
+// 布局宽度管理
+const scriptSliderWidth = ref(0);
+const isResizing = ref(false);
+
+// 宽度限制常量
+const SCRIPT_MIN_WIDTH = 250;
+const SCRIPT_MAX_WIDTH = 700;
+const TWO_COLUMN_THRESHOLD = 500; // 两列布局阈值
+
+// 缓存键名
+const SCRIPT_WIDTH_CACHE_KEY = 'script-slider-width';
+
+// 保存宽度到缓存
+const saveWidthToCache = (width) => {
+  localStorage.setItem(SCRIPT_WIDTH_CACHE_KEY, width.toString());
+};
+
+// 从缓存读取宽度
+const getWidthFromCache = () => {
+  const cachedWidth = localStorage.getItem(SCRIPT_WIDTH_CACHE_KEY);
+  if (cachedWidth) {
+    const width = parseInt(cachedWidth, 10);
+    // 验证宽度是否在有效范围内
+    if (width >= SCRIPT_MIN_WIDTH && width <= SCRIPT_MAX_WIDTH) {
+      return width;
+    }
+  }
+  return null;
+};
+
+// 初始化布局宽度
+const initLayoutWidths = () => {
+  // 优先使用缓存的宽度
+  const cachedWidth = getWidthFromCache();
+  let newWidth;
+  
+  if (cachedWidth) {
+    // 使用缓存的宽度
+    newWidth = cachedWidth;
+  } else {
+    // 使用默认宽度
+    const windowWidth = window.innerWidth;
+    const defaultScriptWidth = Math.min(windowWidth * 0.23, 500);
+    newWidth = Math.min(Math.max(defaultScriptWidth, SCRIPT_MIN_WIDTH), SCRIPT_MAX_WIDTH);
+  }
+  
+  scriptSliderWidth.value = newWidth;
+  
+  // 初始化时设置两列布局状态判断
+  mainStore.isListTwoColumn = newWidth >= TWO_COLUMN_THRESHOLD;
+};
+
+// 拖动处理（第二栏和第三栏之间）
+const handleResize = (e) => {
+  if (!isResizing.value) return;
+
+  const windowWidth = window.innerWidth;
+  const leftSliderWidth = Math.min(windowWidth * 0.18, 300);
+  const mouseX = e.clientX;
+  
+  // 计算第二栏的右边界位置
+  const scriptRightBoundary = leftSliderWidth + 3;
+
+  // 设置最终宽度
+  const newWidth = Math.min(Math.max(mouseX - scriptRightBoundary, SCRIPT_MIN_WIDTH), SCRIPT_MAX_WIDTH);
+  scriptSliderWidth.value = newWidth;
+  
+  // 更新 mainStore 中的两列布局状态
+  mainStore.isListTwoColumn = newWidth >= TWO_COLUMN_THRESHOLD;
+  
+  // 保存宽度到缓存
+  saveWidthToCache(newWidth);
+};
+
+
+// 拖动开始（第二栏和第三栏之间）
+const startResize = (e) => {
+  isResizing.value = true;
+  document.addEventListener('mousemove', handleResize);
+  document.addEventListener('mouseup', stopResize);
+  document.body.style.cursor = 'col-resize';
+  document.body.style.userSelect = 'none';
+  e.preventDefault();
+};
+
+// 拖动结束（第二栏和第三栏之间）
+const stopResize = () => {
+  isResizing.value = false;
+  document.removeEventListener('mousemove', handleResize);
+  document.removeEventListener('mouseup', stopResize);
+  document.body.style.cursor = '';
+  document.body.style.userSelect = '';
+};
+
+
+// 窗口大小变化处理
+const handleWindowResize = () => {
+  if (!isResizing.value) {
+    initLayoutWidths();
+  }
+};
 
 // 判断是否有搜索关键词
 const hasSearchKey = computed(() => {
@@ -446,6 +551,21 @@ onMounted(() => {
     mainStore.applySortForMenu(mainStore.selectedMenu[0]);
   }
   mainStore.selectedRoleTags = [...mainStore.appliedRoleTags];
+  
+  // 初始化布局宽度
+  initLayoutWidths();
+  
+  // 监听窗口大小变化
+  window.addEventListener('resize', handleWindowResize);
+});
+
+// 组件卸载时清理事件监听器
+onUnmounted(() => {
+  window.removeEventListener('resize', handleWindowResize);
+  if (isResizing.value) {
+    document.removeEventListener('mousemove', handleResize);
+    document.removeEventListener('mouseup', stopResize);
+  }
 });
 
 // 选择语言切换
@@ -606,17 +726,14 @@ function onLocaleChange(val) {
   font-size: 15px;
 }
 
-.script-sider {
-  width: 23% !important;
-  min-width: 23% !important;
-  max-width: 23% !important;
+.script-slider {
+  min-width: 200px !important;
+  max-width: 600px !important;
   border-right: 1px solid var(--border-base);
+  background: var(--bg-menu);
   height: 100%;
   position: relative;
-}
-
-:deep(.ant-layout-sider) {
-  background: var(--bg-menu);
+  flex-shrink: 0;
 }
 
 .script-header {
@@ -774,8 +891,17 @@ function onLocaleChange(val) {
 .main-right {
   flex: 1;
   height: 100%;
-  padding: 0;
-  overflow-y: auto;
+}
+
+:deep(.main-right.ant-layout) {
+  background: var(--bg-container);
+  display: flex;
+  flex-direction: column;
+}
+
+.main-right-container {
+  flex: 1;
+  height: 100%;
   overflow-x: hidden;
   display: flex;
   flex-direction: column;
@@ -1075,6 +1201,25 @@ function onLocaleChange(val) {
 .safety-text {
   color: var(--text-base);
   font-size: 14px;
+}
+
+.resize-handle {
+  width: 3px;
+  height: 100%;
+  background: transparent;
+  cursor: col-resize;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.resize-handle:hover {
+  background: var(--color-primary);
+  opacity: 0.3;
+}
+
+.resize-handle:active {
+  background: var(--color-primary);
+  opacity: 0.3;
 }
 </style>
 

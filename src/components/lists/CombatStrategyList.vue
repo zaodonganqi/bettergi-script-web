@@ -1,6 +1,9 @@
 <template>
   <div class="list-container">
-    <a-list :data-source="filteredStrategies">
+    <a-list 
+      :data-source="filteredStrategies"
+      :grid="mainStore.isListTwoColumn ? { gutter: 10, column: 2 } : undefined"
+    >
       <template #renderItem="{ item }">
         <div :class="['script-item', { active: item.id === listStore.selectedId }]" @click="selectStrategy(item.id)">
           <div class="item-header">
