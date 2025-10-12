@@ -512,7 +512,6 @@ function normalize(str) {
   border-radius: 50%;
   margin-left: 6px;
   vertical-align: middle;
-  position: relative;
-  top: -1px;
+  align-self: center;
 }
 </style>
