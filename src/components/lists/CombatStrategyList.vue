@@ -136,6 +136,7 @@ const filteredStrategies = computed(() => {
   width: 100%;
   max-height: 100%;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .script-item {
