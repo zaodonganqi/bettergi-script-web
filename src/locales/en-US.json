@@ -58,18 +58,18 @@
     "planList": [
       {
         "desc": "Theme Color Support",
-        "content": "The color configuration currently used in the project is still fragmented. We plan to consolidate the colors to support overall theme color configuration. Pending solutions include dark mode and translucent mode (to support custom background display)."
+        "content": "More theme colors (very simple, hoping developers who are willing to help will create theme colors) and dedicated management popups, supporting translucent themes and custom themes (storing theme color configuration json through repository js form and obtaining, local cache storing current usage), supporting custom background images under translucent mode."
       },
       {
         "desc": "Enhance One-Click Subscription",
         "content": "Find scripts you have already subscribed to among the updated scripts to filter those that can be updated with one click. Of course, blindly updating all of them isn't very slow right now anyway."
       },
       {
-        "desc": "Add Internal Tutorial Documentation",
-        "content": "Add a repository usage tutorial on the toolbar for computer novices, except for those who can't read words."
+        "desc": "Add Internal Tutorial Documentation (Resolved, can be viewed in official documentation)",
+        "content": "Add repository usage tutorial on the toolbar for computer novices."
       },
       {
-        "desc": "Draggable Content Areas",
+        "desc": "Draggable Content Areas (Resolved, try dragging the sidebar)",
         "content": "Modify views like lists to be resizable by dragging rather than fixed values, and save the data locally (consider adding a configuration file in the main body if caching is unreliable)."
       },
       {
@@ -244,6 +244,7 @@
     "theme": "Set Theme",
     "light": "Light",
     "dark": "Dark",
+    "egg": "Don't click this!",
     "eggSafetyTitle": "Safety Notice",
     "eggSafetyDesc": "Warning: The upcoming easter-egg effect contains rapid flashing, strong contrast, and highly saturated dynamic colors that may trigger photosensitive epilepsy or cause discomfort. If you or someone around you has a history of photosensitive epilepsy, is sensitive to flicker/strong light, or is fatigued or alcohol-impaired, please cancel and avoid viewing.",
     "eggSafetyOk": "I understand, continue",

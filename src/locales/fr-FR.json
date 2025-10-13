@@ -58,18 +58,18 @@
     "planList": [
       {
         "desc": "Support des Couleurs de Thème",
-        "content": "La configuration des couleurs actuellement utilisée dans le projet est encore fragmentée. Nous prévoyons de consolider les couleurs pour prendre en charge une configuration globale des couleurs de thème. Les solutions en attente incluent le mode sombre et le mode translucide (pour prendre en charge l'affichage d'arrière-plan personnalisé)."
+        "content": "Plus de couleurs de thème (très simple, en espérant que les développeurs qui veulent aider créeront des couleurs de thème) et des popups de gestion dédiés, supportant les thèmes translucides et les thèmes personnalisés (stockage de la configuration des couleurs de thème json via le formulaire js du dépôt et obtention, cache local stockant l'utilisation actuelle), supportant les images d'arrière-plan personnalisées en mode translucide."
       },
       {
         "desc": "Renforcer l'Abonnement en un Clic",
         "content": "Trouvez les scripts que vous avez déjà abonnés parmi les scripts mis à jour pour filtrer ceux qui peuvent être mis à jour en un clic. Bien sûr, mettre à jour tous les scripts aveuglément n'est pas très lent de toute façon."
       },
       {
-        "desc": "Ajouter une Documentation de Tutoriel Interne",
-        "content": "Ajoutez un tutoriel d'utilisation du dépôt dans la barre d'outils pour les novices en informatique, sauf pour ceux qui ne savent pas lire."
+        "desc": "Ajouter une Documentation de Tutoriel Interne (Résolu, peut être consulté dans la documentation officielle)",
+        "content": "Ajoutez un tutoriel d'utilisation du dépôt dans la barre d'outils pour les novices en informatique."
       },
       {
-        "desc": "Zones de Contenu Déplaçables",
+        "desc": "Zones de Contenu Déplaçables (Résolu, essayez de faire glisser la barre latérale)",
         "content": "Modifiez les vues comme les listes pour qu'elles soient redimensionnables par glisser-déposer plutôt que fixes, et enregistrez les données localement (envisagez d'ajouter un fichier de configuration dans le corps principal si la mise en cache n'est pas fiable)."
       },
       {
@@ -244,6 +244,11 @@
     "theme": "Définir le Thème",
     "light": "Clair",
     "dark": "Sombre",
+    "egg": "Ne cliquez surtout pas !",
+    "eggSafetyTitle": "Avis de Sécurité",
+    "eggSafetyDesc": "Attention : L'effet easter-egg à venir contient des clignotements rapides, des contrastes forts et des couleurs dynamiques très saturées qui peuvent déclencher une épilepsie photosensible ou causer de l'inconfort. Si vous ou quelqu'un autour de vous avez des antécédents d'épilepsie photosensible, êtes sensibles au clignotement/lumière forte, ou êtes fatigués ou sous l'influence de l'alcool, veuillez annuler et éviter de regarder.",
+    "eggSafetyOk": "Je comprends, continuer",
+    "eggSafetyCancel": "Annuler",
     "clearUpdate": "Effacer les Notifications de Mise à Jour",
     "clearUpdateBtn": "Effacer",
     "clearUpdateSuccess": "Notifications de mise à jour effacées avec succès",
