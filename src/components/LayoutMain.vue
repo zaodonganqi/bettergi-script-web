@@ -913,6 +913,7 @@ function onLocaleChange(val) {
 .detail-top-bar {
   height: 60px;
   border-bottom: 1px solid var(--border-base);
+  background-color: var(--bg-menu);
   display: flex;
   justify-content: space-between;
   align-items: center;
