@@ -97,10 +97,6 @@ export const useSettingsStore = defineStore('settings', () => {
 	// 清除更新提示红点
 	const clearUpdateLoading = ref(false);
 
-	function setClearUpdateLoading() {
-		clearUpdateLoading.value = !clearUpdateLoading.value;
-	}
-
 	// 清除更新提示
 	const handleClearUpdate = async (mainStore) => {
 		const isModeSingle = import.meta.env.VITE_MODE === 'single';
@@ -115,7 +111,7 @@ export const useSettingsStore = defineStore('settings', () => {
 				// 清除成功，更新所有脚本的hasUpdate状态
 				updateAllScriptsHasUpdate(mainStore, false);
 				// 显示成功消息
-				Message.success($t('settings.clearUpdateSuccess'));
+				Message.success($t('settings.clearUpdateSuccess'), 2);
 			} else {
 				// 清除失败
 				Message.error($t('settings.clearUpdateFailed'));
@@ -178,7 +174,6 @@ export const useSettingsStore = defineStore('settings', () => {
 		showUpdateMessageModal,
 		// 清除更新提示
 		clearUpdateLoading,
-		setClearUpdateLoading,
 		handleClearUpdate,
 		updateAllScriptsHasUpdate,
 	}
