@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { useMainStore } from './mainStore.js'
+import { mapTagsToCanonical } from '@/utils/roleAlias.js'
 
 export const useListStore = defineStore('listStore', () => {
     const mainStore = useMainStore()
@@ -99,7 +100,7 @@ export const useListStore = defineStore('listStore', () => {
         if (!roleTags || roleTags.length === 0) return items
         
         return items.filter(item => {
-            const itemTags = item.tags || []
+            const itemTags = mapTagsToCanonical(item.tags || [])
             return roleTags.some(tag => itemTags.includes(tag))
         })
     }
