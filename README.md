@@ -1,6 +1,6 @@
 # 🎮 BGI-BSW 脚本仓库
 
-> **BetterGI ScriptsList Web** - BetterGI脚本仓库Web界面
+> **BetterGI Script Web** - BetterGI脚本仓库Web界面
 
 [![Vue](https://img.shields.io/badge/Vue-3.4.0-4FC08D?style=flat-square&logo=vue.js)](https://vuejs.org/)
 [![Vite](https://img.shields.io/badge/Vite-5.0.0-646CFF?style=flat-square&logo=vite)](https://vitejs.dev/)
