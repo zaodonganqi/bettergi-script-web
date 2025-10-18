@@ -47,7 +47,7 @@ const isHttpUrl = computed(() => {
 
 const md = new MarkdownIt({
   html: true,
-  linkify: true,
+  linkify: false,
   typographer: true,
   highlight: function (str, lang) {
     if (lang && hljs.getLanguage(lang)) {
