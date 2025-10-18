@@ -593,11 +593,13 @@ function onLocaleChange(val) {
 .custom-sider {
   width: 18% !important;
   max-width: 300px !important;
+  min-width: 250px !important;
   border-right: 1px solid var(--border-base);
   display: flex;
   flex-direction: column;
   padding: 0;
   height: 100%;
+  flex-shrink: 0;
 }
 
 .sider-header {
@@ -894,6 +896,8 @@ function onLocaleChange(val) {
 .main-right {
   flex: 1;
   height: 100%;
+  min-width: 0;
+  overflow: hidden;
 }
 
 :deep(.main-right.ant-layout) {
@@ -905,9 +909,10 @@ function onLocaleChange(val) {
 .main-right-container {
   flex: 1;
   height: 100%;
-  overflow-x: hidden;
+  overflow-x: auto;
   display: flex;
   flex-direction: column;
+  min-width: 0;
 }
 
 .detail-top-bar {
