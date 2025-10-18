@@ -133,14 +133,11 @@
                       <span class="role-filter-label">{{ tag }}</span>
                     </a-checkbox>
                   </div>
-                  <div class="role-filter-footer">
-                    <a-button size="middle" class="role-filter-btn" @click="mainStore.resetRoleFilter">
-                      {{ $t('common.reset') }}
-                    </a-button>
-                    <a-button size="middle" type="primary" class="role-filter-btn-primary" @click="mainStore.confirmRoleFilter">
-                      {{ $t('common.confirm') }}
-                    </a-button>
-                  </div>
+                   <div class="role-filter-footer">
+                     <a-button size="middle" type="primary" class="role-filter-btn-primary" @click="mainStore.resetRoleFilter">
+                       {{ $t('common.reset') }}
+                     </a-button>
+                   </div>
                 </div>
               </a-sub-menu>
             </a-menu>

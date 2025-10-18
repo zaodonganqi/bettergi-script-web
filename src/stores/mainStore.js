@@ -501,11 +501,6 @@ export const useMainStore = defineStore('mainStore', () => {
         appliedRoleTags.value = [];
     }
 
-    // 点击确定后关闭二级菜单（战斗策略）
-    function confirmRoleFilter() {
-        appliedRoleTags.value = [...selectedRoleTags.value];
-        sortDropdownOpen.value = false;
-    }
 
     // 切换目录后更换排序选项
     function applySortForMenu(menuKey) {
@@ -664,7 +659,6 @@ export const useMainStore = defineStore('mainStore', () => {
         handleSortMenuClick,
         onRoleCheckboxChange,
         resetRoleFilter,
-        confirmRoleFilter,
         applySortForMenu,
         // 帮助弹窗
         showHelpModal,
