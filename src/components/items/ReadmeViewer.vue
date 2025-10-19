@@ -297,105 +297,119 @@ const fetchAndRenderReadme = async (path) => {
     const basePath = path.replace(/\\/g, '/') + '/';
     const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
 
-    // 处理markdown图片语法 ![alt](path)
+    // 收集所有需要处理的资源路径及其替换信息
+    const resourceMap = new Map(); // key: 原始路径, value: {base64: string, replacements: Array}
+
+    // 提取markdown图片语法 ![alt](path)
     const imgMatches = markdown.matchAll(/!\[([^\]]*)\]\(([^)]+)\)/gi);
     for (const match of imgMatches) {
       const [fullMatch, alt, imgPath] = match;
-      let cleanPath = imgPath.trim().replace(/\\/g, '/');
-      // 检查是否为完整的HTTP/HTTPS链接或data URL
+      const cleanPath = imgPath.trim().replace(/\\/g, '/');
       const isHttpUrl = /^https?:\/\/[\S]+$/i.test(cleanPath);
       const isDataUrl = cleanPath.startsWith('data:');
 
       if (!isHttpUrl && !isDataUrl) {
-        try {
-          const imgBase64 = await repoWebBridge.GetFile(basePath + cleanPath);
-          if (imgBase64 && imgBase64 !== '404') {
-            markdown = markdown.replace(fullMatch, `![${alt}](${imgBase64})`);
-          }
-        } catch (e) {
-          console.error('Failed to load image:', cleanPath, e);
+        if (!resourceMap.has(cleanPath)) {
+          resourceMap.set(cleanPath, { base64: null, replacements: [] });
         }
+        resourceMap.get(cleanPath).replacements.push({
+          fullMatch,
+          replacement: (base64) => `![${alt}](${base64})`
+        });
       }
     }
 
-    // 处理HTML img标签
+    // 提取HTML img标签
     const htmlImgMatches = markdown.matchAll(/<img\s+[^>]*src=["']([^"']+)["'][^>]*>/gi);
     for (const match of htmlImgMatches) {
       const [fullMatch, imgPath] = match;
-      let cleanPath = imgPath.trim().replace(/\\/g, '/');
-      // 检查是否为完整的HTTP/HTTPS链接或data URL
+      const cleanPath = imgPath.trim().replace(/\\/g, '/');
       const isHttpUrl = /^https?:\/\/[\S]+$/i.test(cleanPath);
       const isDataUrl = cleanPath.startsWith('data:');
 
       if (!isHttpUrl && !isDataUrl) {
-        try {
-          const imgBase64 = await repoWebBridge.GetFile(basePath + cleanPath);
-          if (imgBase64 && imgBase64 !== '404') {
-            markdown = markdown.replace(fullMatch, fullMatch.replace(imgPath, imgBase64));
-          }
-        } catch (e) {
-          console.error('Failed to load image:', cleanPath, e);
+        if (!resourceMap.has(cleanPath)) {
+          resourceMap.set(cleanPath, { base64: null, replacements: [] });
         }
+        resourceMap.get(cleanPath).replacements.push({
+          fullMatch,
+          replacement: (base64) => fullMatch.replace(imgPath, base64)
+        });
       }
     }
 
-    // 处理代码块中的图片路径 `image.png`
+    // 提取代码块中的图片路径 `image.png`
     const codeImgMatches = markdown.matchAll(/`([^`\n]+\.(?:png|jpg|jpeg|gif|webp|svg))`/gi);
     for (const match of codeImgMatches) {
       const [fullMatch, imgPath] = match;
-      let cleanPath = imgPath.trim().replace(/\\/g, '/');
-      // 检查是否为完整的HTTP/HTTPS链接
+      const cleanPath = imgPath.trim().replace(/\\/g, '/');
       const isHttpUrl = /^https?:\/\/[\S]+$/i.test(cleanPath);
 
       if (!isHttpUrl) {
-        try {
-          const imgBase64 = await repoWebBridge.GetFile(basePath + cleanPath);
-          if (imgBase64 && imgBase64 !== '404') {
-            markdown = markdown.replace(fullMatch, `![](${imgBase64})`);
-          }
-        } catch (e) {
-          console.error('Failed to load image:', cleanPath, e);
+        if (!resourceMap.has(cleanPath)) {
+          resourceMap.set(cleanPath, { base64: null, replacements: [] });
         }
+        resourceMap.get(cleanPath).replacements.push({
+          fullMatch,
+          replacement: (base64) => `![](${base64})`
+        });
       }
     }
 
-    // 处理代码块中的图片路径 ```image.png```
+    // 提取代码块中的图片路径 ```image.png```
     const blockImgMatches = markdown.matchAll(/```\s*([^`\n]+\.(?:png|jpg|jpeg|gif|webp|svg))\s*```/gi);
     for (const match of blockImgMatches) {
       const [fullMatch, imgPath] = match;
-      let cleanPath = imgPath.trim().replace(/\\/g, '/');
-      // 检查是否为完整的HTTP/HTTPS链接
+      const cleanPath = imgPath.trim().replace(/\\/g, '/');
       const isHttpUrl = /^https?:\/\/[\S]+$/i.test(cleanPath);
 
       if (!isHttpUrl) {
-        try {
-          const imgBase64 = await repoWebBridge.GetFile(basePath + cleanPath);
-          if (imgBase64 && imgBase64 !== '404') {
-            markdown = markdown.replace(fullMatch, `![](${imgBase64})`);
-          }
-        } catch (e) {
-          console.error('Failed to load image:', cleanPath, e);
+        if (!resourceMap.has(cleanPath)) {
+          resourceMap.set(cleanPath, { base64: null, replacements: [] });
         }
+        resourceMap.get(cleanPath).replacements.push({
+          fullMatch,
+          replacement: (base64) => `![](${base64})`
+        });
       }
     }
 
-    // 处理HTML iframe标签
+    // 提取HTML iframe标签
     const iframeMatches = markdown.matchAll(/<iframe\s+[^>]*src=["']([^"']+)["'][^>]*>/gi);
     for (const match of iframeMatches) {
       const [fullMatch, iframePath] = match;
-      let cleanPath = iframePath.trim().replace(/\\/g, '/');
-      // 检查是否为完整的HTTP/HTTPS链接或data URL
+      const cleanPath = iframePath.trim().replace(/\\/g, '/');
       const isHttpUrl = /^https?:\/\/[\S]+$/i.test(cleanPath);
       const isDataUrl = cleanPath.startsWith('data:');
 
       if (!isHttpUrl && !isDataUrl) {
-        try {
-          const iframeBase64 = await repoWebBridge.GetFile(basePath + cleanPath);
-          if (iframeBase64 && iframeBase64 !== '404') {
-            markdown = markdown.replace(fullMatch, fullMatch.replace(iframePath, iframeBase64));
-          }
-        } catch (e) {
-          console.error('Failed to load iframe content:', cleanPath, e);
+        if (!resourceMap.has(cleanPath)) {
+          resourceMap.set(cleanPath, { base64: null, replacements: [] });
+        }
+        resourceMap.get(cleanPath).replacements.push({
+          fullMatch,
+          replacement: (base64) => fullMatch.replace(iframePath, base64)
+        });
+      }
+    }
+
+    // 统一获取所有资源的base64数据
+    for (const [resourcePath, resourceData] of resourceMap.entries()) {
+      try {
+        const base64Data = await repoWebBridge.GetFile(basePath + resourcePath);
+        if (base64Data && base64Data !== '404') {
+          resourceData.base64 = base64Data;
+        }
+      } catch (e) {
+        console.error('Failed to load resource:', resourcePath, e);
+      }
+    }
+
+    // 统一替换markdown内容
+    for (const [resourcePath, resourceData] of resourceMap.entries()) {
+      if (resourceData.base64) {
+        for (const { fullMatch, replacement } of resourceData.replacements) {
+          markdown = markdown.replace(fullMatch, replacement(resourceData.base64));
         }
       }
     }
