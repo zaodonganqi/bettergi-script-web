@@ -297,6 +297,22 @@ const fetchAndRenderReadme = async (path) => {
     const basePath = path.replace(/\\/g, '/') + '/';
     const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
 
+    // 定义替换函数工厂
+    const createMarkdownImgReplacement = (fullMatch, alt) => ({
+      fullMatch,
+      replacement: (base64) => `![${alt}](${base64})`
+    });
+
+    const createHtmlReplacement = (fullMatch, originalPath) => ({
+      fullMatch,
+      replacement: (base64) => fullMatch.replace(originalPath, base64)
+    });
+
+    const createSimpleImgReplacement = (fullMatch) => ({
+      fullMatch,
+      replacement: (base64) => `![](${base64})`
+    });
+
     // 收集所有需要处理的资源路径及其替换信息
     const resourceMap = new Map(); // key: 原始路径, value: {base64: string, replacements: Array}
 
@@ -312,10 +328,7 @@ const fetchAndRenderReadme = async (path) => {
         if (!resourceMap.has(cleanPath)) {
           resourceMap.set(cleanPath, { base64: null, replacements: [] });
         }
-        resourceMap.get(cleanPath).replacements.push({
-          fullMatch,
-          replacement: (base64) => `![${alt}](${base64})`
-        });
+        resourceMap.get(cleanPath).replacements.push(createMarkdownImgReplacement(fullMatch, alt));
       }
     }
 
@@ -331,10 +344,7 @@ const fetchAndRenderReadme = async (path) => {
         if (!resourceMap.has(cleanPath)) {
           resourceMap.set(cleanPath, { base64: null, replacements: [] });
         }
-        resourceMap.get(cleanPath).replacements.push({
-          fullMatch,
-          replacement: (base64) => fullMatch.replace(imgPath, base64)
-        });
+        resourceMap.get(cleanPath).replacements.push(createHtmlReplacement(fullMatch, imgPath));
       }
     }
 
@@ -349,10 +359,7 @@ const fetchAndRenderReadme = async (path) => {
         if (!resourceMap.has(cleanPath)) {
           resourceMap.set(cleanPath, { base64: null, replacements: [] });
         }
-        resourceMap.get(cleanPath).replacements.push({
-          fullMatch,
-          replacement: (base64) => `![](${base64})`
-        });
+        resourceMap.get(cleanPath).replacements.push(createSimpleImgReplacement(fullMatch));
       }
     }
 
@@ -367,10 +374,7 @@ const fetchAndRenderReadme = async (path) => {
         if (!resourceMap.has(cleanPath)) {
           resourceMap.set(cleanPath, { base64: null, replacements: [] });
         }
-        resourceMap.get(cleanPath).replacements.push({
-          fullMatch,
-          replacement: (base64) => `![](${base64})`
-        });
+        resourceMap.get(cleanPath).replacements.push(createSimpleImgReplacement(fullMatch));
       }
     }
 
@@ -386,10 +390,7 @@ const fetchAndRenderReadme = async (path) => {
         if (!resourceMap.has(cleanPath)) {
           resourceMap.set(cleanPath, { base64: null, replacements: [] });
         }
-        resourceMap.get(cleanPath).replacements.push({
-          fullMatch,
-          replacement: (base64) => fullMatch.replace(iframePath, base64)
-        });
+        resourceMap.get(cleanPath).replacements.push(createHtmlReplacement(fullMatch, iframePath));
       }
     }
 
