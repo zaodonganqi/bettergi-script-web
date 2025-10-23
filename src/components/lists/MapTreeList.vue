@@ -83,8 +83,53 @@ const handleSelect = async (selectedKeysList) => {
   const selectedNode = findNodeByKey(filteredTreeData.value, selectedKeysList[0]);
   if (!selectedNode) return;
 
+  // 如果有搜索关键词，需要过滤 files 和 authors
+  let nodeToSelect = selectedNode;
+  if (mainStore.search && mainStore.search.trim() && selectedNode.files && Array.isArray(selectedNode.files)) {
+    const keyword = mainStore.search.trim().toLowerCase();
+    
+    // 对文件进行评分和过滤
+    const scoreFile = (file) => {
+      let isExact = false;
+      if (file.name && file.name.toLowerCase() === keyword) isExact = true;
+      if (file.authors && file.authors.some(a => normalize(a.name) === keyword)) isExact = true;
+      if ((file.tags || []).some(tag => tag.toLowerCase() === keyword)) isExact = true;
+      if (file.description && file.description.toLowerCase() === keyword) isExact = true;
+      
+      let score = 0;
+      if (!isExact) {
+        if (file.name && file.name.toLowerCase().includes(keyword)) score += 3;
+        if (file.authors && file.authors.some(a => normalize(a.name).includes(keyword))) score += 3;
+        if ((file.tags || []).some(tag => tag.toLowerCase().includes(keyword))) score += 2;
+        if (file.description && file.description.toLowerCase().includes(keyword)) score += 2;
+      }
+      return isExact || score > 0;
+    };
+    
+    // 过滤 files 数组
+    const filteredFiles = selectedNode.files.filter(file => scoreFile(file));
+    
+    // 重新收集筛选后文件的作者
+    const collectAuthorsFromFiles = (files) => {
+      const authorsMap = new Map();
+      files.forEach(file => {
+        if (Array.isArray(file.authors)) {
+          file.authors.forEach(author => {
+            if (author && author.name) {
+              authorsMap.set(author.name, author);
+            }
+          });
+        }
+      });
+      return Array.from(authorsMap.values());
+    };
+    
+    const filteredAuthors = collectAuthorsFromFiles(filteredFiles);
+    nodeToSelect = { ...selectedNode, files: filteredFiles, authors: filteredAuthors };
+  }
+
   // 使用mainStore的方法选择节点
-  mainStore.handleMapSelect(selectedNode);
+  mainStore.handleMapSelect(nodeToSelect);
   selectedKeys.value = selectedNode.key ? [selectedNode.key] : [];
 
   if (selectedNode.hasUpdate && mainStore.isModeSingle) {
@@ -98,7 +143,7 @@ const handleSelect = async (selectedKeysList) => {
     }
   }
 
-  console.log("Node selected", selectedNode);
+  console.log("Node selected", nodeToSelect);
 };
 
 // 处理订阅
