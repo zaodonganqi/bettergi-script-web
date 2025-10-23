@@ -69,8 +69,8 @@
         "content": "Ajoutez un tutoriel d'utilisation du dépôt dans la barre d'outils pour les novices en informatique."
       },
       {
-        "desc": "Zones de Contenu Déplaçables (Résolu, essayez de faire glisser la barre latérale)",
-        "content": "Modifiez les vues comme les listes pour qu'elles soient redimensionnables par glisser-déposer plutôt que fixes, et enregistrez les données localement (envisagez d'ajouter un fichier de configuration dans le corps principal si la mise en cache n'est pas fiable)."
+        "desc": "Tri et Filtrage Plus Complets",
+        "content": "Le tri et le filtrage actuels utilisent le menu déroulant fourni par antd, mais de nombreux problèmes ont été constatés lors de l'utilisation réelle. Pour améliorer le tri et le filtrage, la première étape consiste à refactoriser le menu déroulant, en utilisant d'autres composants ou en l'implémentant vous-même. Actuellement, a-popover est envisagé pour le remplacer. Deuxièmement, la fonction de filtrage doit fournir un support de filtrage par auteur, et le filtrage par rôle doit également ajouter des méthodes d'exclusion. Pour plus d'intuitivité, le filtrage par rôle doit envisager d'ajouter des avatars de personnages."
       },
       {
         "desc": "Recherche Plus Puissante",
@@ -96,20 +96,32 @@
     "author": "Email de l'auteur : anqi4051{'@'}gmail.com",
     "qa": [
       {
-        "q": "Pourquoi le dépôt échoue-t-il toujours à charger ?",
+        "q": "Pourquoi le dépôt échoue-t-il toujours à charger ? (Uniquement pour le dépôt en ligne)",
         "a": "Le dépôt utilise des adresses GitHub, et les connexions directes depuis la Chine peuvent être intermittentes, ce qui est normal. Si cela ne s'ouvre pas, essayez plusieurs fois ou revenez dans quelques minutes. Vous pouvez aussi utiliser la page de dépôt local de BGI. (Si vous êtes un magicien, vous savez quoi faire)"
       },
       {
+        "q": "Tutoriel d'utilisation du dépôt ?",
+        "a": "Voir le site officiel de BGI : Manuel de l'utilisateur - Dépôt de scripts."
+      },
+      {
+        "q": "Les scripts abonnés se mettent-ils à jour automatiquement ?",
+        "a": "Non. Le processus d'abonnement à un script consiste essentiellement à copier un fichier ou un dossier dans un autre dossier. Après chaque mise à jour du dépôt, ce qui est mis à jour est le dépôt central qui stocke tous les fichiers du dépôt localement. Vous devez vous réabonner manuellement aux scripts qui ont des mises à jour pour réaliser la mise à jour (pour plus de détails, voir le site officiel de BGI : Manuel de l'utilisateur - Fichiers locaux)."
+      },
+      {
+        "q": "Pourquoi la mise à jour récente disparaît-elle la prochaine fois que je l'ouvre ?",
+        "a": "Limité par la méthode actuelle d'acquisition de données, après avoir cliqué sur un script avec une notification de mise à jour ou effacé le point rouge, il sera marqué comme non mis à jour. Cela pourra être résolu à l'avenir."
+      },
+      {
+        "q": "La mise à jour en un clic ne peut-elle mettre à jour que ceux avec des mises à jour ou me laisser choisir ?",
+        "a": "Il y a deux raisons : 1 est la même que la question précédente sur les mises à jour récentes, 2 est que l'auteur (moi) n'a pas eu le temps de l'implémenter récemment."
+      },
+      {
         "q": "Pourquoi la fonction de commentaire n'est-elle pas disponible ?",
-        "a": "Les commentaires ne sont pas pris en charge en mode local. Veuillez visiter le dépôt en ligne et vous connecter à votre compte GitHub pour commenter. Comment utiliser GitHub, veuillez chercher vous-même."
+        "a": "Les commentaires ne sont pas pris en charge en mode local. Veuillez visiter le dépôt en ligne et vous connecter à votre compte GitHub pour commenter. Comment utiliser GitHub doit être résolu par vous-même."
       },
       {
         "q": "Pourquoi n'y a-t-il pas de script XX ?",
-        "a": "Lors de la recherche, essayez de vous assurer que les mots-clés sont précis, comme \"Fleur Douce\". Si vous avez tout cherché et que vous ne le trouvez toujours pas, alors aucun auteur ne l'a écrit. Vous pouvez essayer d'en écrire un vous-même."
-      },
-      {
-        "q": "Comment utiliser la fonction abonné ?",
-        "a": "\"BetterGI → Paramètres → Paramètres du Serveur Http BetterGI\" (si vous ne trouvez pas ce paramètre, assurez-vous que BGI est mis à jour vers la dernière version), assurez-vous que cet élément est activé et que le numéro de port est défini sur 30648. Après avoir terminé, fermez cette page et redémarrez BGI pour réessayer. S'il y a encore des problèmes, contactez l'auteur pour résolution."
+        "a": "Utilisez bien la recherche. Lors de la recherche, essayez de vous assurer que les mots-clés sont précis, comme \"Fleur Douce\", ou si vous ne trouvez pas \"coupe de bois\", essayez de rechercher \"couper des arbres\". Si vous ne le trouvez toujours pas après avoir tout cherché, alors aucun auteur ne l'a écrit. Vous pouvez essayer d'en écrire un vous-même."
       },
       {
         "q": "Qu'est-ce que README, pourquoi a-t-il échoué à charger ? Pourquoi n'est-il pas affiché ?",
@@ -141,7 +153,7 @@
       },
       {
         "q": "Autres",
-        "a": "Pour plus de questions, contactez-moi. Si c'est précieux, cette page sera mise à jour périodiquement."
+        "a": "S'il y a encore des questions, veuillez d'abord chercher sur le site officiel. Si vous ne trouvez ni sur le site officiel ni ici, veuillez me contacter."
       }
     ]
   },

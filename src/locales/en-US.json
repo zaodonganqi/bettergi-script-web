@@ -69,8 +69,8 @@
         "content": "Add repository usage tutorial on the toolbar for computer novices."
       },
       {
-        "desc": "Draggable Content Areas (Resolved, try dragging the sidebar)",
-        "content": "Modify views like lists to be resizable by dragging rather than fixed values, and save the data locally (consider adding a configuration file in the main body if caching is unreliable)."
+        "desc": "More Complete Sorting and Filtering",
+        "content": "The current sorting and filtering use the dropdown menu provided by antd, but many problems have been found in actual use. To improve sorting and filtering, the first step is to refactor the dropdown menu, using other components or implementing it yourself. Currently, a-popover is considered to replace it. Secondly, the filtering function needs to provide author filtering support, and role filtering also needs to add exclusion methods. For intuitiveness, role filtering needs to consider adding character avatars."
       },
       {
         "desc": "More Powerful Search",
@@ -96,20 +96,32 @@
     "author": "Author email: anqi4051{'@'}gmail.com",
     "qa": [
       {
-        "q": "Why does the repository keep failing to load?",
+        "q": "Why does the repository keep failing to load? (Only for online repository)",
         "a": "The repository uses GitHub addresses, and direct connections from China may be intermittent, which is normal. If it doesn't open, try a few more times or come back in a few minutes. You can also use BGI's local repository page. (If you're a wizard, you know what to do)"
       },
       {
+        "q": "Repository usage tutorial?",
+        "a": "See BGI official website: User Manual - Script Repository."
+      },
+      {
+        "q": "Will subscribed scripts update automatically?",
+        "a": "No. The process of subscribing to a script is essentially just copying a file or folder to another folder. After each repository update, what gets updated is the central repository that stores all repository files locally. You need to manually subscribe again to the scripts that have updates to achieve the update (for details, see BGI official website: User Manual - Local Files)."
+      },
+      {
+        "q": "Why does the recent update disappear next time I open it?",
+        "a": "Limited by the current data acquisition method, after you click on a script with an update notification or clear the red dot, it will be marked as not updated. This may be resolved in the future."
+      },
+      {
+        "q": "Can one-click update only update those with updates or let me choose?",
+        "a": "There are two reasons: 1 is the same as the previous question about recent updates, 2 is that the author (me) hasn't had time to implement it recently."
+      },
+      {
         "q": "Why is the comment function unavailable?",
-        "a": "Comments are not supported in local mode. Please visit the online repository and log in to your GitHub account to comment. How to use GitHub, please search for yourself."
+        "a": "Comments are not supported in local mode. Please visit the online repository and log in to your GitHub account to comment. How to use GitHub needs to be resolved by yourself."
       },
       {
         "q": "Why is there no XX script?",
-        "a": "When searching, try to ensure keywords are accurate, such as \"Sweet Flower\". If you've searched everything and still can't find it, then no author has written it. You can try writing one yourself."
-      },
-      {
-        "q": "How to use the subscribed function?",
-        "a": "\"BetterGI → Settings → BetterGI Http Server Settings\" (if you can't find this setting, please make sure BGI is updated to the latest version), ensure this item is enabled and the port number is set to 30648. After completion, please close this page and restart BGI to try again. If there are still issues, please contact the author for resolution."
+        "a": "Make good use of search. When searching, try to ensure keywords are accurate, such as \"Sweet Flower\", or if you can't find \"logging\" try searching \"tree cutting\". If you still can't find it after searching for each one, then no author has written it. You can try writing one yourself."
       },
       {
         "q": "What is README, why did it fail to load? Why is it not displayed?",
@@ -141,7 +153,7 @@
       },
       {
         "q": "Others",
-        "a": "For more questions, please contact me. If valuable, this page will be updated periodically."
+        "a": "If you still have questions, please search the official website first. If you can't find it on both the official website and here, please contact me."
       }
     ]
   },
