@@ -1,4 +1,3 @@
-```vue
 <template>
   <div class="readme-viewer">
     <div v-if="readmeContent" v-html="readmeContent" class="readme-content"></div>
@@ -295,41 +294,126 @@ const fetchAndRenderReadme = async (path) => {
       return;
     }
     // 图片路径处理和渲染
-    const baseImageUrl = '../../../Repos/bettergi-scripts-list-git/repo/' + path.replace(/\\/g, '/') + '/';
-    markdown = markdown.replace(/!\[([^\]]*)\]\(([^)]+)\)/gi, (match, alt, imgPath) => {
-      let cleanPath = imgPath.trim().replace(/\\/g, '/');
-      // 检查是否为完整的HTTP/HTTPS链接或data URL
+    const basePath = path.replace(/\\/g, '/') + '/';
+    const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
+
+    // 定义替换函数工厂
+    const createMarkdownImgReplacement = (fullMatch, alt) => ({
+      fullMatch,
+      replacement: (base64) => `![${alt}](${base64})`
+    });
+
+    const createHtmlReplacement = (fullMatch, originalPath) => ({
+      fullMatch,
+      replacement: (base64) => fullMatch.replace(originalPath, base64)
+    });
+
+    const createSimpleImgReplacement = (fullMatch) => ({
+      fullMatch,
+      replacement: (base64) => `![](${base64})`
+    });
+
+    // 收集所有需要处理的资源路径及其替换信息
+    const resourceMap = new Map(); // key: 原始路径, value: {base64: string, replacements: Array}
+
+    // 提取markdown图片语法 ![alt](path)
+    const imgMatches = markdown.matchAll(/!\[([^\]]*)\]\(([^)]+)\)/gi);
+    for (const match of imgMatches) {
+      const [fullMatch, alt, imgPath] = match;
+      const cleanPath = imgPath.trim().replace(/\\/g, '/');
       const isHttpUrl = /^https?:\/\/[\S]+$/i.test(cleanPath);
       const isDataUrl = cleanPath.startsWith('data:');
-      return `![${alt}](${(isHttpUrl || isDataUrl) ? cleanPath : baseImageUrl + cleanPath})`;
-    });
-    markdown = markdown.replace(/<img\s+[^>]*src=["']([^"']+)["'][^>]*>/gi, (match, imgPath) => {
-      let cleanPath = imgPath.trim().replace(/\\/g, '/');
-      // 检查是否为完整的HTTP/HTTPS链接或data URL
+
+      if (!isHttpUrl && !isDataUrl) {
+        if (!resourceMap.has(cleanPath)) {
+          resourceMap.set(cleanPath, { base64: null, replacements: [] });
+        }
+        resourceMap.get(cleanPath).replacements.push(createMarkdownImgReplacement(fullMatch, alt));
+      }
+    }
+
+    // 提取HTML img标签
+    const htmlImgMatches = markdown.matchAll(/<img\s+[^>]*src=["']([^"']+)["'][^>]*>/gi);
+    for (const match of htmlImgMatches) {
+      const [fullMatch, imgPath] = match;
+      const cleanPath = imgPath.trim().replace(/\\/g, '/');
       const isHttpUrl = /^https?:\/\/[\S]+$/i.test(cleanPath);
       const isDataUrl = cleanPath.startsWith('data:');
-      return match.replace(imgPath, (isHttpUrl || isDataUrl) ? cleanPath : baseImageUrl + cleanPath);
-    });
-    markdown = markdown.replace(/`([^`\n]+\.(?:png|jpg|jpeg|gif|webp|svg))`/gi, (imgPath) => {
-      let cleanPath = imgPath.trim().replace(/\\/g, '/');
-      // 检查是否为完整的HTTP/HTTPS链接
+
+      if (!isHttpUrl && !isDataUrl) {
+        if (!resourceMap.has(cleanPath)) {
+          resourceMap.set(cleanPath, { base64: null, replacements: [] });
+        }
+        resourceMap.get(cleanPath).replacements.push(createHtmlReplacement(fullMatch, imgPath));
+      }
+    }
+
+    // 提取代码块中的图片路径 `image.png`
+    const codeImgMatches = markdown.matchAll(/`([^`\n]+\.(?:png|jpg|jpeg|gif|webp|svg))`/gi);
+    for (const match of codeImgMatches) {
+      const [fullMatch, imgPath] = match;
+      const cleanPath = imgPath.trim().replace(/\\/g, '/');
       const isHttpUrl = /^https?:\/\/[\S]+$/i.test(cleanPath);
-      return `![](${isHttpUrl ? cleanPath : baseImageUrl + cleanPath})`;
-    });
-    markdown = markdown.replace(/```\s*([^`\n]+\.(?:png|jpg|jpeg|gif|webp|svg))\s*```/gi, (imgPath) => {
-      let cleanPath = imgPath.trim().replace(/\\/g, '/');
-      // 检查是否为完整的HTTP/HTTPS链接
+
+      if (!isHttpUrl) {
+        if (!resourceMap.has(cleanPath)) {
+          resourceMap.set(cleanPath, { base64: null, replacements: [] });
+        }
+        resourceMap.get(cleanPath).replacements.push(createSimpleImgReplacement(fullMatch));
+      }
+    }
+
+    // 提取代码块中的图片路径 ```image.png```
+    const blockImgMatches = markdown.matchAll(/```\s*([^`\n]+\.(?:png|jpg|jpeg|gif|webp|svg))\s*```/gi);
+    for (const match of blockImgMatches) {
+      const [fullMatch, imgPath] = match;
+      const cleanPath = imgPath.trim().replace(/\\/g, '/');
       const isHttpUrl = /^https?:\/\/[\S]+$/i.test(cleanPath);
-      return `![](${isHttpUrl ? cleanPath : baseImageUrl + cleanPath})`;
-    });
-    // 处理HTML iframe标签
-    markdown = markdown.replace(/<iframe\s+[^>]*src=["']([^"']+)["'][^>]*>/gi, (match, iframePath) => {
-      let cleanPath = iframePath.trim().replace(/\\/g, '/');
-      // 检查是否为完整的HTTP/HTTPS链接或data URL
+
+      if (!isHttpUrl) {
+        if (!resourceMap.has(cleanPath)) {
+          resourceMap.set(cleanPath, { base64: null, replacements: [] });
+        }
+        resourceMap.get(cleanPath).replacements.push(createSimpleImgReplacement(fullMatch));
+      }
+    }
+
+    // 提取HTML iframe标签
+    const iframeMatches = markdown.matchAll(/<iframe\s+[^>]*src=["']([^"']+)["'][^>]*>/gi);
+    for (const match of iframeMatches) {
+      const [fullMatch, iframePath] = match;
+      const cleanPath = iframePath.trim().replace(/\\/g, '/');
       const isHttpUrl = /^https?:\/\/[\S]+$/i.test(cleanPath);
       const isDataUrl = cleanPath.startsWith('data:');
-      return match.replace(iframePath, (isHttpUrl || isDataUrl) ? cleanPath : baseImageUrl + cleanPath);
-    });
+
+      if (!isHttpUrl && !isDataUrl) {
+        if (!resourceMap.has(cleanPath)) {
+          resourceMap.set(cleanPath, { base64: null, replacements: [] });
+        }
+        resourceMap.get(cleanPath).replacements.push(createHtmlReplacement(fullMatch, iframePath));
+      }
+    }
+
+    // 统一获取所有资源的base64数据
+    for (const [resourcePath, resourceData] of resourceMap.entries()) {
+      try {
+        const base64Data = await repoWebBridge.GetFile(basePath + resourcePath);
+        if (base64Data && base64Data !== '404') {
+          resourceData.base64 = base64Data;
+        }
+      } catch (e) {
+        console.error('Failed to load resource:', resourcePath, e);
+      }
+    }
+
+    // 统一替换markdown内容
+    for (const [resourcePath, resourceData] of resourceMap.entries()) {
+      if (resourceData.base64) {
+        for (const { fullMatch, replacement } of resourceData.replacements) {
+          markdown = markdown.replace(fullMatch, replacement(resourceData.base64));
+        }
+      }
+    }
     markdown = processFootnotes(markdown);
     readmeContent.value = md.render(markdown);
     emit('loaded', { status: 'ok' });
