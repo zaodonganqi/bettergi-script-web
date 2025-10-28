@@ -254,9 +254,6 @@
     "jaJP": "日本語",
     "frFR": "フランス語",
     "theme": "テーマを設定",
-    "light": "ライト",
-    "dark": "ダーク",
-    "egg": "絶対にクリックしないで！",
     "eggSafetyTitle": "安全に関する注意",
     "eggSafetyDesc": "警告：この後のイースターエッグ効果には、急速な点滅、強いコントラスト、彩度の高い動的な色が含まれ、光過敏性てんかんを誘発したり不快感を引き起こす可能性があります。ご自身または周囲の方に光過敏性てんかんの既往がある場合、点滅/強光に敏感な場合、疲労時や飲酒時は、直ちにキャンセルし視聴をお控えください。",
     "eggSafetyOk": "理解したうえで続行",
@@ -264,7 +261,15 @@
     "clearUpdate": "更新通知をクリア",
     "clearUpdateBtn": "クリア",
     "clearUpdateSuccess": "更新通知のクリアに成功しました",
-    "clearUpdateFailed": "更新通知のクリアに失敗しました"
+    "clearUpdateFailed": "更新通知のクリアに失敗しました",
+    "uploadBackground": "背景をアップロード",
+    "customBackgroundSaved": "カスタム背景を保存しました",
+    "customBackgroundSaveFailed": "カスタム背景の保存に失敗しました",
+    "customBackgroundCleared": "カスタム背景をクリアしました",
+    "customBackgroundClearFailed": "カスタム背景のクリアに失敗しました",
+    "invalidImageFile": "有効な画像ファイルを選択してください",
+    "imageFileTooLarge": "画像ファイルが大きすぎます。50MB未満のファイルを選択してください",
+    "fileUploadFailed": "ファイルのアップロードに失敗しました"
   },
   "sort": {
     "sortBy": "並び順",

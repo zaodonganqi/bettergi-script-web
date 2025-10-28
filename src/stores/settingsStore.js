@@ -6,9 +6,10 @@ import enUS from 'ant-design-vue/es/locale/en_US';
 import jaJP from 'ant-design-vue/es/locale/ja_JP';
 import frFR from 'ant-design-vue/es/locale/fr_FR';
 import { i18n } from '@/utils/i18n.js'
-import { getThemeByName, getThemeName, setTheme } from '@/styles/theme.js'
+import { getThemeByName, getThemeName, setTheme, antdThemes } from '@/styles/theme.js'
 import { message as Message } from 'ant-design-vue'
 import { useI18n } from 'vue-i18n'
+import { set, get, del } from 'idb-keyval'
 
 const antdLocales = {
 	'zh-CN': zhCN,
@@ -43,6 +44,14 @@ export const useSettingsStore = defineStore('settings', () => {
 	const selectedThemeName = ref(getThemeName());
 	const antdTheme = ref(getThemeByName(selectedThemeName.value));
 
+	// 获取主题列表
+	const themeList = computed(() => {
+		return Object.keys(antdThemes).map(key => ({
+			key,
+			name: antdThemes[key]?.name || { [selectedLocale.value]: key }
+		}));
+	});
+
 	function setThemeName(name) {
 		selectedThemeName.value = name
 	}
@@ -62,7 +71,6 @@ export const useSettingsStore = defineStore('settings', () => {
 			return;
 		}
 		setThemeName(name);
-		showSettingsModal.value = false;
 	}
 
 	watch(selectedThemeName, (name) => {
@@ -96,6 +104,98 @@ export const useSettingsStore = defineStore('settings', () => {
 	
 	// 清除更新提示红点
 	const clearUpdateLoading = ref(false);
+
+	// 自定义背景
+	const customBackgroundBase64 = ref(null);
+	const CUSTOM_BG_KEY = 'custom-background';
+
+	// 将文件转换为base64
+	function fileToBase64(file) {
+		return new Promise((resolve, reject) => {
+			const reader = new FileReader();
+			reader.onload = () => resolve(reader.result);
+			reader.onerror = reject;
+			reader.readAsDataURL(file);
+		});
+	}
+
+	// 保存自定义背景到IndexedDB
+	async function saveCustomBackground(base64Data) {
+		try {
+			await set(CUSTOM_BG_KEY, base64Data);
+			customBackgroundBase64.value = base64Data;
+			applyCustomBackground();
+			Message.success($t('settings.customBackgroundSaved'));
+		} catch (error) {
+			Message.error($t('settings.customBackgroundSaveFailed'));
+		}
+	}
+
+	// 从IndexedDB加载自定义背景
+	async function loadCustomBackground() {
+		try {
+			const data = await get(CUSTOM_BG_KEY);
+			if (data) {
+				customBackgroundBase64.value = data;
+				applyCustomBackground();
+			}
+		} catch (error) {
+			console.error('Load background error:', error);
+		}
+	}
+
+	// 应用自定义背景到页面
+	function applyCustomBackground() {
+		if (customBackgroundBase64.value) {
+			const appElement = document.getElementById('app');
+			if (appElement) {
+				appElement.style.backgroundImage = `url(${customBackgroundBase64.value})`;
+				appElement.style.backgroundSize = 'cover';
+				appElement.style.backgroundPosition = 'center';
+				appElement.style.backgroundRepeat = 'no-repeat';
+				appElement.style.backgroundAttachment = 'fixed';
+			}
+		}
+	}
+
+	// 清除自定义背景
+	async function clearCustomBackground() {
+		try {
+			await del(CUSTOM_BG_KEY);
+			customBackgroundBase64.value = null;
+			const appElement = document.getElementById('app');
+			if (appElement) {
+				appElement.style.backgroundImage = '';
+			}
+		} catch (error) {
+			Message.error($t('settings.customBackgroundClearFailed'));
+		}
+	}
+
+	// 处理文件上传
+	async function handleFileUpload(file) {
+		if (!file) return;
+		
+		// 检查文件类型
+		if (!file.type.startsWith('image/')) {
+			Message.error($t('settings.invalidImageFile'));
+			return;
+		}
+
+		// 检查文件大小（限制为50MB）
+		if (file.size > 50 * 1024 * 1024) {
+			Message.error($t('settings.imageFileTooLarge'));
+			return;
+		}
+
+		try {
+			const base64Data = await fileToBase64(file);
+			await saveCustomBackground(base64Data);
+		} catch (error) {
+			console.error('文件上传失败:', error);
+			Message.error($t('settings.fileUploadFailed'));
+		}
+	}
 
 	// 清除更新提示
 	const handleClearUpdate = async (mainStore) => {
@@ -164,6 +264,7 @@ export const useSettingsStore = defineStore('settings', () => {
 		// 主题
 		selectedThemeName,
 		antdTheme,
+		themeList,
 		useTheme,
 		onThemeChange,
 		// 彩蛋安全
@@ -176,6 +277,11 @@ export const useSettingsStore = defineStore('settings', () => {
 		clearUpdateLoading,
 		handleClearUpdate,
 		updateAllScriptsHasUpdate,
+		// 自定义背景
+		customBackgroundBase64,
+		loadCustomBackground,
+		handleFileUpload,
+		clearCustomBackground,
 	}
 })
 

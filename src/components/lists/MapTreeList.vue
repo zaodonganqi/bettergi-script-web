@@ -534,6 +534,7 @@ function normalize(str) {
 :deep(.ant-tree) {
   width: calc(100% - 10px);
   background: var(--bg-menu);
+  backdrop-filter: blur(5px);
 }
 
 :deep(.ant-tree-treenode) {

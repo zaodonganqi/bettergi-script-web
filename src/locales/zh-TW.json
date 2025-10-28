@@ -254,9 +254,6 @@
     "jaJP": "日語",
     "frFR": "法語",
     "theme": "設定主題",
-    "light": "淺色",
-    "dark": "深色",
-    "egg": "千萬別點！",
     "eggSafetyTitle": "安全聲明",
     "eggSafetyDesc": "警告：接下來的彩蛋效果包含快速閃爍、強烈對比與高飽和度的動態色彩，可能誘發光敏性癲癇或造成不適。若您或身邊的人曾有光敏性癲癇史、對閃爍/強光敏感、正在疲勞或飲酒，請立即取消並避免觀看。",
     "eggSafetyOk": "我已知悉，仍要繼續",
@@ -264,7 +261,15 @@
     "clearUpdate": "清除更新提示",
     "clearUpdateBtn": "清除",
     "clearUpdateSuccess": "清除更新提示成功",
-    "clearUpdateFailed": "清除更新提示失敗"
+    "clearUpdateFailed": "清除更新提示失敗",
+    "uploadBackground": "上傳背景",
+    "customBackgroundSaved": "自定義背景保存成功",
+    "customBackgroundSaveFailed": "自定義背景保存失敗",
+    "customBackgroundCleared": "自定義背景已清除",
+    "customBackgroundClearFailed": "清除自定義背景失敗",
+    "invalidImageFile": "請選擇有效的圖片文件",
+    "imageFileTooLarge": "圖片文件過大，請選擇小於50MB的文件",
+    "fileUploadFailed": "文件上傳失敗"
   },
   "sort": {
     "sortBy": "排序方式",

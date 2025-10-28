@@ -254,9 +254,6 @@
     "jaJP": "Japanese",
     "frFR": "French",
     "theme": "Set Theme",
-    "light": "Light",
-    "dark": "Dark",
-    "egg": "Don't click this!",
     "eggSafetyTitle": "Safety Notice",
     "eggSafetyDesc": "Warning: The upcoming easter-egg effect contains rapid flashing, strong contrast, and highly saturated dynamic colors that may trigger photosensitive epilepsy or cause discomfort. If you or someone around you has a history of photosensitive epilepsy, is sensitive to flicker/strong light, or is fatigued or alcohol-impaired, please cancel and avoid viewing.",
     "eggSafetyOk": "I understand, continue",
@@ -264,7 +261,15 @@
     "clearUpdate": "Clear Update Notifications",
     "clearUpdateBtn": "Clear",
     "clearUpdateSuccess": "Successfully cleared update notifications",
-    "clearUpdateFailed": "Failed to clear update notifications"
+    "clearUpdateFailed": "Failed to clear update notifications",
+    "uploadBackground": "Upload Background",
+    "customBackgroundSaved": "Custom background saved successfully",
+    "customBackgroundSaveFailed": "Failed to save custom background",
+    "customBackgroundCleared": "Custom background cleared",
+    "customBackgroundClearFailed": "Failed to clear custom background",
+    "invalidImageFile": "Please select a valid image file",
+    "imageFileTooLarge": "Image file too large, please select a file smaller than 50MB",
+    "fileUploadFailed": "File upload failed"
   },
   "sort": {
     "sortBy": "Sort By",

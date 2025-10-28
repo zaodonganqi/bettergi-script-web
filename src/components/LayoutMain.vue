@@ -350,11 +350,15 @@
     <a-modal v-model:open="settings.showSettingsModal"
              :title="$t('settings.title')"
              :footer="null"
-             centered width="400px"
+             centered width="500px"
              @cancel="settings.showSettingsModal = false">
       <div class="settings-row">
         <span class="settings-label">{{ $t('settings.language') }}</span>
-        <a-select :value="settings.selectedLocale" size="middle" style="width: 160px;" @change="onLocaleChange"
+        <a-select :value="settings.selectedLocale"
+                  size="middle"
+                  style="width: 120px;"
+                  :dropdownMatchSelectWidth="false"
+                  @change="onLocaleChange"
                   popupClassName="lang-select-dropdown">
           <a-select-option value="zh-CN">{{ $t('settings.zhCN') }}</a-select-option>
           <a-select-option value="zh-TW">{{ $t('settings.zhTW') }}</a-select-option>
@@ -366,12 +370,27 @@
       <a-divider/>
       <div class="settings-row">
         <span class="settings-label">{{ $t('settings.theme') }}</span>
-        <a-select :value="settings.selectedThemeName" size="middle" style="width: 160px;" @change="settings.onThemeChange"
-                  popupClassName="lang-select-dropdown">
-          <a-select-option value="light">{{ $t('settings.light') }}</a-select-option>
-          <a-select-option value="dark">{{ $t('settings.dark') }}</a-select-option>
-          <a-select-option value="egg">{{ $t('settings.egg') }}</a-select-option>
-        </a-select>
+        <div class="theme-controls-wrapper">
+          <div class="theme-controls">
+            <a-button v-if="settings.selectedThemeName === 'transparent'" 
+                     type="primary" 
+                     size="middle" 
+                     @click="triggerFileUpload"
+                     class="upload-btn">
+              {{ $t('settings.uploadBackground') }}
+            </a-button>
+            <a-select :value="settings.selectedThemeName"
+                      size="middle"
+                      style="width: 120px;"
+                      :dropdownMatchSelectWidth="false"
+                      @change="settings.onThemeChange"
+                      popupClassName="lang-select-dropdown">
+              <a-select-option v-for="theme in settings.themeList" :key="theme.key" :value="theme.key">
+                {{ theme.name[settings.selectedLocale] }}
+              </a-select-option>
+            </a-select>
+          </div>
+        </div>
       </div>
       <a-divider v-if="mainStore.isModeSingle"/>
       <div v-if="mainStore.isModeSingle" class="settings-row">
@@ -398,6 +417,9 @@
         <div class="safety-text">{{ $t('settings.eggSafetyDesc') }}</div>
       </div>
     </a-modal>
+
+    <!-- 隐藏的文件输入 -->
+    <input ref="fileInput" type="file" accept="image/*" style="display: none;" @change="handleFileChange" />
   </a-layout>
 </template>
 
@@ -430,6 +452,24 @@ import {useMainStore} from "@/stores/mainStore.js";
 
 const mainStore = useMainStore();
 const settings = useSettingsStore();
+
+// 文件上传相关
+const fileInput = ref(null);
+
+// 触发文件上传
+function triggerFileUpload() {
+  fileInput.value?.click();
+}
+
+// 处理文件选择
+function handleFileChange(event) {
+  const file = event.target.files?.[0];
+  if (file) {
+    settings.handleFileUpload(file);
+  }
+  // 清空input值，允许重复选择同一文件
+  event.target.value = '';
+}
 
 // 布局宽度管理
 const scriptSliderWidth = ref(0);
@@ -559,6 +599,9 @@ onMounted(() => {
   
   // 监听窗口大小变化
   window.addEventListener('resize', handleWindowResize);
+  
+  // 加载自定义背景
+  settings.loadCustomBackground();
 });
 
 // 组件卸载时清理事件监听器
@@ -574,7 +617,6 @@ onUnmounted(() => {
 function onLocaleChange(val) {
   mainStore.onLocaleChange(val);
   settings.setLocale(val);
-  settings.showSettingsModal = false;
 }
 </script>
 
@@ -606,6 +648,8 @@ function onLocaleChange(val) {
   padding: 0 16px;
   font-weight: 600;
   font-size: 18px;
+  background-color: var(--bg-menu);
+  backdrop-filter: blur(5px);
   border-bottom: 1px solid var(--border-base);
   width: 100%;
   flex-shrink: 0;
@@ -636,6 +680,7 @@ function onLocaleChange(val) {
 .sider-menu-wrap {
   padding: 8px;
   width: 100%;
+  background-color: var(--bg-menu);
   overflow-y: auto;
   overflow-x: hidden;
   display: flex;
@@ -646,6 +691,8 @@ function onLocaleChange(val) {
 .menu-content {
   overflow-y: auto;
   overflow-x: hidden;
+  border-radius: 6px;
+  backdrop-filter: blur(5px);
 }
 
 .custom-menu {
@@ -692,6 +739,7 @@ function onLocaleChange(val) {
   font-size: 14px;
   border-top: 1px solid var(--border-base);
   color: var(--text-base3);
+  backdrop-filter: blur(5px);
   width: 100%;
   flex-shrink: 0;
 }
@@ -706,6 +754,8 @@ function onLocaleChange(val) {
   font-size: 12px;
   border-top: 1px solid var(--border-base);
   color: var(--text-base2);
+  background: var(--bg-menu);
+  backdrop-filter: blur(5px);
   width: 100%;
   flex-shrink: 0;
   height: 60px;
@@ -744,6 +794,7 @@ function onLocaleChange(val) {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  backdrop-filter: blur(5px);
   border-bottom: 1px solid var(--border-base);
 }
 
@@ -771,7 +822,12 @@ function onLocaleChange(val) {
   height: 60px;
   padding: 10px 16px;
   border-bottom: 1px solid var(--border-base);
+  backdrop-filter: blur(5px);
   gap: 8px;
+}
+
+:deep(.ant-input-affix-wrapper >input.ant-input) {
+  background: transparent;
 }
 
 .script-search {
@@ -916,6 +972,7 @@ function onLocaleChange(val) {
   height: 60px;
   border-bottom: 1px solid var(--border-base);
   background-color: var(--bg-menu);
+  backdrop-filter: blur(5px);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -1165,6 +1222,30 @@ function onLocaleChange(val) {
 .settings-label {
   font-size: 15px;
   font-weight: 500;
+}
+
+.theme-controls-wrapper {
+  max-width: 350px;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.theme-controls {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.upload-btn {
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+:deep(.ant-select) {
+  width: auto !important;
+  min-width: 120px;
 }
 
 .update-label {

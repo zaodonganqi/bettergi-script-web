@@ -254,9 +254,6 @@
     "jaJP": "Japonais",
     "frFR": "Français",
     "theme": "Définir le Thème",
-    "light": "Clair",
-    "dark": "Sombre",
-    "egg": "Ne cliquez surtout pas !",
     "eggSafetyTitle": "Avis de Sécurité",
     "eggSafetyDesc": "Attention : L'effet easter-egg à venir contient des clignotements rapides, des contrastes forts et des couleurs dynamiques très saturées qui peuvent déclencher une épilepsie photosensible ou causer de l'inconfort. Si vous ou quelqu'un autour de vous avez des antécédents d'épilepsie photosensible, êtes sensibles au clignotement/lumière forte, ou êtes fatigués ou sous l'influence de l'alcool, veuillez annuler et éviter de regarder.",
     "eggSafetyOk": "Je comprends, continuer",
@@ -264,7 +261,15 @@
     "clearUpdate": "Effacer les Notifications de Mise à Jour",
     "clearUpdateBtn": "Effacer",
     "clearUpdateSuccess": "Notifications de mise à jour effacées avec succès",
-    "clearUpdateFailed": "Échec de l'effacement des notifications de mise à jour"
+    "clearUpdateFailed": "Échec de l'effacement des notifications de mise à jour",
+    "uploadBackground": "Télécharger l'arrière-plan",
+    "customBackgroundSaved": "Arrière-plan personnalisé sauvegardé avec succès",
+    "customBackgroundSaveFailed": "Échec de la sauvegarde de l'arrière-plan personnalisé",
+    "customBackgroundCleared": "Arrière-plan personnalisé effacé",
+    "customBackgroundClearFailed": "Échec de l'effacement de l'arrière-plan personnalisé",
+    "invalidImageFile": "Veuillez sélectionner un fichier image valide",
+    "imageFileTooLarge": "Fichier image trop volumineux, veuillez sélectionner un fichier de moins de 50MB",
+    "fileUploadFailed": "Échec du téléchargement du fichier"
   },
   "sort": {
     "sortBy": "Trier par",

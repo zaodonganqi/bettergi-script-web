@@ -68,4 +68,9 @@ body {
   padding: 0;
   background: transparent;
 }
+
+#app {
+  width: 100%;
+  height: 100%;
+}
 </style>
