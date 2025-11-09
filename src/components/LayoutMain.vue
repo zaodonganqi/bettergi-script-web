@@ -8,8 +8,12 @@
       </div>
       <div class="sider-menu-wrap">
         <div class="menu-content">
-          <a-menu v-model:selectedKeys="mainStore.selectedMenu" mode="vertical" class="custom-menu" @select="mainStore.handleMenuSelect">
-            <a-menu-item v-for="item in mainStore.menuList" :key="item.key" class="custom-menu-item">
+          <a-menu v-model:selectedKeys="mainStore.selectedMenu"
+                  mode="vertical" class="custom-menu"
+                  @select="mainStore.handleMenuSelect">
+            <a-menu-item v-for="item in mainStore.menuList"
+                         :key="item.key"
+                         class="custom-menu-item">
               <span class="menu-icon">
                 <component :is="item.icon"/>
               </span>
@@ -38,7 +42,9 @@
         </div>
       </div>
       <!-- 最后更新时间 -->
-      <div v-if="mainStore.lastUpdateTime" class="last-update-time" @click="mainStore.showEggModal = true">
+      <div v-if="mainStore.lastUpdateTime"
+           class="last-update-time"
+           @click="mainStore.showEggModal = true">
         <div class="update-content" :class="{ 'column-mode': mainStore.isModeSingle }">
           <template v-if="mainStore.isModeSingle">
             <div class="update-label">{{ $t('sider.lastUpdate') }}</div>
@@ -67,19 +73,30 @@
         </div>
       </div>
       <div class="search-section">
-        <a-input v-model:value="mainStore.search" :placeholder="mainStore.searchPlaceholder" class="script-search" @change="mainStore.handleSearch"
+        <a-input v-model:value="mainStore.search"
+                 :placeholder="mainStore.searchPlaceholder"
+                 class="script-search"
+                 @change="mainStore.handleSearch"
                  allow-clear>
           <template #prefix>
             <SearchOutlined/>
           </template>
         </a-input>
-        <a-dropdown v-if="mainStore.selectedMenu[0] !== '1'" placement="bottomLeft" :trigger="'click'" class="sort-dropdown"
+        <a-dropdown v-if="mainStore.selectedMenu[0] !== '1'"
+                    placement="bottomLeft"
+                    :trigger="'click'"
+                    class="sort-dropdown"
                     v-model:open="mainStore.sortDropdownOpen">
           <a-button class="sort-button" size="middle">
             <AlignRightOutlined/>
           </a-button>
           <template #overlay>
-            <a-menu class="sort-menu" @click="mainStore.handleSortMenuClick">
+            <a-menu
+                class="sort-menu"
+                :triggerSubMenuAction="'click'"
+                :forceSubMenuRender="true"
+                @click="mainStore.handleSortMenuClick"
+            >
               <a-menu-item-group :title="$t('sort.sortBy')">
                 <a-menu-item v-if="hasSearchKey" key="relevance" :class="{ active: mainStore.sortType === 'relevance' }">
                   <span>{{ $t('sort.relevance') }}</span>
@@ -115,7 +132,9 @@
                   <span>{{ $t('sort.filterByRole') }}</span>
                 </template>
                 <div class="role-filter-panel" @mousedown.stop @click.stop>
-                  <a-input v-model:value="mainStore.roleFilterSearch" size="middle" class="role-filter-search"
+                  <a-input v-model:value="mainStore.roleFilterSearch"
+                           size="middle"
+                           class="role-filter-search"
                            :placeholder="$t('sort.searchRole')">
                     <template #prefix>
                       <SearchOutlined/>
@@ -134,7 +153,10 @@
                     </a-checkbox>
                   </div>
                    <div class="role-filter-footer">
-                     <a-button size="middle" type="primary" class="role-filter-btn-primary" @click="mainStore.resetRoleFilter">
+                     <a-button size="middle"
+                               type="primary"
+                               class="role-filter-btn-primary"
+                               @click="mainStore.resetRoleFilter">
                        {{ $t('common.reset') }}
                      </a-button>
                    </div>
@@ -224,8 +246,15 @@
         <div class="repo-error-title">{{ $t('repoError.title') }}</div>
         <div class="repo-error-desc">{{ $t('repoError.desc') }}</div>
         <div class="repo-error-btn-group">
-          <a-button class="repo-error-btn" @click="mainStore.getRepoJson" type="primary" danger>{{ $t('repoError.refresh') }}</a-button>
-          <a-button class="repo-help-btn" @click="mainStore.showHelpModal = true" type="primary">{{ $t('repoError.help') }}</a-button>
+          <a-button class="repo-error-btn"
+                    @click="mainStore.getRepoJson"
+                    type="primary"
+                    danger>{{ $t('repoError.refresh') }}
+          </a-button>
+          <a-button class="repo-help-btn"
+                    @click="mainStore.showHelpModal = true"
+                    type="primary">{{ $t('repoError.help') }}
+          </a-button>
         </div>
       </div>
     </div>
@@ -289,7 +318,10 @@
         </a-list>
       </div>
       <div class="update-modal-footer">
-        <a-button type="primary" size="middle" @click="settings.handleClearUpdate(mainStore)" :loading="settings.clearUpdateLoading">
+        <a-button type="primary"
+                  size="middle"
+                  @click="settings.handleClearUpdate(mainStore)"
+                  :loading="settings.clearUpdateLoading">
           {{ $t('action.clearDot') }}
         </a-button>
       </div>
@@ -395,7 +427,10 @@
       <a-divider v-if="mainStore.isModeSingle"/>
       <div v-if="mainStore.isModeSingle" class="settings-row">
         <span class="settings-label">{{ $t('settings.clearUpdate') }}</span>
-        <a-button type="primary" size="middle" @click="settings.handleClearUpdate(mainStore)" :loading="settings.clearUpdateLoading">
+        <a-button type="primary"
+                  size="middle"
+                  @click="settings.handleClearUpdate(mainStore)"
+                  :loading="settings.clearUpdateLoading">
           {{ $t('settings.clearUpdateBtn') }}
         </a-button>
       </div>
