@@ -281,7 +281,9 @@
     "ascending": "Croissant",
     "descending": "Décroissant",
     "filterByRole": "Filtrer par rôle",
-    "searchRole": "Rechercher des rôles"
+    "searchRole": "Rechercher des rôles",
+    "filter": "Filtrer",
+    "selected": "Sélectionné :"
   },
   "loading": {
     "repoData": "Chargement des données du dépôt, veuillez patienter..."

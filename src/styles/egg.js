@@ -181,25 +181,6 @@ class MushroomTrip {
         document.body.style.backgroundColor = '';
     }
 
-    // 获取当前状态
-    getStatus() {
-        return this.isTripping ? 'tripping' : 'sober';
-    }
-
-    // 设置自定义颜色数组
-    setColors(newColors) {
-        if (Array.isArray(newColors) && newColors.length > 0) {
-            this.colors = newColors;
-        }
-    }
-
-    // 设置动画速度 (ms)
-    setSpeed(speed) {
-        if (this.isTripping) {
-            this.stopColorAnimation();
-            this.startColorAnimation(speed);
-        }
-    }
 }
 
 // 创建单例

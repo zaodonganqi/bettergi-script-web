@@ -98,13 +98,13 @@ export const useListStore = defineStore('listStore', () => {
     // 角色筛选的通用方法（用于战斗策略）
     const filterByRoleTags = (items, roleTags) => {
         if (!roleTags || roleTags.length === 0) return items
-        
+
         return items.filter(item => {
             const itemTags = mapTagsToCanonical(item.tags || [])
-            return roleTags.some(tag => itemTags.includes(tag))
+            return roleTags.every(tag => itemTags.includes(tag))
         })
     }
-    
+
     // 组合所有过滤和排序的通用方法
     const processItems = (items, options = {}) => {
         const {

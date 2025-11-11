@@ -281,7 +281,9 @@
     "ascending": "昇順",
     "descending": "降順",
     "filterByRole": "キャラで絞り込み",
-    "searchRole": "キャラを検索"
+    "searchRole": "キャラを検索",
+    "filter": "フィルター",
+    "selected": "選択済み："
   },
   "loading": {
     "repoData": "リポジトリデータを読み込み中、お待ちください..."

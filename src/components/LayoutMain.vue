@@ -127,41 +127,59 @@
                 </a-menu-item>
               </a-menu-item-group>
               <a-menu-divider v-if="mainStore.selectedMenu[0] === '3'"/>
-              <a-sub-menu v-if="mainStore.selectedMenu[0] === '3'">
-                <template #title>
-                  <span>{{ $t('sort.filterByRole') }}</span>
-                </template>
-                <div class="role-filter-panel" @mousedown.stop @click.stop>
-                  <a-input v-model:value="mainStore.roleFilterSearch"
-                           size="middle"
-                           class="role-filter-search"
-                           :placeholder="$t('sort.searchRole')">
-                    <template #prefix>
-                      <SearchOutlined/>
-                    </template>
-                  </a-input>
-                  <div class="role-filter-list">
-                    <a-checkbox
-                        v-for="tag in mainStore.displayedRoleTags"
-                        :key="tag"
-                        :checked="mainStore.selectedRoleTags.includes(tag)"
-                        :disabled="!mainStore.selectedRoleTags.includes(tag) && mainStore.selectedRoleTags.length >= 4"
-                        class="role-filter-checkbox"
-                        @change="mainStore.onRoleCheckboxChange(tag, $event)"
-                    >
-                      <span class="role-filter-label">{{ tag }}</span>
-                    </a-checkbox>
+              <a-menu-item-group :title="$t('sort.filter')">
+                <a-sub-menu v-if="mainStore.selectedMenu[0] === '3'">
+                  <template #title>
+                    <span>{{ $t('sort.filterByRole') }}</span>
+                  </template>
+                  <div class="role-filter-panel" @mousedown.stop @click.stop>
+                    <a-input v-model:value="mainStore.roleFilterSearch"
+                             size="middle"
+                             class="role-filter-search"
+                             :placeholder="$t('sort.searchRole')">
+                      <template #prefix>
+                        <SearchOutlined/>
+                      </template>
+                    </a-input>
+                    <div class="role-filter-list">
+                      <div
+                          class="role-item"
+                          v-for="tag in mainStore.displayedRoleTags"
+                          :key="tag"
+                          @click="mainStore.onRoleItemClick(tag)"
+                      >
+                        <img class="role-avatar" :src="mainStore.getRoleAvatar(tag)" alt="avatar"/>
+                        <a-checkbox
+                            :checked="mainStore.selectedRoleTags.includes(tag)"
+                            :disabled="!mainStore.selectedRoleTags.includes(tag) && mainStore.selectedRoleTags.length >= 4"
+                            class="role-filter-checkbox"
+                            @click.stop
+                            @change="mainStore.onRoleCheckboxChange(tag, $event)"
+                        >
+                          <span class="role-filter-label">{{ tag }}</span>
+                        </a-checkbox>
+                      </div>
+                    </div>
+
+                    <div class="role-filter-footer">
+                      <div class="role-choose-text">已选：</div>
+                      <a-button v-for="avatar in mainStore.selectedRoleTags"
+                                size="middle"
+                                type="default"
+                                class="role-filter-avatar"
+                                @click="mainStore.onRoleItemClick(avatar)">
+                        {{ avatar }}
+                      </a-button>
+                      <a-button size="middle"
+                                type="primary"
+                                class="role-filter-btn-primary"
+                                @click="mainStore.resetRoleFilter">
+                        {{ $t('common.reset') }}
+                      </a-button>
+                    </div>
                   </div>
-                   <div class="role-filter-footer">
-                     <a-button size="middle"
-                               type="primary"
-                               class="role-filter-btn-primary"
-                               @click="mainStore.resetRoleFilter">
-                       {{ $t('common.reset') }}
-                     </a-button>
-                   </div>
-                </div>
-              </a-sub-menu>
+                </a-sub-menu>
+              </a-menu-item-group>
             </a-menu>
           </template>
         </a-dropdown>
@@ -899,8 +917,7 @@ function onLocaleChange(val) {
 }
 
 .role-filter-panel {
-  width: 360px;
-  max-height: 400px;
+  max-height: 50vh;
   padding: 8px 12px 12px 12px;
   overflow: hidden;
   display: flex;
@@ -919,8 +936,22 @@ function onLocaleChange(val) {
   padding-right: 4px;
   display: grid;
   margin: 8px 0;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px 10px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px 5px;
+}
+
+.role-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  gap: 8px;
+}
+
+.role-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
 }
 
 .role-filter-checkbox :deep(.ant-checkbox) {
@@ -935,20 +966,57 @@ function onLocaleChange(val) {
 
 .role-filter-footer {
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-start;
   gap: 8px;
-  padding-top: 8px;
+  padding: 8px 10px 0 10px;
   border-top: 1px solid var(--border-base);
 }
 
-.role-filter-btn {
+.role-choose-text {
+  display: flex;
+  text-align: center;
+  align-items: center;
+  color: var(--text-base);
+}
+
+.role-filter-avatar {
   border-radius: 8px;
   padding: 0 12px;
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.role-filter-avatar::after {
+  content: 'X';
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 16px;
+  height: 16px;
+  background-color: var(--text-error);
+  color: #FFFFFF;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  line-height: 1;
+  font-family: Arial, sans-serif;
+  opacity: 0;
+  transform: scale(0.8);
+  transition: all 0.2s ease;
+  pointer-events: none;
+}
+
+.role-filter-avatar:hover::after {
+  opacity: 1;
+  transform: scale(1);
 }
 
 .role-filter-btn-primary {
   border-radius: 8px;
   padding: 0 14px;
+  margin-left: auto;
 }
 
 .sort-menu .ant-menu-item {

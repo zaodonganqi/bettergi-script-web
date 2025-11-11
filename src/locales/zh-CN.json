@@ -285,7 +285,9 @@
         "ascending": "正序",
         "descending": "倒序",
         "filterByRole": "角色筛选",
-        "searchRole": "搜索角色"
+        "searchRole": "搜索角色",
+        "filter": "筛选",
+        "selected": "已选："
     },
     "loading": {
         "repoData": "仓库数据加载中，请稍候..."

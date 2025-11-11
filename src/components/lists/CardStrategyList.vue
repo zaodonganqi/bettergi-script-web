@@ -153,12 +153,12 @@ const filteredStrategies = computed(() => {
 .script-item.active {
   border: 1px solid var(--color-primary);
   box-shadow: 0 4px 16px 0 var(--color-shadow);
-  background: var(--bg-item-selected);
+  background: var(--bg-desc);
 }
 
 .script-item:hover {
   box-shadow: 0 4px 16px 0 var(--color-shadow);
-  background: var(--bg-item-selected);
+  background: var(--bg-desc);
   border-color: var(--color-primary);
 }
 

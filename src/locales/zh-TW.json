@@ -281,7 +281,9 @@
     "ascending": "正序",
     "descending": "倒序",
     "filterByRole": "角色篩選",
-    "searchRole": "搜尋角色"
+    "searchRole": "搜尋角色",
+    "filter": "篩選",
+    "selected": "已選："
   },
   "loading": {
     "repoData": "倉庫資料載入中，請稍候..."

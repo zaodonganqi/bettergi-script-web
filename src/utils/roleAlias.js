@@ -1,4 +1,5 @@
 import avatars from '@/assets/combat_avatar.json';
+import pinyin from 'pinyin';
 
 let cachedAliasToNameMap = null;
 
@@ -38,4 +39,12 @@ export function mapTagsToCanonical(tags) {
   return tags.map(t => toCanonicalRoleName(String(t)));
 }
 
+// 将中文字符串转换为拼音，全部小写拼接
+export function toPinyin(str) {
+  if (!str || typeof str !== 'string') return '';
+  return pinyin(str, { style: pinyin.STYLE_NORMAL })
+      .flat()
+      .join('')
+      .toLowerCase();
+}
 

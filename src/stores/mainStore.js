@@ -4,7 +4,7 @@ import {BulbOutlined, CalculatorOutlined, FileOutlined, FolderOutlined} from "@a
 import {useI18n} from "vue-i18n";
 import {getMirrorPath, getRawPath} from "@/utils/basePaths.js";
 import {subscribePaths} from "@/utils/subscription.js";
-import {mapTagsToCanonical} from "@/utils/roleAlias.js";
+import {mapTagsToCanonical, toPinyin} from "@/utils/roleAlias.js";
 import pako from "pako";
 import {message as Message} from 'ant-design-vue';
 
@@ -479,8 +479,39 @@ export const useMainStore = defineStore('mainStore', () => {
     const displayedRoleTags = computed(() => {
         const kw = (roleFilterSearch.value || '').trim().toLowerCase();
         if (!kw) return allRoleTags.value;
-        return allRoleTags.value.filter(t => String(t).toLowerCase().includes(kw));
+
+        return allRoleTags.value.filter(t => {
+            const tagStr = String(t).toLowerCase();
+            const tagPinyin = toPinyin(tagStr);
+
+            // 匹配原名或者拼音
+            return tagStr.includes(kw) || tagPinyin.includes(kw);
+        });
     });
+
+    // 获取角色头像
+    const roleImages = import.meta.glob('@/assets/roles/*.{png,jpg,jpeg,webp}', { eager: true, import: 'default' })
+
+    const getRoleAvatar = (tag) => {
+        // 匹配文件名和tag
+        const matchKey = Object.keys(roleImages).find(path => {
+            // 取文件名部分
+            const fileName = path.split('/').pop()?.split('.')[0]
+            return fileName === tag
+        })
+        return matchKey ? roleImages[matchKey] : '/src/assets/roles/旅行者.webp'
+    }
+
+    // 点击角色
+    function onRoleItemClick(tag) {
+        // 如果已禁用则不操作
+        if (!selectedRoleTags.value.includes(tag) && selectedRoleTags.value.length >= 4) return;
+
+        const isChecked = selectedRoleTags.value.includes(tag);
+        // 构造一个合乎文档结构的伪 event
+        const fakeEvent = { target: { checked: !isChecked } };
+        onRoleCheckboxChange(tag, fakeEvent);
+    }
 
     // 更新复选框选中后的角色状态（战斗策略）
     function onRoleCheckboxChange(tag, evt) {
@@ -657,6 +688,8 @@ export const useMainStore = defineStore('mainStore', () => {
         sortOrder,
         displayedRoleTags,
         handleSortMenuClick,
+        getRoleAvatar,
+        onRoleItemClick,
         onRoleCheckboxChange,
         resetRoleFilter,
         applySortForMenu,

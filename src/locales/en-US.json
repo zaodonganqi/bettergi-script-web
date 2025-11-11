@@ -281,7 +281,9 @@
     "ascending": "Ascending",
     "descending": "Descending",
     "filterByRole": "Filter by Role",
-    "searchRole": "Search roles"
+    "searchRole": "Search roles",
+    "filter": "Filter",
+    "selected": "Selected:"
   },
   "loading": {
     "repoData": "Loading repository data, please wait..."
