@@ -311,5 +311,7 @@
     "script.searchScript": "搜索脚本名称、作者、简介、tag",
     "script.searchCombat": "搜索战斗策略名称、作者、tag",
     "script.searchTCG": "搜索七圣召唤策略名称、作者、tag",
-    "script.searchDefault": "输入关键词查询"
+    "script.searchDefault": "输入关键词查询",
+    "update.notice.title": "更新提醒",
+    "update.notice.text": "\uD83D\uDC40你已经 <b>{day}</b> 天没有更新仓库啦\n为了获得更完备的功能与更好的体验\uD83D\uDE09\n快出去更新一下再回来吧~"
 }

@@ -307,5 +307,7 @@
   "script.searchScript": "搜尋腳本名稱、作者、簡介、tag",
   "script.searchCombat": "搜尋戰鬥策略名稱、作者、tag",
   "script.searchTCG": "搜尋七聖召喚策略名稱、作者、tag",
-  "script.searchDefault": "輸入關鍵詞查詢"
+  "script.searchDefault": "輸入關鍵詞查詢",
+  "update.notice.title": "更新提醒",
+  "update.notice.text": "👀你已經 <b>{day}</b> 天沒有更新倉庫啦\n為了獲得更完整的功能與更好的體驗😉\n快出去更新一下再回來吧~"
 }

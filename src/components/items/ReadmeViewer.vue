@@ -1,4 +1,3 @@
-```vue
 <template>
   <div class="readme-viewer">
     <div v-if="readmeContent" v-html="readmeContent" class="readme-content"></div>

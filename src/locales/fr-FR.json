@@ -307,5 +307,7 @@
   "script.searchScript": "Rechercher nom de script, auteur, description, tag",
   "script.searchCombat": "Rechercher nom de stratégie de combat, auteur, tag",
   "script.searchTCG": "Rechercher nom de stratégie TCG, auteur, tag",
-  "script.searchDefault": "Entrer des mots-clés pour rechercher"
+  "script.searchDefault": "Entrer des mots-clés pour rechercher",
+  "update.notice.title": "Avis de mise à jour",
+  "update.notice.text": "👀Vous n'avez pas mis à jour le dépôt depuis <b>{day}</b> jours.\nPour profiter de toutes les fonctionnalités et d'une meilleure expérience😉\nAllez le mettre à jour et revenez~"
 }

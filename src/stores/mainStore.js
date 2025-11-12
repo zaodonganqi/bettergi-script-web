@@ -26,6 +26,8 @@ export const useMainStore = defineStore('mainStore', () => {
     const globalLoading = ref(false);
     // 是否启用镜像加速
     const useMirror = ref(false);
+    // 未更新天数
+    const daysDiff = ref(0);
     // 加载超时计时器
     let fetchTimeoutId = null;
     // 订阅信息获取失败标志
@@ -353,6 +355,31 @@ export const useMainStore = defineStore('mainStore', () => {
         return '';
     });
 
+    // 更新提醒弹窗显示状态
+    const showUpdateNoticeModal = ref(false);
+    const updateNoticeModalLoading = ref(false);
+
+    const closeUpdateNoticeModal = () => {
+        updateNoticeModalLoading.value = true;
+        setTimeout(() => {
+            updateNoticeModalLoading.value = false;
+            showUpdateNoticeModal.value = false;
+        }, 3000);
+    };
+
+    // 监听未更新天数
+    watch(
+        () => repoData.value?.time,
+        (newTime) => {
+            if (!newTime) return;
+            daysDiff.value = daysSince(repoData.value.time);
+            if (daysDiff.value >= 7) {
+                showUpdateNoticeModal.value = true;
+            }
+        },
+        { immediate: true }
+    );
+
     // 彩蛋显示
     const showEggModal = ref(false);
     // 彩蛋 README 加载状态
@@ -668,6 +695,8 @@ export const useMainStore = defineStore('mainStore', () => {
         handleMenuSelect,
         // 仓库最后更新时间
         lastUpdateTime,
+        // 仓库未更新天数
+        daysDiff,
         // 彩蛋显示
         showEggModal,
         isLoadingEggReadme,
@@ -697,6 +726,10 @@ export const useMainStore = defineStore('mainStore', () => {
         showHelpModal,
         // 更新计划弹窗
         showPlanModal,
+        // 更新提醒弹窗
+        showUpdateNoticeModal,
+        updateNoticeModalLoading,
+        closeUpdateNoticeModal,
         // 评论
         showCommentModal,
         // 脚本选择相关
@@ -770,6 +803,20 @@ function formatTime(timeString) {
     const second = timeString.substring(12, 14);
 
     return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
+}
+
+function daysSince(timeStr) {
+    if (!timeStr) return null;
+    // timeStr 格式：20251112182852
+    const year = parseInt(timeStr.slice(0, 4));
+    const month = parseInt(timeStr.slice(4, 6)) - 1;
+    const day = parseInt(timeStr.slice(6, 8));
+
+    const targetDate = new Date(year, month, day);
+    const now = new Date();
+
+    const diffTime = now - targetDate;
+    return Math.floor(diffTime / (1000 * 60 * 60 * 24));
 }
 
 // 清理所有readme404缓存

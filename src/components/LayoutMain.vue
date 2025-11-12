@@ -386,11 +386,25 @@
       <Plan/>
     </a-modal>
 
+    <!-- 更新提醒弹窗 -->
+    <a-modal v-model:open="mainStore.showUpdateNoticeModal"
+             :title="$t('update.notice.title')"
+             centered
+             width="auto"
+             :closable="false"
+             :maskClosable="false"
+             :cancelButtonProps="{ style: { display: 'none' } }"
+             :confirm-loading="mainStore.updateNoticeModalLoading"
+             @ok="mainStore.closeUpdateNoticeModal">
+      <UpdateNotice/>
+    </a-modal>
+
     <!-- 帮助弹窗 -->
     <a-modal v-model:open="mainStore.showHelpModal"
              :title="$t('help.title')"
              :footer="null"
-             centered width="80%"
+             centered
+             width="80%"
              :style="{ maxWidth: '900px' }"
              @cancel="mainStore.showHelpModal = false">
       <Help/>
@@ -400,7 +414,8 @@
     <a-modal v-model:open="settings.showSettingsModal"
              :title="$t('settings.title')"
              :footer="null"
-             centered width="500px"
+             centered
+             width="500px"
              @cancel="settings.showSettingsModal = false">
       <div class="settings-row">
         <span class="settings-label">{{ $t('settings.language') }}</span>
@@ -502,6 +517,7 @@ import Help from './items/Help.vue';
 import {useI18n} from 'vue-i18n';
 import Plan from "./items/Plan.vue";
 import {useMainStore} from "@/stores/mainStore.js";
+import UpdateNotice from "@/components/items/UpdateNotice.vue";
 
 const mainStore = useMainStore();
 const settings = useSettingsStore();

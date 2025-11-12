@@ -18,7 +18,8 @@ export const i18n = createI18n({
 		'en-US': enUS,
 		'ja-JP': jaJP,
 		'fr-FR': frFR
-	}
+	},
+	warnHtmlMessage: false,
 })
 
 

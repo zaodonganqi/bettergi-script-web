@@ -307,5 +307,7 @@
   "script.searchScript": "Search script name, author, description, tag",
   "script.searchCombat": "Search combat strategy name, author, tag",
   "script.searchTCG": "Search TCG strategy name, author, tag",
-  "script.searchDefault": "Enter keywords to search"
+  "script.searchDefault": "Enter keywords to search",
+  "update.notice.title": "Update Notice",
+  "update.notice.text": "👀You haven't updated the repository for <b>{day}</b> days.\nTo enjoy full features and better experience😉\nGo update it and come back~"
 }
