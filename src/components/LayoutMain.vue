@@ -127,8 +127,8 @@
                 </a-menu-item>
               </a-menu-item-group>
               <a-menu-divider v-if="mainStore.selectedMenu[0] === '3'"/>
-              <a-menu-item-group :title="$t('sort.filter')">
-                <a-sub-menu v-if="mainStore.selectedMenu[0] === '3'">
+              <a-menu-item-group :title="$t('sort.filter')" v-if="mainStore.selectedMenu[0] === '3'">
+                <a-sub-menu>
                   <template #title>
                     <span>{{ $t('sort.filterByRole') }}</span>
                   </template>
