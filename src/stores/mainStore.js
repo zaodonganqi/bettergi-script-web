@@ -823,7 +823,7 @@ function formatTime(timeString) {
 function daysSince(timeStr) {
     if (!timeStr) return null;
     // 测试用字符串
-    timeStr = '20251012182852';
+    // timeStr = '20251012182852';
     const year = parseInt(timeStr.slice(0, 4));
     const month = parseInt(timeStr.slice(4, 6)) - 1;
     const day = parseInt(timeStr.slice(6, 8));
