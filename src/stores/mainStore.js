@@ -365,7 +365,7 @@ export const useMainStore = defineStore('mainStore', () => {
         if (updateNoticeModalLoading.value) return; // 防止重复点击
         updateNoticeModalLoading.value = true;
 
-        let seconds = 6;
+        let seconds = daysDiff.value <= 30 ? daysDiff.value : 30;
         okButtonText.value = `${seconds}s`;
 
         countdownTimer = setInterval(() => {
@@ -387,7 +387,7 @@ export const useMainStore = defineStore('mainStore', () => {
         (newTime) => {
             if (!newTime) return;
             daysDiff.value = daysSince(repoData.value.time);
-            if (daysDiff.value >= 7) {
+            if (daysDiff.value >= 7 && daysDiff.value < 1000) {
                 showUpdateNoticeModal.value = true;
             }
         },
