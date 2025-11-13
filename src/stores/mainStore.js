@@ -358,13 +358,27 @@ export const useMainStore = defineStore('mainStore', () => {
     // 更新提醒弹窗显示状态
     const showUpdateNoticeModal = ref(false);
     const updateNoticeModalLoading = ref(false);
+    const okButtonText = ref($t('common.confirm'));
+    let countdownTimer = null;
 
     const closeUpdateNoticeModal = () => {
+        if (updateNoticeModalLoading.value) return; // 防止重复点击
         updateNoticeModalLoading.value = true;
-        setTimeout(() => {
-            updateNoticeModalLoading.value = false;
-            showUpdateNoticeModal.value = false;
-        }, 3000);
+
+        let seconds = 6;
+        okButtonText.value = `${seconds}s`;
+
+        countdownTimer = setInterval(() => {
+            seconds--;
+            if (seconds > 0) {
+                okButtonText.value = `\u00A0\u00A0${seconds}s\u00A0\u00A0`;
+            } else {
+                clearInterval(countdownTimer);
+                updateNoticeModalLoading.value = false;
+                showUpdateNoticeModal.value = false;
+                okButtonText.value = ' ';
+            }
+        }, 1000);
     };
 
     // 监听未更新天数
@@ -729,6 +743,7 @@ export const useMainStore = defineStore('mainStore', () => {
         // 更新提醒弹窗
         showUpdateNoticeModal,
         updateNoticeModalLoading,
+        okButtonText,
         closeUpdateNoticeModal,
         // 评论
         showCommentModal,
@@ -807,7 +822,8 @@ function formatTime(timeString) {
 
 function daysSince(timeStr) {
     if (!timeStr) return null;
-    // timeStr 格式：20251112182852
+    // 测试用字符串
+    timeStr = '20251012182852';
     const year = parseInt(timeStr.slice(0, 4));
     const month = parseInt(timeStr.slice(4, 6)) - 1;
     const day = parseInt(timeStr.slice(6, 8));

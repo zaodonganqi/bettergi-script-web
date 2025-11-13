@@ -309,5 +309,6 @@
   "script.searchTCG": "Search TCG strategy name, author, tag",
   "script.searchDefault": "Enter keywords to search",
   "update.notice.title": "Update Notice",
-  "update.notice.text": "👀You haven't updated the repository for <b>{day}</b> days.\nTo enjoy full features and better experience😉\nGo update it and come back~"
+  "update.notice.text": "👀You haven't updated the repository for <b>{day}</b> days.\nTo enjoy full features and better experience😉\nGo update it and come back~",
+  "update.notice.tip": "💡 Updating the repository will not automatically update your subscriptions.\n     See FAQ 3 in the top right corner for details."
 }

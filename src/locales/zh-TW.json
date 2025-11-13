@@ -309,5 +309,6 @@
   "script.searchTCG": "搜尋七聖召喚策略名稱、作者、tag",
   "script.searchDefault": "輸入關鍵詞查詢",
   "update.notice.title": "更新提醒",
-  "update.notice.text": "👀你已經 <b>{day}</b> 天沒有更新倉庫啦\n為了獲得更完整的功能與更好的體驗😉\n快出去更新一下再回來吧~"
+  "update.notice.text": "👀你已經 <b>{day}</b> 天沒有更新倉庫啦\n為了獲得更完整的功能與更好的體驗😉\n快出去更新一下再回來吧~",
+  "update.notice.tip": "💡 僅更新倉庫並不會自動更新你的訂閱喔～\n     原因請見右上角的常見問題 3。"
 }

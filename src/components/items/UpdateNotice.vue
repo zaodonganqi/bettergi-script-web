@@ -1,7 +1,10 @@
 <template>
   <div class="update-notice-content">
     <CarryOutOutlined class="update-notice-icon"/>
-    <div class="update-notice-text" v-html="$t('update.notice.text', {day: mainStore.daysDiff})"></div>
+    <div class="text-content">
+      <span class="update-notice-text" v-html="$t('update.notice.text', {day: mainStore.daysDiff})"></span>
+      <span class="update-notice-tip">{{$t('update.notice.tip')}}</span>
+    </div>
   </div>
 </template>
 
@@ -19,7 +22,7 @@ const mainStore = useMainStore();
   display: flex;
   align-items: flex-start;
   margin-top: 20px;
-  margin-right: 10px;
+  margin-right: 20px;
   gap: 12px;
 }
 
@@ -30,11 +33,22 @@ const mainStore = useMainStore();
   margin-top: 2px;
 }
 
+.text-content {
+  display: flex;
+  flex-direction: column;
+  margin-left: 10px;
+  gap: 10px;
+}
+
 .update-notice-text {
   color: var(--text-base);
   font-size: 15px;
-  margin-left: 10px;
-  margin-bottom: 8px;
+  white-space: pre-wrap;
+}
+
+.update-notice-tip {
+  color: var(--text-base3);
+  font-size: 13px;
   white-space: pre-wrap;
 }
 </style>

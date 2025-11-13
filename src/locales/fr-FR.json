@@ -309,5 +309,6 @@
   "script.searchTCG": "Rechercher nom de stratégie TCG, auteur, tag",
   "script.searchDefault": "Entrer des mots-clés pour rechercher",
   "update.notice.title": "Avis de mise à jour",
-  "update.notice.text": "👀Vous n'avez pas mis à jour le dépôt depuis <b>{day}</b> jours.\nPour profiter de toutes les fonctionnalités et d'une meilleure expérience😉\nAllez le mettre à jour et revenez~"
+  "update.notice.text": "👀Vous n'avez pas mis à jour le dépôt depuis <b>{day}</b> jours.\nPour profiter de toutes les fonctionnalités et d'une meilleure expérience😉\nAllez le mettre à jour et revenez~",
+  "update.notice.tip": "💡 La mise à jour du dépôt n’actualise pas automatiquement vos abonnements.\n     Consultez la FAQ 3 en haut à droite pour plus de détails."
 }

@@ -313,5 +313,6 @@
     "script.searchTCG": "搜索七圣召唤策略名称、作者、tag",
     "script.searchDefault": "输入关键词查询",
     "update.notice.title": "更新提醒",
-    "update.notice.text": "\uD83D\uDC40你已经 <b>{day}</b> 天没有更新仓库啦\n为了获得更完备的功能与更好的体验\uD83D\uDE09\n快出去更新一下再回来吧~"
+    "update.notice.text": "\uD83D\uDC40你已经 <b>{day}</b> 天没有更新仓库啦\n为了获得更完备的功能与更好的体验\uD83D\uDE09\n快出去更新一下再回来吧~",
+    "update.notice.tip": "\uD83D\uDCA1 仅更新仓库并不会自动更新你的已订阅哦\n     原因请见右上角常见问题3"
 }

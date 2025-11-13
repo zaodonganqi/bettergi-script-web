@@ -394,6 +394,7 @@
              :closable="false"
              :maskClosable="false"
              :cancelButtonProps="{ style: { display: 'none' } }"
+             :ok-text="mainStore.okButtonText"
              :confirm-loading="mainStore.updateNoticeModalLoading"
              @ok="mainStore.closeUpdateNoticeModal">
       <UpdateNotice/>
