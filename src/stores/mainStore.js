@@ -524,6 +524,7 @@ export const useMainStore = defineStore('mainStore', () => {
         return allRoleTags.value.filter(t => {
             const tagStr = String(t).toLowerCase();
             const tagPinyin = toPinyin(tagStr);
+            console.log(tagPinyin);
 
             // 匹配原名或者拼音
             return tagStr.includes(kw) || tagPinyin.includes(kw);
@@ -591,6 +592,34 @@ export const useMainStore = defineStore('mainStore', () => {
     
     // 更新计划弹窗显示状态
     const showPlanModal = ref(false);
+
+    // 公告弹窗显示状态
+    const showAnnouncementModal = ref(false);
+    // 版本检测
+    const isAppVersionNew = ref(false);
+
+    function checkAppVersionIsNew() {
+        const savedVersion = localStorage.getItem('app-version');
+
+        if (savedVersion && savedVersion !== __APP_VERSION__) {
+            // 新版本
+            saveVersion();
+            isAppVersionNew.value = true;
+        } else if (!savedVersion) {
+            // 首次访问
+            saveVersion();
+            isAppVersionNew.value = true;
+        } else {
+            saveVersion();
+            isAppVersionNew.value = false;
+        }
+    }
+
+    watch(isAppVersionNew, () => {
+       if (isAppVersionNew) {
+           showAnnouncementModal.value = true;
+       }
+    });
 
     // 切换全部与已订阅状态
     const onClickShowAll = () => {
@@ -740,6 +769,9 @@ export const useMainStore = defineStore('mainStore', () => {
         showHelpModal,
         // 更新计划弹窗
         showPlanModal,
+        // 公告弹窗
+        showAnnouncementModal,
+        checkAppVersionIsNew,
         // 更新提醒弹窗
         showUpdateNoticeModal,
         updateNoticeModalLoading,
@@ -875,16 +907,33 @@ function collectCombatTags(repo) {
     const combat = repo.indexes.find(i => i.name === 'combat');
     if (!combat || !Array.isArray(combat.children)) return [];
     const all = [];
+
     const dfs = (nodes) => {
         for (const node of nodes) {
             if (node.children && node.children.length > 0) {
                 dfs(node.children);
             } else {
                 const tags = mapTagsToCanonical(Array.isArray(node.tags) ? node.tags : []);
-                for (const tag of tags) if (tag && typeof tag === 'string') all.push(tag);
+                for (const tag of tags) {
+                    if (tag && typeof tag === 'string') all.push(tag);
+                }
             }
         }
     };
     dfs(combat.children);
-    return Array.from(new Set(all)).sort((a, b) => String(a).localeCompare(String(b)));
+
+    // 去重
+    const uniqueTags = Array.from(new Set(all));
+
+    // 使用自定义拼音排序
+    return uniqueTags.sort((a, b) => {
+        const pinyinA = toPinyin(a);
+        const pinyinB = toPinyin(b);
+        return pinyinA.localeCompare(pinyinB);
+    });
+}
+
+// 版本更新记录
+function saveVersion() {
+    localStorage.setItem('app-version', __APP_VERSION__);
 }

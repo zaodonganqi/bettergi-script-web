@@ -167,6 +167,10 @@
     "invalidLinkHint": "(This author is stupid and wrote the link wrong, go remind them to fix it)",
     "iframeNotice": "Due to security restrictions, this content cannot be displayed directly. Please use local repository to view"
   },
+  "announcement": {
+    "guide": "Guide",
+    "changelog": "Changelog"
+  },
   "action": {
     "help": "Help",
     "jumpToGitHub": "GitHub",

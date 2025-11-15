@@ -17,8 +17,13 @@ import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
 
 const props = defineProps({
-  path: String,
-  desc: String,
+  path: {
+    type: String,
+    default: ''
+  },
+  desc: {
+    type: String,
+  },
   showDescTitle: {
     type: Boolean,
     default: false
@@ -30,6 +35,10 @@ const props = defineProps({
   forceWeb: {
     type: Boolean,
     default: false
+  },
+  markdownContent: {
+    type: String,
+    default: ''
   }
 });
 
@@ -241,18 +250,20 @@ function isReadme404(path) {
 }
 
 // 获取并渲染readme内容
-const fetchAndRenderReadme = async (path) => {
-  if (!path) {
-    readmeContent.value = '';
-    emit('loaded');
-    emit('hasContent', false);
-    return;
-  }
-  if (isReadme404(path)) {
-    readmeContent.value = '';
-    emit('loaded', { status: '404' });
-    emit('hasContent', false);
-    return;
+const fetchAndRenderReadme = async (path, markdownContent = '') => {
+  if (!markdownContent) {
+    if (!path) {
+      readmeContent.value = '';
+      emit('loaded');
+      emit('hasContent', false);
+      return;
+    }
+    if (isReadme404(path)) {
+      readmeContent.value = '';
+      emit('loaded', { status: '404' });
+      emit('hasContent', false);
+      return;
+    }
   }
   isLoading.value = true;
   loadError.value = null;
@@ -264,44 +275,127 @@ const fetchAndRenderReadme = async (path) => {
   if (props.forceWeb) {
     mode = 'web';
   }
-  if (mode === 'single') {
-    try {
-      const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
-      markdown = await repoWebBridge.GetFile(path.replace(/\\/g, '/') + '/README.md');
-    } catch (e) {
-      fetchError = e;
-    }
-    if (fetchError) {
-      readmeContent.value = '';
-      if (fetchError.name === 'AbortError') {
-        loadError.value = t('readmeViewer.loadTimeout');
-        emit('loaded', { status: 'error', message: t('readmeViewer.loadTimeout') });
-        emit('error', t('readmeViewer.loadTimeout'));
-      } else {
-        loadError.value = t('readmeViewer.loadFailed');
-        emit('loaded', { status: 'error', message: t('readmeViewer.loadFailed') });
-        emit('error', t('readmeViewer.loadFailed'));
+  if (props.markdownContent) {
+    markdown = props.markdownContent;
+  } else {
+    if (mode === 'single') {
+      try {
+        const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
+        markdown = await repoWebBridge.GetFile(path.replace(/\\/g, '/') + '/README.md');
+      } catch (e) {
+        fetchError = e;
       }
-      emit('hasContent', false);
+      if (fetchError) {
+        readmeContent.value = '';
+        if (fetchError.name === 'AbortError') {
+          loadError.value = t('readmeViewer.loadTimeout');
+          emit('loaded', { status: 'error', message: t('readmeViewer.loadTimeout') });
+          emit('error', t('readmeViewer.loadTimeout'));
+        } else {
+          loadError.value = t('readmeViewer.loadFailed');
+          emit('loaded', { status: 'error', message: t('readmeViewer.loadFailed') });
+          emit('error', t('readmeViewer.loadFailed'));
+        }
+        emit('hasContent', false);
+        isLoading.value = false;
+        return;
+      }
+      if (markdown === '404') {
+        readmeContent.value = '';
+        emit('loaded', { status: '404' });
+        emit('hasContent', false);
+        isLoading.value = false;
+        return;
+      }
+      // 图片路径处理和渲染
+      const baseImageUrl = '../../../Repos/bettergi-scripts-list-git/repo/' + path.replace(/\\/g, '/') + '/';
+      markdown = markdown.replace(/!\[([^\]]*)\]\(([^)]+)\)/gi, (match, alt, imgPath) => {
+        let cleanPath = imgPath.trim().replace(/\\/g, '/');
+        // 检查是否为完整的HTTP/HTTPS链接或data URL
+        const isHttpUrl = /^https?:\/\/[\S]+$/i.test(cleanPath);
+        const isDataUrl = cleanPath.startsWith('data:');
+        return `![${alt}](${(isHttpUrl || isDataUrl) ? cleanPath : baseImageUrl + cleanPath})`;
+      });
+      markdown = markdown.replace(/<img\s+[^>]*src=["']([^"']+)["'][^>]*>/gi, (match, imgPath) => {
+        let cleanPath = imgPath.trim().replace(/\\/g, '/');
+        // 检查是否为完整的HTTP/HTTPS链接或data URL
+        const isHttpUrl = /^https?:\/\/[\S]+$/i.test(cleanPath);
+        const isDataUrl = cleanPath.startsWith('data:');
+        return match.replace(imgPath, (isHttpUrl || isDataUrl) ? cleanPath : baseImageUrl + cleanPath);
+      });
+      markdown = markdown.replace(/`([^`\n]+\.(?:png|jpg|jpeg|gif|webp|svg))`/gi, (imgPath) => {
+        let cleanPath = imgPath.trim().replace(/\\/g, '/');
+        // 检查是否为完整的HTTP/HTTPS链接
+        const isHttpUrl = /^https?:\/\/[\S]+$/i.test(cleanPath);
+        return `![](${isHttpUrl ? cleanPath : baseImageUrl + cleanPath})`;
+      });
+      markdown = markdown.replace(/```\s*([^`\n]+\.(?:png|jpg|jpeg|gif|webp|svg))\s*```/gi, (imgPath) => {
+        let cleanPath = imgPath.trim().replace(/\\/g, '/');
+        // 检查是否为完整的HTTP/HTTPS链接
+        const isHttpUrl = /^https?:\/\/[\S]+$/i.test(cleanPath);
+        return `![](${isHttpUrl ? cleanPath : baseImageUrl + cleanPath})`;
+      });
+      // 处理HTML iframe标签
+      markdown = markdown.replace(/<iframe\s+[^>]*src=["']([^"']+)["'][^>]*>/gi, (match, iframePath) => {
+        let cleanPath = iframePath.trim().replace(/\\/g, '/');
+        // 检查是否为完整的HTTP/HTTPS链接或data URL
+        const isHttpUrl = /^https?:\/\/[\S]+$/i.test(cleanPath);
+        const isDataUrl = cleanPath.startsWith('data:');
+        return match.replace(iframePath, (isHttpUrl || isDataUrl) ? cleanPath : baseImageUrl + cleanPath);
+      });
+      markdown = processFootnotes(markdown);
+      readmeContent.value = md.render(markdown);
+      emit('loaded', { status: 'ok' });
+      emit('hasContent', true);
       isLoading.value = false;
       return;
+    } else {
+      // 拼接完整URL
+      const readmeUrl = getReadmeUrl(path);
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 6000);
+      try {
+        const response = await fetch(readmeUrl, { signal: controller.signal });
+        if (response.ok) {
+          markdown = await response.text();
+        } else if (response.status === 404) {
+          readmeContent.value = '';
+          emit('loaded', { status: '404' });
+          emit('hasContent', false);
+          clearTimeout(timeoutId);
+          isLoading.value = false;
+          return;
+        } else {
+          useMirror.value = true;
+          fetchError = new Error('Load failed');
+        }
+      } catch (e) {
+        fetchError = e;
+      } finally {
+        clearTimeout(timeoutId);
+      }
     }
-    if (markdown === '404') {
-      readmeContent.value = '';
-      emit('loaded', { status: '404' });
-      emit('hasContent', false);
-      isLoading.value = false;
-      return;
+
+    // 处理图片路径，将相对路径转换为绝对路径
+    let baseImageUrl;
+    if (props.forceWeb) {
+      baseImageUrl = path.replace(/README\.md$/i, "");
+      if (!baseImageUrl.endsWith('/')) {
+        baseImageUrl += '/';
+      }
+    } else {
+      baseImageUrl = getRepoPath() + path.replace(/\\/g, '/') + '/';
     }
-    // 图片路径处理和渲染
-    const baseImageUrl = '../../../Repos/bettergi-scripts-list-git/repo/' + path.replace(/\\/g, '/') + '/';
-    markdown = markdown.replace(/!\[([^\]]*)\]\(([^)]+)\)/gi, (match, alt, imgPath) => {
+
+    // 处理markdown图片语法 ![alt](path)
+    markdown = markdown.replace(/!\[[^\]]*\]\(([^)]+)\)/g, (match, imgPath) => {
       let cleanPath = imgPath.trim().replace(/\\/g, '/');
-      // 检查是否为完整的HTTP/HTTPS链接或data URL
+      // 检查是否为完整的HTTP/HTTPS链接
       const isHttpUrl = /^https?:\/\/[\S]+$/i.test(cleanPath);
-      const isDataUrl = cleanPath.startsWith('data:');
-      return `![${alt}](${(isHttpUrl || isDataUrl) ? cleanPath : baseImageUrl + cleanPath})`;
+      return match.replace(imgPath, isHttpUrl ? cleanPath : baseImageUrl + cleanPath);
     });
+
+    // 处理HTML img标签
     markdown = markdown.replace(/<img\s+[^>]*src=["']([^"']+)["'][^>]*>/gi, (match, imgPath) => {
       let cleanPath = imgPath.trim().replace(/\\/g, '/');
       // 检查是否为完整的HTTP/HTTPS链接或data URL
@@ -309,58 +403,24 @@ const fetchAndRenderReadme = async (path) => {
       const isDataUrl = cleanPath.startsWith('data:');
       return match.replace(imgPath, (isHttpUrl || isDataUrl) ? cleanPath : baseImageUrl + cleanPath);
     });
+
+    // 处理代码块中的图片路径
     markdown = markdown.replace(/`([^`\n]+\.(?:png|jpg|jpeg|gif|webp|svg))`/gi, (imgPath) => {
       let cleanPath = imgPath.trim().replace(/\\/g, '/');
       // 检查是否为完整的HTTP/HTTPS链接
       const isHttpUrl = /^https?:\/\/[\S]+$/i.test(cleanPath);
       return `![](${isHttpUrl ? cleanPath : baseImageUrl + cleanPath})`;
     });
+
+    // 处理代码块中的图片路径
     markdown = markdown.replace(/```\s*([^`\n]+\.(?:png|jpg|jpeg|gif|webp|svg))\s*```/gi, (imgPath) => {
       let cleanPath = imgPath.trim().replace(/\\/g, '/');
       // 检查是否为完整的HTTP/HTTPS链接
       const isHttpUrl = /^https?:\/\/[\S]+$/i.test(cleanPath);
       return `![](${isHttpUrl ? cleanPath : baseImageUrl + cleanPath})`;
     });
-    // 处理HTML iframe标签
-    markdown = markdown.replace(/<iframe\s+[^>]*src=["']([^"']+)["'][^>]*>/gi, (match, iframePath) => {
-      let cleanPath = iframePath.trim().replace(/\\/g, '/');
-      // 检查是否为完整的HTTP/HTTPS链接或data URL
-      const isHttpUrl = /^https?:\/\/[\S]+$/i.test(cleanPath);
-      const isDataUrl = cleanPath.startsWith('data:');
-      return match.replace(iframePath, (isHttpUrl || isDataUrl) ? cleanPath : baseImageUrl + cleanPath);
-    });
-    markdown = processFootnotes(markdown);
-    readmeContent.value = md.render(markdown);
-    emit('loaded', { status: 'ok' });
-    emit('hasContent', true);
-    isLoading.value = false;
-    return;
-  } else {
-    // 拼接完整URL
-    const readmeUrl = getReadmeUrl(path);
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 6000);
-    try {
-      const response = await fetch(readmeUrl, { signal: controller.signal });
-      if (response.ok) {
-        markdown = await response.text();
-      } else if (response.status === 404) {
-        readmeContent.value = '';
-        emit('loaded', { status: '404' });
-        emit('hasContent', false);
-        clearTimeout(timeoutId);
-        isLoading.value = false;
-        return;
-      } else {
-        useMirror.value = true;
-        fetchError = new Error('Load failed');
-      }
-    } catch (e) {
-      fetchError = e;
-    } finally {
-      clearTimeout(timeoutId);
-    }
   }
+
   if (fetchError) {
     readmeContent.value = '';
     if (fetchError.name === 'AbortError') {
@@ -376,50 +436,7 @@ const fetchAndRenderReadme = async (path) => {
     isLoading.value = false;
     return;
   }
-  // 处理图片路径，将相对路径转换为绝对路径
-  let baseImageUrl;
-  if (props.forceWeb) {
-    baseImageUrl = path.replace(/README\.md$/i, "");
-    if (!baseImageUrl.endsWith('/')) {
-      baseImageUrl += '/';
-    }
-  } else {
-    baseImageUrl = getRepoPath() + path.replace(/\\/g, '/') + '/';
-  }
 
-  // 处理markdown图片语法 ![alt](path)
-  markdown = markdown.replace(/!\[[^\]]*\]\(([^)]+)\)/g, (match, imgPath) => {
-    let cleanPath = imgPath.trim().replace(/\\/g, '/');
-    // 检查是否为完整的HTTP/HTTPS链接
-    const isHttpUrl = /^https?:\/\/[\S]+$/i.test(cleanPath);
-    return match.replace(imgPath, isHttpUrl ? cleanPath : baseImageUrl + cleanPath);
-  });
-
-  // 处理HTML img标签
-  markdown = markdown.replace(/<img\s+[^>]*src=["']([^"']+)["'][^>]*>/gi, (match, imgPath) => {
-    let cleanPath = imgPath.trim().replace(/\\/g, '/');
-    // 检查是否为完整的HTTP/HTTPS链接或data URL
-    const isHttpUrl = /^https?:\/\/[\S]+$/i.test(cleanPath);
-    const isDataUrl = cleanPath.startsWith('data:');
-    return match.replace(imgPath, (isHttpUrl || isDataUrl) ? cleanPath : baseImageUrl + cleanPath);
-  });
-
-  // 处理代码块中的图片路径
-  markdown = markdown.replace(/`([^`\n]+\.(?:png|jpg|jpeg|gif|webp|svg))`/gi, (imgPath) => {
-    let cleanPath = imgPath.trim().replace(/\\/g, '/');
-    // 检查是否为完整的HTTP/HTTPS链接
-    const isHttpUrl = /^https?:\/\/[\S]+$/i.test(cleanPath);
-    return `![](${isHttpUrl ? cleanPath : baseImageUrl + cleanPath})`;
-  });
-
-  // 处理代码块中的图片路径
-  markdown = markdown.replace(/```\s*([^`\n]+\.(?:png|jpg|jpeg|gif|webp|svg))\s*```/gi, (imgPath) => {
-    let cleanPath = imgPath.trim().replace(/\\/g, '/');
-    // 检查是否为完整的HTTP/HTTPS链接
-    const isHttpUrl = /^https?:\/\/[\S]+$/i.test(cleanPath);
-    return `![](${isHttpUrl ? cleanPath : baseImageUrl + cleanPath})`;
-  });
-  
   // 处理HTML iframe标签 - 因跨域问题，在线模式仅提醒
   const iframeNoticeText = t('readmeViewer.iframeNotice') || '由于安全限制，无法直接显示此内容，请使用本地仓库查看';
   markdown = markdown.replace(/<iframe\s+[^>]*src=["']([^"']+)["'][^>]*>/gi, (match, iframePath) => {
@@ -434,13 +451,12 @@ const fetchAndRenderReadme = async (path) => {
   isLoading.value = false;
 };
 
-// 监听路径变化
 watch(
-  () => props.path,
-  (newPath) => {
-    fetchAndRenderReadme(newPath);
-  },
-  { immediate: true }
+    () => [props.path, props.markdownContent],
+    ([newPath, newContent]) => {
+      fetchAndRenderReadme(newPath, newContent);
+    },
+    { immediate: true }
 );
 </script>
 
@@ -545,6 +561,7 @@ watch(
   background: var(--bg-desc);
   border-radius: 10px;
   padding: 16px 20px;
+  margin-right: 10px;
   overflow: auto;
   margin-bottom: 1.5em;
   font-size: 90%;

@@ -162,7 +162,7 @@
                     </div>
 
                     <div class="role-filter-footer">
-                      <div class="role-choose-text">已选：</div>
+                      <div class="role-choose-text">{{ $t('sort.selected') }}</div>
                       <a-button v-for="avatar in mainStore.selectedRoleTags"
                                 size="middle"
                                 type="default"
@@ -222,6 +222,11 @@
           </a-tooltip>
         </div>
         <div class="top-bar-right">
+          <a-tooltip :title="$t('action.announcement')">
+            <a-button type="text" class="action-btn" @click="mainStore.showAnnouncementModal = true">
+              <CalendarOutlined />
+            </a-button>
+          </a-tooltip>
           <a-tooltip :title="$t('action.plan')">
             <a-button type="text" class="action-btn" @click="mainStore.showPlanModal = true">
               <EditOutlined />
@@ -287,7 +292,8 @@
     <a-modal v-model:open="mainStore.showEggModal"
              :title="$t('egg.title')"
              :footer="null"
-             centered width="80%"
+             centered
+             width="80%"
              :style="{ maxWidth: '900px' }"
              :destroyOnClose="true"
              @cancel="mainStore.showEggModal = false">
@@ -376,6 +382,16 @@
       </div>
     </a-modal>
 
+    <!-- 公告弹窗 -->
+    <a-modal v-model:open="mainStore.showAnnouncementModal"
+             :title="$t('action.announcement')"
+             centered
+             width="70%"
+             :footer="null"
+             @ok="mainStore.showAnnouncementModal = false">
+      <Announcement/>
+    </a-modal>
+
     <!-- 更新计划弹窗 -->
     <a-modal v-model:open="mainStore.showPlanModal"
              :title="$t('plan.title')"
@@ -387,18 +403,18 @@
     </a-modal>
 
     <!-- 更新提醒弹窗 -->
-    <a-modal v-model:open="mainStore.showUpdateNoticeModal"
-             :title="$t('update.notice.title')"
-             centered
-             width="auto"
-             :closable="false"
-             :maskClosable="false"
-             :cancelButtonProps="{ style: { display: 'none' } }"
-             :ok-text="mainStore.okButtonText"
-             :confirm-loading="mainStore.updateNoticeModalLoading"
-             @ok="mainStore.closeUpdateNoticeModal">
-      <UpdateNotice/>
-    </a-modal>
+<!--    <a-modal v-model:open="mainStore.showUpdateNoticeModal"-->
+<!--             :title="$t('update.notice.title')"-->
+<!--             centered-->
+<!--             width="auto"-->
+<!--             :closable="false"-->
+<!--             :maskClosable="false"-->
+<!--             :cancelButtonProps="{ style: { display: 'none' } }"-->
+<!--             :ok-text="mainStore.okButtonText"-->
+<!--             :confirm-loading="mainStore.updateNoticeModalLoading"-->
+<!--             @ok="mainStore.closeUpdateNoticeModal">-->
+<!--      <UpdateNotice/>-->
+<!--    </a-modal>-->
 
     <!-- 帮助弹窗 -->
     <a-modal v-model:open="mainStore.showHelpModal"
@@ -504,7 +520,8 @@ import {
   QuestionCircleOutlined,
   ReloadOutlined,
   SearchOutlined,
-  SettingOutlined
+  SettingOutlined,
+  CalendarOutlined
 } from '@ant-design/icons-vue';
 import MapTreeList from './lists/MapTreeList.vue';
 import ScriptList from './lists/ScriptList.vue';
@@ -519,6 +536,7 @@ import {useI18n} from 'vue-i18n';
 import Plan from "./items/Plan.vue";
 import {useMainStore} from "@/stores/mainStore.js";
 import UpdateNotice from "@/components/items/UpdateNotice.vue";
+import Announcement from "@/components/items/Announcement.vue";
 
 const mainStore = useMainStore();
 const settings = useSettingsStore();
@@ -657,21 +675,24 @@ const hasSearchKey = computed(() => {
 const {t: $t} = useI18n();
 
 // 挂载时获取仓库数据并应用部分排序
-onMounted(() => {
-  mainStore.getRepoJson();
+onMounted(async () => {
+  await mainStore.getRepoJson();
   if (['2', '3', '4'].includes(mainStore.selectedMenu[0])) {
     mainStore.applySortForMenu(mainStore.selectedMenu[0]);
   }
   mainStore.selectedRoleTags = [...mainStore.appliedRoleTags];
-  
+
   // 初始化布局宽度
   initLayoutWidths();
-  
+
   // 监听窗口大小变化
   window.addEventListener('resize', handleWindowResize);
-  
+
   // 加载自定义背景
   settings.loadCustomBackground();
+
+  // 检测版本
+  mainStore.checkAppVersionIsNew();
 });
 
 // 组件卸载时清理事件监听器

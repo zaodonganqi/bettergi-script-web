@@ -167,6 +167,10 @@
     "invalidLinkHint": "（この作者は愚かでリンクを間違えました。修正するよう彼らに伝えてください）",
     "iframeNotice": "セキュリティ制限により、このコンテンツを直接表示できません。ローカルリポジトリを使用して表示してください"
   },
+  "announcement": {
+    "guide": "使用ガイド",
+    "changelog": "更新履歴"
+  },
   "action": {
     "help": "ヘルプ",
     "jumpToGitHub": "GitHub",

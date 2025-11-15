@@ -1,5 +1,5 @@
 import avatars from '@/assets/combat_avatar.json';
-import pinyin from 'pinyin';
+import { pinyin } from 'pinyin-pro';
 
 let cachedAliasToNameMap = null;
 
@@ -27,6 +27,11 @@ function buildAliasToNameMap() {
   return cachedAliasToNameMap;
 }
 
+// 多音字映射表
+const customPinyinMap = {
+  '茜特菈莉': 'xitelali',
+};
+
 export function toCanonicalRoleName(tag) {
   if (!tag || typeof tag !== 'string') return '';
   const map = buildAliasToNameMap();
@@ -42,9 +47,13 @@ export function mapTagsToCanonical(tags) {
 // 将中文字符串转换为拼音，全部小写拼接
 export function toPinyin(str) {
   if (!str || typeof str !== 'string') return '';
-  return pinyin(str, { style: pinyin.STYLE_NORMAL })
-      .flat()
-      .join('')
+
+  if (customPinyinMap[str]) {
+    return customPinyinMap[str];
+  }
+
+  return pinyin(str, { toneType: 'none', type: 'string' })
+      .replace(/\s+/g, '')  // 去掉空格
       .toLowerCase();
 }
 

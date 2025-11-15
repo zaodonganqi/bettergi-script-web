@@ -178,6 +178,7 @@
         "subscribe": "一键更新",
         "update": "查看更新",
         "plan": "更新计划",
+        "announcement": "公告",
         "recent": "以下脚本最近有更新",
         "updateAll": "是否一键更新所有已订阅项",
         "clearDot": "清除红点提示",
@@ -288,6 +289,10 @@
         "searchRole": "搜索角色",
         "filter": "筛选",
         "selected": "已选："
+    },
+    "announcement": {
+        "guide": "使用教程",
+        "changelog": "更新日志"
     },
     "loading": {
         "repoData": "仓库数据加载中，请稍候..."
