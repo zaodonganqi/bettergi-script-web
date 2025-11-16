@@ -1,74 +1,140 @@
 import fs from "fs";
 import path from "path";
+import sharp from "sharp";
 
-const rootDir = process.cwd(); // 项目根目录
-const targetDir = path.join(rootDir, "src"); // 要处理的目录
-const outputDir = path.join(rootDir, "src/assets/readme"); // 输出目录
+/* ==============================
+   🔧 可配置项
+================================*/
+const CONFIG = {
+    SCALE: 0.8,              // ⬅⬅ 按比例缩放（0.5 = 缩小一半）
+    QUALITY: 60,             // JPG/WebP 质量
+    PNG_COLORS: 256,         // PNG 最大颜色数
+    LOG: false,              // 是否输出详细日志
+};
 
+const rootDir = process.cwd();
+const targetDir = path.join(rootDir, "src");
+const outputDir = path.join(rootDir, "src/assets/readme");
 if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir, { recursive: true });
 
-function fileToBase64(filePath) {
-    if (!fs.existsSync(filePath)) {
-        console.warn(`⚠️ File not found: ${filePath}`);
+/* ==============================
+   📦 压缩 + Base64 转换（按比例）
+================================*/
+async function compressAndBase64(filePath) {
+    if (!fs.existsSync(filePath)) return null;
+
+    try {
+        const ext = path.extname(filePath).toLowerCase();
+        let mime = "image/png";
+        if (ext === ".jpg" || ext === ".jpeg") mime = "image/jpeg";
+        else if (ext === ".gif") mime = "image/gif";
+        else if (ext === ".svg") mime = "image/svg+xml";
+        else if (ext === ".webp") mime = "image/webp";
+
+        // svg 不可压缩
+        if (ext === ".svg") {
+            const raw = fs.readFileSync(filePath, "utf8");
+            return `data:${mime};base64,${Buffer.from(raw).toString("base64")}`;
+        }
+
+        const info = await sharp(filePath).metadata();
+        const newW = Math.round(info.width * CONFIG.SCALE);
+        const newH = Math.round(info.height * CONFIG.SCALE);
+
+        let img = sharp(filePath).resize({
+            width: newW,
+            height: newH,
+        });
+
+        if (ext === ".jpg" || ext === ".jpeg") {
+            img = img.jpeg({ quality: CONFIG.QUALITY });
+        } else if (ext === ".webp") {
+            img = img.webp({ quality: CONFIG.QUALITY });
+        } else if (ext === ".png") {
+            img = img.png({
+                compressionLevel: 9,
+                palette: true,
+                colors: CONFIG.PNG_COLORS,
+            });
+        }
+
+        const buffer = await img.toBuffer();
+        return `data:${mime};base64,${buffer.toString("base64")}`;
+
+    } catch (err) {
+        console.error("❌ 图片处理失败:", filePath, err);
         return null;
     }
-    const ext = path.extname(filePath).toLowerCase();
-    const buffer = fs.readFileSync(filePath);
-    const base64 = buffer.toString("base64");
-    let mime = "image/png";
-    if (ext === ".jpg" || ext === ".jpeg") mime = "image/jpeg";
-    else if (ext === ".gif") mime = "image/gif";
-    else if (ext === ".svg") mime = "image/svg+xml";
-    else if (ext === ".webp") mime = "image/webp";
-
-    console.log(`✅ Converted to Base64: ${filePath}`);
-    return `data:${mime};base64,${base64}`;
 }
 
-function processMarkdownFile(filePath) {
-    console.log(`\n🔹 Processing Markdown: ${filePath}`);
+/* ==============================
+   📝 处理 Markdown
+================================*/
+async function processMarkdownFile(filePath) {
+    if (CONFIG.LOG) console.log(`📄 ${filePath}`);
+
     let content = fs.readFileSync(filePath, "utf8");
     const mdDir = path.dirname(filePath);
 
-    // Markdown 图片
-    content = content.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (match, alt, src) => {
-        if (/^(https?:)?\/\//.test(src)) return match;
-        const absPath = path.resolve(mdDir, src);
-        const base64 = fileToBase64(absPath);
-        return base64 ? `![${alt}](${base64})` : match;
-    });
+    // ![]()
+    content = await replaceAsync(
+        content,
+        /!\[([^\]]*)\]\(([^)]+)\)/g,
+        async (match, alt, src) => {
+            if (/^(https?:)?\/\//.test(src)) return match;
+            const abs = path.resolve(mdDir, src);
+            const base64 = await compressAndBase64(abs);
+            return base64 ? `![${alt}](${base64})` : match;
+        }
+    );
 
-    // HTML 图片
-    content = content.replace(/<img\s+[^>]*src=["']([^"']+)["'][^>]*>/g, (match, src) => {
-        if (/^(https?:)?\/\//.test(src)) return match;
-        const absPath = path.resolve(mdDir, src);
-        const base64 = fileToBase64(absPath);
-        return base64 ? match.replace(src, base64) : match;
-    });
+    // <img>
+    content = await replaceAsync(
+        content,
+        /<img\s+[^>]*src=["']([^"']+)["'][^>]*>/g,
+        async (match, src) => {
+            if (/^(https?:)?\/\//.test(src)) return match;
+            const abs = path.resolve(mdDir, src);
+            const base64 = await compressAndBase64(abs);
+            return base64 ? match.replace(src, base64) : match;
+        }
+    );
 
-    // 输出文件名直接放到 outputDir 下
-    const fileName = path.basename(filePath);
-    const outputPath = path.join(outputDir, fileName);
-
-    fs.writeFileSync(outputPath, content, "utf8");
-    console.log(`💾 Markdown saved to: ${outputPath}`);
+    const outFile = path.join(outputDir, path.basename(filePath));
+    fs.writeFileSync(outFile, content, "utf8");
 }
 
-function traverseDir(dir) {
-    if (!fs.existsSync(dir)) return;
+/* ==============================
+   🔄 异步替换工具
+================================*/
+async function replaceAsync(str, regex, asyncFn) {
+    const promises = [];
+    str.replace(regex, (match, ...args) => {
+        promises.push(asyncFn(match, ...args));
+    });
+    const results = await Promise.all(promises);
+    return str.replace(regex, () => results.shift());
+}
+
+/* ==============================
+   📂 递归遍历
+================================*/
+async function traverseDir(dir) {
     const entries = fs.readdirSync(dir, { withFileTypes: true });
+
     for (const entry of entries) {
-        const fullPath = path.join(dir, entry.name);
+        const full = path.join(dir, entry.name);
+        if (full.startsWith(outputDir)) continue;
 
-        // 排除输出目录
-        if (fullPath === outputDir || fullPath.startsWith(outputDir + path.sep)) continue;
-
-        if (entry.isDirectory()) traverseDir(fullPath);
-        else if (entry.isFile() && fullPath.endsWith(".md")) processMarkdownFile(fullPath);
+        if (entry.isDirectory()) await traverseDir(full);
+        else if (entry.isFile() && full.endsWith(".md"))
+            await processMarkdownFile(full);
     }
 }
 
-// 执行
-console.log(`\n🚀 Starting Markdown image inlining from: ${targetDir}`);
-traverseDir(targetDir);
-console.log("\n🎉 All done.");
+/* ==============================
+   🚀 执行
+================================*/
+console.log("🚀 开始处理 Markdown 图片（按比例压缩 PNG/JPG/WebP）…");
+await traverseDir(targetDir);
+console.log("🎉 完成！");
