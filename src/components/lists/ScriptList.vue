@@ -4,8 +4,8 @@
       :data-source="filteredScripts"
       :grid="mainStore.isListTwoColumn ? { gutter: 10, column: 2 } : undefined"
     >
-      <template #renderItem="{ item }">
-        <div :class="['script-item', { active: item.id === listStore.selectedId }]" @click="selectScript(item.id)">
+      <template #renderItem="{ item, index }">
+        <div :class="['script-item', `script-item-${index}`, { active: item.id === listStore.selectedId }]" @click="selectScript(item.id)">
           <div class="item-header">
             <div class="item-title-wrap">
               <span class="item-title-main">{{ item.name1 }}</span>

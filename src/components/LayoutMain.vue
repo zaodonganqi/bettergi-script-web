@@ -3,16 +3,22 @@
     <!-- 左侧菜单 -->
     <div class="custom-sider">
       <div class="sider-header">
-        <div class="sider-logo" :title="$t('sider.document')" @click="mainStore.openExternalLink('https://bettergi.com/')"></div>
+        <div class="sider-logo"
+             :title="$t('sider.document')"
+             @click="mainStore.openExternalLink('https://bettergi.com/')"
+        >
+        </div>
         <span class="repo-title">{{ $t('sider.repoTitle') }}</span>
       </div>
       <div class="sider-menu-wrap">
         <div class="menu-content">
           <a-menu v-model:selectedKeys="mainStore.selectedMenu"
-                  mode="vertical" class="custom-menu"
+                  mode="vertical"
+                  class="custom-menu"
                   @select="mainStore.handleMenuSelect">
             <a-menu-item v-for="item in mainStore.menuList"
                          :key="item.key"
+                         :id="`menu-item-${item.key}`"
                          class="custom-menu-item">
               <span class="menu-icon">
                 <component :is="item.icon"/>
@@ -474,6 +480,18 @@
           </div>
         </div>
       </div>
+      <a-divider/>
+      <div class="settings-row">
+        <span class="settings-label">{{ $t('settings.guide') }}</span>
+        <a-button type="primary"
+                  size="middle"
+                  @click="mainStore.startGuide">
+          <template #icon>
+            <CompassOutlined/>
+          </template>
+          {{ $t('settings.startGuide') }}
+        </a-button>
+      </div>
       <a-divider v-if="mainStore.isModeSingle"/>
       <div v-if="mainStore.isModeSingle" class="settings-row">
         <span class="settings-label">{{ $t('settings.clearUpdate') }}</span>
@@ -521,7 +539,8 @@ import {
   ReloadOutlined,
   SearchOutlined,
   SettingOutlined,
-  CalendarOutlined
+  CalendarOutlined,
+  CompassOutlined
 } from '@ant-design/icons-vue';
 import MapTreeList from './lists/MapTreeList.vue';
 import ScriptList from './lists/ScriptList.vue';
@@ -532,9 +551,9 @@ import StrategyDetail from './details/StrategyDetail.vue';
 import MapDetail from './details/MapDetail.vue';
 import ReadmeViewer from './items/ReadmeViewer.vue';
 import Help from './items/Help.vue';
-import {useI18n} from 'vue-i18n';
+import { useI18n } from 'vue-i18n';
 import Plan from "./items/Plan.vue";
-import {useMainStore} from "@/stores/mainStore.js";
+import { useMainStore } from "@/stores/mainStore.js";
 import UpdateNotice from "@/components/items/UpdateNotice.vue";
 import Announcement from "@/components/items/Announcement.vue";
 
@@ -672,7 +691,7 @@ const hasSearchKey = computed(() => {
 });
 
 // 采用vue-i18n组件获取选中语言的文本
-const {t: $t} = useI18n();
+const { t: $t } = useI18n();
 
 // 挂载时获取仓库数据并应用部分排序
 onMounted(async () => {
@@ -689,10 +708,15 @@ onMounted(async () => {
   window.addEventListener('resize', handleWindowResize);
 
   // 加载自定义背景
-  settings.loadCustomBackground();
+  await settings.loadCustomBackground();
 
   // 检测版本
   mainStore.checkAppVersionIsNew();
+
+  // 新手引导检测
+  setTimeout(() => {
+    mainStore.checkGuide();
+  }, 1000);
 });
 
 // 组件卸载时清理事件监听器
@@ -709,6 +733,7 @@ function onLocaleChange(val) {
   mainStore.onLocaleChange(val);
   settings.setLocale(val);
 }
+
 </script>
 
 <style scoped>
@@ -895,7 +920,7 @@ function onLocaleChange(val) {
 }
 
 .script-actions {
-  position:relative;
+  position: relative;
   display: flex;
   gap: 8px;
 }
@@ -1144,7 +1169,7 @@ function onLocaleChange(val) {
   justify-content: center;
 }
 
-.main-right > div:last-child {
+.main-right>div:last-child {
   flex: 1;
   overflow: hidden;
 }
@@ -1451,3 +1476,95 @@ function onLocaleChange(val) {
 }
 </style>
 
+<style>
+.driver-popover {
+  background-color: var(--bg-container);
+  color: var(--text-base);
+  border-radius: 8px;
+  max-width: 500px;
+}
+
+.driver-popover .driver-popover-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-base);
+}
+
+.driver-popover .driver-popover-description {
+  font-size: 14px;
+  margin-right: 60px;
+  word-wrap: normal;
+  color: var(--text-base2);
+}
+
+.driver-popover .driver-popover-progress-text {
+  margin-right: 16px;
+  color: var(--text-base2);
+}
+
+.driver-popover button {
+  text-align: center;
+  background-color: var(--color-primary);
+  color: var(--text-light);
+  border: none !important;
+  text-shadow: none;
+  font-size: 14px;
+  height: fit-content;
+  width: fit-content;
+  padding: 7px 15px;
+  border-radius: 6px;
+  transition: all 0.2s;
+  outline: none !important;
+  cursor: pointer;
+}
+
+.driver-popover button:hover {
+  background-color: var(--color-hover);
+  color: var(--text-light);
+  border: none !important;
+}
+
+.driver-popover button:focus {
+  background-color: var(--color-primary);
+  color: var(--text-light);
+  border: none !important;
+}
+
+.driver-popover .driver-popover-navigation-btns {
+  justify-content: flex-end;
+  margin-left: auto;
+  flex-grow: 0;
+  gap: 8px;
+}
+
+.skip-btn {
+  position: absolute;
+  background-color: transparent !important;
+  color: var(--text-base2) !important;
+  font-size: 13px !important;
+  text-align: center;
+  padding: 0 1px !important;
+  top: 14px;
+  right: 18px;
+}
+
+.skip-btn:hover {
+  color: var(--text-base3) !important;
+}
+
+.driver-popover .driver-popover-arrow-side-left.driver-popover-arrow {
+  border-left-color: var(--bg-container);
+}
+
+.driver-popover .driver-popover-arrow-side-right.driver-popover-arrow {
+  border-right-color: var(--bg-container);
+}
+
+.driver-popover .driver-popover-arrow-side-top.driver-popover-arrow {
+  border-top-color: var(--bg-container);
+}
+
+.driver-popover .driver-popover-arrow-side-bottom.driver-popover-arrow {
+  border-bottom-color: var(--bg-container);
+}
+</style>

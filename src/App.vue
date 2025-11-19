@@ -33,6 +33,7 @@ onMounted(() => {
   --bg-shadow-light: #1677ff14;
   --bg-desc: #f8fbff;
   --color-shadow: #e6f0ff;
+  --color-hover: #4096ff;
   --color-update: #52c41a;
   --text-error: #ff4d4f;
 }

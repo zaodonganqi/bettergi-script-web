@@ -274,7 +274,27 @@
     "customBackgroundClearFailed": "Failed to clear custom background",
     "invalidImageFile": "Please select a valid image file",
     "imageFileTooLarge": "Image file too large, please select a file smaller than 50MB",
-    "fileUploadFailed": "File upload failed"
+    "fileUploadFailed": "File upload failed",
+    "guide": "Guide",
+    "startGuide": "Start Guide"
+  },
+  "guide": {
+    "step1Title": "Get Help",
+    "step1Desc": "When encountering problems, check here first for possible solutions.",
+    "step2Title": "Settings",
+    "step2Desc": "Configure basic page settings here.",
+    "step3Title": "Select a Category",
+    "step3Desc": "Click a category in the left menu (using JavaScript scripts as an example).",
+    "step4Title": "Subscribe to Script",
+    "step4Desc": "Click to subscribe to the script.<br>Please note!<br>The repository update here only refreshes the information of your local central repository.<br>It does NOT automatically update already-subscribed scripts or paths!<br>This is a common misunderstanding for beginners!",
+    "step5Title": "Select a Script",
+    "step5Desc": "Click a script in the list to view detailed information.",
+    "step6Title": "Script Details",
+    "step6Desc": "The text here (if any) is the user guide written by the script author.<br><br>To avoid problems during execution:<br><strong>Please read all instructions carefully before using any script so you fully understand its functions!</strong><br>Asking questions without reading the instructions may set a bad example.",
+    "next": "Next",
+    "prev": "Previous",
+    "skip": "Skip",
+    "done": "Done"
   },
   "sort": {
     "sortBy": "Sort By",

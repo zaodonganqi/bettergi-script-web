@@ -1,12 +1,20 @@
 import { defineStore } from 'pinia'
-import {computed, nextTick, reactive, ref, watch} from "vue";
-import {BulbOutlined, CalculatorOutlined, FileOutlined, FolderOutlined} from "@ant-design/icons-vue";
-import {useI18n} from "vue-i18n";
-import {getMirrorPath, getRawPath} from "@/utils/basePaths.js";
-import {subscribePaths} from "@/utils/subscription.js";
-import {mapTagsToCanonical, toPinyin} from "@/utils/roleAlias.js";
+import { computed, nextTick, reactive, ref, watch } from "vue";
+import {
+    BulbOutlined,
+    CalculatorOutlined,
+    FileOutlined,
+    FolderOutlined
+} from "@ant-design/icons-vue";
+import { useI18n } from "vue-i18n";
+import { getMirrorPath, getRawPath } from "@/utils/basePaths.js";
+import { subscribePaths } from "@/utils/subscription.js";
+import { mapTagsToCanonical, toPinyin } from "@/utils/roleAlias.js";
 import pako from "pako";
-import {message as Message} from 'ant-design-vue';
+import { message as Message } from 'ant-design-vue';
+import { useSettingsStore } from "@/stores/settingsStore.js";
+import { driver } from "driver.js";
+import "driver.js/dist/driver.css";
 
 export const useMainStore = defineStore('mainStore', () => {
     const {t: $t} = useI18n();
@@ -14,6 +22,9 @@ export const useMainStore = defineStore('mainStore', () => {
     // 当前运行环境
     const mode = import.meta.env.VITE_MODE;
     const isModeSingle = mode === 'single';
+
+    // 设置状态
+    const settings = useSettingsStore();
 
     // 仓库状态
     // 仓库json文件解构后数据
@@ -621,6 +632,300 @@ export const useMainStore = defineStore('mainStore', () => {
        }
     });
 
+    // 检查是否需要初次新手引导
+    const showGuide = ref(false);
+    function checkGuide() {
+        const hasShownGuide = localStorage.getItem('has-shown-guide');
+        if (!hasShownGuide && !showAnnouncementModal.value) {
+            showGuide.value = true;
+            startGuide();
+        }
+    }
+
+    function setGuide() {
+        localStorage.setItem('has-shown-guide', '1');
+    }
+
+    watch(showAnnouncementModal, () => {
+        if (showAnnouncementModal) {
+            setTimeout(() => {
+                checkGuide();
+            }, 1000);
+        }
+    });
+
+    // 新手引导
+    function startGuide() {
+        settings.showSettingsModal = false;
+
+        const toolsRight = document.querySelector('.top-bar-right');
+        const lastTwo = Array.from(toolsRight.children).slice(-2);
+
+        let countdownTimer = null;
+        let isCountingDown = false;
+
+        const driverObj = driver({
+            showProgress: true,
+            allowClose: false,
+            nextBtnText: $t('guide.next'),
+            prevBtnText: $t('guide.prev'),
+            doneBtnText: $t('guide.done'),
+            onDestroyStarted: () => {
+                // 清理倒计时
+                if (countdownTimer) {
+                    clearInterval(countdownTimer);
+                    countdownTimer = null;
+                }
+                if (!isCountingDown) {
+                    driverObj.destroy();
+                }
+            },
+            steps: [
+                {
+                    element: lastTwo[0],
+                    popover: {
+                        title: $t('guide.step1Title'),
+                        description: `
+            ${$t('guide.step1Desc')}
+            <button id="guide-skip-btn" class="skip-btn">${$t('guide.skip')}</button>
+          `,
+                        side: "right",
+                        align: 'start',
+                    }
+                },
+                {
+                    element: lastTwo[1],
+                    popover: {
+                        title: $t('guide.step2Title'),
+                        description: `
+            ${$t('guide.step2Desc')}
+            <button id="guide-skip-btn" class="skip-btn">${$t('guide.skip')}</button>
+          `,
+                        side: "right",
+                        align: 'start',
+                    }
+                },
+                {
+                    element: '#menu-item-2',
+                    popover: {
+                        title: $t('guide.step3Title'),
+                        description: `
+            ${$t('guide.step3Desc')}
+            <button id="guide-skip-btn" class="skip-btn">${$t('guide.skip')}</button>
+          `,
+                        side: "right",
+                        align: 'start',
+                        onNextClick: async () => {
+                            const element = document.querySelector('#menu-item-2');
+                            element.click();
+                            await waitForElement('.script-item-1');
+                            driverObj.moveNext();
+                        }
+                    }
+                },
+                {
+                    element: '.script-item-1',
+                    popover: {
+                        title: $t('guide.step5Title'),
+                        description: `
+            ${$t('guide.step5Desc')}
+            <button id="guide-skip-btn" class="skip-btn">跳过</button>`,
+                        side: "right",
+                        align: 'start',
+                        onNextClick: async () => {
+                            const element = document.querySelector('.script-item-1');
+                            element.click();
+                            await waitForElement('.detail-readme');
+                            driverObj.moveNext();
+                        }
+                    }
+                },
+                {
+                    element: () => {
+                        const headerRight = document.querySelector('.header-right');
+                        if (!headerRight) return null;
+                        const arr = Array.from(headerRight.children);
+                        return arr[arr.length - 1];
+                    },
+                    popover: {
+                        title: $t('guide.step4Title'),
+                        description: `
+            ${$t('guide.step4Desc')}
+            <button id="guide-skip-btn" class="skip-btn">${$t('guide.skip')}</button>
+          `,
+                        side: "right",
+                        align: 'start',
+                    }
+                },
+                {
+                    element: '.detail-readme',
+                    popover: {
+                        title: $t('guide.step6Title'),
+                        description: $t('guide.step6Desc'),
+                        side: "left",
+                        align: 'start',
+                        onPrevClick: () => {
+                            // 清理倒计时
+                            if (countdownTimer) {
+                                clearInterval(countdownTimer);
+                                countdownTimer = null;
+                                isCountingDown = false;
+                            }
+                            driverObj.movePrevious();
+                        },
+                        onNextClick: () => {
+                            // 清理之前可能存在的倒计时
+                            if (countdownTimer) {
+                                clearInterval(countdownTimer);
+                                countdownTimer = null;
+                            }
+
+                            // 阻止默认的关闭行为
+                            const doneBtn = document.querySelector('.driver-popover-next-btn');
+                            if (doneBtn && !isCountingDown) {
+                                isCountingDown = true;
+                                let countdown = 5;
+
+                                // 更新按钮文本并禁用
+                                doneBtn.textContent = ` ${countdown} `;
+                                doneBtn.disabled = true;
+                                doneBtn.style.opacity = '0.6';
+                                doneBtn.style.cursor = 'not-allowed';
+
+                                // 开始倒计时
+                                countdownTimer = setInterval(() => {
+                                    countdown--;
+                                    if (countdown > 0) {
+                                        doneBtn.textContent = ` ${countdown} `;
+                                    } else {
+                                        // 倒计时结束，清理并关闭
+                                        clearInterval(countdownTimer);
+                                        countdownTimer = null;
+                                        isCountingDown = false;
+                                        setGuide();
+                                        driverObj.destroy();
+                                    }
+                                }, 1000);
+                            }
+                            showGuide.value = false;
+                            return false;
+                        }
+                    }
+                }
+            ]
+        });
+
+        // 监听跳过按钮
+        document.addEventListener("click", async (e) => {
+            if (e.target?.id === "guide-skip-btn") {
+                await openReadmePanel();
+                driverObj.destroy();
+                await showLastStepOnly();
+            }
+        });
+
+        function waitForElement(selector, timeout = 3000) {
+            return new Promise((resolve, reject) => {
+                const start = Date.now();
+                const timer = setInterval(() => {
+                    const el = document.querySelector(selector);
+                    if (el) {
+                        clearInterval(timer);
+                        resolve(el);
+                    }
+                    if (Date.now() - start > timeout) {
+                        clearInterval(timer);
+                        reject(`Element ${selector} not found`);
+                    }
+                }, 50);
+            });
+        }
+
+        // 前置操作
+        async function openReadmePanel() {
+            const menu = document.querySelector('#menu-item-2');
+            if (menu && selectedMenu.value[0] !== '2') {
+                menu.click();
+            }
+
+            // 等待菜单点击生效
+            await new Promise(r => setTimeout(r, 300));
+
+            const item = document.querySelector('.script-item-1');
+            if (item) item.click();
+
+            // 再等内容渲染
+            await new Promise(r => setTimeout(r, 300));
+        }
+
+        // 单独展示最后一步
+        async function showLastStepOnly() {
+            await waitForElement('.detail-readme');
+
+            const last = driver({
+                allowClose: false,
+                showProgress: false,
+                prevBtnText: $t('guide.prev'),
+                doneBtnText: $t('guide.done'),
+                steps: [
+                    {
+                        element: '.detail-readme',
+                        popover: {
+                            title: $t('guide.step6Title'),
+                            description: $t('guide.step6Desc'),
+                            side: "left",
+                            align: 'start',
+                            onNextClick: () => {
+                                // 清理之前可能存在的倒计时
+                                if (countdownTimer) {
+                                    clearInterval(countdownTimer);
+                                    countdownTimer = null;
+                                }
+
+                                // 阻止默认的关闭行为
+                                const doneBtn = document.querySelector('.driver-popover-next-btn');
+                                if (doneBtn && !isCountingDown) {
+                                    isCountingDown = true;
+                                    let countdown = 5;
+
+                                    // 更新按钮文本并禁用
+                                    doneBtn.textContent = ` ${countdown} `;
+                                    doneBtn.disabled = true;
+                                    doneBtn.style.opacity = '0.6';
+                                    doneBtn.style.cursor = 'not-allowed';
+
+                                    // 开始倒计时
+                                    countdownTimer = setInterval(() => {
+                                        countdown--;
+                                        if (countdown > 0) {
+                                            doneBtn.textContent = ` ${countdown} `;
+                                        } else {
+                                            // 倒计时结束，清理并关闭
+                                            clearInterval(countdownTimer);
+                                            countdownTimer = null;
+                                            isCountingDown = false;
+                                            setGuide();
+                                            driverObj.destroy();
+                                        }
+                                    }, 1000);
+                                }
+                                showGuide.value = false;
+                                return false;
+                            },
+                            onPopoverRender: () => {
+                                const nextBtn = document.querySelector('.driver-popover-prev-btn');
+                                if (nextBtn) nextBtn.style.display = 'none';
+                            }
+                        },
+                    }
+                ]
+            });
+            last.drive();
+        }
+
+        driverObj.drive();
+    }
+
     // 切换全部与已订阅状态
     const onClickShowAll = () => {
         if (!isModeSingle) return;
@@ -772,6 +1077,10 @@ export const useMainStore = defineStore('mainStore', () => {
         // 公告弹窗
         showAnnouncementModal,
         checkAppVersionIsNew,
+        // 新手引导
+        showGuide,
+        checkGuide,
+        startGuide,
         // 更新提醒弹窗
         showUpdateNoticeModal,
         updateNoticeModalLoading,

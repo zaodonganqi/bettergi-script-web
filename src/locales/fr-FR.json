@@ -274,7 +274,27 @@
     "customBackgroundClearFailed": "Échec de l'effacement de l'arrière-plan personnalisé",
     "invalidImageFile": "Veuillez sélectionner un fichier image valide",
     "imageFileTooLarge": "Fichier image trop volumineux, veuillez sélectionner un fichier de moins de 50MB",
-    "fileUploadFailed": "Échec du téléchargement du fichier"
+    "fileUploadFailed": "Échec du téléchargement du fichier",
+    "guide": "Guide",
+    "startGuide": "Démarrer le guide"
+  },
+  "guide": {
+    "step1Title": "Obtenir de l’aide",
+    "step1Desc": "En cas de problème, commencez par consulter ici pour trouver une solution.",
+    "step2Title": "Paramètres",
+    "step2Desc": "Configurez ici les paramètres de base de la page.",
+    "step3Title": "Choisir une catégorie",
+    "step3Desc": "Cliquez sur un élément du menu à gauche (exemple : scripts JavaScript).",
+    "step4Title": "S’abonner au script",
+    "step4Desc": "Cliquez pour vous abonner au script.<br>Attention !<br>La mise à jour du dépôt ici ne fait qu’actualiser les informations de votre dépôt central local.<br>Elle ne met PAS automatiquement à jour les scripts ou chemins auxquels vous êtes déjà abonné !<br>C’est une erreur fréquente chez les débutants !",
+    "step5Title": "Choisir un script",
+    "step5Desc": "Cliquez sur un script dans la liste pour afficher ses informations détaillées.",
+    "step6Title": "Détails du script",
+    "step6Desc": "Le texte ici (s’il existe) est le guide d’utilisation rédigé par l’auteur du script.<br><br>Afin d’éviter tout problème lors de l’exécution :<br><strong>Lisez attentivement toutes les instructions avant d’utiliser un script pour bien comprendre ses fonctionnalités !</strong><br>Poser des questions sans avoir lu la documentation peut donner le mauvais exemple.",
+    "next": "Suivant",
+    "prev": "Précédent",
+    "skip": "Passer",
+    "done": "Terminer"
   },
   "sort": {
     "sortBy": "Trier par",
