@@ -290,7 +290,7 @@
     "step5Title": "Select a Script",
     "step5Desc": "Click a script in the list to view detailed information.",
     "step6Title": "Script Details",
-    "step6Desc": "The text here (if any) is the user guide written by the script author.<br><br>To avoid problems during execution:<br><strong>Please read all instructions carefully before using any script so you fully understand its functions!</strong><br>Asking questions without reading the instructions may set a bad example.",
+    "step6Desc": "The text here (if any) is the user guide written by the script author.<br><br><strong>To avoid problems during execution:</strong><br><strong style='color:var(--text-error)'>Please read all instructions carefully before using any script so you fully understand its functions!</strong><br>Asking questions without reading the instructions may set a bad example.",
     "next": "Next",
     "prev": "Previous",
     "skip": "Skip",

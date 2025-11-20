@@ -290,7 +290,7 @@
     "step5Title": "Choisir un script",
     "step5Desc": "Cliquez sur un script dans la liste pour afficher ses informations détaillées.",
     "step6Title": "Détails du script",
-    "step6Desc": "Le texte ici (s’il existe) est le guide d’utilisation rédigé par l’auteur du script.<br><br>Afin d’éviter tout problème lors de l’exécution :<br><strong>Lisez attentivement toutes les instructions avant d’utiliser un script pour bien comprendre ses fonctionnalités !</strong><br>Poser des questions sans avoir lu la documentation peut donner le mauvais exemple.",
+    "step6Desc": "Le texte ici (s’il existe) est le guide d’utilisation rédigé par l’auteur du script.<br><br><strong>Afin d’éviter tout problème lors de l’exécution :</strong><br><strong style='color:var(--text-error)'>Lisez attentivement toutes les instructions avant d’utiliser un script pour bien comprendre ses fonctionnalités !</strong><br>Poser des questions sans avoir lu la documentation peut donner le mauvais exemple.",
     "next": "Suivant",
     "prev": "Précédent",
     "skip": "Passer",

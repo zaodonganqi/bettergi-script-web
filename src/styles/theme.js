@@ -217,6 +217,10 @@ export function setTheme(name) {
                     `;
                     document.head.appendChild(style);
                 }
+            } else {
+                const id = 'force-driver-bg-style';
+                const oldStyle = document.getElementById(id);
+                if (oldStyle) oldStyle.remove();
             }
         } else {
             egg.start();
