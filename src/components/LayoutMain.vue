@@ -276,7 +276,7 @@
         <div class="repo-error-desc">{{ $t('repoError.desc') }}</div>
         <div class="repo-error-btn-group">
           <a-button class="repo-error-btn"
-                    @click="mainStore.getRepoJson"
+                    @click="fetchRepoData"
                     type="primary"
                     danger>{{ $t('repoError.refresh') }}
           </a-button>
@@ -694,12 +694,28 @@ const hasSearchKey = computed(() => {
 const { t: $t } = useI18n();
 
 // 挂载时获取仓库数据并应用部分排序
-onMounted(async () => {
+// 获取仓库数据
+const fetchRepoData = async () => {
   await mainStore.getRepoJson();
-  if (['2', '3', '4'].includes(mainStore.selectedMenu[0])) {
-    mainStore.applySortForMenu(mainStore.selectedMenu[0]);
+  if (!mainStore.repoError) {
+    if (['2', '3', '4'].includes(mainStore.selectedMenu[0])) {
+      mainStore.applySortForMenu(mainStore.selectedMenu[0]);
+    }
+    mainStore.selectedRoleTags = [...mainStore.appliedRoleTags];
+
+    // 检测版本
+    mainStore.checkAppVersionIsNew();
+
+    // 新手引导检测
+    setTimeout(() => {
+      mainStore.checkGuide();
+    }, 1000);
   }
-  mainStore.selectedRoleTags = [...mainStore.appliedRoleTags];
+};
+
+// 挂载时获取仓库数据并应用部分排序
+onMounted(async () => {
+  await fetchRepoData();
 
   // 初始化布局宽度
   initLayoutWidths();
@@ -709,14 +725,6 @@ onMounted(async () => {
 
   // 加载自定义背景
   await settings.loadCustomBackground();
-
-  // 检测版本
-  mainStore.checkAppVersionIsNew();
-
-  // 新手引导检测
-  setTimeout(() => {
-    mainStore.checkGuide();
-  }, 1000);
 });
 
 // 组件卸载时清理事件监听器

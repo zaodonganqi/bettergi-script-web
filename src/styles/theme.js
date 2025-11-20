@@ -67,6 +67,7 @@ export const antdThemes = {
             colorTextQuaternary: 'rgba(255, 255, 255, 0.25)', // 四级文本色
             colorTextLightSolid: '#ffffff', // 主题色按钮中的文本色（有色按钮中的文本色，只在地图追踪详情的切换滑块中定义了亮色文本，如主题色较黑建议将.ant-menu-item-selected的color改为此映射）
             colorSuccessText: '#52c41a', // 成功色（有更新提示色）
+            colorPrimaryHover: '#4096ff', // 引导弹窗按钮hover色（由于是其他组件的，需要覆盖一下）
 
             // 以下颜色不建议更改
             colorErrorText: '#ff4d4f' // 不用说了，错误色
@@ -98,6 +99,7 @@ export const antdThemes = {
             colorTextQuaternary: '#aaa', // 四级文本色
             colorTextLightSolid: '#ffffff', // 主题色按钮中的文本色（有色按钮中的文本色，只在地图追踪详情的切换滑块中定义了亮色文本，如主题色较黑建议将.ant-menu-item-selected的color改为此映射）
             colorSuccessText: '#52c41a', // 成功色（有更新提示色）
+            colorPrimaryHover: '#4096ff', // 引导弹窗按钮hover色（由于是其他组件的，需要覆盖一下）
 
             // 以下颜色不建议更改
             colorErrorText: '#ff4d4f' // 不用说了，错误色
