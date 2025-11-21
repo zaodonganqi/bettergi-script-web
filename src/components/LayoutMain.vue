@@ -36,7 +36,7 @@
           <div class="sider-link" @click="mainStore.openExternalLink('https://github.com/babalae/bettergi-scripts-list')">
             {{ $t('sider.scriptRepo') }}
           </div>
-          <div v-if="mainStore.isModeSingle" class="sider-link" @click="mainStore.openExternalLink('https://bgi.sh')">
+          <div v-if="mainStore.isModeSingle" class="sider-link" @click="mainStore.openExternalLink('https://s.bettergi.com')">
             {{ $t('sider.onlineRepo') }}
           </div>
           <div class="sider-link" @click="mainStore.openExternalLink('https://bettergi.com/open.html')">
