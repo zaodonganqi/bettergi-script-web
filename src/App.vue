@@ -2,6 +2,7 @@
 import LayoutMain from './components/LayoutMain.vue';
 import { useSettingsStore } from '@/stores/settingsStore.js'
 import {onMounted} from "vue";
+import ParticleExplosion from "@/components/items/ParticleExplosion.vue";
 
 const settings = useSettingsStore();
 

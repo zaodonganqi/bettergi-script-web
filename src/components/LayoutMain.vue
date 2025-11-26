@@ -229,6 +229,11 @@
         </div>
         <div class="top-bar-right">
           <a-tooltip :title="$t('action.announcement')">
+            <a-button type="text" class="action-btn" @click="showTest = true">
+              <CalendarOutlined />
+            </a-button>
+          </a-tooltip>
+          <a-tooltip :title="$t('action.announcement')">
             <a-button type="text" class="action-btn" @click="mainStore.showAnnouncementModal = true">
               <CalendarOutlined />
             </a-button>
@@ -398,6 +403,16 @@
       <Announcement/>
     </a-modal>
 
+    <!-- test弹窗 -->
+    <a-modal v-model:open="showTest"
+             :title="$t('action.announcement')"
+             centered
+             width="70%"
+             :footer="null"
+             @ok="showTest = false">
+      <ParticleExplosion />
+    </a-modal>
+
     <!-- 更新计划弹窗 -->
     <a-modal v-model:open="mainStore.showPlanModal"
              :title="$t('plan.title')"
@@ -556,9 +571,12 @@ import Plan from "./items/Plan.vue";
 import { useMainStore } from "@/stores/mainStore.js";
 import UpdateNotice from "@/components/items/UpdateNotice.vue";
 import Announcement from "@/components/items/Announcement.vue";
+import ParticleExplosion from "@/components/items/ParticleExplosion.vue";
 
 const mainStore = useMainStore();
 const settings = useSettingsStore();
+
+const showTest = ref(false);
 
 // 文件上传相关
 const fileInput = ref(null);
