@@ -167,10 +167,6 @@
     "invalidLinkHint": "(Cet auteur est stupide et a mal écrit le lien, allez lui rappeler de le corriger)",
     "iframeNotice": "En raison des restrictions de sécurité, ce contenu ne peut pas être affiché directement. Veuillez utiliser le dépôt local pour le visualiser"
   },
-  "announcement": {
-    "guide": "Guide d'utilisation",
-    "changelog": "Journal des modifications"
-  },
   "action": {
     "help": "Aide",
     "jumpToGitHub": "GitHub",
@@ -309,6 +305,11 @@
     "searchRole": "Rechercher des rôles",
     "filter": "Filtrer",
     "selected": "Sélectionné :"
+  },
+  "announcement": {
+    "guide": "Guide d'utilisation",
+    "changelog": "Journal des modifications",
+    "ask": "Comment poser une question"
   },
   "loading": {
     "repoData": "Chargement des données du dépôt, veuillez patienter..."

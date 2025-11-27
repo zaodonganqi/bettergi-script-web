@@ -27,16 +27,18 @@
 
 <script setup>
 import ReadmeViewer from "@/components/items/ReadmeViewer.vue";
-import srepoMd from '@/assets/readme/srepo.md?raw'
-import updateMd from '@/assets/readme/update.md?raw'
+import srepoMd from '@/assets/readme/srepo.md?raw';
+import updateMd from '@/assets/readme/update.md?raw';
+import askMd from '@/assets/readme/ask.md?raw';
 import {useI18n} from 'vue-i18n';
 import {ref} from "vue";
 
 const {t: $t} = useI18n();
 
 const tabs = [
-  {key: "changelog", title: $t('announcement.changelog'), content: updateMd},
-  {key: "guide", title: $t('announcement.guide'), content: srepoMd}
+  { key: "changelog", title: $t('announcement.changelog'), content: updateMd },
+  { key: "guide", title: $t('announcement.guide'), content: srepoMd },
+  { key: "ask", title: $t('announcement.ask'), content: askMd },
 ];
 
 const activeTab = ref("changelog");

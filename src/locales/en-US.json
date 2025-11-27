@@ -167,10 +167,6 @@
     "invalidLinkHint": "(This author is stupid and wrote the link wrong, go remind them to fix it)",
     "iframeNotice": "Due to security restrictions, this content cannot be displayed directly. Please use local repository to view"
   },
-  "announcement": {
-    "guide": "Guide",
-    "changelog": "Changelog"
-  },
   "action": {
     "help": "Help",
     "jumpToGitHub": "GitHub",
@@ -309,6 +305,11 @@
     "searchRole": "Search roles",
     "filter": "Filter",
     "selected": "Selected:"
+  },
+  "announcement": {
+    "guide": "使用教程",
+    "changelog": "更新日志",
+    "ask": "如何提问"
   },
   "loading": {
     "repoData": "Loading repository data, please wait..."
