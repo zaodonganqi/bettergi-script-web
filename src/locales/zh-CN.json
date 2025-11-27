@@ -312,7 +312,8 @@
     },
     "announcement": {
         "guide": "使用教程",
-        "changelog": "更新日志"
+        "changelog": "更新日志",
+        "ask": "如何提问（重要）"
     },
     "loading": {
         "repoData": "仓库数据加载中，请稍候..."
