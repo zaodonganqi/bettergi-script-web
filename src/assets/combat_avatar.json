@@ -1947,5 +1947,54 @@
     "nameEn": "Aino",
     "skillCD": 10,
     "weapon": "11"
+  },
+  {
+    "alias": [
+      "奈芙尔",
+      "Nefer"
+    ],
+    "burstCD": 15,
+    "id": "10000122",
+    "name": "奈芙尔",
+    "nameEn": "Nefer",
+    "skillCD": 9,
+    "weapon": "10"
+  },
+  {
+    "alias": [
+      "杜林",
+      "Durin"
+    ],
+    "burstCD": 18,
+    "id": "10000123",
+    "name": "杜林",
+    "nameEn": "Durin",
+    "skillCD": 12,
+    "weapon": "10"
+  },
+  {
+    "alias": [
+      "雅珂达",
+      "Jahoda"
+    ],
+    "burstCD": 18,
+    "id": "10000124",
+    "name": "雅珂达",
+    "nameEn": "Jahoda",
+    "skillCD": 15,
+    "weapon": "10"
+  },
+  {
+    "alias": [
+      "哥伦比娅",
+      "少女",
+      "Columbina"
+    ],
+    "burstCD": 15,
+    "id": "10000125",
+    "name": "哥伦比娅",
+    "nameEn": "Columbina",
+    "skillCD": 17,
+    "weapon": "10"
   }
 ]
