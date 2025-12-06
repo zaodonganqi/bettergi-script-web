@@ -280,7 +280,7 @@
     },
     "guide": {
         "step1Title": "获取帮助",
-        "step1Desc": "当遇到问题时，优先在此处以及官网文档查找解决方法",
+        "step1Desc": "当遇到问题时，优先在此处、脚本说明以及官网文档查找解决方法",
         "step2Title": "设置",
         "step2Desc": "在此处进行页面的基础设置",
         "step3Title": "选择目录",
@@ -290,11 +290,11 @@
         "step5Title": "选择脚本",
         "step5Desc": "点击列表中的脚本以查看详细信息",
         "step6Title": "脚本详情",
-        "step6Desc": "此处的文本（如果有的话）是作者编写的脚本使用说明<br><br><strong>为防止运行时出现问题：</strong><br><strong style='color:var(--text-error)'>在使用脚本前，请务必仔细阅读其中的内容，了解脚本拥有的功能！！！</strong><br>未阅读说明的情况下向他人提问，会被当成反面教材哦。<br>",
+        "step6Desc": "此处的文本（如果有的话）是作者编写的脚本使用说明（也称README）<br><br><strong>为防止运行时出现问题：</strong><br><strong style='color:var(--text-error)'>在使用脚本前，请务必仔细阅读其中的内容，了解脚本拥有的功能！！！</strong><br>未阅读说明的情况下向他人提问，会被当成反面教材哦。<br>",
         "next": "下一步",
         "prev": "上一步",
         "skip": "跳过",
-        "done": "完成"
+        "done": "我已知悉"
     },
     "sort": {
         "sortBy": "排序方式",

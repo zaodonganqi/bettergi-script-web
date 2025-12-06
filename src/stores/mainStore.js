@@ -784,7 +784,7 @@ export const useMainStore = defineStore('mainStore', () => {
                             const doneBtn = document.querySelector('.driver-popover-next-btn');
                             if (doneBtn && !isCountingDown) {
                                 isCountingDown = true;
-                                let countdown = 5;
+                                let countdown = 10;
 
                                 // 更新按钮文本并禁用
                                 doneBtn.textContent = ` ${countdown} `;
@@ -886,7 +886,7 @@ export const useMainStore = defineStore('mainStore', () => {
                                 const doneBtn = document.querySelector('.driver-popover-next-btn');
                                 if (doneBtn && !isCountingDown) {
                                     isCountingDown = true;
-                                    let countdown = 5;
+                                    let countdown = 10;
 
                                     // 更新按钮文本并禁用
                                     doneBtn.textContent = ` ${countdown} `;
