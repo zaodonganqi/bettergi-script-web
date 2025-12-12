@@ -1,7 +1,6 @@
 // 订阅工具：构建订阅 URL，并在本地模式下执行导入
 
 import { useMainStore } from "@/stores/mainStore.js";
-import { event } from "vue-gtag";
 
 export function buildSubscriptionUrl(paths) {
   const jsonString = JSON.stringify(paths);
@@ -10,18 +9,20 @@ export function buildSubscriptionUrl(paths) {
 }
 
 export async function subscribePaths(paths) {
-  if (Array.isArray(paths)) {
-    paths.forEach(path => {
-      event("subscribe_path", {
-        event_category: "subscription",
-        event_label: typeof path === 'string' ? path : JSON.stringify(path)
+  if (typeof window.gtag === 'function') {
+    if (Array.isArray(paths)) {
+      paths.forEach(path => {
+        window.gtag("event", "subscribe_path", {
+          event_category: "subscription",
+          event_label: typeof path === 'string' ? path : JSON.stringify(path)
+        });
       });
-    });
-  } else {
-    event("subscribe_path", {
-      event_category: "subscription",
-      event_label: JSON.stringify(paths)
-    });
+    } else {
+      window.gtag("event", "subscribe_path", {
+        event_category: "subscription",
+        event_label: JSON.stringify(paths)
+      });
+    }
   }
   const url = buildSubscriptionUrl(paths);
   const mainStore = useMainStore();

@@ -1,7 +1,6 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import App from './App.vue'
-import { createGtag } from "vue-gtag"
 import Antd from 'ant-design-vue'
 import 'ant-design-vue/dist/reset.css'
 
@@ -12,11 +11,6 @@ const pinia = createPinia()
 app.use(Antd)
 app.use(i18n)
 app.use(pinia)
-app.use(createGtag({
-    config: {
-        id: "G-WXWXFJS95C"
-    }
-}))
 app.mount('#app')
 
 // 清除 localStorage 和 sessionStorage
