@@ -1,6 +1,6 @@
 {
     "name": "bgi-bsw",
-    "version": "0.54.0",
+    "version": "0.54.1",
     "private": true,
     "type": "module",
     "repository": "https://github.com/zaodonganqi/bettergi-script-web",

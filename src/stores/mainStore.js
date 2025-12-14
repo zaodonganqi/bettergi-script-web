@@ -211,6 +211,13 @@ export const useMainStore = defineStore('mainStore', () => {
         }
 
         updatingSubscribed.value = true;
+        // 追踪一键更新的总数
+        if (typeof window.gtag === 'function') {
+            window.gtag("event", "one-click-update", {
+                update_count: subscribedScriptPaths.value.length
+            });
+        }
+
         try {
             const result = await subscribePaths(subscribedScriptPaths.value);
             if (!result?.ok) {
