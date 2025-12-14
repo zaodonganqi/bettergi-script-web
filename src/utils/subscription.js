@@ -11,21 +11,58 @@ export function buildSubscriptionUrl(paths) {
 export async function subscribePaths(paths) {
   const mainStore = useMainStore();
   const environment = mainStore.isModeSingle ? 'single' : 'web';
+  // 防刷榜逻辑：检查 1 小时内是否重复订阅
+  const checkSpam = (identifier) => {
+    const KEY = 'subscription_tracking_history';
+    const COOLDOWN = 3600 * 1000 * 1; // 1小时冷却
+    let history = {};
+    try {
+      history = JSON.parse(localStorage.getItem(KEY) || '{}');
+    } catch (e) {
+      history = {};
+    }
+    const now = Date.now();
+
+    // 清理过期数据
+    let changed = false;
+    Object.keys(history).forEach(k => {
+      if (now - history[k] > COOLDOWN) {
+        delete history[k];
+        changed = true;
+      }
+    });
+
+    if (history[identifier] && now - history[identifier] < COOLDOWN) {
+      if (changed) localStorage.setItem(KEY, JSON.stringify(history));
+      return false; // 处于冷却期，不记录
+    }
+
+    history[identifier] = now;
+    localStorage.setItem(KEY, JSON.stringify(history));
+    return true; // 允许记录
+  };
+
   if (typeof window.gtag === 'function') {
     if (Array.isArray(paths)) {
       paths.forEach(path => {
-        window.gtag("event", "subscribe_path", {
-          event_category: "subscription",
-          event_label: typeof path === 'string' ? path : JSON.stringify(path),
-          environment: environment,
-        });
+        const label = typeof path === 'string' ? path : JSON.stringify(path);
+        if (checkSpam(label)) {
+          window.gtag("event", "subscribe_path", {
+            event_category: "subscription",
+            event_label: label,
+            environment: environment,
+          });
+        }
       });
     } else {
-      window.gtag("event", "subscribe_path", {
-        event_category: "subscription",
-        event_label: JSON.stringify(paths),
-        environment: environment,
-      });
+      const label = JSON.stringify(paths);
+      if (checkSpam(label)) {
+        window.gtag("event", "subscribe_path", {
+          event_category: "subscription",
+          event_label: label,
+          environment: environment,
+        });
+      }
     }
   }
 

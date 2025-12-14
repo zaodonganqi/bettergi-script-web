@@ -1,7 +1,8 @@
 <template>
   <div class="readme-viewer">
     <div v-if="readmeContent" v-html="readmeContent" class="readme-content"></div>
-    <div v-else-if="desc" class="detail-desc">{{ showDescTitle ? $t('readmeViewer.descTitle') + '\n' + desc : desc }}</div>
+    <div v-else-if="desc" class="detail-desc">{{ showDescTitle ? $t('readmeViewer.descTitle') + '\n' + desc : desc }}
+    </div>
     <div v-else-if="!isHttpUrl && showNoDesc" class="readme-empty">{{ $t('readmeViewer.noDesc') }}</div>
   </div>
 </template>
@@ -12,7 +13,7 @@ import MarkdownIt from 'markdown-it';
 import markdownItAnchor from 'markdown-it-anchor';
 import hljs from 'highlight.js';
 import 'highlight.js/styles/github.css';
-import {getWebPath, getRepoPath, getMirrorPath, getMirror} from '@/utils/basePaths.js';
+import { getWebPath, getRepoPath, getMirrorPath, getMirror } from '@/utils/basePaths.js';
 import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
 
@@ -80,7 +81,7 @@ function processFootnotes(rawMarkdown) {
   const keptLines = [];
 
   // 提取脚注定义
-  for (let i = 0; i < lines.length; ) {
+  for (let i = 0; i < lines.length;) {
     const defMatch = lines[i].match(/^\[\^([^\]]+)\]:\s*(.*)$/);
     if (defMatch) {
       const id = defMatch[1];
@@ -307,44 +308,73 @@ const fetchAndRenderReadme = async (path, markdownContent = '') => {
         isLoading.value = false;
         return;
       }
-      // 图片路径处理和渲染
-      const baseImageUrl = '../../../Repos/bettergi-scripts-list-git/repo/' + path.replace(/\\/g, '/') + '/';
-      markdown = markdown.replace(/!\[([^\]]*)\]\(([^)]+)\)/gi, (match, alt, imgPath) => {
-        let cleanPath = imgPath.trim().replace(/\\/g, '/');
-        // 检查是否为完整的HTTP/HTTPS链接或data URL
-        const isHttpUrl = /^https?:\/\/[\S]+$/i.test(cleanPath);
-        const isDataUrl = cleanPath.startsWith('data:');
-        return `![${alt}](${(isHttpUrl || isDataUrl) ? cleanPath : baseImageUrl + cleanPath})`;
-      });
-      markdown = markdown.replace(/<img\s+[^>]*src=["']([^"']+)["'][^>]*>/gi, (match, imgPath) => {
-        let cleanPath = imgPath.trim().replace(/\\/g, '/');
-        // 检查是否为完整的HTTP/HTTPS链接或data URL
-        const isHttpUrl = /^https?:\/\/[\S]+$/i.test(cleanPath);
-        const isDataUrl = cleanPath.startsWith('data:');
-        return match.replace(imgPath, (isHttpUrl || isDataUrl) ? cleanPath : baseImageUrl + cleanPath);
-      });
-      markdown = markdown.replace(/`([^`\n]+\.(?:png|jpg|jpeg|gif|webp|svg))`/gi, (imgPath) => {
-        let cleanPath = imgPath.trim().replace(/\\/g, '/');
-        // 检查是否为完整的HTTP/HTTPS链接
-        const isHttpUrl = /^https?:\/\/[\S]+$/i.test(cleanPath);
-        return `![](${isHttpUrl ? cleanPath : baseImageUrl + cleanPath})`;
-      });
-      markdown = markdown.replace(/```\s*([^`\n]+\.(?:png|jpg|jpeg|gif|webp|svg))\s*```/gi, (imgPath) => {
-        let cleanPath = imgPath.trim().replace(/\\/g, '/');
-        // 检查是否为完整的HTTP/HTTPS链接
-        const isHttpUrl = /^https?:\/\/[\S]+$/i.test(cleanPath);
-        return `![](${isHttpUrl ? cleanPath : baseImageUrl + cleanPath})`;
-      });
-      // 处理HTML iframe标签
-      markdown = markdown.replace(/<iframe\s+[^>]*src=["']([^"']+)["'][^>]*>/gi, (match, iframePath) => {
-        let cleanPath = iframePath.trim().replace(/\\/g, '/');
-        // 检查是否为完整的HTTP/HTTPS链接或data URL
-        const isHttpUrl = /^https?:\/\/[\S]+$/i.test(cleanPath);
-        const isDataUrl = cleanPath.startsWith('data:');
-        return match.replace(iframePath, (isHttpUrl || isDataUrl) ? cleanPath : baseImageUrl + cleanPath);
-      });
+      // 先渲染 Markdown 为 HTML
       markdown = processFootnotes(markdown);
-      readmeContent.value = md.render(markdown);
+      let html = md.render(markdown);
+
+      // 然后处理 HTML 中的图片
+      const imgRegex = /<img\s+([^>]*\s)?src=["']([^"']+)["']([^>]*)>/gi;
+      const imgPromises = [];
+
+      let imgMatch;
+      while ((imgMatch = imgRegex.exec(html)) !== null) {
+        const fullImgTag = imgMatch[0];
+        const beforeSrc = imgMatch[1] || '';
+        const srcValue = imgMatch[2];
+        const afterSrc = imgMatch[3] || '';
+
+        // 跳过 HTTP/HTTPS 和 data URL
+        if (/^https?:\/\//i.test(srcValue) || srcValue.startsWith('data:')) {
+          continue;
+        }
+
+        // 构建完整路径
+        let fullPath;
+        const cleanSrc = srcValue.trim().replace(/\\/g, '/');
+
+        if (cleanSrc.startsWith('/')) {
+          // 绝对路径：去掉开头的 /，直接使用
+          fullPath = cleanSrc.substring(1);
+        } else {
+          // 相对路径：拼接当前目录
+          fullPath = (path ? path.replace(/\\/g, '/') + '/' : '') + cleanSrc;
+        }
+
+        imgPromises.push(
+          (async () => {
+            try {
+              const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
+              const result = await repoWebBridge.GetFile(fullPath);
+
+              if (result && result !== '404') {
+                const ext = srcValue.split('.').pop().toLowerCase();
+                let mimeType = 'image/png';
+                if (ext === 'jpg' || ext === 'jpeg') mimeType = 'image/jpeg';
+                else if (ext === 'gif') mimeType = 'image/gif';
+                else if (ext === 'webp') mimeType = 'image/webp';
+                else if (ext === 'svg') mimeType = 'image/svg+xml';
+
+                const newSrc = `data:${mimeType};base64,${result}`;
+                const newImgTag = `<img ${beforeSrc}src="${newSrc}"${afterSrc}>`;
+
+                return { original: fullImgTag, replacement: newImgTag };
+              }
+            } catch (e) {
+              console.error('Image load fail', fullPath, e);
+            }
+            return null;
+          })()
+        );
+      }
+
+      const results = await Promise.all(imgPromises);
+      results.forEach(res => {
+        if (res) {
+          html = html.replace(res.original, res.replacement);
+        }
+      });
+
+      readmeContent.value = html;
       emit('loaded', { status: 'ok' });
       emit('hasContent', true);
       isLoading.value = false;
@@ -452,11 +482,11 @@ const fetchAndRenderReadme = async (path, markdownContent = '') => {
 };
 
 watch(
-    () => [props.path, props.markdownContent],
-    ([newPath, newContent]) => {
-      fetchAndRenderReadme(newPath, newContent);
-    },
-    { immediate: true }
+  () => [props.path, props.markdownContent],
+  ([newPath, newContent]) => {
+    fetchAndRenderReadme(newPath, newContent);
+  },
+  { immediate: true }
 );
 </script>
 
@@ -593,7 +623,7 @@ watch(
 }
 
 :deep(.hljs-string) {
- color: var(--text-base2);
+  color: var(--text-base2);
 }
 
 :deep(.hljs-attr) {
