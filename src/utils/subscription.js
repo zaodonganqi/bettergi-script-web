@@ -9,23 +9,27 @@ export function buildSubscriptionUrl(paths) {
 }
 
 export async function subscribePaths(paths) {
+  const mainStore = useMainStore();
+  const environment = mainStore.isModeSingle ? 'single' : 'web';
   if (typeof window.gtag === 'function') {
     if (Array.isArray(paths)) {
       paths.forEach(path => {
         window.gtag("event", "subscribe_path", {
           event_category: "subscription",
-          event_label: typeof path === 'string' ? path : JSON.stringify(path)
+          event_label: typeof path === 'string' ? path : JSON.stringify(path),
+          environment: environment,
         });
       });
     } else {
       window.gtag("event", "subscribe_path", {
         event_category: "subscription",
-        event_label: JSON.stringify(paths)
+        event_label: JSON.stringify(paths),
+        environment: environment,
       });
     }
   }
+
   const url = buildSubscriptionUrl(paths);
-  const mainStore = useMainStore();
   if (mainStore.isModeSingle) {
     const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
     await repoWebBridge.ImportUri(url);
