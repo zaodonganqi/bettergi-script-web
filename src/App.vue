@@ -7,6 +7,12 @@ const settings = useSettingsStore();
 
 onMounted(() => {
   console.log(settings.selectedLocale);
+  // 追踪语言选择
+  if (typeof window.gtag === 'function') {
+    window.gtag("event", "UI-Settings", {
+      select_language: settings.selectedLocale
+    });
+  }
   console.log(settings.selectedThemeName);
 });
 </script>

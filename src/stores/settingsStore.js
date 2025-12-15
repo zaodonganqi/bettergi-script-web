@@ -53,6 +53,12 @@ export const useSettingsStore = defineStore('settings', () => {
 	});
 
 	function setThemeName(name) {
+		// 追踪主题切换
+		if (typeof window.gtag === 'function') {
+			window.gtag("event", "UI-Settings", {
+				select_Theme: name
+			});
+		}
 		selectedThemeName.value = name
 	}
 
