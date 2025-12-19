@@ -10,7 +10,8 @@ onMounted(() => {
   // 追踪语言选择
   if (typeof window.gtag === 'function') {
     window.gtag("event", "UI-Settings", {
-      select_language: settings.selectedLocale
+      select_language: settings.selectedLocale,
+      selected_theme: settings.selectedThemeName
     });
   }
   console.log(settings.selectedThemeName);
