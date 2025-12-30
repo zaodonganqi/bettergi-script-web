@@ -151,21 +151,35 @@ const filteredScripts = computed(() => {
   padding: 16px 18px 12px 18px;
   background: var(--bg-container);
   box-shadow: 0 2px 8px 0 var(--color-shadow);
-  border: 1.5px solid var(--border-base);
+  border: 1px solid var(--border-base);
   cursor: pointer;
-  transition: box-shadow 0.2s, border 0.2s;
   position: relative;
+  overflow: hidden;
+  transition: box-shadow 0.2s, border-color 0.3s;
 }
 
-.script-item.active {
-  border: 1px solid var(--color-primary);
-  box-shadow: 0 4px 16px 0 var(--color-shadow);
+.script-item > * {
+  position: relative;
+  z-index: 1;
+}
+
+.script-item::before {
+  content: '';
+  position: absolute;
+  inset: 0;
   background: var(--bg-desc);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+  z-index: 0;
+}
+
+.script-item:hover::before {
+  transform: scaleX(1);
 }
 
 .script-item:hover {
   box-shadow: 0 4px 16px 0 var(--color-shadow);
-  background: var(--bg-desc);
   border-color: var(--color-primary);
 }
 

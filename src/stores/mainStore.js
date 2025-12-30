@@ -12,6 +12,7 @@ import { subscribePaths } from "@/utils/subscription.js";
 import { mapTagsToCanonical, toPinyin } from "@/utils/roleAlias.js";
 import pako from "pako";
 import { message as Message } from 'ant-design-vue';
+import roleCdn from '@/assets/avatar_cdn.json';
 import { useSettingsStore } from "@/stores/settingsStore.js";
 import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
@@ -550,17 +551,10 @@ export const useMainStore = defineStore('mainStore', () => {
     });
 
     // 获取角色头像
-    const roleImages = import.meta.glob('@/assets/roles/*.{png,jpg,jpeg,webp}', { eager: true, import: 'default' })
-
     const getRoleAvatar = (tag) => {
-        // 匹配文件名和tag
-        const matchKey = Object.keys(roleImages).find(path => {
-            // 取文件名部分
-            const fileName = path.split('/').pop()?.split('.')[0]
-            return fileName === tag
-        })
-        return matchKey ? roleImages[matchKey] : '/src/assets/roles/旅行者.webp'
-    }
+        const match = roleCdn.find(item => item.name === tag);
+        return match ? match.url : '/src/assets/roles/旅行者.webp';
+    };
 
     // 点击角色
     function onRoleItemClick(tag) {
@@ -791,7 +785,7 @@ export const useMainStore = defineStore('mainStore', () => {
                             const doneBtn = document.querySelector('.driver-popover-next-btn');
                             if (doneBtn && !isCountingDown) {
                                 isCountingDown = true;
-                                let countdown = 10;
+                                let countdown = 5;
 
                                 // 更新按钮文本并禁用
                                 doneBtn.textContent = ` ${countdown} `;
@@ -893,7 +887,7 @@ export const useMainStore = defineStore('mainStore', () => {
                                 const doneBtn = document.querySelector('.driver-popover-next-btn');
                                 if (doneBtn && !isCountingDown) {
                                     isCountingDown = true;
-                                    let countdown = 10;
+                                    let countdown = 5;
 
                                     // 更新按钮文本并禁用
                                     doneBtn.textContent = ` ${countdown} `;

@@ -30,20 +30,30 @@
         </div>
         <!-- 外链（需要可自行添加，修改链接即可） -->
         <div class="sider-footer">
-          <div class="sider-link" @click="mainStore.openExternalLink('https://github.com/babalae/better-genshin-impact')">
-            {{ $t('sider.mainRepo') }}
+          <div class="sider-link">
+            <span class="link-text" @click="mainStore.openExternalLink('https://github.com/babalae/better-genshin-impact')">
+              {{ $t('sider.mainRepo') }}
+            </span>
           </div>
-          <div class="sider-link" @click="mainStore.openExternalLink('https://github.com/babalae/bettergi-scripts-list')">
-            {{ $t('sider.scriptRepo') }}
+          <div class="sider-link">
+            <span class="link-text" @click="mainStore.openExternalLink('https://github.com/babalae/bettergi-scripts-list')">
+              {{ $t('sider.scriptRepo') }}
+            </span>
           </div>
-          <div v-if="mainStore.isModeSingle" class="sider-link" @click="mainStore.openExternalLink('https://s.bettergi.com')">
-            {{ $t('sider.onlineRepo') }}
+          <div class="sider-link">
+            <span v-if="mainStore.isModeSingle" class="link-text" @click="mainStore.openExternalLink('https://s.bettergi.com')">
+              {{ $t('sider.onlineRepo') }}
+            </span>
           </div>
-          <div class="sider-link" @click="mainStore.openExternalLink('https://bettergi.com/open.html')">
-            {{ $t('sider.otherExtensions') }}
+          <div class="sider-link">
+            <span class="link-text" @click="mainStore.openExternalLink('https://bettergi.com/open.html')">
+              {{ $t('sider.otherExtensions') }}
+            </span>
           </div>
-          <div class="sider-link" @click="mainStore.openExternalLink('https://bettergi.com/doc.html')">
+          <div class="sider-link">
+            <span class="link-text" @click="mainStore.openExternalLink('https://bettergi.com/doc.html')">
             {{ $t('sider.document') }}
+            </span>
           </div>
         </div>
       </div>
@@ -869,8 +879,31 @@ function onLocaleChange(val) {
 }
 
 .sider-link {
-  margin-bottom: 12px;
+  margin-bottom: 14px;
   cursor: pointer;
+}
+
+.link-text {
+  position: relative;
+  display: inline-block;
+}
+
+/* 下划线 */
+.link-text::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 100%;
+  height: 1px;
+  background-color: var(--text-base3);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.25s ease;
+}
+
+.sider-link:hover .link-text::after {
+  transform: scaleX(1);
 }
 
 .last-update-time {
