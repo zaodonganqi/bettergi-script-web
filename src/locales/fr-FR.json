@@ -244,7 +244,8 @@
     "version": "Version",
     "path": "Chemin",
     "details": "Détails",
-    "showDetails": "Détails"
+    "showDetails": "Détails",
+    "roles": "Personnages concernés :"
   },
   "settings": {
     "title": "Paramètres",

@@ -24,7 +24,19 @@
           </div>
           <div class="item-desc">{{ item.desc }}</div>
           <div class="item-tags">
-            <a-tag v-for="tag in item.tags" :key="tag" class="item-tag">{{ tag }}</a-tag>
+            <a-tag
+                v-for="tag in getVisibleTags(item.tags)"
+                :key="tag"
+                class="item-tag"
+            >
+              {{ tag }}
+            </a-tag>
+            <a-tag
+                v-if="hasMoreTags(item.tags)"
+                class="item-tag"
+            >
+              ···
+            </a-tag>
           </div>
           <div class="item-time">{{ item.lastUpdated }}</div>
         </div>
@@ -129,6 +141,16 @@ const filteredStrategies = computed(() => {
     roleTags: mainStore.appliedRoleTags
   });
 });
+
+const MAX_TAGS = 8;
+
+function getVisibleTags(tags) {
+  return Array.isArray(tags) ? tags.slice(0, MAX_TAGS) : [];
+}
+
+function hasMoreTags(tags) {
+  return Array.isArray(tags) && tags.length > MAX_TAGS;
+}
 </script>
 
 <style scoped>

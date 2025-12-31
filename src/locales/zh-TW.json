@@ -244,7 +244,8 @@
     "version": "版本",
     "path": "路徑",
     "details": "詳情",
-    "showDetails": "詳情"
+    "showDetails": "詳情",
+    "roles": "相關角色："
   },
   "settings": {
     "title": "設定",

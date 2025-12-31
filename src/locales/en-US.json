@@ -244,7 +244,8 @@
     "version": "Version",
     "path": "Path",
     "details": "Details",
-    "showDetails": "Details"
+    "showDetails": "Details",
+    "roles": "Related Characters:"
   },
   "settings": {
     "title": "Settings",
