@@ -736,7 +736,7 @@ export const useMainStore = defineStore('mainStore', () => {
                         title: $t('guide.step5Title'),
                         description: `
             ${$t('guide.step5Desc')}
-            <button id="guide-skip-btn" class="skip-btn">跳过</button>`,
+            <button id="guide-skip-btn" class="skip-btn">${$t('guide.skip')}</button>`,
                         side: "right",
                         align: 'start',
                         onNextClick: async () => {
