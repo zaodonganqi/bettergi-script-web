@@ -43,6 +43,20 @@
         <div v-if="script && script.desc && script.desc.trim()" class="desc-block">
           <div class="desc-title">{{ $t('detail.desc') }}</div>
           <div class="desc-content">{{ script.desc }}</div>
+          <div class="detail-tags">
+            <div class="detail-tags-label">
+              {{ $t('detail.roles') }}
+            </div>
+            <div class="detail-tags-list">
+              <a-tag
+                  v-for="tag in script.tags"
+                  :key="tag"
+                  class="item-tag"
+              >
+                {{ tag }}
+              </a-tag>
+            </div>
+          </div>
         </div>
         <transition name="fade-slide-up">
           <div v-if="isLoadingTxt" class="readme-loading-indicator">
@@ -261,6 +275,35 @@ watch(() => script.value, (newScript) => {
   font-size: 13px;
   margin-bottom: 10px;
   word-break: break-word;
+}
+
+.detail-tags {
+  margin-top: 18px;
+}
+
+.detail-tags-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-base2);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.detail-tags-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.item-tag {
+  border-radius: 6px !important;
+  font-size: 12px;
+  background: var(--bg-item-selected);
+  color: var(--color-primary);
+  margin-right: 4px;
+  padding: 0 8px;
+  border: none !important;
 }
 
 .detail-empty {

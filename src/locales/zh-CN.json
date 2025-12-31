@@ -248,7 +248,8 @@
         "version": "版本",
         "path": "路径",
         "details": "详情",
-        "showDetails": "详情"
+        "showDetails": "详情",
+        "roles": "相关角色："
     },
     "settings": {
         "title": "设置",

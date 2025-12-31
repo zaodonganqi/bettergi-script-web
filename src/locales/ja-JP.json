@@ -244,7 +244,8 @@
     "version": "バージョン",
     "path": "パス",
     "details": "詳細",
-    "showDetails": "詳細"
+    "showDetails": "詳細",
+    "roles": "関連キャラクター："
   },
   "settings": {
     "title": "設定",
