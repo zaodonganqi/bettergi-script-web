@@ -5,10 +5,11 @@
     "type": "module",
     "repository": "https://github.com/zaodonganqi/bettergi-script-web",
     "scripts": {
-        "dev": "vite",
-        "build": "vite build",
+        "prepare": "node build/markdownInlineImages.js",
+        "dev": "npm run prepare && vite",
+        "build": "npm run prepare && vite build",
         "serve": "vite preview",
-        "build:single": "vite build --config vite.config.single.js --mode single",
+        "build:single": "npm run prepare && vite build --config vite.config.single.js --mode single",
         "deploy": "gh-pages -d dist"
     },
     "dependencies": {
