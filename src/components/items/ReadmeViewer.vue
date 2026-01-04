@@ -1,8 +1,7 @@
 <template>
   <div class="readme-viewer">
     <div v-if="readmeContent" v-html="readmeContent" class="readme-content"></div>
-    <div v-else-if="desc" class="detail-desc">{{ showDescTitle ? $t('readmeViewer.descTitle') + '\n' + desc : desc }}
-    </div>
+    <div v-else-if="desc" class="detail-desc">{{ showDescTitle ? $t('readmeViewer.descTitle') + '\n' + desc : desc }}</div>
     <div v-else-if="!isHttpUrl && showNoDesc" class="readme-empty">{{ $t('readmeViewer.noDesc') }}</div>
   </div>
 </template>
@@ -81,7 +80,7 @@ function processFootnotes(rawMarkdown) {
   const keptLines = [];
 
   // 提取脚注定义
-  for (let i = 0; i < lines.length;) {
+  for (let i = 0; i < lines.length; ) {
     const defMatch = lines[i].match(/^\[\^([^\]]+)\]:\s*(.*)$/);
     if (defMatch) {
       const id = defMatch[1];
@@ -312,67 +311,82 @@ const fetchAndRenderReadme = async (path, markdownContent = '') => {
       markdown = processFootnotes(markdown);
       let html = md.render(markdown);
 
-      // 然后处理 HTML 中的图片
+      // 统一收集资源
+      const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
+      const basePath = path ? path.replace(/\\/g, '/') + '/' : '';
+
+      // key: 原始 src
+      // value: { base64, mime, replacements: [] }
+      const resourceMap = new Map();
+
+      // HTML img
       const imgRegex = /<img\s+([^>]*\s)?src=["']([^"']+)["']([^>]*)>/gi;
-      const imgPromises = [];
 
-      let imgMatch;
-      while ((imgMatch = imgRegex.exec(html)) !== null) {
-        const fullImgTag = imgMatch[0];
-        const beforeSrc = imgMatch[1] || '';
-        const srcValue = imgMatch[2];
-        const afterSrc = imgMatch[3] || '';
+      let match;
+      while ((match = imgRegex.exec(html)) !== null) {
+        const fullImgTag = match[0];
+        const beforeSrc = match[1] || '';
+        const srcValue = match[2];
+        const afterSrc = match[3] || '';
 
-        // 跳过 HTTP/HTTPS 和 data URL
+        // 跳过 http / data
         if (/^https?:\/\//i.test(srcValue) || srcValue.startsWith('data:')) {
           continue;
         }
 
-        // 构建完整路径
-        let fullPath;
         const cleanSrc = srcValue.trim().replace(/\\/g, '/');
 
-        if (cleanSrc.startsWith('/')) {
-          // 绝对路径：去掉开头的 /，直接使用
-          fullPath = cleanSrc.substring(1);
-        } else {
-          // 相对路径：拼接当前目录
-          fullPath = (path ? path.replace(/\\/g, '/') + '/' : '') + cleanSrc;
+        // 构建完整路径
+        const fullPath = cleanSrc.startsWith('/')
+            ? cleanSrc.substring(1)
+            : basePath + cleanSrc;
+
+        if (!resourceMap.has(fullPath)) {
+          // 推断 mime
+          const ext = cleanSrc.split('.').pop()?.toLowerCase();
+          let mime = 'image/png';
+          if (ext === 'jpg' || ext === 'jpeg') mime = 'image/jpeg';
+          else if (ext === 'gif') mime = 'image/gif';
+          else if (ext === 'webp') mime = 'image/webp';
+          else if (ext === 'svg') mime = 'image/svg+xml';
+
+          resourceMap.set(fullPath, {
+            base64: null,
+            mime,
+            replacements: []
+          });
         }
 
-        imgPromises.push(
-          (async () => {
-            try {
-              const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
-              const result = await repoWebBridge.GetFile(fullPath);
-
-              if (result && result !== '404') {
-                const ext = srcValue.split('.').pop().toLowerCase();
-                let mimeType = 'image/png';
-                if (ext === 'jpg' || ext === 'jpeg') mimeType = 'image/jpeg';
-                else if (ext === 'gif') mimeType = 'image/gif';
-                else if (ext === 'webp') mimeType = 'image/webp';
-                else if (ext === 'svg') mimeType = 'image/svg+xml';
-
-                const newSrc = `data:${mimeType};base64,${result}`;
-                const newImgTag = `<img ${beforeSrc}src="${newSrc}"${afterSrc}>`;
-
-                return { original: fullImgTag, replacement: newImgTag };
-              }
-            } catch (e) {
-              console.error('Image load fail', fullPath, e);
-            }
-            return null;
-          })()
-        );
+        resourceMap.get(fullPath).replacements.push({
+          original: fullImgTag,
+          replacement: (base64, mime) =>
+              `<img ${beforeSrc}src="data:${mime};base64,${base64}"${afterSrc}>`
+        });
       }
 
-      const results = await Promise.all(imgPromises);
-      results.forEach(res => {
-        if (res) {
-          html = html.replace(res.original, res.replacement);
+      // 统一 GetFile
+      for (const [fullPath, data] of resourceMap.entries()) {
+        try {
+          const base64 = await repoWebBridge.GetFile(fullPath);
+          if (base64 && base64 !== '404') {
+            data.base64 = base64;
+          }
+        } catch (e) {
+          console.error('Image load fail', fullPath, e);
         }
-      });
+      }
+
+      // 统一注入 HTML
+      for (const [, data] of resourceMap.entries()) {
+        if (!data.base64) continue;
+
+        for (const { original, replacement } of data.replacements) {
+          html = html.replace(
+              original,
+              replacement(data.base64, data.mime)
+          );
+        }
+      }
 
       readmeContent.value = html;
       emit('loaded', { status: 'ok' });
@@ -481,6 +495,7 @@ const fetchAndRenderReadme = async (path, markdownContent = '') => {
   isLoading.value = false;
 };
 
+// 监听路径变化
 watch(
   () => [props.path, props.markdownContent],
   ([newPath, newContent]) => {
