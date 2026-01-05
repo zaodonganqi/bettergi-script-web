@@ -1,4 +1,4 @@
-import egg from "@/styles/egg.js";
+import egg from "./egg.js";
 
 const STORAGE_KEYS = {
     THEME: 'app-theme',
@@ -37,6 +37,13 @@ export const antdThemes = {
 
             // 以下颜色不建议更改
             colorErrorText: '#ff4d4f' // 不用说了，错误色
+        },
+        // 用于antd以外的组件颜色配置
+        other: {
+            'mermaid-text-fill': '#ffffff',
+            'mermaid-text-stroke': '#000000',
+            'mermaid-noteText-fill': '#ffd700',
+            'mermaid-actor-stroke': '#ffffff',
         }
     },
     dark: {
@@ -71,6 +78,13 @@ export const antdThemes = {
 
             // 以下颜色不建议更改
             colorErrorText: '#ff4d4f' // 不用说了，错误色
+        },
+        // 用于antd以外的组件颜色配置
+        other: {
+            'mermaid-text-fill': '#ffffff',
+            'mermaid-text-stroke': '#000000',
+            'mermaid-noteText-fill': '#ffd700',
+            'mermaid-actor-stroke': '#ffffff',
         }
     },
     transparent: {
@@ -103,6 +117,13 @@ export const antdThemes = {
 
             // 以下颜色不建议更改
             colorErrorText: '#ff4d4f' // 不用说了，错误色
+        },
+        // 用于antd以外的组件颜色配置
+        other: {
+            'mermaid-text-fill': '#ffffff',
+            'mermaid-text-stroke': '#000000',
+            'mermaid-noteText-fill': '#ffd700',
+            'mermaid-actor-stroke': '#ffffff',
         }
     },
     egg: {
@@ -132,6 +153,13 @@ export const antdThemes = {
             colorTextLightSolid: '#FFFFFF', // 白色按钮文本
             colorSuccessText: '#FF00FF', // 死亡芭比粉成功色
             colorErrorText: '#00FFFF' // 荧光青错误色
+        },
+        // 用于antd以外的组件颜色配置
+        other: {
+            'mermaid-text-fill': '#ffffff',
+            'mermaid-text-stroke': '#000000',
+            'mermaid-noteText-fill': '#ffd700',
+            'mermaid-actor-stroke': '#ffffff',
         }
     }
 };
@@ -233,16 +261,28 @@ export function setTheme(name) {
 
 // 应用主题到 CSS 变量
 export function applyThemeToCSS(themeName) {
-    const theme = getThemeByName(themeName).token;
+    const themeConfig = getThemeByName(themeName);
+    const { token, other } = themeConfig;
 
+    // 1token -> CSS 变量映射
     Object.keys(tokenToCssVar).forEach(tokenKey => {
         const cssVar = tokenToCssVar[tokenKey];
-        const value = theme[tokenKey];
+        const value = token[tokenKey];
         if (value) {
             document.documentElement.style.setProperty(cssVar, value);
         }
     });
+
+    // other -> CSS 变量映射
+    if (other && typeof other === 'object') {
+        Object.entries(other).forEach(([key, value]) => {
+            if (value != null) {
+                document.documentElement.style.setProperty(`--${key}`, value);
+            }
+        });
+    }
 }
+
 
 export function getThemeByName(themeName) {
     return antdThemes[themeName] || antdThemes.light;

@@ -10,14 +10,13 @@
 </template>
 
 <script setup>
-import {ref, watch, computed} from 'vue';
+import {computed, nextTick, onMounted, onUnmounted, ref, watch} from 'vue';
 import MarkdownIt from 'markdown-it';
 import markdownItAnchor from 'markdown-it-anchor';
 import hljs from 'highlight.js';
 import 'highlight.js/styles/github.css';
-import {getWebPath, getRepoPath, getMirrorPath, getMirror} from '@/utils/basePaths.js';
+import {getMirror, getMirrorPath, getRepoPath, getWebPath} from '@/utils/basePaths.js';
 import {useI18n} from 'vue-i18n';
-import {onMounted, onUnmounted, nextTick} from 'vue';
 import mermaid from 'mermaid';
 
 const {t} = useI18n();
@@ -86,7 +85,6 @@ const initMermaid = async () => {
   // 初始化 mermaid 配置
   mermaid.initialize({
     startOnLoad: false,
-    theme: document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default',
     // securityLevel: 'loose',
     securityLevel: 'strict',
     flowchart: {useMaxWidth: true},
@@ -101,7 +99,7 @@ const initMermaid = async () => {
   const container = document.querySelector('.readme-viewer');
   if (!container) return;
 
-  // 创建 observer 监听整个 viewer（因为 .readme-content 是 v-if，可能反复创建销毁）
+  // 创建 observer 监听整个 viewer
   mermaidObserver.value = new MutationObserver(async () => {
     const mermaidEls = container.querySelectorAll('.mermaid:not([data-processed])');
     if (mermaidEls.length > 0) {
@@ -141,7 +139,7 @@ onMounted(() => {
   });
 });
 
-// 监听内容变化 → 重新初始化（因为 v-html 会完全替换内容）
+// 监听内容变化 -> 重新初始化
 watch(readmeContent, () => {
   nextTick(() => {
     initMermaid();
@@ -292,9 +290,7 @@ md.renderer.rules.link_open = function (tokens, idx, options, env, self) {
 
       // 判断是否为文件（有扩展名）还是目录
       const isFile = /\.[a-zA-Z0-9]+$/.test(targetPath);
-      const githubUrl = baseUrl + targetPath;
-
-      token.attrs[hrefIndex][1] = githubUrl;
+      token.attrs[hrefIndex][1] = baseUrl + targetPath;
       token.attrPush(['target', '_blank']);
       token.attrPush(['rel', 'noopener noreferrer']);
       token.attrPush(['class', 'internal-link']);
@@ -799,46 +795,42 @@ watch(
 }
 
 .readme-content :deep(.mermaid svg) {
-  background: transparent !important;
+  background: transparent;
 }
 
 
 .readme-content :deep(.mermaid text),
 .readme-content :deep(.mermaid tspan) {
-  fill: #ffffff !important;
-  font-weight: 600 !important;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif !important;
-}
-
-.readme-content :deep(.mermaid text),
-.readme-content :deep(.mermaid tspan) {
+  fill: var(--mermaid-text-fill) !important;
+  font-weight: 600;
+  font-family: -apple-system, sans-serif;
   paint-order: stroke fill;
-  stroke: #000000 !important;
-  stroke-width: 2px !important;
-  stroke-linejoin: round !important;
+  stroke: var(--mermaid-text-stroke) !important;
+  stroke-width: 2px;
+  stroke-linejoin: round;
 }
 
 .readme-content :deep(.mermaid .messageText) {
-  font-weight: 700 !important;
-  stroke-width: 3px !important;
+  font-weight: 700;
+  stroke-width: 3px;
 }
 
 .readme-content :deep(.mermaid .loopText tspan),
 .readme-content :deep(.mermaid .altText tspan),
 .readme-content :deep(.mermaid .noteText) {
-  fill: #ffd700 !important;
-  font-weight: bold !important;
-  stroke: #000000 !important;
-  stroke-width: 3px !important;
+  fill: var(--mermaid-noteText-fill) !important;
+  font-weight: bold;
+  stroke: var(--mermaid-text-stroke) !important;
+  stroke-width: 3px;
 }
 
 .readme-content :deep(.mermaid .actor text) {
-  font-weight: 700 !important;
-  stroke-width: 3px !important;
+  font-weight: 700;
+  stroke-width: 3px;
 }
 
 .readme-content :deep(.mermaid .actor) {
-  stroke: #ffffff !important;
-  stroke-width: 2px !important;
+  stroke: var(--mermaid-actor-stroke) !important;
+  stroke-width: 2px;
 }
 </style>

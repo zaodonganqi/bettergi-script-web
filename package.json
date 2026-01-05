@@ -6,10 +6,10 @@
     "repository": "https://github.com/zaodonganqi/bettergi-script-web",
     "scripts": {
         "mark:prepare": "node build/markdownInlineImages.js",
-        "dev": "npm run mark:prepare && vite",
-        "build": "npm run mark:prepare && vite build",
+        "dev": "node scripts/generateThemeVars.js && npm run mark:prepare && vite",
+        "build": "node scripts/generateThemeVars.js && npm run mark:prepare && vite build",
         "serve": "vite preview",
-        "build:single": "npm run mark:prepare && vite build --config vite.config.single.js --mode single",
+        "build:single": "node scripts/generateThemeVars.js && npm run mark:prepare && vite build --config vite.config.single.js --mode single",
         "deploy": "gh-pages -d dist"
     },
     "dependencies": {
