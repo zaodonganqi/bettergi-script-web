@@ -183,12 +183,19 @@ const filteredScripts = computed(() => {
   border-color: var(--color-primary);
 }
 
+.script-item.active {
+  border: 1px solid var(--color-primary);
+  box-shadow: 0 4px 16px 0 var(--color-shadow);
+  background: var(--bg-desc);
+}
+
 .item-header {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   width: 100%;
 }
+
 .item-title-wrap {
   display: flex;
   align-items: baseline;
@@ -197,6 +204,7 @@ const filteredScripts = computed(() => {
   margin-right: 8px;
   position: relative;
 }
+
 .item-title-main {
   flex: 1 1 0%;
   min-width: 0;
@@ -274,5 +282,4 @@ const filteredScripts = computed(() => {
   margin-top: 2px;
   color: var(--text-base3);
 }
-
 </style>

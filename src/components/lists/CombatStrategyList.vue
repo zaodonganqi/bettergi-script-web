@@ -199,6 +199,12 @@ function hasMoreTags(tags) {
   border-color: var(--color-primary);
 }
 
+.script-item.active {
+  border: 1px solid var(--color-primary);
+  box-shadow: 0 4px 16px 0 var(--color-shadow);
+  background: var(--bg-desc);
+}
+
 .item-header {
   display: flex;
   flex-direction: column;
