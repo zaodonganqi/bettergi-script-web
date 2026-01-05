@@ -3,7 +3,7 @@
     "version": "0.54.1",
     "private": true,
     "type": "module",
-    "repository": "https://github.com/zaodonganqi/bettergi-script-web",
+    "repository": "https://github.com/A-Little-AnQi/bettergi-script-web",
     "scripts": {
         "prepare": "node build/markdownInlineImages.js",
         "dev": "npm run prepare && vite",
