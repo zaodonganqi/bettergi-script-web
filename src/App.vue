@@ -26,25 +26,6 @@ onMounted(() => {
 </template>
 
 <style>
-:root {
-  --color-primary: #1677ff;
-  --border-base: #d9d9d9;
-  --text-base: #141414FF;
-  --text-base2: #666;
-  --text-base3: #999;
-  --text-base4: #bbb;
-  --text-light: #ffffff;
-  --bg-container: #ffffff;
-  --bg-menu: #ffffff;
-  --bg-item-selected: #e6f4ff;
-  --bg-shadow-light: #1677ff14;
-  --bg-desc: #f8fbff;
-  --color-shadow: #e6f0ff;
-  --color-hover: #4096ff;
-  --color-update: #52c41a;
-  --text-error: #ff4d4f;
-}
-
 ::-webkit-scrollbar-track {
   display: none;
   padding: 10px 0;

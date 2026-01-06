@@ -1,5 +1,23 @@
 /* AUTO GENERATED - DO NOT EDIT */
 :root {
+  --colorPrimary: #1677ff;
+  --colorInfo: #1677ff;
+  --colorInfoBg: #e6f0ff;
+  --colorBgLayout: #f7f8fa;
+  --colorBgContainer: #ffffff;
+  --colorPrimaryBg: #e6f4ff;
+  --controlItemBgActive: #f3f8ff;
+  --colorPrimaryBgHover: #1677ff14;
+  --colorItemBgSelected: #e6f4ff;
+  --colorBorder: #dfe2e5;
+  --colorText: #141414FF;
+  --colorTextSecondary: #666;
+  --colorTextTertiary: #999;
+  --colorTextQuaternary: #bbb;
+  --colorTextLightSolid: #ffffff;
+  --colorSuccessText: #52c41a;
+  --colorPrimaryHover: #4096ff;
+  --colorErrorText: #ff4d4f;
   --mermaid-text-fill: #ffffff;
   --mermaid-text-stroke: #000000;
   --mermaid-noteText-fill: #ffd700;
