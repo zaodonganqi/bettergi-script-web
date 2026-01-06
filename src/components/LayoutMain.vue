@@ -409,17 +409,7 @@
     </a-modal>
 
     <!-- 烟花弹窗 -->
-    <a-modal
-        v-model:open="showFireworksModal"
-        title="烟花"
-        :footer="null"
-        centered
-        width="80%"
-        :style="{ maxWidth: '900px' }"
-        @cancel="onFireworksClose"
-    >
-      <Fireworks />
-    </a-modal>
+    <Fireworks />
 
     <!-- 更新计划弹窗 -->
     <a-modal v-model:open="mainStore.showPlanModal"
@@ -750,7 +740,7 @@ onMounted(async () => {
   // 加载自定义背景
   await settings.loadCustomBackground();
 
-  checkFireworksModal();
+  mainStore.checkFireworksModal();
 });
 
 // 组件卸载时清理事件监听器
@@ -766,28 +756,6 @@ onUnmounted(() => {
 function onLocaleChange(val) {
   mainStore.onLocaleChange(val);
   settings.setLocale(val);
-}
-
-const showFireworksModal = ref(false);
-
-const FIREWORKS_KEY = 'fireworks_shown_2026';
-
-function checkFireworksModal() {
-  if (localStorage.getItem(FIREWORKS_KEY)) return;
-
-  const now = new Date();
-
-  const start = new Date(2026, 1, 16, 0, 0, 0); // 2026-02-16
-  const end   = new Date(2026, 1, 24, 23, 59, 59); // 2026-02-24
-
-  if (now >= start && now <= end) {
-    showFireworksModal.value = true;
-  }
-}
-
-function onFireworksClose() {
-  localStorage.setItem(FIREWORKS_KEY, '1');
-  showFireworksModal.value = false;
 }
 </script>
 

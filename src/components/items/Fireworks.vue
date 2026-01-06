@@ -1,22 +1,38 @@
 <template>
-  <div class="fireworks-content">
-    <svg
-        ref="svgRef"
-        class="fireworks-svg"
-        viewBox="0 0 1000 600"
-        preserveAspectRatio="xMidYMid slice"
-    >
-      <!-- 星空层 -->
-      <g ref="starsLayerRef"></g>
-      <!-- 烟花层 -->
-      <g ref="fireworksLayerRef"></g>
-    </svg>
-  </div>
+  <a-modal
+      v-model:open="mainStore.showFireworksModal"
+      title="烟花"
+      :footer="null"
+      centered
+      width="80%"
+      :maskClosable="false"
+      :style="{ maxWidth: '900px' }"
+      @cancel="mainStore.onFireworksClose"
+  >
+    <div class="fireworks-content">
+      <svg
+          ref="svgRef"
+          class="fireworks-svg"
+          viewBox="0 0 1000 600"
+          preserveAspectRatio="xMidYMid slice"
+      >
+        <!-- 星空层 -->
+        <g ref="starsLayerRef"></g>
+        <!-- 烟花层 -->
+        <g ref="fireworksLayerRef"></g>
+      </svg>
+    </div>
+  </a-modal>
 </template>
 
 <script setup>
-import { onMounted, onUnmounted, ref } from 'vue';
+import { onUnmounted, ref, watch, nextTick } from 'vue';
 import gsap from 'gsap';
+import {useMainStore} from "@/stores/mainStore.js";
+
+let inited = false
+
+const mainStore = useMainStore();
 
 // 全局配置
 const CONFIG = {
@@ -305,10 +321,22 @@ function launchFirework() {
   });
 }
 
-onMounted(() => {
-  initStars();
-  scheduleNextLaunch();
-});
+watch(
+    () => mainStore.showFireworksModal,
+    async (open) => {
+      if (!open) return;
+      if (inited) return;
+
+      await nextTick();
+
+      if (!starsLayerRef.value || !fireworksLayerRef.value) return;
+
+      initStars();
+      scheduleNextLaunch();
+
+      inited = true;
+    }
+)
 
 onUnmounted(() => {
   destroyed = true;
