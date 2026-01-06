@@ -5,11 +5,15 @@
     "type": "module",
     "repository": "https://github.com/zaodonganqi/bettergi-script-web",
     "scripts": {
-        "mark:prepare": "node build/markdownInlineImages.js",
-        "dev": "node scripts/generateThemeVars.js && npm run mark:prepare && vite",
-        "build": "node scripts/generateThemeVars.js && npm run mark:prepare && vite build",
+        "md:prepare": "node build/markdownInlineImages.js",
+        "gen:theme": "node scripts/generateThemeVars.js",
+        "predev": "npm run gen:theme && npm run md:prepare",
+        "prebuild": "npm run gen:theme && npm run md:prepare",
+        "prebuild:single": "npm run gen:theme && npm run md:prepare",
+        "dev": "vite",
+        "build": "vite build",
+        "build:single": "vite build --config vite.config.single.js --mode single",
         "serve": "vite preview",
-        "build:single": "node scripts/generateThemeVars.js && npm run mark:prepare && vite build --config vite.config.single.js --mode single",
         "deploy": "gh-pages -d dist"
     },
     "dependencies": {

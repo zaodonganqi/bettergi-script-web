@@ -17,4 +17,4 @@ fs.writeFileSync(
     'utf8'
 );
 
-console.log('Theme css vars generated');
+console.log('🎉 已自动生成css变量注入');
