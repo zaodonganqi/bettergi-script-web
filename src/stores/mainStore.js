@@ -599,6 +599,9 @@ export const useMainStore = defineStore('mainStore', () => {
         }
     }
 
+    // 烟花弹窗显示状态
+    const showFireworksModal = ref(false);
+
     // 帮助弹窗显示状态
     const showHelpModal = ref(false);
     
@@ -1071,6 +1074,8 @@ export const useMainStore = defineStore('mainStore', () => {
         onRoleCheckboxChange,
         resetRoleFilter,
         applySortForMenu,
+        // 烟花弹窗
+        showFireworksModal,
         // 帮助弹窗
         showHelpModal,
         // 更新计划弹窗

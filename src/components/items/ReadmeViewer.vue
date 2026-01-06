@@ -833,4 +833,9 @@ watch(
   stroke: var(--mermaid-actor-stroke) !important;
   stroke-width: 2px;
 }
+
+.readme-content :deep(#arrowhead) {
+  fill: #ff6b6b !important;
+  stroke: #ff6b6b !important;
+}
 </style>
