@@ -3,7 +3,7 @@
 > **BetterGI Script Web** - BetterGI脚本仓库Web界面
 
 [![Vue](https://img.shields.io/badge/Vue-3.4.0-4FC08D?style=flat-square&logo=vue.js)](https://vuejs.org/)
-[![Vite](https://img.shields.io/badge/Vite-6.0.0-646CFF?style=flat-square&logo=vite)](https://vitejs.dev/)
+[![Vite](https://img.shields.io/badge/Vite-6.4.1-646CFF?style=flat-square&logo=vite)](https://vitejs.dev/)
 [![Ant Design Vue](https://img.shields.io/badge/Ant%20Design%20Vue-4.2.6-1890FF?style=flat-square&logo=ant-design)](https://antdv.com/)
 [![Pinia](https://img.shields.io/badge/Pinia-3.0.0-FFD859?style=flat-square&logo=pinia)](https://pinia.vuejs.org/)
 
@@ -48,13 +48,6 @@ npm run dev
 ### 开发环境
 ```bash
 npm run dev
-```
-
-### 预处理任务
-```bash
-npm run predev              # 开发前预处理（主题生成、Markdown处理）
-npm run gen:theme           # 生成主题变量
-npm run md:prepare          # 处理Markdown图片资源
 ```
 
 ### 生产构建

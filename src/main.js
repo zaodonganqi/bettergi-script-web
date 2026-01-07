@@ -16,11 +16,11 @@ app.mount('#app')
 
 // 清除 localStorage 和 sessionStorage
 window.addEventListener('beforeunload', () => {
-    // 只清除404相关的缓存
-    Object.keys(localStorage).forEach(key => {
-        if (key.startsWith('readme404:')) {
-            localStorage.removeItem(key);
-        }
-    });
-    sessionStorage.clear();
+  // 只清除404相关的缓存
+  Object.keys(localStorage).forEach(key => {
+    if (key.startsWith('readme404:')) {
+      localStorage.removeItem(key);
+    }
+  });
+  sessionStorage.clear();
 });

@@ -13,24 +13,24 @@ export function inlineFavicon() {
       const distPath = resolve(process.cwd(), 'dist')
       const htmlPath = join(distPath, 'index.html')
       const faviconPath = join(distPath, 'favicon.ico')
-      
+
       if (existsSync(htmlPath) && existsSync(faviconPath)) {
         // 读取HTML文件
         let htmlContent = readFileSync(htmlPath, 'utf-8')
-        
+
         // 读取favicon文件并转换为base64
         const faviconBuffer = readFileSync(faviconPath)
         const base64Favicon = `data:image/x-icon;base64,${faviconBuffer.toString('base64')}`
-        
+
         // 替换HTML中的favicon引用
         htmlContent = htmlContent.replace(
           /<link[^>]*rel=["']icon["'][^>]*>/gi,
           `<link rel="icon" type="image/x-icon" href="${base64Favicon}">`
         )
-        
+
         // 写回HTML文件
         writeFileSync(htmlPath, htmlContent, 'utf-8')
-        
+
         // 删除favicon文件
         try {
           unlinkSync(faviconPath)

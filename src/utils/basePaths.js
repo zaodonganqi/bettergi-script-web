@@ -20,21 +20,21 @@ const MirrorPathRelease = 'https://dkproxy.linzefeng.top/https://raw.githubuserc
 
 // 仓库 Web 页面根路径
 export function getWebPath() {
-    return WebPathMain;
+  return WebPathMain;
 }
 // 仓库原始文件根路径
 export function getRepoPath() {
-    return RepoPathRelease
+  return RepoPathRelease
 }
 // 仓库 raw 根路径
 export function getRawPath() {
-    return RawPathRelease;
+  return RawPathRelease;
 }
 // 镜像 raw 根路径
 export function getMirrorPath() {
-    return MirrorPathRelease;
+  return MirrorPathRelease;
 }
 // 镜像加速站点
 export function getMirror() {
-    return 'https://dkproxy.linzefeng.top/';
+  return 'https://dkproxy.linzefeng.top/';
 }

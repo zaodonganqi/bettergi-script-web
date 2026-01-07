@@ -1,48 +1,43 @@
 {
-    "name": "bgi-bsw",
-    "version": "0.54.1",
-    "private": true,
-    "type": "module",
-    "repository": "https://github.com/zaodonganqi/bettergi-script-web",
-    "scripts": {
-        "md:prepare": "node build/markdownInlineImages.js",
-        "gen:theme": "node scripts/generateThemeVars.js",
-        "predev": "npm run gen:theme && npm run md:prepare",
-        "prebuild": "npm run gen:theme && npm run md:prepare",
-        "prebuild:single": "npm run gen:theme && npm run md:prepare",
-        "dev": "vite",
-        "build": "vite build",
-        "build:single": "vite build --config vite.config.single.js --mode single",
-        "serve": "vite preview",
-        "deploy": "gh-pages -d dist"
-    },
-    "dependencies": {
-        "@ant-design/icons-vue": "^7.0.1",
-        "@giscus/vue": "^3.1.1",
-        "@vueuse/core": "^13.4.0",
-        "ant-design-vue": "^4.2.6",
-        "driver.js": "^1.4.0",
-        "gsap": "^3.14.2",
-        "highlight.js": "^11.11.1",
-        "idb-keyval": "^6.2.2",
-        "markdown-it": "^14.1.0",
-        "markdown-it-anchor": "^9.2.0",
-        "mermaid": "^11.12.2",
-        "pako": "^2.1.0",
-        "pinia": "3.0.0",
-        "pinyin-pro": "^3.27.0",
-        "sharp": "^0.34.5",
-        "vue": "^3.4.0",
-        "vue-i18n": "^11.1.11"
-    },
-    "devDependencies": {
-        "@vitejs/plugin-vue": "^5.2.4",
-        "gh-pages": "^6.3.0",
-        "less": "^4.3.0",
-        "vite": "6.0.0",
-        "vite-plugin-singlefile": "^2.0.2"
-    },
-    "optionalDependencies": {
-        "@rollup/rollup-linux-x64-gnu": "*"
-    }
+  "name": "bgi-bsw",
+  "version": "0.54.1",
+  "private": true,
+  "type": "module",
+  "repository": "https://github.com/zaodonganqi/bettergi-script-web",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "build:single": "vite build --config vite.config.single.js",
+    "serve": "vite preview",
+    "deploy": "gh-pages -d dist"
+  },
+  "dependencies": {
+    "@ant-design/icons-vue": "^7.0.1",
+    "@giscus/vue": "^3.1.1",
+    "@vueuse/core": "^13.4.0",
+    "ant-design-vue": "^4.2.6",
+    "driver.js": "^1.4.0",
+    "gsap": "^3.14.2",
+    "highlight.js": "^11.11.1",
+    "idb-keyval": "^6.2.2",
+    "markdown-it": "^14.1.0",
+    "markdown-it-anchor": "^9.2.0",
+    "mermaid": "^11.12.2",
+    "pako": "^2.1.0",
+    "pinia": "3.0.0",
+    "pinyin-pro": "^3.27.0",
+    "sharp": "^0.34.5",
+    "vue": "^3.4.0",
+    "vue-i18n": "^11.1.11"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.4",
+    "gh-pages": "^6.3.0",
+    "less": "^4.3.0",
+    "vite": "^6.4.1",
+    "vite-plugin-singlefile": "^2.0.2"
+  },
+  "optionalDependencies": {
+    "@rollup/rollup-linux-x64-gnu": "*"
+  }
 }
