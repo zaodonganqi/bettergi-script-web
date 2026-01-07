@@ -1,28 +1,31 @@
 <template>
-  <a-modal
-      v-model:open="mainStore.showFireworksModal"
-      title="烟花"
-      :footer="null"
-      centered
-      width="80%"
-      :maskClosable="false"
-      :style="{ maxWidth: '900px' }"
-      @cancel="mainStore.onFireworksClose"
-  >
-    <div class="fireworks-content">
-      <svg
-          ref="svgRef"
-          class="fireworks-svg"
-          viewBox="0 0 1000 600"
-          preserveAspectRatio="xMidYMid slice"
-      >
-        <!-- 星空层 -->
-        <g ref="starsLayerRef"></g>
-        <!-- 烟花层 -->
-        <g ref="fireworksLayerRef"></g>
-      </svg>
-    </div>
-  </a-modal>
+  <div ref="fireworks">
+    <a-modal
+        :getContainer="() => $refs.fireworks"
+        v-model:open="mainStore.showFireworksModal"
+        title="春节快乐！"
+        :footer="null"
+        centered
+        width="80%"
+        :maskClosable="false"
+        :style="{ height: '80%' }"
+        @cancel="mainStore.onFireworksClose"
+    >
+      <div class="fireworks-content">
+        <svg
+            ref="svgRef"
+            class="fireworks-svg"
+            viewBox="0 0 1000 600"
+            preserveAspectRatio="xMidYMid slice"
+        >
+          <!-- 星空层 -->
+          <g ref="starsLayerRef"></g>
+          <!-- 烟花层 -->
+          <g ref="fireworksLayerRef"></g>
+        </svg>
+      </div>
+    </a-modal>
+  </div>
 </template>
 
 <script setup>
@@ -50,22 +53,43 @@ const CONFIG = {
   secondarySpread: [50, 90], // 二次爆炸扩散范围
 
   fireworkTypes: [
-    'radial',
-    'ring',
-    'heart',
-    'burstLine'
+    'radial',        // 放射形
+    'ring',          // 环形
+    'heart',         // 心形
+    'burstLine',     // 线形爆发
+    'spiral',        // 螺旋形
+    'star',          // 星形
+    'doubleRing',    // 双环
+    'chrysanthemum', // 菊花形
+    'willow',        // 柳树形
+    'palm'           // 棕榈形
   ],
   particleTypes: [
     'dot',
     'spark',
-    'glow'
+    'glow',
+    'star',
+    'trail'
   ],
+  // 更艳丽的颜色 - 高饱和度、高亮度
   colors: [
-    '#ff5f5f',
-    '#ffd93d',
-    '#5fdfff',
-    '#c77dff',
-    '#7CFFCB'
+    '#FF0040',    // 亮红
+    '#FF3D00',    // 橙红
+    '#FF8C00',    // 深橙
+    '#FFD700',    // 金色
+    '#FFFF00',    // 纯黄
+    '#7FFF00',    // 查特酒绿
+    '#00FF7F',    // 春绿
+    '#00FFFF',    // 青色
+    '#00BFFF',    // 深天蓝
+    '#0080FF',    // 亮蓝
+    '#4169E1',    // 皇家蓝
+    '#8A2BE2',    // 蓝紫
+    '#9400D3',    // 深紫罗兰
+    '#FF00FF',    // 洋红
+    '#FF1493',    // 深粉
+    '#FF69B4',    // 亮粉
+    '#FFFFFF'     // 白色（银色烟花）
   ]
 }
 
@@ -87,6 +111,7 @@ const fireworksLayerRef = ref(null);
 let launchTimer = null;
 let destroyed = false;
 let activeFireworks = 0;
+let fireworkCount = 0;
 
 function scheduleNextLaunch() {
   if (destroyed) return;
@@ -168,10 +193,11 @@ function createParticle(type, x, y, color) {
       el = createSVG('line');
       el.setAttribute('x1', x);
       el.setAttribute('y1', y);
-      el.setAttribute('x2', x + rand(-6, 6));
-      el.setAttribute('y2', y + rand(-6, 6));
+      el.setAttribute('x2', x + rand(-8, 8));
+      el.setAttribute('y2', y + rand(-8, 8));
       el.setAttribute('stroke', color);
-      el.setAttribute('stroke-width', '2');
+      el.setAttribute('stroke-width', rand(2, 3));
+      el.setAttribute('stroke-linecap', 'round');
       break;
     }
 
@@ -179,9 +205,36 @@ function createParticle(type, x, y, color) {
       el = createSVG('circle');
       el.setAttribute('cx', x);
       el.setAttribute('cy', y);
-      el.setAttribute('r', rand(3, 5));
+      el.setAttribute('r', rand(4, 7));
       el.setAttribute('fill', color);
-      el.setAttribute('opacity', '0.8');
+      el.setAttribute('opacity', rand(0.7, 0.9));
+      break;
+    }
+
+    case 'star': {
+      el = createSVG('polygon');
+      const size = rand(3, 6);
+      const points = [];
+      for (let i = 0; i < 5; i++) {
+        const angle = (i * 4 * Math.PI) / 5 - Math.PI / 2;
+        const r = i % 2 === 0 ? size : size / 2;
+        points.push(`${x + Math.cos(angle) * r},${y + Math.sin(angle) * r}`);
+      }
+      el.setAttribute('points', points.join(' '));
+      el.setAttribute('fill', color);
+      break;
+    }
+
+    case 'trail': {
+      el = createSVG('line');
+      el.setAttribute('x1', x);
+      el.setAttribute('y1', y);
+      el.setAttribute('x2', x);
+      el.setAttribute('y2', y);
+      el.setAttribute('stroke', color);
+      el.setAttribute('stroke-width', rand(2, 4));
+      el.setAttribute('stroke-linecap', 'round');
+      el.setAttribute('opacity', rand(0.6, 0.8));
       break;
     }
 
@@ -189,7 +242,7 @@ function createParticle(type, x, y, color) {
       el = createSVG('circle');
       el.setAttribute('cx', x);
       el.setAttribute('cy', y);
-      el.setAttribute('r', rand(1, 2.5));
+      el.setAttribute('r', rand(1.5, 3.5));
       el.setAttribute('fill', color);
     }
   }
@@ -202,12 +255,14 @@ function createParticle(type, x, y, color) {
 const FireworkPatterns = {
   radial(i, count) {
     const a = (Math.PI * 2 * i) / count;
-    return {x: Math.cos(a), y: Math.sin(a)};
+    const r = rand(0.8, 1.2);
+    return {x: Math.cos(a) * r, y: Math.sin(a) * r};
   },
 
   ring(i, count) {
     const a = (Math.PI * 2 * i) / count;
-    return {x: Math.cos(a), y: Math.sin(a)};
+    const r = rand(0.95, 1.05);
+    return {x: Math.cos(a) * r, y: Math.sin(a) * r};
   },
 
   heart(i, count) {
@@ -221,6 +276,43 @@ const FireworkPatterns = {
   burstLine() {
     const a = rand(0, Math.PI * 2);
     return {x: Math.cos(a), y: Math.sin(a)};
+  },
+
+  spiral(i, count) {
+    const a = (Math.PI * 6 * i) / count; // 3圈螺旋
+    const r = (i / count) * rand(0.8, 1.2);
+    return {x: Math.cos(a) * r, y: Math.sin(a) * r};
+  },
+
+  star(i, count) {
+    const a = (Math.PI * 2 * i) / count;
+    const r = (i % 2 === 0) ? 1 : 0.5; // 星形效果
+    return {x: Math.cos(a) * r, y: Math.sin(a) * r};
+  },
+
+  doubleRing(i, count) {
+    const ring = i % 2; // 交替内外环
+    const a = (Math.PI * 2 * Math.floor(i / 2)) / (count / 2);
+    const r = ring === 0 ? rand(0.6, 0.7) : rand(1.3, 1.4);
+    return {x: Math.cos(a) * r, y: Math.sin(a) * r};
+  },
+
+  chrysanthemum(i, count) {
+    const a = (Math.PI * 12 * i) / count; // 多花瓣
+    const r = rand(0.7, 1.3);
+    return {x: Math.cos(a) * r, y: Math.sin(a) * r};
+  },
+
+  willow(i, count) {
+    const a = (Math.PI * 2 * i) / count;
+    const r = rand(0.5, 1.5);
+    return {x: Math.cos(a) * r, y: Math.sin(a) * r * 1.5}; // 拉长的柳树形
+  },
+
+  palm(i, count) {
+    const a = (Math.PI * 2 * i) / count;
+    const r = rand(0.8, 1.2) * (1 + Math.sin(a * 5) * 0.3); // 棕榈叶波浪
+    return {x: Math.cos(a) * r, y: Math.sin(a) * r};
   }
 }
 
@@ -284,11 +376,25 @@ function launchFirework() {
   let lastY = startY;
   const explodeY = rand(...CONFIG.explodeHeightRange);
 
-  const rocket = createSVG('circle');
-  rocket.setAttribute('cx', x);
-  rocket.setAttribute('cy', startY);
-  rocket.setAttribute('r', 2);
-  rocket.setAttribute('fill', pick(CONFIG.colors));
+  let rocket;
+
+  // 第一发烟花使用 favicon 图标
+  if (fireworkCount < 26) {
+    fireworkCount++;
+
+    rocket = createSVG('image');
+    rocket.setAttribute('href', '/favicon.ico');
+    rocket.setAttribute('x', x - 16);
+    rocket.setAttribute('y', startY);
+    rocket.setAttribute('width', 32);
+    rocket.setAttribute('height', 32);
+  } else {
+    rocket = createSVG('circle');
+    rocket.setAttribute('cx', x);
+    rocket.setAttribute('cy', startY);
+    rocket.setAttribute('r', 2);
+    rocket.setAttribute('fill', pick(CONFIG.colors));
+  }
 
   fireworksLayerRef.value.appendChild(rocket);
 
@@ -336,7 +442,7 @@ watch(
 
       inited = true;
     }
-)
+);
 
 onUnmounted(() => {
   destroyed = true;
@@ -345,6 +451,28 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+:deep(.ant-modal-content) {
+  height: 80vh;
+  padding: 20px 0 0 0;
+  background: radial-gradient(circle at bottom, #0a0a14, #000);
+  border-radius: 12px;
+}
+
+:deep(.ant-modal-close) {
+  color: #ffffff;
+}
+
+:deep(.ant-modal-header) {
+  padding-left: 20px;
+  background-color: transparent;
+}
+
+:deep(.ant-modal-body) {
+  height: 80%;
+  overflow: hidden;
+  padding: 0;
+}
+
 .fireworks-content {
   width: 100%;
   height: 100%;
@@ -358,7 +486,8 @@ onUnmounted(() => {
 }
 
 circle,
-line {
-  filter: drop-shadow(0 0 6px currentColor);
+line,
+polygon {
+  filter: drop-shadow(0 0 8px currentColor) drop-shadow(0 0 16px currentColor);
 }
 </style>
