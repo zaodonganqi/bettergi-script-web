@@ -3,10 +3,10 @@
     <a-modal
         :getContainer="() => $refs.fireworks"
         v-model:open="mainStore.showFireworksModal"
-        title="新春佳节&emsp;全勤不肝"
+        title="新春佳节&emsp;照玩不肝"
         :footer="null"
         centered
-        width="70%"
+        width="60%"
         :maskClosable="false"
         @cancel="mainStore.onFireworksClose"
     >
@@ -24,6 +24,17 @@
         </svg>
       </div>
     </a-modal>
+    <div v-if="mainStore.showFireworksModal" class="mask-marquee">
+      <div class="marquee-track" ref="marqueeTrack">
+        <div
+            v-for="(item, i) in marqueeList"
+            :key="i"
+            class="marquee-item"
+        >
+          <img :src="item"  alt=""/>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -31,6 +42,16 @@
 import { onUnmounted, ref, watch, nextTick } from 'vue';
 import gsap from 'gsap';
 import {useMainStore} from "@/stores/mainStore.js";
+import favicon from "@/assets/favicon.ico";
+import hutao from "@/assets/fireworks/hutao.ico";
+import cocogoat from "@/assets/fireworks/cocogoat.ico";
+import starward from "@/assets/fireworks/starward.ico";
+import old from "@/assets/fireworks/old.png";
+import nike from "@/assets/fireworks/nike.png";
+import okgi from "@/assets/fireworks/okgi.ico";
+import kong from "@/assets/fireworks/kong.png";
+import tiwate from "@/assets/fireworks/tiwate.png";
+import yae from "@/assets/fireworks/yae.ico";
 
 let inited = false
 
@@ -44,6 +65,8 @@ const CONFIG = {
 
   baseParticleCount: 80, // 基础粒子数
   particleVariance: 30, // 粒子浮动
+
+  maxIconCount: 52,
 
   secondaryParticleRange: [6, 10], // 二次爆炸粒子数量
   secondaryTriggerChance: 0.003, // 二次爆炸触发概率
@@ -111,6 +134,67 @@ let launchTimer = null;
 let destroyed = false;
 let activeFireworks = 0;
 let fireworkCount = 0;
+
+const baseIcons = [
+  favicon,
+  hutao,
+  cocogoat,
+  starward,
+  old,
+  nike,
+  okgi,
+  kong,
+  tiwate,
+  yae
+];
+
+const marqueeList = ref([]);
+
+function buildMarqueeList() {
+  const result = [];
+  for (let i = 0; i < 10; i++) {
+    result.push(...baseIcons);
+  }
+  marqueeList.value = result;
+}
+
+const marqueeTrack = ref(null);
+let marqueeTween = null;
+
+function startMarquee() {
+  const track = marqueeTrack.value;
+  if (!track) return;
+
+  const totalWidth = track.scrollWidth / 2;
+
+  // 👇 初始就在屏幕最左
+  gsap.set(track, {
+    x: -totalWidth
+  });
+
+  marqueeTween = gsap.to(track, {
+    x: 0,                 // 向右移动
+    duration: 40,
+    ease: 'none',
+    repeat: -1,
+    modifiers: {
+      x: x => {
+        const v = parseFloat(x);
+        return `${((v + totalWidth) % totalWidth) - totalWidth}px`;
+      }
+    }
+  });
+
+  // 顺时针旋转
+  gsap.utils.toArray('.marquee-item').forEach(el => {
+    gsap.to(el, {
+      rotation: 360,      // 正值 = 顺时针
+      duration: gsap.utils.random(6, 12),
+      repeat: -1,
+      ease: 'none'
+    });
+  });
+}
 
 function scheduleNextLaunch() {
   if (destroyed) return;
@@ -363,9 +447,17 @@ function launchFirework() {
   if (activeFireworks >= CONFIG.maxConcurrentFireworks) return;
 
   function getRealY(el) {
-    const gsapData = gsap.getProperty(el, 'y');
-    const baseY = parseFloat(el.getAttribute('cy'));
-    return baseY + gsapData;
+    const gsapY = gsap.getProperty(el, 'y');
+
+    if (el.tagName === 'circle') {
+      return parseFloat(el.getAttribute('cy')) + gsapY;
+    }
+
+    if (el.tagName === 'image') {
+      return parseFloat(el.getAttribute('y')) + gsapY;
+    }
+
+    return gsapY;
   }
 
   activeFireworks++;
@@ -378,11 +470,11 @@ function launchFirework() {
   let rocket;
 
   // 第一发烟花使用 favicon 图标
-  if (fireworkCount < 26) {
+  if (fireworkCount < CONFIG.maxIconCount) {
     fireworkCount++;
 
     rocket = createSVG('image');
-    rocket.setAttribute('href', '/favicon.ico');
+    rocket.setAttribute('href', favicon);
     rocket.setAttribute('x', x - 16);
     rocket.setAttribute('y', startY);
     rocket.setAttribute('width', 32);
@@ -429,12 +521,19 @@ function launchFirework() {
 watch(
     () => mainStore.showFireworksModal,
     async (open) => {
-      if (!open) return;
+      if (!open) {
+        marqueeTween?.kill();
+        return;
+      }
       if (inited) return;
 
       await nextTick();
 
       if (!starsLayerRef.value || !fireworksLayerRef.value) return;
+
+      buildMarqueeList();
+      await nextTick();
+      startMarquee();
 
       initStars();
       scheduleNextLaunch();
@@ -455,7 +554,7 @@ onUnmounted(() => {
   content: '';
   position: absolute;
   top: 50%;
-  width: 12vw;
+  width: 18vw;
   aspect-ratio: 67 / 100;
   background-repeat: no-repeat;
   background-size: contain;
@@ -471,30 +570,46 @@ onUnmounted(() => {
 :deep(.ant-modal)::before {
   left: 0;
   transform: translate(
-      calc(-50% - 7.5vw),
+      calc(-50% - 10vw),
       -50%
   );
-  background-image: url('@/assets/new_year_left.png');
+  background-image: url('../../assets/fireworks/new_year_left.jpg');
 }
 
 :deep(.ant-modal)::after {
   right: 0;
   transform: translate(
-      calc(50% + 7.5vw),
+      calc(50% + 10vw),
       -50%
   );
-  background-image: url('@/assets/new_year_right.png');
+  background-image: url('../../assets/fireworks/new_year_right.jpg');
+}
+
+:deep(.ant-modal) {
+  display: flex;
+  transform: translateY(-4%);
 }
 
 :deep(.ant-modal-content) {
-  height: 80vh;
+  display: flex;
+  flex-direction: column;
+  height: 70vh;
   padding: 20px 0 0 0;
   background: radial-gradient(circle at bottom, #0a0a14, #000);
   border-radius: 12px;
+  box-shadow: 0 0 24px rgba(255, 200, 120, 0.4);
 }
 
 :deep(.ant-modal-close) {
-  color: #ffffff;
+  color: var(--text-light);
+}
+
+:deep(.ant-modal-close):hover {
+  color: var(--text-light);
+}
+
+:deep(.ant-modal-close-x) {
+  font-size: 24px;
 }
 
 :deep(.ant-modal-header) {
@@ -506,15 +621,15 @@ onUnmounted(() => {
 :deep(.ant-modal-title) {
   background: var(--new-year-title-bg);
   border-radius: 12px;
-  font-size: 30px;
+  font-size: 40px;
   padding: 8px 30px;
   margin-bottom: 10px;
-  transform: translateX(-10%);
+  transform: translateX(-10%) translateY(-160%);
   color: var(--new-year-title);
 }
 
 :deep(.ant-modal-body) {
-  height: 100%;
+  flex: 1;
   overflow: hidden;
   padding: 0;
   border-radius: 12px;
@@ -536,5 +651,44 @@ circle,
 line,
 polygon {
   filter: drop-shadow(0 0 8px currentColor) drop-shadow(0 0 16px currentColor);
+}
+
+.mask-marquee {
+  display: flex;
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 18vh;
+  pointer-events: none;
+  z-index: 10000;
+  overflow: hidden;
+  align-items: center;
+}
+
+.marquee-track {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  will-change: transform;
+}
+
+.marquee-item {
+  width: 8vh;
+  height: 8vh;
+  flex: 0 0 8vh;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 200, 120, 0.2);
+  box-shadow: 0 0 24px rgba(255, 200, 120, 0.4);
+}
+
+.marquee-item img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: contain;
 }
 </style>

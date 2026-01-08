@@ -80,8 +80,8 @@ export const useSettingsStore = defineStore('settings', () => {
   }
 
   watch(selectedThemeName, (name) => {
-    setTheme(name)
-    antdTheme.value = getThemeByName(name)
+    setTheme(name);
+    antdTheme.value = getThemeByName(name);
   }, { immediate: true })
 
   // 彩蛋安全确认

@@ -16,6 +16,7 @@ import roleCdn from '@/assets/avatar_cdn.json';
 import { useSettingsStore } from "@/stores/settingsStore.js";
 import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
+import {getThemeName} from "@/styles/theme.js";
 
 export const useMainStore = defineStore('mainStore', () => {
   const {t: $t} = useI18n();
@@ -601,6 +602,7 @@ export const useMainStore = defineStore('mainStore', () => {
 
   // 烟花弹窗显示状态
   const showFireworksModal = ref(false);
+  let choseTheme = null;
   const FIREWORKS_KEY = 'fireworks_shown_2026';
 
   function checkFireworksModal() {
@@ -612,6 +614,8 @@ export const useMainStore = defineStore('mainStore', () => {
     const end   = new Date(2026, 1, 24, 23, 59, 59); // 2026-02-24
 
     if (now >= start && now <= end) {
+      choseTheme = getThemeName();
+      settings.onThemeChange('dark');
       showFireworksModal.value = true;
     }
   }
@@ -619,6 +623,7 @@ export const useMainStore = defineStore('mainStore', () => {
   function onFireworksClose() {
     localStorage.setItem(FIREWORKS_KEY, '1');
     showFireworksModal.value = false;
+    settings.onThemeChange(choseTheme);
   }
 
   // 帮助弹窗显示状态
