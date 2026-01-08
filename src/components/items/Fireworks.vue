@@ -8,14 +8,13 @@
         centered
         width="80%"
         :maskClosable="false"
-        :style="{ height: '80%' }"
         @cancel="mainStore.onFireworksClose"
     >
       <div class="fireworks-content">
         <svg
             ref="svgRef"
             class="fireworks-svg"
-            viewBox="0 0 1000 600"
+            viewBox="0 0 1000 550"
             preserveAspectRatio="xMidYMid slice"
         >
           <!-- 星空层 -->
@@ -468,7 +467,7 @@ onUnmounted(() => {
 }
 
 :deep(.ant-modal-body) {
-  height: 80%;
+  height: 100%;
   overflow: hidden;
   padding: 0;
 }

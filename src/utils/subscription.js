@@ -11,10 +11,10 @@ export function buildSubscriptionUrl(paths) {
 export async function subscribePaths(paths) {
   const mainStore = useMainStore();
   const environment = mainStore.isModeSingle ? 'single' : 'web';
-  // 防刷榜逻辑：检查 1 小时内是否重复订阅
+  // 防刷榜：检查 12 小时内是否重复订阅
   const checkSpam = (identifier) => {
     const KEY = 'subscription_tracking_history';
-    const COOLDOWN = 3600 * 1000 * 1; // 1小时冷却
+    const COOLDOWN = 3600 * 1000 * 12;
     let history = {};
     try {
       history = JSON.parse(localStorage.getItem(KEY) || '{}');
