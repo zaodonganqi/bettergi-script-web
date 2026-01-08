@@ -3,10 +3,10 @@
     <a-modal
         :getContainer="() => $refs.fireworks"
         v-model:open="mainStore.showFireworksModal"
-        title="春节快乐！"
+        title="新春佳节&emsp;全勤不肝"
         :footer="null"
         centered
-        width="80%"
+        width="70%"
         :maskClosable="false"
         @cancel="mainStore.onFireworksClose"
     >
@@ -450,6 +450,42 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+:deep(.ant-modal)::before,
+:deep(.ant-modal)::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 12vw;
+  aspect-ratio: 67 / 100;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  border-radius: 12px;
+  overflow: hidden;
+  background-clip: padding-box;
+  pointer-events: none;
+  z-index: 2;
+  filter: drop-shadow(0 0 30px rgba(255,255,255,.35));
+}
+
+:deep(.ant-modal)::before {
+  left: 0;
+  transform: translate(
+      calc(-50% - 7.5vw),
+      -50%
+  );
+  background-image: url('@/assets/new_year_left.png');
+}
+
+:deep(.ant-modal)::after {
+  right: 0;
+  transform: translate(
+      calc(50% + 7.5vw),
+      -50%
+  );
+  background-image: url('@/assets/new_year_right.png');
+}
+
 :deep(.ant-modal-content) {
   height: 80vh;
   padding: 20px 0 0 0;
@@ -462,14 +498,26 @@ onUnmounted(() => {
 }
 
 :deep(.ant-modal-header) {
-  padding-left: 20px;
+  align-items: center;
+  justify-items: center;
   background-color: transparent;
+}
+
+:deep(.ant-modal-title) {
+  background: var(--new-year-title-bg);
+  border-radius: 12px;
+  font-size: 30px;
+  padding: 8px 30px;
+  margin-bottom: 10px;
+  transform: translateX(-10%);
+  color: var(--new-year-title);
 }
 
 :deep(.ant-modal-body) {
   height: 100%;
   overflow: hidden;
   padding: 0;
+  border-radius: 12px;
 }
 
 .fireworks-content {

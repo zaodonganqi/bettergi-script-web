@@ -41,6 +41,8 @@ export const antdThemes = {
     },
     // 用于antd以外的组件颜色配置
     other: {
+      'new-year-title': '#FFD966FF',
+      'new-year-title-bg': '#C82D24',
       'mermaid-text-fill': '#ffffff',
       'mermaid-text-stroke': '#000000',
       'mermaid-noteText-fill': '#ffd700',
@@ -82,6 +84,8 @@ export const antdThemes = {
     },
     // 用于antd以外的组件颜色配置
     other: {
+      'new-year-title': '#FFD966FF',
+      'new-year-title-bg': '#C82D24',
       'mermaid-text-fill': '#ffffff',
       'mermaid-text-stroke': '#000000',
       'mermaid-noteText-fill': '#ffd700',
@@ -121,6 +125,8 @@ export const antdThemes = {
     },
     // 用于antd以外的组件颜色配置
     other: {
+      'new-year-title': '#FFD966FF',
+      'new-year-title-bg': '#C82D24',
       'mermaid-text-fill': '#ffffff',
       'mermaid-text-stroke': '#000000',
       'mermaid-noteText-fill': '#ffd700',
@@ -157,6 +163,8 @@ export const antdThemes = {
     },
     // 用于antd以外的组件颜色配置
     other: {
+      'new-year-title': '#FFD966FF',
+      'new-year-title-bg': '#C82D24',
       'mermaid-text-fill': '#ffffff',
       'mermaid-text-stroke': '#000000',
       'mermaid-noteText-fill': '#ffd700',
