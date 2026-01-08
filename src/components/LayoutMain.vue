@@ -719,11 +719,6 @@ const fetchRepoData = async () => {
 
     // 检测版本
     mainStore.checkAppVersionIsNew();
-
-    // 新手引导检测
-    setTimeout(() => {
-      mainStore.checkGuide();
-    }, 1000);
   }
 };
 
@@ -741,6 +736,11 @@ onMounted(async () => {
   await settings.loadCustomBackground();
 
   mainStore.checkFireworksModal();
+
+  // 新手引导检测
+  setTimeout(() => {
+    mainStore.checkGuide();
+  }, 1000);
 });
 
 // 组件卸载时清理事件监听器

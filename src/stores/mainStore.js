@@ -624,6 +624,7 @@ export const useMainStore = defineStore('mainStore', () => {
     localStorage.setItem(FIREWORKS_KEY, '1');
     showFireworksModal.value = false;
     settings.onThemeChange(choseTheme);
+    checkGuide();
   }
 
   // 帮助弹窗显示状态
@@ -664,7 +665,7 @@ export const useMainStore = defineStore('mainStore', () => {
   const showGuide = ref(false);
   function checkGuide() {
     const hasShownGuide = localStorage.getItem('has-shown-guide');
-    if (!hasShownGuide && !showAnnouncementModal.value) {
+    if (!hasShownGuide && !showAnnouncementModal.value && !showFireworksModal.value) {
       showGuide.value = true;
       startGuide();
     }
