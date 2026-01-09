@@ -1,922 +1,562 @@
 [
   {
-    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN01pwppzQ1lhoQTePGo6_!!2042484851.webp",
-    "name": "班尼特",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01Qzmdbs1lhoQUJ2eID_!!2042484851.webp",
-    "name": "雷电将军",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN0146SLeq1lhoQVE7GA4_!!2042484851.webp",
-    "name": "重云",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01FVVSSl1lhoQUxOxv7_!!2042484851.webp",
-    "name": "优菈",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01ely41I1lhoQUd009W_!!2042484851.webp",
-    "name": "云堇",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN013g8QhC1lhoQV2FaH9_!!2042484851.webp",
-    "name": "伊法",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN0139jgg71lhoQUQdepw_!!2042484851.webp",
-    "name": "伊涅芙",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01Fl9lYz1lhoQUQejM4_!!2042484851.webp",
-    "name": "凝光",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01dKQupZ1lhoQUnkq3y_!!2042484851.webp",
-    "name": "夜兰",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN01nxCrza1lhoQUd0P7W_!!2042484851.webp",
-    "name": "诺艾尔",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN01B8gy701lhoQUnnJuH_!!2042484851.webp",
-    "name": "菈乌玛",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN01VFaXuv1lhoQUdmsfZ_!!2042484851.webp",
-    "name": "莱依拉",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN01Jz7p5O1lhoQU143pX_!!2042484851.webp",
-    "name": "梦见月瑞希",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01YCS1HP1lhoQVE4ufT_!!2042484851.webp",
-    "name": "可莉",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN013jkMRj1lhoQTxCKLS_!!2042484851.webp",
-    "name": "克洛琳德",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN014hfgni1lhoQTeOGO8_!!2042484851.webp",
-    "name": "北斗",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN01V45dQg1lhoQU14Smr_!!2042484851.webp",
-    "name": "芭芭拉",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN012dparO1lhoQTxAzAX_!!2042484851.webp",
-    "name": "白术",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN01PoO6kD1lhoQVey1Dn_!!2042484851.webp",
-    "name": "安柏",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01HLPSvv1lhoQV2Eyqy_!!2042484851.webp",
-    "name": "八重神子",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN0109NVdB1lhoQUdeprN_!!2042484851.webp",
-    "name": "爱可菲",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN01bz6oLF1lhoQV2Dlyc_!!2042484851.webp",
-    "name": "艾梅莉埃",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN01ruvQWd1lhoQUdmgBF_!!2042484851.webp",
-    "name": "五郎",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN01MVpnzH1lhoQTeRLgT_!!2042484851.webp",
-    "name": "温迪",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN012JjzEB1lhoQUnn3FM_!!2042484851.webp",
-    "name": "提纳里",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN01PvAAwr1lhoQUQfT64_!!2042484851.webp",
-    "name": "塔利雅",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01OWcEuk1lhoQVIcThi_!!2042484851.webp",
-    "name": "丝柯克",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN01Cz1Djb1lhoQVE6BaM_!!2042484851.webp",
-    "name": "赛索斯",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN01o1yj9G1lhoQUQgCpC_!!2042484851.webp",
-    "name": "恰斯卡",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN011R9qtb1lhoQV2F79P_!!2042484851.webp",
-    "name": "鹿野院平藏",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN011F7hTt1lhoQV2DuH5_!!2042484851.webp",
-    "name": "莱欧斯利",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN019Palow1lhoQUnnaWG_!!2042484851.webp",
-    "name": "雷泽",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01IzJrK41lhoQU15nu4_!!2042484851.webp",
-    "name": "卡维",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN012ew03w1lhoQVIckJl_!!2042484851.webp",
-    "name": "九条裟罗",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN01AlFSVY1lhoQUrh2WV_!!2042484851.webp",
-    "name": "枫原万叶",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN01MwxqxG1lhoQUQdK1D_!!2042484851.webp",
-    "name": "娜维娅",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN01hEFTx31lhoQU14Ob7_!!2042484851.webp",
-    "name": "菲谢尔",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN01doJV631lhoQUxLkJL_!!2042484851.webp",
-    "name": "玛拉妮",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01C0cLsG1lhoQUQg4Uw_!!2042484851.webp",
-    "name": "纳西妲",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN014Mrh9H1lhoQTxBFlx_!!2042484851.webp",
-    "name": "流浪者",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN01LHOgEV1lhoQUdfN3R_!!2042484851.webp",
-    "name": "琳妮特",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01drHVje1lhoQUd1g4U_!!2042484851.webp",
-    "name": "丽莎",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN01gTQ68y1lhoQVE4Zpu_!!2042484851.webp",
-    "name": "雅珂达",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN01EqyvG61lhoQUd2DKh_!!2042484851.webp",
-    "name": "烟绯",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN016kC81e1lhoQUczOgj_!!2042484851.webp",
-    "name": "魈",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN01C3iZfu1lhoQUxLwlz_!!2042484851.webp",
-    "name": "香菱",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN01eOhaRY1lhoQUdehTo_!!2042484851.webp",
-    "name": "希诺宁",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN01EqhgU71lhoQUxOMR4_!!2042484851.webp",
-    "name": "绮良良",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN01fxNF7l1lhoQUdeQrD_!!2042484851.webp",
-    "name": "七七",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01JrmeIm1lhoQV2ENLc_!!2042484851.webp",
-    "name": "妮露",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN01RF88DX1lhoQU12JfJ_!!2042484851.webp",
-    "name": "奈芙尔",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01EAsjYX1lhoQUdlfm8_!!2042484851.webp",
-    "name": "那维莱特",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01GFGlQk1lhoQTxB3GP_!!2042484851.webp",
-    "name": "莫娜",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN01VnDwQc1lhoQUdeZAx_!!2042484851.webp",
-    "name": "玛薇卡",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN01fTrYcS1lhoQUd1H5d_!!2042484851.webp",
-    "name": "米卡",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN01JVtTeI1lhoQVIckGI_!!2042484851.webp",
-    "name": "旅行者",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN018wv4Ju1lhoQVIdx5F_!!2042484851.webp",
+    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01hWWG5D1lhoQpOy3NP_!!2042484851.webp",
     "name": "爱诺",
-    "category": "角色"
+    "category": "角色有背景"
   },
   {
-    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN012wKD6E1lhoQUrjaUg_!!2042484851.webp",
-    "name": "罗莎莉亚",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN01WLfeod1lhoQUQcFQL_!!2042484851.webp",
-    "name": "迪希雅",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN01CDWcAC1lhoQTxBzT0_!!2042484851.webp",
-    "name": "埃洛伊",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN01B8wYIW1lhoQTxAmbc_!!2042484851.webp",
-    "name": "兹白",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01VteRAy1lhoQUxNcfZ_!!2042484851.webp",
-    "name": "钟离",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN01DMlGhf1lhoQUnkyFq_!!2042484851.webp",
-    "name": "茜特菈莉",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN01O0PTLO1lhoQVE4RUH_!!2042484851.webp",
-    "name": "奇偶",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN01FoLEj21lhoQUdk86Q_!!2042484851.webp",
-    "name": "林尼",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01zC6dGD1lhoQTxAJUM_!!2042484851.webp",
-    "name": "迪卢克",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN017yNud01lhoQVE4dwn_!!2042484851.webp",
-    "name": "闲云",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01EERx0Z1lhoQV2BQMa_!!2042484851.webp",
-    "name": "行秋",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN01rdzh2Z1lhoQVevXEv_!!2042484851.webp",
+    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN01LsHWX51lhoQqDFjNd_!!2042484851.webp",
     "name": "迪奥娜",
-    "category": "角色"
+    "category": "角色有背景"
   },
   {
-    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01RdX6Qx1lhoQUJ0V9b_!!2042484851.webp",
-    "name": "希格雯",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN01kKdMh31lhoQVeyQ28_!!2042484851.webp",
-    "name": "夏洛蒂",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN01dgdP4U1lhoQVIbTFX_!!2042484851.webp",
-    "name": "托马",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN01pwppzQ1lhoQTePGo6_!!2042484851.webp",
-    "name": "班尼特",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01Qzmdbs1lhoQUJ2eID_!!2042484851.webp",
-    "name": "雷电将军",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01FVVSSl1lhoQUxOxv7_!!2042484851.webp",
-    "name": "优菈",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01ely41I1lhoQUd009W_!!2042484851.webp",
-    "name": "云堇",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN0146SLeq1lhoQVE7GA4_!!2042484851.webp",
-    "name": "重云",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN0139jgg71lhoQUQdepw_!!2042484851.webp",
-    "name": "伊涅芙",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN013g8QhC1lhoQV2FaH9_!!2042484851.webp",
-    "name": "伊法",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN01nxCrza1lhoQUd0P7W_!!2042484851.webp",
-    "name": "诺艾尔",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01Fl9lYz1lhoQUQejM4_!!2042484851.webp",
-    "name": "凝光",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01dKQupZ1lhoQUnkq3y_!!2042484851.webp",
-    "name": "夜兰",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN01Jz7p5O1lhoQU143pX_!!2042484851.webp",
-    "name": "梦见月瑞希",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN01B8gy701lhoQUnnJuH_!!2042484851.webp",
-    "name": "菈乌玛",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN01VFaXuv1lhoQUdmsfZ_!!2042484851.webp",
-    "name": "莱依拉",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01YCS1HP1lhoQVE4ufT_!!2042484851.webp",
-    "name": "可莉",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN013jkMRj1lhoQTxCKLS_!!2042484851.webp",
-    "name": "克洛琳德",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN012dparO1lhoQTxAzAX_!!2042484851.webp",
-    "name": "白术",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN01V45dQg1lhoQU14Smr_!!2042484851.webp",
-    "name": "芭芭拉",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN014hfgni1lhoQTeOGO8_!!2042484851.webp",
-    "name": "北斗",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN01PoO6kD1lhoQVey1Dn_!!2042484851.webp",
-    "name": "安柏",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN0109NVdB1lhoQUdeprN_!!2042484851.webp",
-    "name": "爱可菲",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01HLPSvv1lhoQV2Eyqy_!!2042484851.webp",
-    "name": "八重神子",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN01ruvQWd1lhoQUdmgBF_!!2042484851.webp",
-    "name": "五郎",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN01bz6oLF1lhoQV2Dlyc_!!2042484851.webp",
-    "name": "艾梅莉埃",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN012JjzEB1lhoQUnn3FM_!!2042484851.webp",
-    "name": "提纳里",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN01MVpnzH1lhoQTeRLgT_!!2042484851.webp",
-    "name": "温迪",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN01PvAAwr1lhoQUQfT64_!!2042484851.webp",
-    "name": "塔利雅",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN01Cz1Djb1lhoQVE6BaM_!!2042484851.webp",
-    "name": "赛索斯",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN01o1yj9G1lhoQUQgCpC_!!2042484851.webp",
-    "name": "恰斯卡",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01OWcEuk1lhoQVIcThi_!!2042484851.webp",
-    "name": "丝柯克",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN011F7hTt1lhoQV2DuH5_!!2042484851.webp",
-    "name": "莱欧斯利",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN019Palow1lhoQUnnaWG_!!2042484851.webp",
-    "name": "雷泽",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN011R9qtb1lhoQV2F79P_!!2042484851.webp",
-    "name": "鹿野院平藏",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN012ew03w1lhoQVIckJl_!!2042484851.webp",
-    "name": "九条裟罗",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01IzJrK41lhoQU15nu4_!!2042484851.webp",
-    "name": "卡维",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN01AlFSVY1lhoQUrh2WV_!!2042484851.webp",
-    "name": "枫原万叶",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN01hEFTx31lhoQU14Ob7_!!2042484851.webp",
-    "name": "菲谢尔",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN01MwxqxG1lhoQUQdK1D_!!2042484851.webp",
-    "name": "娜维娅",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01C0cLsG1lhoQUQg4Uw_!!2042484851.webp",
-    "name": "纳西妲",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN01doJV631lhoQUxLkJL_!!2042484851.webp",
-    "name": "玛拉妮",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01drHVje1lhoQUd1g4U_!!2042484851.webp",
-    "name": "丽莎",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN014Mrh9H1lhoQTxBFlx_!!2042484851.webp",
-    "name": "流浪者",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN01LHOgEV1lhoQUdfN3R_!!2042484851.webp",
-    "name": "琳妮特",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN01gTQ68y1lhoQVE4Zpu_!!2042484851.webp",
-    "name": "雅珂达",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN01EqyvG61lhoQUd2DKh_!!2042484851.webp",
-    "name": "烟绯",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN016kC81e1lhoQUczOgj_!!2042484851.webp",
-    "name": "魈",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN01C3iZfu1lhoQUxLwlz_!!2042484851.webp",
-    "name": "香菱",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN01eOhaRY1lhoQUdehTo_!!2042484851.webp",
-    "name": "希诺宁",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN01EqhgU71lhoQUxOMR4_!!2042484851.webp",
-    "name": "绮良良",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN01fxNF7l1lhoQUdeQrD_!!2042484851.webp",
-    "name": "七七",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01JrmeIm1lhoQV2ENLc_!!2042484851.webp",
-    "name": "妮露",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN01RF88DX1lhoQU12JfJ_!!2042484851.webp",
-    "name": "奈芙尔",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01EAsjYX1lhoQUdlfm8_!!2042484851.webp",
-    "name": "那维莱特",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01GFGlQk1lhoQTxB3GP_!!2042484851.webp",
-    "name": "莫娜",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN01fTrYcS1lhoQUd1H5d_!!2042484851.webp",
-    "name": "米卡",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN01VnDwQc1lhoQUdeZAx_!!2042484851.webp",
-    "name": "玛薇卡",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN01JVtTeI1lhoQVIckGI_!!2042484851.webp",
-    "name": "旅行者",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN012wKD6E1lhoQUrjaUg_!!2042484851.webp",
-    "name": "罗莎莉亚",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN01WLfeod1lhoQUQcFQL_!!2042484851.webp",
-    "name": "迪希雅",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN018wv4Ju1lhoQVIdx5F_!!2042484851.webp",
-    "name": "爱诺",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN01CDWcAC1lhoQTxBzT0_!!2042484851.webp",
-    "name": "埃洛伊",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN01B8wYIW1lhoQTxAmbc_!!2042484851.webp",
-    "name": "兹白",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01VteRAy1lhoQUxNcfZ_!!2042484851.webp",
-    "name": "钟离",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN01DMlGhf1lhoQUnkyFq_!!2042484851.webp",
-    "name": "茜特菈莉",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN01O0PTLO1lhoQVE4RUH_!!2042484851.webp",
-    "name": "奇偶",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN01FoLEj21lhoQUdk86Q_!!2042484851.webp",
-    "name": "林尼",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01zC6dGD1lhoQTxAJUM_!!2042484851.webp",
+    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01KkHmXJ1lhoQpxopQv_!!2042484851.webp",
     "name": "迪卢克",
-    "category": "角色"
+    "category": "角色有背景"
   },
   {
-    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN017yNud01lhoQVE4dwn_!!2042484851.webp",
-    "name": "闲云",
-    "category": "角色"
+    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01foNqAa1lhoQp7bGa8_!!2042484851.webp",
+    "name": "埃洛伊",
+    "category": "角色有背景"
   },
   {
-    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN01rdzh2Z1lhoQVevXEv_!!2042484851.webp",
-    "name": "迪奥娜",
-    "category": "角色"
+    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN013QAcCo1lhoQpxqRCp_!!2042484851.webp",
+    "name": "奇偶",
+    "category": "角色有背景"
   },
   {
-    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01EERx0Z1lhoQV2BQMa_!!2042484851.webp",
+    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN01xA9gD01lhoQpYWdjY_!!2042484851.webp",
     "name": "行秋",
-    "category": "角色"
+    "category": "角色有背景"
   },
   {
-    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN01dgdP4U1lhoQVIbTFX_!!2042484851.webp",
-    "name": "托马",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01RdX6Qx1lhoQUJ0V9b_!!2042484851.webp",
-    "name": "希格雯",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN01kKdMh31lhoQVeyQ28_!!2042484851.webp",
-    "name": "夏洛蒂",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN01KO9DoF1lhoQVewwau_!!2042484851.webp",
-    "name": "神里绫华",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN01LUndvG1lhoQUnjpYM_!!2042484851.webp",
+    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01Q0NWbP1lhoQqDFfCZ_!!2042484851.webp",
     "name": "砂糖",
-    "category": "角色"
+    "category": "角色有背景"
   },
   {
-    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01AQC90r1lhoQUdiaT7_!!2042484851.webp",
-    "name": "赛诺",
-    "category": "角色"
+    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN01Xg3wgX1lhoQqJxQpe_!!2042484851.webp",
+    "name": "托马",
+    "category": "角色有背景"
   },
   {
-    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN01WV6C2b1lhoQU11RZB_!!2042484851.webp",
-    "name": "千织",
-    "category": "角色"
+    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN01fyLnnq1lhoQp7bOt4_!!2042484851.webp",
+    "name": "神里绫华",
+    "category": "角色有背景"
   },
   {
-    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01fbnVw51lhoQUxLwhR_!!2042484851.webp",
+    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN01eTfpJq1lhoQp7arcW_!!2042484851.webp",
+    "name": "娜维娅",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN01e0Ov4Y1lhoQq1I1ZN_!!2042484851.webp",
     "name": "欧洛伦",
-    "category": "角色"
+    "category": "角色有背景"
   },
   {
-    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01rdfqrr1lhoQUrh6ZI_!!2042484851.webp",
+    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN011Gv3qK1lhoQpChvuN_!!2042484851.webp",
     "name": "蓝砚",
-    "category": "角色"
+    "category": "角色有背景"
   },
   {
-    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN01COMfUt1lhoQVew0Ky_!!2042484851.webp",
+    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN01qk1ysL1lhoQqJvxKk_!!2042484851.webp",
     "name": "刻晴",
-    "category": "角色"
+    "category": "角色有背景"
   },
   {
-    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN013IpPM91lhoQUQb6hP_!!2042484851.webp",
-    "name": "卡齐娜",
-    "category": "角色"
+    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN01Gr0GBx1lhoQpYVlgt_!!2042484851.webp",
+    "name": "琳妮特",
+    "category": "角色有背景"
   },
   {
-    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN01eGQdSM1lhoQVeyLqi_!!2042484851.webp",
+    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN01fZdqbZ1lhoQoqn3zm_!!2042484851.webp",
     "name": "久岐忍",
-    "category": "角色"
+    "category": "角色有背景"
   },
   {
-    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN01UZbuvs1lhoQVey5Du_!!2042484851.webp",
+    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01PB0bz11lhoQqDDzF4_!!2042484851.webp",
+    "name": "卡齐娜",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN014bxdcz1lhoQpYVIal_!!2042484851.webp",
     "name": "凯亚",
-    "category": "角色"
+    "category": "角色有背景"
   },
   {
-    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN01v8GO7k1lhoQTxAiPr_!!2042484851.webp",
+    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01Nj5RGO1lhoQpuSLB3_!!2042484851.webp",
     "name": "嘉明",
-    "category": "角色"
+    "category": "角色有背景"
   },
   {
-    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN017dbyj71lhoQUJ0Ie0_!!2042484851.webp",
-    "name": "菲林斯",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN01f4khpD1lhoQUnkALZ_!!2042484851.webp",
-    "name": "菲米尼",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN01GaSGm71lhoQUniUNR_!!2042484851.webp",
-    "name": "叶洛亚",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN014fpCkp1lhoQUdkvy6_!!2042484851.webp",
-    "name": "杜林",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN01mWvVuw1lhoQUnlJ0L_!!2042484851.webp",
-    "name": "达达利亚",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN017JiVc71lhoQUQbEzr_!!2042484851.webp",
-    "name": "辛焱",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN01mzXwtE1lhoQUdcDZQ_!!2042484851.webp",
-    "name": "瑶瑶",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01QgX16H1lhoQUdkvxV_!!2042484851.webp",
-    "name": "夏沃蕾",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN01GsrKKL1lhoQUxL4cM_!!2042484851.webp",
-    "name": "宵宫",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01m4ebYf1lhoQTx8R0s_!!2042484851.webp",
-    "name": "瓦雷莎",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN01Z4BOiJ1lhoQVev8EY_!!2042484851.webp",
-    "name": "珊瑚宫心海",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN01MWPKtH1lhoQVE5B7I_!!2042484851.webp",
-    "name": "申鹤",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01P7jLS11lhoQPKf9UQ_!!2042484851.webp",
-    "name": "神里绫人",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN01QoWTd11lhoQVeyPzI_!!2042484851.webp",
-    "name": "柯莱",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN0195vFD21lhoQUxJrkL_!!2042484851.webp",
-    "name": "琴",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN01W2V4UI1lhoQUdlfga_!!2042484851.webp",
-    "name": "坎蒂丝",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN01DIu7rE1lhoQUQd3Hk_!!2042484851.webp",
-    "name": "基尼奇",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN01T5OMVC1lhoQUdizKy_!!2042484851.webp",
-    "name": "荒泷一斗",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN01rDH6Jc1lhoQPKf19C_!!2042484851.webp",
-    "name": "胡桃",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN016wdZXf1lhoQVE3lpB_!!2042484851.webp",
-    "name": "哥伦比娅",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01yrPpQP1lhoQUrhVTP_!!2042484851.webp",
+    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01KcwhTD1lhoQpjzo2Q_!!2042484851.webp",
     "name": "甘雨",
-    "category": "角色"
+    "category": "角色有背景"
   },
   {
-    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN01gdyFUl1lhoQUdehN6_!!2042484851.webp",
-    "name": "芙宁娜",
-    "category": "角色"
+    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN01iiLLMs1lhoQqqgzY9_!!2042484851.webp",
+    "name": "菲米尼",
+    "category": "角色有背景"
   },
   {
-    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01ihw0Fu1lhoQPKf188_!!2042484851.webp",
-    "name": "珐露珊",
-    "category": "角色"
+    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN01GJopuk1lhoQq1IhA5_!!2042484851.webp",
+    "name": "杜林",
+    "category": "角色有背景"
   },
   {
-    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01sQRaYL1lhoQUQcFKc_!!2042484851.webp",
-    "name": "多莉",
-    "category": "角色"
+    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN0199FIrU1lhoQpxpy6W_!!2042484851.webp",
+    "name": "班尼特",
+    "category": "角色有背景"
   },
   {
-    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01vqkt8L1lhoQTeMzDn_!!2042484851.webp",
-    "name": "艾尔海森",
-    "category": "角色"
+    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN01aP3f4Q1lhoQpChfGn_!!2042484851.webp",
+    "name": "爱可菲",
+    "category": "角色有背景"
   },
   {
-    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN01AqT6Dm1lhoQUnku1T_!!2042484851.webp",
-    "name": "阿蕾奇诺",
-    "category": "角色"
+    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN01bhbC8s1lhoQq1IpTk_!!2042484851.webp",
+    "name": "重云",
+    "category": "角色有背景"
   },
   {
-    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01ddqBXP1lhoQVevOq3_!!2042484851.webp",
-    "name": "阿贝多",
-    "category": "角色"
-  },
-  {
-    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN01Pjs6A71lhoQTeMv3w_!!2042484851.webp",
+    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN01ilGr171lhoQp7e5Af_!!2042484851.webp",
     "name": "早柚",
-    "category": "角色"
+    "category": "角色有背景"
   },
   {
-    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN01jdAbMb1lhoQUnkMja_!!2042484851.webp",
+    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN01d54tqn1lhoQqDBVKl_!!2042484851.webp",
+    "name": "云堇",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN017sHqr41lhoQpjzTED_!!2042484851.webp",
+    "name": "伊涅芙",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN01QpbnFc1lhoQqDBN0m_!!2042484851.webp",
+    "name": "优菈",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN011LrJoL1lhoQqJz2ce_!!2042484851.webp",
+    "name": "夜兰",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN01OraKzT1lhoQq58bpj_!!2042484851.webp",
+    "name": "叶洛亚",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01mXwPOu1lhoQpuRCWX_!!2042484851.webp",
+    "name": "伊法",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN019Qvxox1lhoQqqgrFQ_!!2042484851.webp",
+    "name": "烟绯",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN01epjlNF1lhoQq1KVOr_!!2042484851.webp",
+    "name": "辛焱",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN01czc9Jx1lhoQphg0qd_!!2042484851.webp",
+    "name": "瑶瑶",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN01yCmwyJ1lhoQpYWIvz_!!2042484851.webp",
+    "name": "闲云",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN01C6lMfx1lhoQkWOfHK_!!2042484851.webp",
+    "name": "宵宫",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN01PmYyzv1lhoQpYVQuf_!!2042484851.webp",
+    "name": "魈",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN01gGdJRE1lhoQpCiGfe_!!2042484851.webp",
+    "name": "希格雯",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN012pZZfs1lhoQpuPSPJ_!!2042484851.webp",
+    "name": "夏沃蕾",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN01i2bcdt1lhoQp7arbM_!!2042484851.webp",
+    "name": "夏洛蒂",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN010kEqXo1lhoQoqofmy_!!2042484851.webp",
+    "name": "瓦雷莎",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN01hxgKk01lhoQpi4puN_!!2042484851.webp",
+    "name": "五郎",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01OxbmLr1lhoQpCi02t_!!2042484851.webp",
+    "name": "温迪",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01m0taZl1lhoQqqhWoG_!!2042484851.webp",
+    "name": "神里绫人",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN01egS3a91lhoQp7anRn_!!2042484851.webp",
+    "name": "丝柯克",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN01GbsFEA1lhoQpxplcU_!!2042484851.webp",
+    "name": "珊瑚宫心海",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN01cJwZul1lhoQpjxWgQ_!!2042484851.webp",
+    "name": "申鹤",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01V4KO2e1lhoQpuQnYf_!!2042484851.webp",
+    "name": "赛索斯",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01otpePT1lhoQqqf2xh_!!2042484851.webp",
+    "name": "琴",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01R9ajdb1lhoQpCj4Yi_!!2042484851.webp",
+    "name": "赛诺",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN01kX4KSZ1lhoQqJx1sK_!!2042484851.webp",
+    "name": "千织",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN01pEIOQ21lhoQpCfigy_!!2042484851.webp",
+    "name": "七七",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN01eQzqK41lhoQqJyEhE_!!2042484851.webp",
+    "name": "绮良良",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01CpptzD1lhoQq580P3_!!2042484851.webp",
+    "name": "诺艾尔",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN01cOxRog1lhoQq578LS_!!2042484851.webp",
+    "name": "凝光",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN01UjlDdN1lhoQoqpwnU_!!2042484851.webp",
+    "name": "奈芙尔",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01SnPk021lhoQpOxW5S_!!2042484851.webp",
+    "name": "妮露",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN010c7vmg1lhoQkWQPKa_!!2042484851.webp",
+    "name": "纳西妲",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN01QryigX1lhoQpYVV21_!!2042484851.webp",
+    "name": "梦见月瑞希",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01A7RxWC1lhoQqDFWrD_!!2042484851.webp",
+    "name": "米卡",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01xx1qOe1lhoQpOxiXY_!!2042484851.webp",
+    "name": "流浪者",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN01aH66n41lhoQoqqU4g_!!2042484851.webp",
+    "name": "玛拉妮",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN01bLvr5B1lhoQqJy2DJ_!!2042484851.webp",
+    "name": "罗莎莉亚",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN01QaNzrJ1lhoQp7bw6h_!!2042484851.webp",
+    "name": "丽莎",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN01qhHUUZ1lhoQp7b8DJ_!!2042484851.webp",
+    "name": "雷泽",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN01LpqSlZ1lhoQpi2Dk3_!!2042484851.webp",
+    "name": "雷电将军",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN017bpwWr1lhoQkWQwag_!!2042484851.webp",
+    "name": "菈乌玛",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN01QYM27o1lhoQpYWqAR_!!2042484851.webp",
+    "name": "克洛琳德",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN01ic4Zn81lhoQp7cTNO_!!2042484851.webp",
+    "name": "莱依拉",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN01DskpJS1lhoQoqmnL4_!!2042484851.webp",
+    "name": "坎蒂丝",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN016pl5Ot1lhoQqDBdet_!!2042484851.webp",
+    "name": "可莉",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN01XvH5xx1lhoQoqmWhN_!!2042484851.webp",
+    "name": "柯莱",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN0117GMzH1lhoQq57GeM_!!2042484851.webp",
+    "name": "卡维",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN01cyZlz71lhoQkWPXHZ_!!2042484851.webp",
+    "name": "基尼奇",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01F6hDmF1lhoQpxncXW_!!2042484851.webp",
+    "name": "哥伦比娅",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN01W12gcs1lhoQpuRfa3_!!2042484851.webp",
+    "name": "胡桃",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01xkBRJO1lhoQqqee0b_!!2042484851.webp",
+    "name": "荒泷一斗",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN011K5gZf1lhoQq58wa0_!!2042484851.webp",
+    "name": "菲林斯",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN01BGJnE61lhoQqJv147_!!2042484851.webp",
+    "name": "菲谢尔",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN01o6R0Hy1lhoQpuRjk7_!!2042484851.webp",
+    "name": "芙宁娜",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN01Do5JWE1lhoQq1IlHQ_!!2042484851.webp",
+    "name": "迪希雅",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN01liphPF1lhoQphdGL3_!!2042484851.webp",
+    "name": "多莉",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN01MBPIgj1lhoQpxqEgq_!!2042484851.webp",
+    "name": "珐露珊",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN015xl7Fa1lhoQp7bXA2_!!2042484851.webp",
+    "name": "北斗",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01uVZEsY1lhoQpxopN6_!!2042484851.webp",
+    "name": "白术",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN013SlVV31lhoQp7dTiq_!!2042484851.webp",
+    "name": "达达利亚",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01fUazdo1lhoQpCgWYs_!!2042484851.webp",
+    "name": "八重神子",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN01nU46941lhoQpuR00o_!!2042484851.webp",
+    "name": "安柏",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN01eZW0Ft1lhoQpi5IzL_!!2042484851.webp",
+    "name": "芭芭拉",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN01UvbS0h1lhoQkWQTT7_!!2042484851.webp",
+    "name": "艾梅莉埃",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN01Qt8QYd1lhoQkWOGJ2_!!2042484851.webp",
+    "name": "阿蕾奇诺",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN01W09Vl51lhoQkWQ8gr_!!2042484851.webp",
+    "name": "艾尔海森",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN01xGTz1a1lhoQoqlvHs_!!2042484851.webp",
+    "name": "阿贝多",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01KKGcrq1lhoQpOxRuA_!!2042484851.webp",
+    "name": "兹白",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN01ldYi1v1lhoQpjzKs9_!!2042484851.webp",
+    "name": "钟离",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN01ImP0Cp1lhoQqqfeL7_!!2042484851.webp",
     "name": "伊安珊",
-    "category": "角色"
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01WKhQEY1lhoQp7cwT3_!!2042484851.webp",
+    "name": "雅珂达",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN01cTHS7n1lhoQpOwNNO_!!2042484851.webp",
+    "name": "香菱",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN01rnPWDu1lhoQpjxG0t_!!2042484851.webp",
+    "name": "塔利雅",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN01TgnnvG1lhoQpYV1uY_!!2042484851.webp",
+    "name": "希诺宁",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN011DjBJ21lhoQpChrgx_!!2042484851.webp",
+    "name": "提纳里",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN010qyJqG1lhoQpYWq8w_!!2042484851.webp",
+    "name": "茜特菈莉",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN0193R9q11lhoQp7bGW5_!!2042484851.webp",
+    "name": "那维莱特",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN01KNOP211lhoQqqgSFF_!!2042484851.webp",
+    "name": "恰斯卡",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i2/2042484851/O1CN01f7HJya1lhoQp7bCLx_!!2042484851.webp",
+    "name": "莫娜",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN01KpomBQ1lhoQpCiCTO_!!2042484851.webp",
+    "name": "旅行者",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN017Zv6s71lhoQqJx5zZ_!!2042484851.webp",
+    "name": "玛薇卡",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN01QmYguA1lhoQqqe2X4_!!2042484851.webp",
+    "name": "林尼",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN01f2cIyY1lhoQq1JMg2_!!2042484851.webp",
+    "name": "莱欧斯利",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i4/2042484851/O1CN012N1dCy1lhoQpi4prP_!!2042484851.webp",
+    "name": "鹿野院平藏",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i1/2042484851/O1CN01TU7oU51lhoQqqhWlH_!!2042484851.webp",
+    "name": "九条裟罗",
+    "category": "角色有背景"
+  },
+  {
+    "url": "https://img.alicdn.com/imgextra/i3/2042484851/O1CN0114QsTI1lhoQp7cfpy_!!2042484851.webp",
+    "name": "枫原万叶",
+    "category": "角色有背景"
   }
 ]
