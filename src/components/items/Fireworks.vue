@@ -59,7 +59,7 @@ import yae from "@/assets/fireworks/yae.ico";
 import collapse from "@/assets/fireworks/collapse.ico";
 import fufu from "@/assets/fireworks/fufu.png";
 
-let inited = false
+let inited = false;
 
 const mainStore = useMainStore();
 
@@ -171,6 +171,9 @@ let marqueeTween = null;
 function startMarquee() {
   const track = marqueeTrack.value;
   if (!track) return;
+
+  marqueeTween?.kill();
+  marqueeTween = null;
 
   const totalWidth = track.scrollWidth / 2;
 
@@ -566,27 +569,28 @@ watch(
     async (open) => {
       if (!open) {
         marqueeTween?.kill();
+        marqueeTween = null;
         return;
       }
-      if (inited) return;
 
       await nextTick();
-
-      if (!starsLayerRef.value || !fireworksLayerRef.value) return;
 
       buildMarqueeList();
       await nextTick();
       startMarquee();
 
-      initStars();
-      scheduleNextLaunch();
-
-      inited = true;
+      if (!inited) {
+        if (!starsLayerRef.value || !fireworksLayerRef.value) return;
+        initStars();
+        scheduleNextLaunch();
+        inited = true;
+      }
     }
 );
 
 onUnmounted(() => {
   destroyed = true;
+  inited = false;
   if (launchTimer) clearTimeout(launchTimer);
 });
 </script>

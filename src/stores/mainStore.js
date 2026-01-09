@@ -614,10 +614,14 @@ export const useMainStore = defineStore('mainStore', () => {
     const end   = new Date(2026, 1, 24, 23, 59, 59); // 2026-02-24
 
     if (now >= start && now <= end) {
-      choseTheme = getThemeName();
-      settings.onThemeChange('dark');
-      showFireworksModal.value = true;
+      openFireworksModal();
     }
+  }
+
+  function openFireworksModal() {
+    choseTheme = getThemeName();
+    settings.onThemeChange('dark');
+    showFireworksModal.value = true;
   }
 
   function onFireworksClose() {
@@ -1102,6 +1106,7 @@ export const useMainStore = defineStore('mainStore', () => {
     // 烟花弹窗
     showFireworksModal,
     checkFireworksModal,
+    openFireworksModal,
     onFireworksClose,
     // 帮助弹窗
     showHelpModal,
