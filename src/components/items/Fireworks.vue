@@ -30,8 +30,13 @@
             v-for="(item, i) in marqueeList"
             :key="i"
             class="marquee-item"
+            @click.stop="onMarqueeClick(item)"
         >
-          <img :src="item"  alt=""/>
+          <img
+              :src="item"
+              alt=""
+              draggable="false"
+          />
         </div>
       </div>
     </div>
@@ -50,8 +55,9 @@ import old from "@/assets/fireworks/old.png";
 import nike from "@/assets/fireworks/nike.png";
 import okgi from "@/assets/fireworks/okgi.ico";
 import kong from "@/assets/fireworks/kong.png";
-import tiwate from "@/assets/fireworks/tiwate.png";
 import yae from "@/assets/fireworks/yae.ico";
+import collapse from "@/assets/fireworks/collapse.ico";
+import fufu from "@/assets/fireworks/fufu.png";
 
 let inited = false
 
@@ -144,8 +150,9 @@ const baseIcons = [
   nike,
   okgi,
   kong,
-  tiwate,
-  yae
+  yae,
+  collapse,
+  fufu
 ];
 
 const marqueeList = ref([]);
@@ -167,13 +174,12 @@ function startMarquee() {
 
   const totalWidth = track.scrollWidth / 2;
 
-  // 👇 初始就在屏幕最左
   gsap.set(track, {
     x: -totalWidth
   });
 
   marqueeTween = gsap.to(track, {
-    x: 0,                 // 向右移动
+    x: 0,
     duration: 40,
     ease: 'none',
     repeat: -1,
@@ -188,12 +194,40 @@ function startMarquee() {
   // 顺时针旋转
   gsap.utils.toArray('.marquee-item').forEach(el => {
     gsap.to(el, {
-      rotation: 360,      // 正值 = 顺时针
+      rotation: 360,
       duration: gsap.utils.random(6, 12),
       repeat: -1,
       ease: 'none'
     });
   });
+
+  track.addEventListener('mouseenter', slowMarquee);
+  track.addEventListener('mouseleave', resumeMarquee);
+}
+
+function slowMarquee() {
+  marqueeTween?.timeScale(0.25);
+}
+
+function resumeMarquee() {
+  marqueeTween?.timeScale(1);
+}
+
+// 图标被点击后
+function onMarqueeClick(icon) {
+  let count = 0;
+  const maxCount = 10;
+
+  function launchNext() {
+    if (count >= maxCount) return;
+    launchFirework(icon);
+    count++;
+
+    const delay = Math.random() * 400;
+    setTimeout(launchNext, delay);
+  }
+
+  launchNext();
 }
 
 function scheduleNextLaunch() {
@@ -442,9 +476,9 @@ function explode(x, y, isSecondary = false) {
 }
 
 // 发射
-function launchFirework() {
+function launchFirework(iconSrc = null) {
   if (!svgRef.value) return;
-  if (activeFireworks >= CONFIG.maxConcurrentFireworks) return;
+  if (!iconSrc && activeFireworks >= CONFIG.maxConcurrentFireworks) return;
 
   function getRealY(el) {
     const gsapY = gsap.getProperty(el, 'y');
@@ -470,7 +504,14 @@ function launchFirework() {
   let rocket;
 
   // 第一发烟花使用 favicon 图标
-  if (fireworkCount < CONFIG.maxIconCount) {
+  if (iconSrc) {
+    rocket = createSVG('image');
+    rocket.setAttribute('href', iconSrc);
+    rocket.setAttribute('x', x - 16);
+    rocket.setAttribute('y', startY);
+    rocket.setAttribute('width', 32);
+    rocket.setAttribute('height', 32);
+  } else if (fireworkCount < CONFIG.maxIconCount) {
     fireworkCount++;
 
     rocket = createSVG('image');
@@ -492,8 +533,10 @@ function launchFirework() {
   let exploded = false;
 
   gsap.to(rocket, {
-    duration: 1.4,
+    duration: 2.5,
     y: -startY,
+    rotation: 360,
+    repeat: -1,
     ease: 'power2.out',
 
     onUpdate() {
@@ -626,6 +669,7 @@ onUnmounted(() => {
   margin-bottom: 10px;
   transform: translateX(-10%) translateY(-160%);
   color: var(--new-year-title);
+  box-shadow: 0 0 24px rgba(255, 200, 120, 0.4);
 }
 
 :deep(.ant-modal-body) {
@@ -668,9 +712,23 @@ polygon {
 
 .marquee-track {
   display: flex;
+  position: relative;
   align-items: center;
   gap: 24px;
   will-change: transform;
+}
+
+.mask-marquee::after {
+  content: '点击发射对应图标的烟花';
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  font-size: 20px;
+  background: transparent;
+  color: var(--new-year-title);
+  opacity: 0.5;
+  padding: 4px 8px;
+  pointer-events: none;
 }
 
 .marquee-item {
@@ -683,6 +741,9 @@ polygon {
   justify-content: center;
   background: rgba(255, 200, 120, 0.2);
   box-shadow: 0 0 24px rgba(255, 200, 120, 0.4);
+  pointer-events: auto;
+  cursor: pointer;
+  user-select: none;
 }
 
 .marquee-item img {
