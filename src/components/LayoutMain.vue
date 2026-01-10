@@ -651,7 +651,7 @@ const initLayoutWidths = () => {
   scriptSliderWidth.value = newWidth;
   
   // 初始化时设置两列布局状态判断
-  mainStore.isListTwoColumn = newWidth >= getTwoColumnThreshold();
+  // mainStore.isListTwoColumn = newWidth >= getTwoColumnThreshold();
 };
 
 // 拖动处理（第二栏和第三栏之间）
@@ -670,7 +670,7 @@ const handleResize = (e) => {
   scriptSliderWidth.value = newWidth;
   
   // 更新 mainStore 中的两列布局状态
-  mainStore.isListTwoColumn = newWidth >= getTwoColumnThreshold();
+  // mainStore.isListTwoColumn = newWidth >= getTwoColumnThreshold();
   
   // 保存宽度到缓存
   saveWidthToCache(newWidth);
