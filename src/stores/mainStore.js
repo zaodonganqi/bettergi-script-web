@@ -608,14 +608,18 @@ export const useMainStore = defineStore('mainStore', () => {
   function checkFireworksModal() {
     if (localStorage.getItem(FIREWORKS_KEY)) return;
 
-    const now = new Date();
-
-    const start = new Date(2026, 1, 16, 0, 0, 0); // 2026-02-16
-    const end   = new Date(2026, 1, 24, 23, 59, 59); // 2026-02-24
-
-    if (now >= start && now <= end) {
+    if (isNewYear()) {
       openFireworksModal();
     }
+  }
+
+  function isNewYear() {
+    const now = new Date();
+
+    const start = new Date(2026, 1, 14, 0, 0, 0); // 2026-02-14
+    const end   = new Date(2026, 1, 24, 23, 59, 59); // 2026-02-24
+
+    return now >= start && now <= end;
   }
 
   function openFireworksModal() {
@@ -1105,6 +1109,7 @@ export const useMainStore = defineStore('mainStore', () => {
     applySortForMenu,
     // 烟花弹窗
     showFireworksModal,
+    isNewYear,
     checkFireworksModal,
     openFireworksModal,
     onFireworksClose,

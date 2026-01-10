@@ -238,7 +238,7 @@
           </a-tooltip>
         </div>
         <div class="top-bar-right">
-          <a-tooltip :title="'新春快乐'">
+          <a-tooltip v-if="mainStore.isNewYear()" :title="'新春快乐'">
             <a-button type="text" class="action-btn" @click="mainStore.openFireworksModal">
               🧨
             </a-button>
