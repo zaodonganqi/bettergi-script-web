@@ -628,11 +628,11 @@ export const useMainStore = defineStore('mainStore', () => {
     showFireworksModal.value = true;
   }
 
-  function onFireworksClose() {
+  async function onFireworksClose() {
     localStorage.setItem(FIREWORKS_KEY, '1');
     showFireworksModal.value = false;
     settings.onThemeChange(choseTheme);
-    checkGuide();
+    await checkGuide();
   }
 
   // 帮助弹窗显示状态
@@ -671,22 +671,33 @@ export const useMainStore = defineStore('mainStore', () => {
 
   // 检查是否需要初次新手引导
   const showGuide = ref(false);
-  function checkGuide() {
-    const hasShownGuide = localStorage.getItem('has-shown-guide');
+  async function checkGuide() {
+    let hasShownGuide = false;
+    if (isModeSingle) {
+      const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
+      hasShownGuide = await repoWebBridge.GetGuideStatus();
+    } else {
+      hasShownGuide = localStorage.getItem('has-shown-guide');
+    }
     if (!hasShownGuide && !showAnnouncementModal.value && !showFireworksModal.value) {
       showGuide.value = true;
       startGuide();
     }
   }
 
-  function setGuide() {
-    localStorage.setItem('has-shown-guide', '1');
+  async function setGuide() {
+    if (isModeSingle) {
+      const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
+      await repoWebBridge.SetGuideStatus(true);
+    } else {
+      localStorage.setItem('has-shown-guide', '1');
+    }
   }
 
   watch(showAnnouncementModal, () => {
     if (showAnnouncementModal) {
-      setTimeout(() => {
-        checkGuide();
+      setTimeout(async () => {
+        await checkGuide();
       }, 1000);
     }
   });
@@ -830,7 +841,7 @@ export const useMainStore = defineStore('mainStore', () => {
                 doneBtn.style.cursor = 'not-allowed';
 
                 // 开始倒计时
-                countdownTimer = setInterval(() => {
+                countdownTimer = setInterval(async () => {
                   countdown--;
                   if (countdown > 0) {
                     doneBtn.textContent = ` ${countdown} `;
@@ -839,7 +850,7 @@ export const useMainStore = defineStore('mainStore', () => {
                     clearInterval(countdownTimer);
                     countdownTimer = null;
                     isCountingDown = false;
-                    setGuide();
+                    await setGuide();
                     driverObj.destroy();
                   }
                 }, 1000);
@@ -932,7 +943,7 @@ export const useMainStore = defineStore('mainStore', () => {
                   doneBtn.style.cursor = 'not-allowed';
 
                   // 开始倒计时
-                  countdownTimer = setInterval(() => {
+                  countdownTimer = setInterval(async () => {
                     countdown--;
                     if (countdown > 0) {
                       doneBtn.textContent = ` ${countdown} `;
@@ -941,7 +952,7 @@ export const useMainStore = defineStore('mainStore', () => {
                       clearInterval(countdownTimer);
                       countdownTimer = null;
                       isCountingDown = false;
-                      setGuide();
+                      await setGuide();
                       driverObj.destroy();
                     }
                   }, 1000);
