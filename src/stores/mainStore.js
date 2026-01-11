@@ -17,6 +17,7 @@ import { useSettingsStore } from "@/stores/settingsStore.js";
 import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
 import {getThemeName} from "@/styles/theme.js";
+import { trackEvent } from '@/utils/useAnalytics.js';
 
 export const useMainStore = defineStore('mainStore', () => {
   const {t: $t} = useI18n();
@@ -214,11 +215,9 @@ export const useMainStore = defineStore('mainStore', () => {
 
     updatingSubscribed.value = true;
     // 追踪一键更新的总数
-    if (typeof window.gtag === 'function') {
-      window.gtag("event", "one-click-update", {
-        update_count: subscribedScriptPaths.value.length
-      });
-    }
+    trackEvent("one-click-update", {
+      update_count: subscribedScriptPaths.value.length
+    });
 
     try {
       const result = await subscribePaths(subscribedScriptPaths.value);

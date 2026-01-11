@@ -1,21 +1,21 @@
 <script setup>
 import LayoutMain from './components/LayoutMain.vue';
 import { useSettingsStore } from '@/stores/settingsStore.js'
-import {onMounted} from "vue";
+import { onMounted } from "vue";
+import { trackEvent } from '@/utils/useAnalytics.js';
 
 const settings = useSettingsStore();
 
 onMounted(() => {
   console.log(settings.selectedLocale);
   // 追踪语言选择
-  if (typeof window.gtag === 'function') {
-    window.gtag("event", "UI-Settings", {
-      select_language: settings.selectedLocale,
-      selected_theme: settings.selectedThemeName
-    });
-  }
+  trackEvent("UI-Settings", {
+    select_language: settings.selectedLocale,
+    selected_theme: settings.selectedThemeName
+  });
   console.log(settings.selectedThemeName);
 });
+
 </script>
 
 <template>

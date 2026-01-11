@@ -16,7 +16,7 @@ export default defineConfig({
     viteSingleFile(),
     inlineFavicon()
   ],
-  base: process.env.NODE_ENV === 'production' ? '/bettergi-script-web/' : '/bettergi-script-web/',
+  base: '/bettergi-script-web/',
   define: {
     __APP_VERSION__: JSON.stringify(version)
   },

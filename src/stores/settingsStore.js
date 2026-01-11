@@ -10,6 +10,7 @@ import { getThemeByName, getThemeName, setTheme, antdThemes } from '@/styles/the
 import { message as Message } from 'ant-design-vue'
 import { useI18n } from 'vue-i18n'
 import { set, get, del } from 'idb-keyval'
+import { trackEvent } from '@/utils/useAnalytics.js'
 
 const antdLocales = {
   'zh-CN': zhCN,
@@ -54,11 +55,9 @@ export const useSettingsStore = defineStore('settings', () => {
 
   function setThemeName(name) {
     // 追踪主题切换
-    if (typeof window.gtag === 'function') {
-      window.gtag("event", "UI-Settings", {
-        select_Theme: name
-      });
-    }
+    trackEvent("UI-Settings", {
+      select_Theme: name
+    });
     selectedThemeName.value = name
   }
 

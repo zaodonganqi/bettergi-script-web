@@ -1,6 +1,7 @@
 // 订阅工具：构建订阅 URL，并在本地模式下执行导入
 
 import { useMainStore } from "@/stores/mainStore.js";
+import { trackEvent } from '@/utils/useAnalytics.js';
 
 export function buildSubscriptionUrl(paths) {
   const jsonString = JSON.stringify(paths);
@@ -42,27 +43,25 @@ export async function subscribePaths(paths) {
     return true; // 允许记录
   };
 
-  if (typeof window.gtag === 'function') {
-    if (Array.isArray(paths)) {
-      paths.forEach(path => {
-        const label = typeof path === 'string' ? path : JSON.stringify(path);
-        if (checkSpam(label)) {
-          window.gtag("event", "subscribe_path", {
-            event_category: "subscription",
-            event_label: label,
-            environment: environment,
-          });
-        }
-      });
-    } else {
-      const label = JSON.stringify(paths);
+  if (Array.isArray(paths)) {
+    paths.forEach(path => {
+      const label = typeof path === 'string' ? path : JSON.stringify(path);
       if (checkSpam(label)) {
-        window.gtag("event", "subscribe_path", {
+        trackEvent("subscribe_path", {
           event_category: "subscription",
           event_label: label,
           environment: environment,
         });
       }
+    });
+  } else {
+    const label = JSON.stringify(paths);
+    if (checkSpam(label)) {
+      trackEvent("subscribe_path", {
+        event_category: "subscription",
+        event_label: label,
+        environment: environment,
+      });
     }
   }
 
