@@ -673,6 +673,10 @@ export const useMainStore = defineStore('mainStore', () => {
   async function checkGuide() {
     let hasShownGuide = false;
     if (isModeSingle) {
+      hasShownGuide = localStorage.getItem('has-shown-guide');
+      if (hasShownGuide) {
+        await setGuide();
+      }
       const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
       hasShownGuide = await repoWebBridge.GetGuideStatus();
     } else {
