@@ -617,8 +617,8 @@ export const useMainStore = defineStore('mainStore', () => {
   function isNewYear() {
     const now = new Date();
 
-    const start = new Date(2026, 1, 14, 0, 0, 0); // 2026-02-14
-    const end   = new Date(2026, 1, 24, 23, 59, 59); // 2026-02-24
+    const start = new Date(2026, 1, 4, 0, 0, 0); // 2026-02-4 立春
+    const end   = new Date(2026, 1, 24, 23, 59, 59); // 2026-02-24 年假结束
 
     return now >= start && now <= end;
   }
