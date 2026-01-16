@@ -208,27 +208,30 @@ export const useMainStore = defineStore('mainStore', () => {
   // 更新已订阅的脚本
   async function updateSubscribedScripts() {
     if (updatingSubscribed.value) return;
-    if (subscribedScriptPaths.value.length === 0) {
+    if (!subscribedScripts.value || subscribedScripts.value.length === 0) {
       showUpdateSubscribeModal.value = false;
       return;
     }
 
     updatingSubscribed.value = true;
+
+    const paths = subscribedScripts.value.map(item => item[1]);
+
     // 追踪一键更新的总数
     trackEvent("one-click-update", {
-      update_count: subscribedScriptPaths.value.length
+      update_count: paths.length
     });
 
     try {
-      const result = await subscribePaths(subscribedScriptPaths.value);
+      const result = await subscribePaths(paths);
       if (!result?.ok) {
         Message.error($t('detail.subscribeFailed'));
         return;
       }
 
       const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
-      const paths = [...subscribedScriptPaths.value];
       const batchSize = 10;
+
       for (let i = 0; i < paths.length; i += batchSize) {
         const slice = paths.slice(i, i + batchSize);
         await Promise.all(slice.map(p => repoWebBridge.UpdateSubscribed(p)));
@@ -239,7 +242,6 @@ export const useMainStore = defineStore('mainStore', () => {
       }
 
       await fetchSubscribedConfig();
-
       showUpdateSubscribeModal.value = false;
     } catch (e) {
       console.error('updateSubscribedScripts failed', e);
