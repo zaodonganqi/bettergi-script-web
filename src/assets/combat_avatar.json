@@ -1987,14 +1987,45 @@
   {
     "alias": [
       "哥伦比娅",
+      "Columbina",
       "少女",
-      "Columbina"
+      "库塔尔",
+      "月神",
+      "月之少女"
     ],
     "burstCD": 15,
     "id": "10000125",
     "name": "哥伦比娅",
     "nameEn": "Columbina",
     "skillCD": 17,
+    "weapon": "10"
+  },
+  {
+    "alias": [
+      "兹白",
+      "Zibai",
+      "白马仙人",
+      "白马"
+    ],
+    "burstCD": 15,
+    "id": "10000126",
+    "name": "兹白",
+    "nameEn": "Zibai",
+    "skillCD": 18,
+    "weapon": "10"
+  },
+  {
+    "alias": [
+      "叶洛亚",
+      "Illuga",
+      "少爷",
+      "小少爷"
+    ],
+    "burstCD": 15,
+    "id": "10000127",
+    "name": "叶洛亚",
+    "nameEn": "Illuga",
+    "skillCD": 15,
     "weapon": "10"
   }
 ]
