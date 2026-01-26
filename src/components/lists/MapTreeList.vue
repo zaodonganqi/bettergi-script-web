@@ -235,7 +235,7 @@ const getLatestUpdateTime = (files) => {
 };
 
 // 国家图标仅用于地方特产直接子目录下
-const countries = ["蒙德", "璃月", "稻妻", "枫丹", "纳塔", "挪德卡莱", "至冬"];
+const countries = ["蒙德", "璃月", "稻妻", "须弥", "枫丹", "纳塔", "挪德卡莱", "至冬"];
 const countriesParentNode = "地方特产";
 
 // 处理节点数据
@@ -255,7 +255,7 @@ const processNode = (node, parentKey = '', parentSubscribed = false) => {
       iconPath = mappedItem.link;
       showIcon = true;
     }
-    if (countries.some(country => node.name.includes(country)) && !parentKey.includes(countriesParentNode)) {
+    if (countries.some(country => node.name.includes(country)) && !currentKey.includes(countriesParentNode)) {
       iconPath = '';
       showIcon = false;
     }
