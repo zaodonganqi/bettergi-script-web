@@ -208,6 +208,7 @@ export const useMainStore = defineStore('mainStore', () => {
   // 更新已订阅的脚本
   async function updateSubscribedScripts() {
     if (updatingSubscribed.value) return;
+
     if (!subscribedScripts.value || subscribedScripts.value.length === 0) {
       showUpdateSubscribeModal.value = false;
       return;
@@ -217,8 +218,7 @@ export const useMainStore = defineStore('mainStore', () => {
 
     const paths = subscribedScripts.value.map(item => item[1]);
 
-    // 追踪一键更新的总数
-    trackEvent("one-click-update", {
+    trackEvent('one-click-update', {
       update_count: paths.length
     });
 
@@ -230,11 +230,9 @@ export const useMainStore = defineStore('mainStore', () => {
       }
 
       const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
-      const batchSize = 10;
 
-      for (let i = 0; i < paths.length; i += batchSize) {
-        const slice = paths.slice(i, i + batchSize);
-        await Promise.all(slice.map(p => repoWebBridge.UpdateSubscribed(p)));
+      for (const p of paths) {
+        await repoWebBridge.UpdateSubscribed(p);
       }
 
       for (const p of paths) {
