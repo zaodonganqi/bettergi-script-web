@@ -850,25 +850,103 @@ function onLocaleChange(val) {
   font-size: 15px;
   border-radius: 8px;
   margin: 0 8px;
-  padding: 0 16px !important;
+  padding: 12px 16px !important;
   min-width: 0;
   height: auto;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  position: relative;
+  overflow: hidden;
+  transform-origin: left center;
+}
+
+/* 优化 Ant Design Vue Menu 组件的动画效果 */
+:deep(.ant-menu) {
+  border: none !important;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+:deep(.ant-menu-item) {
+  width: 90%;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+}
+
+:deep(.ant-menu-item:hover) {
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+}
+
+:deep(.ant-menu-item-selected) {
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+}
+
+/* 优化 Menu 展开/折叠动画 */
+:deep(.ant-menu-submenu-expand-icon) {
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+:deep(.ant-menu-submenu-title) {
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+:deep(.ant-menu-submenu-title:hover) {
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* 优化 Menu 子菜单动画 */
+:deep(.ant-menu-sub) {
+  animation: menuSlideIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+@keyframes menuSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px) scaleX(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scaleX(1);
+  }
+}
+
+.custom-menu-item:hover {
+  transform: translateX(8px);
+  background-color: var(--color-primary-bg-hover);
+  box-shadow: 6px 6px 16px rgba(22, 119, 255, 0.15);
 }
 
 :deep(.ant-menu-item-selected) {
   background: var(--bg-item-selected);
   color: var(--color-primary);
+  transform: translateX(8px);
+  box-shadow: 2px 6px 16px rgba(22, 119, 255, 0.2) !important;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+:deep(.ant-menu-item-selected):hover {
+  background: var(--bg-item-selected);
+  box-shadow: 8px 8px 20px rgba(22, 119, 255, 0.25);
 }
 
 .menu-icon {
   margin-right: 10px;
   font-size: 18px;
   flex-shrink: 0;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.custom-menu-item:hover .menu-icon {
+  transform: scale(1.15) rotate(5deg);
+  color: var(--color-primary);
 }
 
 .menu-label {
   flex: 1 1 0;
   min-width: 0;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.custom-menu-item:hover .menu-label {
+  color: var(--color-primary);
+  transform: translateY(-1px);
 }
 
 .menu-count {
@@ -876,6 +954,49 @@ function onLocaleChange(val) {
   margin-left: 8px;
   flex-shrink: 0;
   color: var(--text-base3);
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  background-color: var(--bg-container);
+  padding: 2px 8px;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.custom-menu-item:hover .menu-count {
+  background-color: var(--color-primary);
+  color: white;
+  transform: scale(1.1) translateY(-2px);
+  box-shadow: 0 4px 8px rgba(22, 119, 255, 0.3);
+}
+
+/* 菜单项选中动画 */
+:deep(.ant-menu-item-selected)::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background-color: var(--color-primary);
+  border-radius: 0 4px 4px 0;
+}
+
+/* 菜单项点击效果 */
+.custom-menu-item::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background-color: rgba(22, 119, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.custom-menu-item:active::after {
+  width: 300px;
+  height: 300px;
 }
 
 .sider-footer {
@@ -999,7 +1120,27 @@ function onLocaleChange(val) {
 
 .script-search {
   flex: 1;
-  height: 40px;
+  height: 44px;
+  transition: all 0.3s var(--ease-in-out);
+}
+
+.script-search:hover {
+  transform: translateY(-1px);
+}
+
+:deep(.ant-input-affix-wrapper) {
+  transition: all 0.3s var(--ease-in-out);
+  border-radius: 8px;
+}
+
+:deep(.ant-input-affix-wrapper):hover {
+  border-color: var(--color-primary);
+  box-shadow: 0 4px 12px rgba(22, 119, 255, 0.15);
+}
+
+:deep(.ant-input-affix-wrapper:focus-within) {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(22, 119, 255, 0.2);
 }
 
 .sort-dropdown {
@@ -1007,23 +1148,56 @@ function onLocaleChange(val) {
 }
 
 .sort-button {
-  height: 40px;
-  width: 40px;
+  height: 44px;
+  width: 44px;
   border: 1px solid var(--border-base);
-  border-radius: 6px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 16px;
+  font-size: 18px;
   padding: 0;
   box-shadow: none;
-  transition: all 0.2s;
+  transition: all 0.3s var(--ease-in-out);
+  position: relative;
+  overflow: hidden;
+}
+
+.sort-button:hover {
+  transform: translateY(-1px);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  box-shadow: 0 4px 12px rgba(22, 119, 255, 0.15);
 }
 
 .sort-button:focus {
   outline: none;
-  color: var(--color-primary);
   border-color: var(--color-primary);
+  color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(22, 119, 255, 0.2);
+}
+
+.sort-button:active {
+  transform: scale(0.95);
+}
+
+/* 排序按钮点击效果 */
+.sort-button::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background-color: rgba(22, 119, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.sort-button:active::after {
+  width: 300px;
+  height: 300px;
 }
 
 .sort-menu {
@@ -1210,14 +1384,45 @@ function onLocaleChange(val) {
 
 .action-btn {
   border: none;
-  padding: 3px 8px;
-  border-radius: 6px;
+  padding: 8px;
+  border-radius: 8px;
   color: var(--text-base2);
-  transition: all 0.2s;
+  transition: all 0.3s var(--ease-in-out);
   font-size: 22px;
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.action-btn:hover {
+  transform: scale(1.1);
+  color: var(--color-primary);
+  background-color: var(--color-primary-bg-hover);
+  box-shadow: 0 4px 12px rgba(22, 119, 255, 0.2);
+}
+
+.action-btn:active {
+  transform: scale(0.95);
+}
+
+.action-btn::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background-color: rgba(22, 119, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.action-btn:active::after {
+  width: 300px;
+  height: 300px;
 }
 
 .main-right>div:last-child {
@@ -1339,6 +1544,30 @@ function onLocaleChange(val) {
   display: flex;
   align-items: center;
   justify-content: center;
+  backdrop-filter: blur(4px);
+}
+
+:deep(.ant-spin) {
+  animation: pulse 2s infinite;
+}
+
+:deep(.ant-spin-dot) {
+  width: 40px;
+  height: 40px;
+}
+
+:deep(.ant-spin-dot-item) {
+  background-color: var(--color-primary);
+  width: 12px;
+  height: 12px;
+  animation-timing-function: cubic-bezier(0.785, 0.135, 0.15, 0.86);
+}
+
+:deep(.ant-spin-text) {
+  margin-top: 16px;
+  font-size: 16px;
+  color: var(--text-base);
+  animation: fadeIn 1s ease-out;
 }
 
 .egg-modal-content {

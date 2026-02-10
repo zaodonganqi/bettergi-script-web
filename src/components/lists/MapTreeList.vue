@@ -1,16 +1,16 @@
 <template>
-  <div class="list-container">
+  <div class="list-container animate-fade-in">
     <a-tree :treeData="filteredTreeData" :expandedKeys="expandedKeys" :selectedKeys="selectedKeys"
       @select="handleSelect" @expand="handleExpand" :block-node="true">
       <template #switcherIcon="{ expanded, dataRef }">
-        <span v-if="hasExpandableChildren(dataRef)">
+        <span v-if="hasExpandableChildren(dataRef)" class="switcher-icon">
           <CaretDownOutlined v-if="expanded" />
           <CaretRightOutlined v-else />
         </span>
         <span v-else class="empty-switcher"></span>
       </template>
       <template #title="{ title, dataRef }">
-        <div class="tree-node-container">
+        <div class="tree-node-container hover-lift">
           <div class="tree-node-left">
             <a-image v-if="dataRef.showIcon" :src="dataRef.icon" :placeholder="false"
               @error="dataRef.showIcon = false" />
@@ -492,12 +492,21 @@ function normalize(str) {
   display: flex;
   align-items: center;
   width: 100%;
-  transition: all 0.2s ease;
+  transition: background-color 0.3s var(--ease-in-out), transform 0.3s var(--ease-in-out), color 0.3s var(--ease-in-out);
+  padding: 4px 8px;
+}
+
+.tree-node-container:hover {
+  background-color: var(--control-item-bg-active);
+  transform: translateX(4px);
+  border: none !important;
+  box-shadow: none !important;
 }
 
 .tree-node-left {
   display: flex;
   align-content: center;
+  align-items: center;
 }
 
 .empty-switcher {
@@ -505,21 +514,36 @@ function normalize(str) {
   width: 24px;
 }
 
+.switcher-icon {
+  transition: transform 0.3s var(--ease-in-out);
+}
+
 :deep(.ant-image) {
   align-content: center;
   justify-content: center;
+  transition: transform 0.3s var(--ease-in-out);
+}
+
+:deep(.ant-image):hover {
+  transform: scale(1.1);
 }
 
 :deep(.ant-image-img) {
   width: 26px;
   height: 26px;
   border-radius: 10px;
+  transition: all 0.3s var(--ease-in-out);
 }
 
 .tree-node-title-text {
   flex: 1;
   font-size: 14px;
   margin-left: 5px;
+  transition: color 0.3s var(--ease-in-out);
+}
+
+.tree-node-container:hover .tree-node-title-text {
+  color: var(--color-primary);
 }
 
 .subscribe-btn {
@@ -529,6 +553,14 @@ function normalize(str) {
   width: 72px;
   text-align: center;
   color: var(--color-primary);
+  transition: all 0.3s var(--ease-in-out);
+  border-radius: 4px;
+  padding: 2px 8px;
+}
+
+.subscribe-btn:hover {
+  background-color: var(--color-primary-bg);
+  transform: scale(1.05);
 }
 
 :deep(.ant-tree) {
@@ -540,14 +572,34 @@ function normalize(str) {
 :deep(.ant-tree-treenode) {
   width: 100%;
   padding: 5px;
+  animation: fadeIn 0.3s var(--ease-out);
 }
 
 :deep(.ant-tree .ant-tree-node-content-wrapper.ant-tree-node-selected) {
   background: var(--bg-item-selected);
+  transition: background-color 0.3s var(--ease-in-out);
+  border: none !important;
+  box-shadow: none !important;
+}
+
+:deep(.ant-tree .ant-tree-node-content-wrapper) {
+  transition: background-color 0.3s var(--ease-in-out);
+  border: none !important;
+  box-shadow: none !important;
+}
+
+:deep(.ant-tree .ant-tree-node-content-wrapper:hover) {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+:deep(.ant-tree-switcher) {
+  transition: transform 0.3s var(--ease-in-out);
 }
 
 .subscribe-btn[disabled] {
   cursor: default !important;
+  opacity: 0.6;
 }
 
 .has-update-dot {
@@ -559,5 +611,14 @@ function normalize(str) {
   margin-left: 6px;
   vertical-align: middle;
   align-self: center;
+  animation: pulse 2s infinite;
+}
+
+:deep(.ant-tree-treenode) {
+  transition: all 0.3s var(--ease-in-out);
+}
+
+:deep(.ant-tree-icon-switcher-leaf-line) {
+  transition: all 0.3s var(--ease-in-out);
 }
 </style>
