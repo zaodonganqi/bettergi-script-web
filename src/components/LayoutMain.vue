@@ -974,6 +974,13 @@ function onLocaleChange(val) {
   border-radius: 0 4px 4px 0;
 }
 
+:deep(.ant-menu-item-selected) .menu-count {
+  background-color: var(--color-primary);
+  color: white;
+  transform: scale(1.1) translateY(-2px);
+  box-shadow: 0 4px 8px rgba(22, 119, 255, 0.3);
+}
+
 /* 菜单项点击效果 */
 .custom-menu-item::after {
   content: '';

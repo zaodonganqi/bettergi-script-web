@@ -5,7 +5,7 @@
       :grid="mainStore.isListTwoColumn ? { gutter: 10, column: 2 } : undefined"
     >
       <template #renderItem="{ item, index }">
-        <div :class="['script-item', 'list-item-slide-in', { active: item.id === listStore.selectedId }]" @click="selectStrategy(item.id)" :style="{ animationDelay: `${index * 0.07}s` }">
+        <div :class="['script-item', `script-item-${index}`, 'list-item-slide-in', { active: item.id === listStore.selectedId }]" @click="selectStrategy(item.id)" :style="{ animationDelay: `${index * 0.07}s` }">
           <div class="item-header">
             <div class="item-title-wrap">
               <span class="item-title-main">{{ item.title }}</span>
