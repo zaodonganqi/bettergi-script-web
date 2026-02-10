@@ -203,7 +203,6 @@
   }
 }
 
-/* 列表项上浮渐入动画 - 适用于 ScriptList, CombatStrategyList, CardStrategyList */
 @keyframes listItemSlideIn {
   from {
     opacity: 0;
@@ -424,7 +423,6 @@
   background-color: var(--control-item-bg-active);
 }
 
-/* 通用列表项上浮渐入动画工具类 */
 .list-item-slide-in {
   opacity: 0;
   will-change: transform, opacity;
