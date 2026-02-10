@@ -907,12 +907,6 @@ function onLocaleChange(val) {
   }
 }
 
-.custom-menu-item:hover {
-  transform: translateX(8px);
-  background-color: var(--color-primary-bg-hover);
-  box-shadow: 6px 6px 16px rgba(22, 119, 255, 0.15);
-}
-
 :deep(.ant-menu-item-selected) {
   background: var(--bg-item-selected);
   color: var(--color-primary);
@@ -1399,7 +1393,7 @@ function onLocaleChange(val) {
 .action-btn:hover {
   transform: scale(1.1);
   color: var(--color-primary);
-  background-color: var(--color-primary-bg-hover);
+  background-color: var(--bg-shadow-light);
   box-shadow: 0 4px 12px rgba(22, 119, 255, 0.2);
 }
 
