@@ -1,11 +1,11 @@
 <template>
-  <div class="list-container">
+  <div class="list-container animate-fade-in">
     <a-list 
       :data-source="filteredScripts"
       :grid="mainStore.isListTwoColumn ? { gutter: 10, column: 2 } : undefined"
     >
       <template #renderItem="{ item, index }">
-        <div :class="['script-item', `script-item-${index}`, { active: item.id === listStore.selectedId }]" @click="selectScript(item.id)">
+        <div :class="['script-item', `script-item-${index}`, { active: item.id === listStore.selectedId }]" @click="selectScript(item.id)" :style="{ animationDelay: `${index * 0.05}s` }">
           <div class="item-header">
             <div class="item-title-wrap">
               <span class="item-title-main">{{ item.name1 }}</span>
@@ -155,7 +155,21 @@ const filteredScripts = computed(() => {
   cursor: pointer;
   position: relative;
   overflow: hidden;
-  transition: box-shadow 0.2s, border-color 0.3s;
+  transition: box-shadow 0.2s, border-color 0.3s, transform 0.3s;
+  animation: fadeIn 0.5s ease-out, slideInUp 0.5s ease-out;
+}
+
+.script-item:hover {
+  box-shadow: 0 4px 16px 0 var(--color-shadow);
+  border-color: var(--color-primary);
+  transform: translateY(-2px);
+}
+
+.script-item.active {
+  border: 1px solid var(--color-primary);
+  box-shadow: 0 4px 16px 0 var(--color-shadow);
+  background: var(--bg-desc);
+  transform: translateY(-2px);
 }
 
 .script-item > * {

@@ -4,6 +4,7 @@ import App from './App.vue'
 import Antd from 'ant-design-vue'
 import 'ant-design-vue/dist/reset.css'
 import '@/styles/gen-theme-vars.css';
+import '@/styles/animations.css';
 
 import { i18n } from '@/utils/i18n.js'
 

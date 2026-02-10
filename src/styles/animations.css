@@ -1,0 +1,503 @@
+/* 动画相关样式 */
+:root {
+  /* 动画时长 */
+  --transition-fast: 0.15s;
+  --transition-normal: 0.3s;
+  --transition-slow: 0.5s;
+  
+  /* 动画缓动函数 */
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* 基础动画 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInDown {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes scaleOut {
+  from {
+    transform: scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes bounce {
+  0%, 20%, 53%, 80%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  40%, 43% {
+    transform: translate3d(0, -8px, 0);
+  }
+  70% {
+    transform: translate3d(0, -4px, 0);
+  }
+  90% {
+    transform: translate3d(0, -2px, 0);
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes ripple {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+@keyframes loadingDots {
+  0%, 80%, 100% {
+    transform: scale(0);
+  }
+  40% {
+    transform: scale(1);
+  }
+}
+
+@keyframes skeletonLoading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes menuSlideIn {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes menuSlideOut {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+}
+
+@keyframes buttonHover {
+  from {
+    transform: translateY(0);
+    box-shadow: 0 0 0 rgba(22, 119, 255, 0);
+  }
+  to {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(22, 119, 255, 0.2);
+  }
+}
+
+@keyframes cardHover {
+  from {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+  to {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  }
+}
+
+/* 工具类 */
+.animate-fade-in {
+  animation: fadeIn var(--transition-normal) var(--ease-in-out);
+}
+
+.animate-fade-out {
+  animation: fadeOut var(--transition-normal) var(--ease-in-out);
+}
+
+.animate-slide-in-right {
+  animation: slideInRight var(--transition-normal) var(--ease-out);
+}
+
+.animate-slide-in-left {
+  animation: slideInLeft var(--transition-normal) var(--ease-out);
+}
+
+.animate-slide-in-up {
+  animation: slideInUp var(--transition-normal) var(--ease-out);
+}
+
+.animate-slide-in-down {
+  animation: slideInDown var(--transition-normal) var(--ease-out);
+}
+
+.animate-scale-in {
+  animation: scaleIn var(--transition-normal) var(--ease-out);
+}
+
+.animate-scale-out {
+  animation: scaleOut var(--transition-normal) var(--ease-in);
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-bounce {
+  animation: bounce 1s infinite;
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+.animate-menu-slide-in {
+  animation: menuSlideIn var(--transition-normal) var(--ease-out);
+}
+
+.animate-menu-slide-out {
+  animation: menuSlideOut var(--transition-normal) var(--ease-in);
+}
+
+/* 过渡效果 */
+.transition-all {
+  transition: all var(--transition-normal) var(--ease-in-out);
+}
+
+.transition-transform {
+  transition: transform var(--transition-normal) var(--ease-in-out);
+}
+
+.transition-opacity {
+  transition: opacity var(--transition-normal) var(--ease-in-out);
+}
+
+.transition-colors {
+  transition: color var(--transition-fast) var(--ease-in-out), background-color var(--transition-fast) var(--ease-in-out), border-color var(--transition-fast) var(--ease-in-out);
+}
+
+.transition-shadow {
+  transition: box-shadow var(--transition-fast) var(--ease-in-out);
+}
+
+/* 悬停效果 */
+.hover-lift {
+  transition: transform var(--transition-fast) var(--ease-out), box-shadow var(--transition-fast) var(--ease-out);
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.hover-scale {
+  transition: transform var(--transition-fast) var(--ease-out);
+}
+
+.hover-scale:hover {
+  transform: scale(1.02);
+}
+
+.hover-glow {
+  transition: box-shadow var(--transition-normal) var(--ease-out);
+}
+
+.hover-glow:hover {
+  box-shadow: 0 0 12px rgba(22, 119, 255, 0.4);
+}
+
+.hover-card {
+  transition: all var(--transition-normal) var(--ease-out);
+}
+
+.hover-card:hover {
+  animation: cardHover var(--transition-normal) var(--ease-out) forwards;
+}
+
+.hover-button {
+  transition: all var(--transition-fast) var(--ease-out);
+}
+
+.hover-button:hover {
+  animation: buttonHover var(--transition-fast) var(--ease-out) forwards;
+}
+
+/* 点击效果 */
+.click-effect {
+  position: relative;
+  overflow: hidden;
+}
+
+.click-effect::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.click-effect:active::after {
+  width: 300px;
+  height: 300px;
+}
+
+/* 加载动画 */
+.loading-dots {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  justify-content: center;
+}
+
+.loading-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--color-primary);
+  animation: loadingDots 1.4s infinite ease-in-out both;
+}
+
+.loading-dot:nth-child(1) {
+  animation-delay: -0.32s;
+}
+
+.loading-dot:nth-child(2) {
+  animation-delay: -0.16s;
+}
+
+/* 骨架屏动画 */
+.skeleton {
+  background: linear-gradient(90deg, var(--bg-base) 25%, var(--bg-container) 50%, var(--bg-base) 75%);
+  background-size: 200% 100%;
+  animation: skeletonLoading 1.5s infinite;
+}
+
+/* 滚动条动画 */
+::-webkit-scrollbar-thumb {
+  transition: background-color var(--transition-fast) var(--ease-in-out);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-primary);
+}
+
+/* 菜单动画 */
+.custom-menu-item {
+  transition: all var(--transition-fast) var(--ease-in-out);
+}
+
+.custom-menu-item:hover {
+  transform: translateX(4px);
+}
+
+/* 按钮动画 */
+.action-btn {
+  transition: all var(--transition-fast) var(--ease-in-out);
+}
+
+.action-btn:hover {
+  transform: scale(1.1);
+  color: var(--color-primary);
+}
+
+/* 列表项动画 */
+.script-list-item {
+  transition: all var(--transition-normal) var(--ease-in-out);
+}
+
+.script-list-item:hover {
+  transform: translateX(4px);
+  background-color: var(--control-item-bg-active);
+}
+
+/* 模态框动画 */
+.modal-enter {
+  animation: scaleIn var(--transition-normal) var(--ease-out);
+}
+
+.modal-exit {
+  animation: scaleOut var(--transition-normal) var(--ease-in);
+}
+
+/* 下拉菜单动画 */
+.dropdown-enter {
+  animation: slideInDown var(--transition-fast) var(--ease-out);
+}
+
+.dropdown-exit {
+  animation: slideInUp var(--transition-fast) var(--ease-in) reverse;
+}
+
+/* 标签页动画 */
+.tab-enter {
+  animation: fadeIn var(--transition-normal) var(--ease-in-out);
+}
+
+.tab-exit {
+  animation: fadeOut var(--transition-normal) var(--ease-in-out);
+}
+
+/* 通知动画 */
+.notification-enter {
+  animation: slideInRight var(--transition-normal) var(--ease-out);
+}
+
+.notification-exit {
+  animation: slideInRight var(--transition-normal) var(--ease-in) reverse;
+}
+
+/* 工具提示动画 */
+.tooltip-enter {
+  animation: fadeIn var(--transition-fast) var(--ease-out);
+}
+
+.tooltip-exit {
+  animation: fadeOut var(--transition-fast) var(--ease-in);
+}
+
+/* 性能优化类 */
+.animation-optimized {
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* 低性能设备检测 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* 动画性能优化 */
+.animate-once {
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+}
+
+/* 硬件加速 */
+.hardware-accelerated {
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* 减少重绘和回流 */
+.no-select {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+/* 优化滚动性能 */
+.smooth-scroll {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
