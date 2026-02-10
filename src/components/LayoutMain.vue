@@ -41,7 +41,7 @@
             </span>
           </div>
           <div class="sider-link">
-            <span v-if="mainStore.isModeSingle" class="link-text" @click="mainStore.openExternalLink('https://s.bettergi.com')">
+            <span v-if="mainStore.isModeSingle" class="link-text" @click="mainStore.openExternalLink('https://bgi.sh')">
               {{ $t('sider.onlineRepo') }}
             </span>
           </div>
