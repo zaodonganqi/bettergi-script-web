@@ -861,10 +861,12 @@ function onLocaleChange(val) {
 
 /* 优化 Ant Design Vue Menu 组件的动画效果 */
 :deep(.ant-menu) {
+  border: none !important;
   transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 :deep(.ant-menu-item) {
+  width: 90%;
   transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
 }
 
@@ -908,20 +910,20 @@ function onLocaleChange(val) {
 .custom-menu-item:hover {
   transform: translateX(8px);
   background-color: var(--color-primary-bg-hover);
-  box-shadow: 0 6px 16px rgba(22, 119, 255, 0.15);
+  box-shadow: 6px 6px 16px rgba(22, 119, 255, 0.15);
 }
 
 :deep(.ant-menu-item-selected) {
   background: var(--bg-item-selected);
   color: var(--color-primary);
   transform: translateX(8px);
-  box-shadow: 0 6px 16px rgba(22, 119, 255, 0.2);
+  box-shadow: 2px 6px 16px rgba(22, 119, 255, 0.2) !important;
   transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 :deep(.ant-menu-item-selected):hover {
   background: var(--bg-item-selected);
-  box-shadow: 0 8px 20px rgba(22, 119, 255, 0.25);
+  box-shadow: 8px 8px 20px rgba(22, 119, 255, 0.25);
 }
 
 .menu-icon {

@@ -5,7 +5,7 @@
       :grid="mainStore.isListTwoColumn ? { gutter: 10, column: 2 } : undefined"
     >
       <template #renderItem="{ item, index }">
-        <div :class="['script-item', { active: item.id === listStore.selectedId }]" @click="selectStrategy(item.id)" :style="{ animationDelay: `${index * 0.05}s` }">
+        <div :class="['script-item', 'list-item-slide-in', { active: item.id === listStore.selectedId }]" @click="selectStrategy(item.id)" :style="{ animationDelay: `${index * 0.07}s` }">
           <div class="item-header">
             <div class="item-title-wrap">
               <span class="item-title-main">{{ item.title }}</span>
@@ -148,14 +148,16 @@ const filteredStrategies = computed(() => {
   cursor: pointer;
   position: relative;
   overflow: hidden;
-  transition: box-shadow 0.2s, border-color 0.3s, transform 0.3s;
-  animation: fadeIn 0.5s ease-out, slideInUp 0.5s ease-out;
+  will-change: transform, box-shadow, border-color;
 }
 
 .script-item:hover {
   box-shadow: 0 4px 16px 0 var(--color-shadow);
   border-color: var(--color-primary);
   transform: translateY(-2px);
+  transition: transform 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              box-shadow 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              border-color 0.25s ease;
 }
 
 .script-item.active {
@@ -177,23 +179,12 @@ const filteredStrategies = computed(() => {
   background: var(--bg-desc);
   transform: scaleX(0);
   transform-origin: left;
-  transition: transform 0.3s ease;
+  transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   z-index: 0;
 }
 
 .script-item:hover::before {
   transform: scaleX(1);
-}
-
-.script-item:hover {
-  box-shadow: 0 4px 16px 0 var(--color-shadow);
-  border-color: var(--color-primary);
-}
-
-.script-item.active {
-  border: 1px solid var(--color-primary);
-  box-shadow: 0 4px 16px 0 var(--color-shadow);
-  background: var(--bg-desc);
 }
 
 .item-header {
