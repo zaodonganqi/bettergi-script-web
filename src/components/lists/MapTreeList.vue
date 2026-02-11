@@ -10,18 +10,18 @@
         <span v-else class="empty-switcher"></span>
       </template>
       <template #title="{ title, dataRef }">
-        <div class="tree-node-container hover-lift">
-          <div class="tree-node-left">
-            <a-image v-if="dataRef.showIcon" :src="dataRef.icon" :placeholder="false"
-              @error="dataRef.showIcon = false" />
-            <span class="tree-node-title-text">{{ title }}</span>
-            <span v-if="dataRef.hasUpdate" class="has-update-dot"></span>
-          </div>
-          <a-button class="subscribe-btn" type="text" size="small" @click.stop="handleSubscribe(dataRef)">
-            {{ dataRef.isSubscribed ? $t('mapTreeList.subscribeAgain') : $t('mapTreeList.subscribe') }}
-          </a-button>
-        </div>
-      </template>
+           <div class="tree-node-container hover-lift" @click="handleNodeClick(dataRef)">
+             <div class="tree-node-left">
+               <a-image v-if="dataRef.showIcon" :src="dataRef.icon" :placeholder="false"
+                 @error="dataRef.showIcon = false" />
+               <span class="tree-node-title-text">{{ title }}</span>
+               <span v-if="dataRef.hasUpdate" class="has-update-dot"></span>
+             </div>
+             <a-button class="subscribe-btn" type="text" size="small" @click.stop="handleSubscribe(dataRef)">
+               {{ dataRef.isSubscribed ? $t('mapTreeList.subscribeAgain') : $t('mapTreeList.subscribe') }}
+             </a-button>
+           </div>
+         </template>
     </a-tree>
   </div>
 </template>
@@ -75,6 +75,20 @@ const handleExpand = (keys) => {
     const node = findNodeByKey(filteredTreeData.value, key);
     return hasExpandableChildren(node);
   });
+};
+
+// 处理节点点击（用于展开/收起）
+const handleNodeClick = (dataRef) => {
+  // 切换展开/收起状态
+  if (hasExpandableChildren(dataRef)) {
+    if (expandedKeys.value.includes(dataRef.key)) {
+      // 如果已展开，则收起
+      expandedKeys.value = expandedKeys.value.filter(key => key !== dataRef.key);
+    } else {
+      // 如果未展开，则展开
+      expandedKeys.value = [...expandedKeys.value, dataRef.key];
+    }
+  }
 };
 
 // 处理节点选择
@@ -131,6 +145,8 @@ const handleSelect = async (selectedKeysList) => {
   // 使用mainStore的方法选择节点
   mainStore.handleMapSelect(nodeToSelect);
   selectedKeys.value = selectedNode.key ? [selectedNode.key] : [];
+  
+
 
   if (selectedNode.hasUpdate && mainStore.isModeSingle) {
     const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
