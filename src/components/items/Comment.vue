@@ -45,7 +45,7 @@
           </div>
           <div class="notice-title">{{ $t('comment.localModeNoticeTitle') }}</div>
           <div class="notice-desc">{{ $t('comment.localModeNoticeDesc') }}</div>
-          <a-button type="primary" class="notice-btn" @click="mainStore.openExternalLink('https://s.bettergi.com')">
+          <a-button type="primary" class="notice-btn" @click="mainStore.openExternalLink('https://bgi.sh')">
             {{ $t('comment.onlineRepo') }}
           </a-button>
         </div>

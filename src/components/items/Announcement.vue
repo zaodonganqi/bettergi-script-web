@@ -11,16 +11,12 @@
       </div>
     </div>
     <div class="announcement-readme">
-      <div v-for="item in tabs"
-           :key="item.key"
-           class="readme-wrapper"
-      >
-        <transition name="fade-readme" mode="out-in">
-          <ReadmeViewer v-show="activeTab === item.key"
-                        :markdown-content="item.content">
+      <transition name="fade-readme" mode="out-in">
+        <div v-if="activeTabContent" :key="activeTabContent.key" class="readme-wrapper">
+          <ReadmeViewer :markdown-content="activeTabContent.content">
           </ReadmeViewer>
-        </transition>
-      </div>
+        </div>
+      </transition>
     </div>
   </div>
 </template>
@@ -31,7 +27,7 @@ import srepoMd from '@/assets/readme/srepo.md?raw';
 import updateMd from '@/assets/readme/update.md?raw';
 import askMd from '@/assets/readme/ask.md?raw';
 import {useI18n} from 'vue-i18n';
-import {ref} from "vue";
+import {ref, computed} from "vue";
 
 const {t: $t} = useI18n();
 
@@ -42,6 +38,10 @@ const tabs = [
 ];
 
 const activeTab = ref("changelog");
+
+const activeTabContent = computed(() => {
+  return tabs.find(tab => tab.key === activeTab.value);
+});
 </script>
 
 <style scoped>

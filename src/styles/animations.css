@@ -380,7 +380,7 @@
 
 /* 骨架屏动画 */
 .skeleton {
-  background: linear-gradient(90deg, var(--bg-base) 25%, var(--bg-container) 50%, var(--bg-base) 75%);
+  background: linear-gradient(90deg, var(--border-base) 25%, var(--bg-container) 50%, var(--border-base) 75%);
   background-size: 200% 100%;
   animation: skeletonLoading 1.5s infinite;
 }
@@ -420,7 +420,7 @@
 
 .script-list-item:hover {
   transform: translateX(4px);
-  background-color: var(--control-item-bg-active);
+  background-color: var(--bg-desc);
 }
 
 .list-item-slide-in {

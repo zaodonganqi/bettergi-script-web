@@ -41,7 +41,7 @@
             </span>
           </div>
           <div class="sider-link">
-            <span v-if="mainStore.isModeSingle" class="link-text" @click="mainStore.openExternalLink('https://s.bettergi.com')">
+            <span v-if="mainStore.isModeSingle" class="link-text" @click="mainStore.openExternalLink('https://bgi.sh')">
               {{ $t('sider.onlineRepo') }}
             </span>
           </div>
@@ -907,12 +907,6 @@ function onLocaleChange(val) {
   }
 }
 
-.custom-menu-item:hover {
-  transform: translateX(8px);
-  background-color: var(--color-primary-bg-hover);
-  box-shadow: 6px 6px 16px rgba(22, 119, 255, 0.15);
-}
-
 :deep(.ant-menu-item-selected) {
   background: var(--bg-item-selected);
   color: var(--color-primary);
@@ -978,6 +972,13 @@ function onLocaleChange(val) {
   width: 4px;
   background-color: var(--color-primary);
   border-radius: 0 4px 4px 0;
+}
+
+:deep(.ant-menu-item-selected) .menu-count {
+  background-color: var(--color-primary);
+  color: white;
+  transform: scale(1.1) translateY(-2px);
+  box-shadow: 0 4px 8px rgba(22, 119, 255, 0.3);
 }
 
 /* 菜单项点击效果 */
@@ -1399,7 +1400,7 @@ function onLocaleChange(val) {
 .action-btn:hover {
   transform: scale(1.1);
   color: var(--color-primary);
-  background-color: var(--color-primary-bg-hover);
+  background-color: var(--bg-shadow-light);
   box-shadow: 0 4px 12px rgba(22, 119, 255, 0.2);
 }
 

@@ -769,7 +769,8 @@ export const useMainStore = defineStore('mainStore', () => {
             onNextClick: async () => {
               const element = document.querySelector('#menu-item-2');
               element.click();
-              await waitForElement('.script-item-1');
+              await new Promise(r => setTimeout(r, 300));
+              await waitForElement('.script-item-1', 8000);
               driverObj.moveNext();
             }
           }
