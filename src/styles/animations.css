@@ -394,25 +394,6 @@
   background-color: var(--color-primary);
 }
 
-/* 菜单动画 */
-.custom-menu-item {
-  transition: all var(--transition-fast) var(--ease-in-out);
-}
-
-.custom-menu-item:hover {
-  transform: translateX(4px);
-}
-
-/* 按钮动画 */
-.action-btn {
-  transition: all var(--transition-fast) var(--ease-in-out);
-}
-
-.action-btn:hover {
-  transform: scale(1.1);
-  color: var(--color-primary);
-}
-
 /* 列表项动画 */
 .script-list-item {
   transition: all var(--transition-normal) var(--ease-in-out);
