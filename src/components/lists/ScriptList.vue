@@ -6,6 +6,9 @@
     >
       <template #renderItem="{ item, index }">
         <div :class="['script-item', `script-item-${index}`, 'list-item-slide-in', { active: item.id === listStore.selectedId }]" @click="selectScript(item.id)" :style="{ animationDelay: `${index * 0.07}s` }">
+          <!-- BgiVersionTag 标签 -->
+          <a-tag v-for="tag in item.tags.filter(t => t.startsWith('bgi'))" :key="tag" class="bgi-version-tag">{{ tag }}</a-tag>
+          
           <div class="item-header">
             <div class="item-title-wrap">
               <span class="item-title-main">{{ item.name1 }}</span>
@@ -27,7 +30,7 @@
           </div>
           <div class="item-desc">{{ item.desc }}</div>
           <div class="item-tags">
-            <a-tag v-for="tag in item.tags" :key="tag" class="item-tag">{{ tag }}</a-tag>
+            <a-tag v-for="tag in item.tags.filter(t => !t.startsWith('bgi'))" :key="tag" class="item-tag">{{ tag }}</a-tag>
           </div>
           <div class="item-time">{{ item.lastUpdated }}</div>
         </div>
@@ -280,6 +283,27 @@ const filteredScripts = computed(() => {
   margin-right: 4px;
   padding: 0 8px;
   border: none !important;
+}
+
+.bgi-version-tag {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: var(--bgi-version-tag-bg) !important;
+  border: 1px solid var(--bgi-version-tag-border) !important;
+  color: var(--text-base) !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  padding: 4px 8px !important;
+  border-radius: 6px !important;
+  box-shadow: var(--bgi-version-tag-shadow) !important;
+  z-index: 2;
+  transition: all 0.3s ease !important;
+}
+
+.bgi-version-tag:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 8px rgba(255, 215, 0, 0.3) !important;
 }
 
 .item-time {
