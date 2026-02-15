@@ -140,14 +140,8 @@ export const useMainStore = defineStore('mainStore', () => {
     if (!isModeSingle) return;
     try {
       const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
-      const json = await repoWebBridge.GetUserConfigJson();
-      let config = {};
-      try {
-        config = typeof json === 'string' ? JSON.parse(json) : json;
-      } catch (e) {
-        config = {};
-      }
-      const paths = Array.from(new Set(config.scriptConfig?.subscribedScriptPaths || []));
+      const json = await repoWebBridge.GetSubscribedScriptPaths();
+      const paths = Array.from(new Set(JSON.parse(json || '[]')));
       if (JSON.stringify(paths) !== JSON.stringify(subscribedScriptPaths.value)) {
         if (!paths.length) {
           subscribedConfigError.value = true;
