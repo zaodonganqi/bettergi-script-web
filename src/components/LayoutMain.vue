@@ -1518,11 +1518,6 @@ function onLocaleChange(val) {
   animation: pulse 2s infinite;
 }
 
-:deep(.ant-spin-dot) {
-  width: 40px;
-  height: 40px;
-}
-
 :deep(.ant-spin-dot-item) {
   background-color: var(--color-primary);
   width: 12px;

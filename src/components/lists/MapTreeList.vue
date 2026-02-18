@@ -509,11 +509,10 @@ function normalize(str) {
   align-items: center;
   width: 100%;
   transition: background-color 0.3s var(--ease-in-out), transform 0.3s var(--ease-in-out), color 0.3s var(--ease-in-out);
-  padding: 4px 8px;
+  padding: 2px 4px;
 }
 
 .tree-node-container:hover {
-  background-color: var(--control-item-bg-active);
   transform: translateX(4px);
   border: none !important;
   box-shadow: none !important;
@@ -554,7 +553,7 @@ function normalize(str) {
 .tree-node-title-text {
   flex: 1;
   font-size: 14px;
-  margin-left: 5px;
+  margin: 0 5px 0 2px;
   transition: color 0.3s var(--ease-in-out);
 }
 
@@ -572,10 +571,10 @@ function normalize(str) {
   transition: all 0.3s var(--ease-in-out);
   border-radius: 4px;
   padding: 2px 8px;
+  flex-shrink: 0;
 }
 
 .subscribe-btn:hover {
-  background-color: var(--color-primary-bg);
   transform: scale(1.05);
 }
 
@@ -588,7 +587,11 @@ function normalize(str) {
 :deep(.ant-tree-treenode) {
   width: 100%;
   padding: 5px;
-  animation: fadeIn 0.3s var(--ease-out);
+}
+
+/* 禁用 Ant Design Tree 默认的展开动画，避免自定义动画闪烁 */
+:deep(.ant-tree-treenode) {
+  transition: none;
 }
 
 :deep(.ant-tree .ant-tree-node-content-wrapper.ant-tree-node-selected) {
@@ -611,6 +614,7 @@ function normalize(str) {
 
 :deep(.ant-tree-switcher) {
   transition: transform 0.3s var(--ease-in-out);
+  align-self: center;
 }
 
 .subscribe-btn[disabled] {
