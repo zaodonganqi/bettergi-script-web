@@ -41,7 +41,7 @@
             </span>
           </div>
           <div class="sider-link">
-            <span v-if="mainStore.isModeSingle" class="link-text" @click="mainStore.openExternalLink('https://bgi.sh')">
+            <span v-if="mainStore.isModeSingle" class="link-text" @click="mainStore.openExternalLink('https://s.bettergi.com')">
               {{ $t('sider.onlineRepo') }}
             </span>
           </div>
@@ -893,18 +893,13 @@ function onLocaleChange(val) {
 
 /* 优化 Menu 子菜单动画 */
 :deep(.ant-menu-sub) {
-  animation: menuSlideIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  animation: menuSlideIn var(--transition-normal) var(--ease-out);
 }
 
-@keyframes menuSlideIn {
-  from {
-    opacity: 0;
-    transform: translateX(-10px) scaleX(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0) scaleX(1);
-  }
+.custom-menu-item:hover {
+  transform: translateX(8px);
+  background-color: var(--color-primary-bg-hover);
+  box-shadow: 6px 6px 16px rgba(22, 119, 255, 0.15);
 }
 
 :deep(.ant-menu-item-selected) {
@@ -972,13 +967,6 @@ function onLocaleChange(val) {
   width: 4px;
   background-color: var(--color-primary);
   border-radius: 0 4px 4px 0;
-}
-
-:deep(.ant-menu-item-selected) .menu-count {
-  background-color: var(--color-primary);
-  color: white;
-  transform: scale(1.1) translateY(-2px);
-  box-shadow: 0 4px 8px rgba(22, 119, 255, 0.3);
 }
 
 /* 菜单项点击效果 */
@@ -1400,7 +1388,7 @@ function onLocaleChange(val) {
 .action-btn:hover {
   transform: scale(1.1);
   color: var(--color-primary);
-  background-color: var(--bg-shadow-light);
+  background-color: var(--color-primary-bg-hover);
   box-shadow: 0 4px 12px rgba(22, 119, 255, 0.2);
 }
 
@@ -1447,17 +1435,7 @@ function onLocaleChange(val) {
   display: flex;
   align-items: center;
   justify-content: center;
-  animation: fadeIn 0.3s;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
+  animation: fadeIn var(--transition-normal) var(--ease-in-out);
 }
 
 .repo-error-content {
@@ -1469,19 +1447,7 @@ function onLocaleChange(val) {
   text-align: center;
   min-width: 320px;
   max-width: 90vw;
-  animation: popIn 0.3s;
-}
-
-@keyframes popIn {
-  from {
-    transform: scale(0.9);
-    opacity: 0;
-  }
-
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
+  animation: scaleIn var(--transition-normal) var(--ease-out);
 }
 
 .repo-error-icon {

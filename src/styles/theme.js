@@ -43,6 +43,7 @@ export const antdThemes = {
     other: {
       'new-year-title': '#FFD966FF',
       'new-year-title-bg': '#C82D24',
+      
       'mermaid-text-fill': '#ffffff',
       'mermaid-text-stroke': '#000000',
       'mermaid-noteText-fill': '#ffd700',
@@ -86,6 +87,9 @@ export const antdThemes = {
     other: {
       'new-year-title': '#FFD966FF',
       'new-year-title-bg': '#C82D24',
+      'bgi-version-tag-bg': '#332d00',
+      'bgi-version-tag-border': '#ffd700',
+      'bgi-version-tag-shadow': '0 2px 4px rgba(255, 215, 0, 0.2)',
       'mermaid-text-fill': '#ffffff',
       'mermaid-text-stroke': '#000000',
       'mermaid-noteText-fill': '#ffd700',
@@ -127,6 +131,9 @@ export const antdThemes = {
     other: {
       'new-year-title': '#FFD966FF',
       'new-year-title-bg': '#C82D24',
+      'bgi-version-tag-bg': 'rgba(255, 249, 230, 0.8)',
+      'bgi-version-tag-border': '#ffd700',
+      'bgi-version-tag-shadow': '0 2px 4px rgba(255, 215, 0, 0.2)',
       'mermaid-text-fill': '#ffffff',
       'mermaid-text-stroke': '#000000',
       'mermaid-noteText-fill': '#ffd700',
