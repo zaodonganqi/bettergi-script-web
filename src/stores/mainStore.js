@@ -135,19 +135,18 @@ export const useMainStore = defineStore('mainStore', () => {
     return repoData.value;
   }
 
+  // 从桥接获取已订阅路径列表
+  async function getSubscribedPathsFromBridge() {
+    const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
+    const json = await repoWebBridge.GetSubscribedScriptPaths();
+    return json ? (typeof json === 'string' ? JSON.parse(json) : json) : [];
+  }
+
   // 获取订阅信息
   async function fetchSubscribedConfig() {
     if (!isModeSingle) return;
     try {
-      const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
-      const json = await repoWebBridge.GetUserConfigJson();
-      let config = {};
-      try {
-        config = typeof json === 'string' ? JSON.parse(json) : json;
-      } catch (e) {
-        config = {};
-      }
-      const paths = Array.from(new Set(config.scriptConfig?.subscribedScriptPaths || []));
+      const paths = await getSubscribedPathsFromBridge();
       if (JSON.stringify(paths) !== JSON.stringify(subscribedScriptPaths.value)) {
         if (!paths.length) {
           subscribedConfigError.value = true;
@@ -1042,22 +1041,16 @@ export const useMainStore = defineStore('mainStore', () => {
     lastConfigStr = JSON.stringify(subscribedScriptPaths.value);
 
     pollingTimer = setInterval(async () => {
-      const repoWebBridge = chrome.webview.hostObjects.repoWebBridge;
-      const json = await repoWebBridge.GetUserConfigJson();
-      if (json) {
-        let config = {};
-        try {
-          config = typeof json === 'string' ? JSON.parse(json) : json;
-        } catch (e) {
-          config = {};
-        }
-        const paths = Array.from(new Set(config.scriptConfig?.subscribedScriptPaths || []));
+      try {
+        const paths = await getSubscribedPathsFromBridge();
         const newConfigStr = JSON.stringify(paths);
         if (newConfigStr !== lastConfigStr) {
-          // config有变化，静默刷新
+          // 订阅路径有变化，静默刷新
           await refreshSubscribedConfigSilently(paths);
           lastConfigStr = newConfigStr;
         }
+      } catch (e) {
+        // 轮询异常不中断
       }
     }, 1000);
 
