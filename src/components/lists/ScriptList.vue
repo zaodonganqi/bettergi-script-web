@@ -6,6 +6,8 @@
     >
       <template #renderItem="{ item, index }">
         <div :class="['script-item', `script-item-${index}`, 'list-item-slide-in', { active: item.id === listStore.selectedId }]" @click="selectScript(item.id)" :style="{ animationDelay: `${index * 0.07}s` }">
+          
+          
           <div class="item-header">
             <div class="item-title-wrap">
               <span class="item-title-main">{{ item.name1 }}</span>
@@ -281,6 +283,8 @@ const filteredScripts = computed(() => {
   padding: 0 8px;
   border: none !important;
 }
+
+
 
 .item-time {
   font-size: 12px;
