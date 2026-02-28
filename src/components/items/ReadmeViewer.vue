@@ -680,7 +680,7 @@ watch(
 
 .readme-content :deep(ul),
 .readme-content :deep(ol) {
-  padding-left: 20px;
+  padding-left: 2em;
 }
 
 .readme-content :deep(pre) {
@@ -701,6 +701,10 @@ watch(
   padding: 0;
   line-height: inherit;
   word-wrap: normal;
+}
+
+.readme-content :deep(summary) {
+  cursor: pointer;
 }
 
 .readme-content :deep(.hljs) {
