@@ -46,12 +46,12 @@
             </span>
           </div>
           <div class="sider-link">
-            <span class="link-text" @click="mainStore.openExternalLink('https://bettergi.com/open.html')">
+            <span class="link-text" @click="mainStore.openExternalLink('https://www.bettergi.com/open.html')">
               {{ $t('sider.otherExtensions') }}
             </span>
           </div>
           <div class="sider-link">
-            <span class="link-text" @click="mainStore.openExternalLink('https://bettergi.com/doc.html')">
+            <span class="link-text" @click="mainStore.openExternalLink('https://www.bettergi.com/doc.html')">
             {{ $t('sider.document') }}
             </span>
           </div>

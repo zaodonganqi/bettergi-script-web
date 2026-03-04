@@ -51,8 +51,11 @@
         </div>
 
         <!-- Web模式显示giscus评论 -->
-        <Giscus v-else :key="giscusKey" :repo="giscusConfig.repo" :repoId="giscusConfig.repoId"
-                :category="giscusConfig.category" :categoryId="giscusConfig.categoryId"
+        <Giscus v-else :key="giscusKey"
+                :repo="giscusConfig.repo"
+                :repoId="giscusConfig.repoId"
+                :category="giscusConfig.category"
+                :categoryId="giscusConfig.categoryId"
                 :mapping="giscusConfig.mapping"
                 :term="giscusTerm"
                 :strict="giscusConfig.strict"
