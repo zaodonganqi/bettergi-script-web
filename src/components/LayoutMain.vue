@@ -5,7 +5,7 @@
       <div class="sider-header">
         <div class="sider-logo"
              :title="$t('sider.document')"
-             @click="mainStore.openExternalLink('https://bettergi.com/')"
+             @click="mainStore.openExternalLink('https://www.bettergi.com/')"
         >
         </div>
         <span class="repo-title">{{ $t('sider.repoTitle') }}</span>

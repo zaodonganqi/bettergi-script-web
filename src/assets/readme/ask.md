@@ -4,7 +4,7 @@
 
 学习如何提问将是你解决问题的第一步。
 
-> 部分素材引用自官网文档：[如何在Github提问？](https://bettergi.com/tutorial/how_to_ask.html)  
+> 部分素材引用自官网文档：[如何在Github提问？](https://www.bettergi.com/tutorial/how_to_ask.html)  
 
 **正确示范：**  
 
@@ -73,7 +73,7 @@
 运行出现报错时一定要提供的文件，是解决问题的重中之重！
 ```
 
-什么是日志及如何获取日志可直接参考官网文档：[本地文件](https://bettergi.com/feats/append/files.html#_3-%F0%9F%93%8B-log)中的log部分了解，此处不过多赘述。
+什么是日志及如何获取日志可直接参考官网文档：[本地文件](https://www.bettergi.com/feats/append/files.html#_3-%F0%9F%93%8B-log)中的log部分了解，此处不过多赘述。
 
 ### 🎨截图
 ```
