@@ -238,11 +238,11 @@
           </a-tooltip>
         </div>
         <div class="top-bar-right">
-          <a-tooltip v-if="mainStore.isNewYear()" :title="'新春快乐'">
-            <a-button type="text" class="action-btn" @click="mainStore.openFireworksModal">
-              🧨
-            </a-button>
-          </a-tooltip>
+<!--          <a-tooltip v-if="mainStore.isNewYear()" :title="'新春快乐'">-->
+<!--            <a-button type="text" class="action-btn" @click="mainStore.openFireworksModal">-->
+<!--              🧨-->
+<!--            </a-button>-->
+<!--          </a-tooltip>-->
           <a-tooltip :title="$t('action.announcement')">
             <a-button type="text" class="action-btn" @click="mainStore.showAnnouncementModal = true">
               <CalendarOutlined />
@@ -413,8 +413,8 @@
       <Announcement/>
     </a-modal>
 
-    <!-- 烟花弹窗 -->
-    <Fireworks />
+<!--    &lt;!&ndash; 烟花弹窗 &ndash;&gt;-->
+<!--    <Fireworks />-->
 
     <!-- 更新计划弹窗 -->
     <a-modal v-model:open="mainStore.showPlanModal"
@@ -574,7 +574,7 @@ import Plan from "./items/Plan.vue";
 import { useMainStore } from "@/stores/mainStore.js";
 import UpdateNotice from "@/components/items/UpdateNotice.vue";
 import Announcement from "@/components/items/Announcement.vue";
-import Fireworks from "@/components/items/Fireworks.vue";
+// import Fireworks from "@/components/items/Fireworks.vue";
 
 const mainStore = useMainStore();
 const settings = useSettingsStore();
@@ -740,7 +740,7 @@ onMounted(async () => {
   // 加载自定义背景
   await settings.loadCustomBackground();
 
-  mainStore.checkFireworksModal();
+  // mainStore.checkFireworksModal();
 
   // 新手引导检测
   setTimeout(() => {
@@ -759,7 +759,7 @@ onUnmounted(() => {
 
 // 选择语言切换
 function onLocaleChange(val) {
-  mainStore.onLocaleChange(val);
+  // mainStore.onLocaleChange(val);
   settings.setLocale(val);
 }
 </script>

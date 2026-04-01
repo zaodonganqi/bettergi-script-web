@@ -598,40 +598,40 @@ export const useMainStore = defineStore('mainStore', () => {
     }
   }
 
-  // 烟花弹窗显示状态
-  const showFireworksModal = ref(false);
-  let choseTheme = null;
-  const FIREWORKS_KEY = 'fireworks_shown_2026';
-
-  function checkFireworksModal() {
-    if (localStorage.getItem(FIREWORKS_KEY)) return;
-
-    if (isNewYear()) {
-      openFireworksModal();
-    }
-  }
-
-  function isNewYear() {
-    const now = new Date();
-
-    const start = new Date(2026, 1, 4, 0, 0, 0); // 2026-02-4 立春
-    const end   = new Date(2026, 1, 24, 23, 59, 59); // 2026-02-24 年假结束
-
-    return now >= start && now <= end;
-  }
-
-  function openFireworksModal() {
-    choseTheme = getThemeName();
-    settings.onThemeChange('dark');
-    showFireworksModal.value = true;
-  }
-
-  async function onFireworksClose() {
-    localStorage.setItem(FIREWORKS_KEY, '1');
-    showFireworksModal.value = false;
-    settings.onThemeChange(choseTheme);
-    await checkGuide();
-  }
+  // // 烟花弹窗显示状态
+  // const showFireworksModal = ref(false);
+  // let choseTheme = null;
+  // const FIREWORKS_KEY = 'fireworks_shown_2026';
+  //
+  // function checkFireworksModal() {
+  //   if (localStorage.getItem(FIREWORKS_KEY)) return;
+  //
+  //   if (isNewYear()) {
+  //     openFireworksModal();
+  //   }
+  // }
+  //
+  // function isNewYear() {
+  //   const now = new Date();
+  //
+  //   const start = new Date(2026, 1, 4, 0, 0, 0); // 2026-02-4 立春
+  //   const end   = new Date(2026, 1, 24, 23, 59, 59); // 2026-02-24 年假结束
+  //
+  //   return now >= start && now <= end;
+  // }
+  //
+  // function openFireworksModal() {
+  //   choseTheme = getThemeName();
+  //   settings.onThemeChange('dark');
+  //   showFireworksModal.value = true;
+  // }
+  //
+  // async function onFireworksClose() {
+  //   localStorage.setItem(FIREWORKS_KEY, '1');
+  //   showFireworksModal.value = false;
+  //   settings.onThemeChange(choseTheme);
+  //   await checkGuide();
+  // }
 
   // 帮助弹窗显示状态
   const showHelpModal = ref(false);
@@ -835,7 +835,7 @@ export const useMainStore = defineStore('mainStore', () => {
               const doneBtn = document.querySelector('.driver-popover-next-btn');
               if (doneBtn && !isCountingDown) {
                 isCountingDown = true;
-                let countdown = 5;
+                let countdown = 10;
 
                 // 更新按钮文本并禁用
                 doneBtn.textContent = ` ${countdown} `;
@@ -937,7 +937,7 @@ export const useMainStore = defineStore('mainStore', () => {
                 const doneBtn = document.querySelector('.driver-popover-next-btn');
                 if (doneBtn && !isCountingDown) {
                   isCountingDown = true;
-                  let countdown = 5;
+                  let countdown = 10;
 
                   // 更新按钮文本并禁用
                   doneBtn.textContent = ` ${countdown} `;
@@ -992,12 +992,12 @@ export const useMainStore = defineStore('mainStore', () => {
     scriptTab.value = 'subscribed';
   };
 
-  // 选择语言切换
-  const onLocaleChange = (val) => {
-    // 这里需要访问settings store，所以我们需要在组件中调用
-    // 这个方法主要用于在main store中统一管理UI交互逻辑
-    return val;
-  };
+  // // 选择语言切换
+  // const onLocaleChange = (val) => {
+  //   // 这里需要访问settings store，所以我们需要在组件中调用
+  //   // 这个方法主要用于在main store中统一管理UI交互逻辑
+  //   return val;
+  // };
 
   // 地图追踪板块
   const handleMapSelect = (location) => {
@@ -1115,12 +1115,12 @@ export const useMainStore = defineStore('mainStore', () => {
     onRoleCheckboxChange,
     resetRoleFilter,
     applySortForMenu,
-    // 烟花弹窗
-    showFireworksModal,
-    isNewYear,
-    checkFireworksModal,
-    openFireworksModal,
-    onFireworksClose,
+    // // 烟花弹窗
+    // showFireworksModal,
+    // isNewYear,
+    // checkFireworksModal,
+    // openFireworksModal,
+    // onFireworksClose,
     // 帮助弹窗
     showHelpModal,
     // 更新计划弹窗
@@ -1143,7 +1143,7 @@ export const useMainStore = defineStore('mainStore', () => {
     scriptTab,
     onClickShowAll,
     onClickShowSubscribed,
-    onLocaleChange,
+    // onLocaleChange,
     handleMapSelect,
     handleScriptSelect,
     openExternalLink,
