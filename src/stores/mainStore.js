@@ -681,7 +681,9 @@ export const useMainStore = defineStore('mainStore', () => {
     } else {
       hasShownGuide = localStorage.getItem('has-shown-guide');
     }
-    if (!hasShownGuide && !showAnnouncementModal.value && !showFireworksModal.value) {
+    // 新年时可恢复回来
+    // if (!hasShownGuide && !showAnnouncementModal.value && !showFireworksModal.value) {
+    if (!hasShownGuide && !showAnnouncementModal.value) {
       showGuide.value = true;
       startGuide();
     }
@@ -977,6 +979,15 @@ export const useMainStore = defineStore('mainStore', () => {
     driverObj.drive();
   }
 
+  // 开发者跳过引导
+  async function skipGuideDev() {
+    await setGuide()
+    showGuide.value = false
+    // 销毁所有 driver 实例
+    document.querySelectorAll('.driver-overlay, .driver-popover').forEach(el => el.remove())
+    document.body.classList.remove('driver-active')
+  }
+
   // 切换全部与已订阅状态
   const onClickShowAll = () => {
     if (!isModeSingle) return;
@@ -1132,6 +1143,7 @@ export const useMainStore = defineStore('mainStore', () => {
     showGuide,
     checkGuide,
     startGuide,
+    skipGuideDev,
     // 更新提醒弹窗
     showUpdateNoticeModal,
     updateNoticeModalLoading,

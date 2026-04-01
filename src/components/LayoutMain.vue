@@ -539,6 +539,9 @@
       </div>
     </a-modal>
 
+    <!-- 开发者通道：跳过新手引导 -->
+    <div v-if="mainStore.showGuide" class="dev-skip-btn" @click="mainStore.skipGuideDev"></div>
+
     <!-- 隐藏的文件输入 -->
     <input ref="fileInput" type="file" accept="image/*" style="display: none;" @change="handleFileChange" />
   </a-layout>
@@ -1750,9 +1753,25 @@ function onLocaleChange(val) {
   background: var(--color-primary);
   opacity: 0.3;
 }
+
 </style>
 
 <style>
+/* 开发者通道：跳过新手引导按钮 */
+.dev-skip-btn {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  width: 50px;
+  height: 50px;
+  z-index: 100000000;
+  cursor: pointer;
+}
+
+.driver-overlay, .driver-active * {
+  pointer-events: auto;
+}
+
 .driver-popover {
   background-color: var(--bg-container);
   color: var(--text-base);
