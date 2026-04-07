@@ -1,5 +1,5 @@
 <script setup>
-import LayoutMain from './components/LayoutMain.vue';
+import { RouterView } from 'vue-router';
 import { useSettingsStore } from '@/stores/settingsStore.js'
 import { onMounted } from "vue";
 import { trackEvent } from '@/utils/useAnalytics.js';
@@ -20,9 +20,9 @@ onMounted(() => {
 
 <template>
   <a-config-provider :locale="settings.currentAntdLocale" :theme="settings.antdTheme">
-    <LayoutMain />
+    <RouterView />
   </a-config-provider>
-  
+
 </template>
 
 <style>

@@ -703,6 +703,12 @@ watch(
   word-wrap: normal;
 }
 
+.readme-content :deep(li code) {
+  background: var(--text-base4);
+  border-radius: 8px;
+  padding: 0 8px;
+}
+
 .readme-content :deep(summary) {
   cursor: pointer;
 }

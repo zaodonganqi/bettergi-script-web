@@ -7,9 +7,11 @@ import '@/styles/gen-theme-vars.css';
 import '@/styles/animations.css';
 
 import { i18n } from '@/utils/i18n.js'
+import router from './router'
 
 const app = createApp(App)
 const pinia = createPinia()
+app.use(router)
 app.use(Antd)
 app.use(i18n)
 app.use(pinia)

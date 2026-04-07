@@ -669,6 +669,9 @@ export const useMainStore = defineStore('mainStore', () => {
 
   // 检查是否需要初次新手引导
   const showGuide = ref(false);
+  let _resolveGuide = null;
+  const guideReady = new Promise(resolve => { _resolveGuide = resolve });
+
   async function checkGuide() {
     let hasShownGuide = false;
     if (isModeSingle) {
@@ -686,6 +689,8 @@ export const useMainStore = defineStore('mainStore', () => {
     if (!hasShownGuide && !showAnnouncementModal.value) {
       showGuide.value = true;
       startGuide();
+    } else {
+      _resolveGuide();
     }
   }
 
@@ -857,10 +862,10 @@ export const useMainStore = defineStore('mainStore', () => {
                     isCountingDown = false;
                     await setGuide();
                     driverObj.destroy();
+                    _resolveGuide();
                   }
                 }, 1000);
               }
-              showGuide.value = false;
               return false;
             }
           }
@@ -959,10 +964,10 @@ export const useMainStore = defineStore('mainStore', () => {
                       isCountingDown = false;
                       await setGuide();
                       driverObj.destroy();
+                      _resolveGuide();
                     }
                   }, 1000);
                 }
-                showGuide.value = false;
                 return false;
               },
               onPopoverRender: () => {
@@ -983,6 +988,7 @@ export const useMainStore = defineStore('mainStore', () => {
   async function skipGuideDev() {
     await setGuide()
     showGuide.value = false
+    _resolveGuide()
     // 销毁所有 driver 实例
     document.querySelectorAll('.driver-overlay, .driver-popover').forEach(el => el.remove())
     document.body.classList.remove('driver-active')
@@ -1141,6 +1147,7 @@ export const useMainStore = defineStore('mainStore', () => {
     checkAppVersionIsNew,
     // 新手引导
     showGuide,
+    guideReady,
     checkGuide,
     startGuide,
     skipGuideDev,

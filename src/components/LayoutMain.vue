@@ -202,19 +202,19 @@
       </div>
       <!-- 地图追踪的树状结构 -->
       <div v-if="mainStore.selectedMenu[0] === '1'" class="script-list">
-        <MapTreeList/>
+        <MapTreeList ref="mapTreeListRef"/>
       </div>
       <!-- Javascript脚本列表 -->
       <div v-else-if="mainStore.selectedMenu[0] === '2'" class="script-list">
-        <ScriptList/>
+        <ScriptList ref="scriptListRef"/>
       </div>
       <!-- 战斗策略列表 -->
       <div v-else-if="mainStore.selectedMenu[0] === '3'" class="script-list">
-        <CombatStrategyList/>
+        <CombatStrategyList ref="combatStrategyListRef"/>
       </div>
       <!-- 七圣召唤策略列表 -->
       <div v-else-if="mainStore.selectedMenu[0] === '4'" class="script-list">
-        <CardStrategyList/>
+        <CardStrategyList ref="cardStrategyListRef"/>
       </div>
     </div>
 
@@ -549,7 +549,9 @@
 
 <script setup>
 import {computed, onMounted, onUnmounted, ref} from 'vue';
+import {useRoute, useRouter} from 'vue-router';
 import {useSettingsStore} from '@/stores/settingsStore.js';
+import { useUrlSync } from '@/utils/routerHelper.js'
 import {
   AlignRightOutlined,
   CheckOutlined,
@@ -581,6 +583,14 @@ import Announcement from "@/components/items/Announcement.vue";
 
 const mainStore = useMainStore();
 const settings = useSettingsStore();
+const route = useRoute();
+const router = useRouter();
+
+// 目录内四个子组件引用
+const mapTreeListRef = ref(null);
+const scriptListRef = ref(null);
+const combatStrategyListRef = ref(null);
+const cardStrategyListRef = ref(null);
 
 // 文件上传相关
 const fileInput = ref(null);
@@ -730,6 +740,14 @@ const fetchRepoData = async () => {
   }
 };
 
+// URL 双向同步
+const { restoreFromUrl } = useUrlSync({
+  mainStore,
+  route,
+  router,
+  getRefs: () => ({ pathing: mapTreeListRef, js: scriptListRef, combat: combatStrategyListRef, tcg: cardStrategyListRef }),
+});
+
 // 挂载时获取仓库数据并应用部分排序
 onMounted(async () => {
   await fetchRepoData();
@@ -743,12 +761,14 @@ onMounted(async () => {
   // 加载自定义背景
   await settings.loadCustomBackground();
 
-  // mainStore.checkFireworksModal();
-
   // 新手引导检测
-  setTimeout(() => {
-    mainStore.checkGuide();
-  }, 1000);
+  mainStore.checkGuide();
+
+  // 等待引导结束后恢复 URL 状态
+  await mainStore.guideReady;
+  await restoreFromUrl();
+
+  // mainStore.checkFireworksModal();
 });
 
 // 组件卸载时清理事件监听器

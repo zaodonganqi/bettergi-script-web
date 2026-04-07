@@ -5,7 +5,7 @@
       :grid="mainStore.isListTwoColumn ? { gutter: 10, column: 2 } : undefined"
     >
       <template #renderItem="{ item, index }">
-        <div :class="['script-item', `script-item-${index}`, 'list-item-slide-in', { active: item.id === listStore.selectedId }]" @click="selectStrategy(item.id)" :style="{ animationDelay: `${index * 0.07}s` }">
+        <div :class="['script-item', `script-item-${index}`, 'list-item-slide-in', { active: item.id === listStore.selectedId }]" @click="selectStrategy(item.id)" :style="{ animationDelay: nav.shouldSkipAnimation() ? '0s' : `${index * 0.07}s` }">
           <div class="item-header">
             <div class="item-title-wrap">
               <span class="item-title-main">{{ item.title }}</span>
@@ -50,6 +50,7 @@ import {computed} from 'vue';
 import {useI18n} from 'vue-i18n';
 import {useMainStore} from "@/stores/mainStore.js";
 import {useListStore} from "@/stores/listStore.js";
+import { createListNavigator } from '@/utils/routerHelper.js';
 
 const { t: $t } = useI18n();
 
@@ -151,6 +152,11 @@ function getVisibleTags(tags) {
 function hasMoreTags(tags) {
   return Array.isArray(tags) && tags.length > MAX_TAGS;
 }
+
+// 通过路径导航并滚动到对应项
+const nav = createListNavigator('combat', () => strategies.value, selectStrategy);
+
+defineExpose({ navigateTo: nav.navigateTo });
 </script>
 
 <style scoped>

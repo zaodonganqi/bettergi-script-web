@@ -35,6 +35,7 @@ import {subscribePaths} from '@/utils/subscription';
 import {useI18n} from 'vue-i18n';
 import iconUrlMap from '@/assets/icon_url.json';
 import {useMainStore} from "@/stores/mainStore.js";
+import { findAncestorKeys } from '@/utils/routerHelper.js';
 
 const { t: $t } = useI18n();
 
@@ -475,6 +476,27 @@ watch(
 function normalize(str) {
   return (str || '').toLowerCase().replace(/[\s【】\[\]（）()·,，.。!！?？\-_]/g, '');
 }
+
+// 通过路径 key 展开树并选中节点
+async function navigateTo(targetKey) {
+  const targetNode = findNodeByKey(treeData.value, targetKey);
+  if (!targetNode) return false;
+
+  const ancestorKeys = findAncestorKeys(treeData.value, targetKey);
+  if (!ancestorKeys) return false;
+
+  // 只展开 directory 类型的祖先
+  expandedKeys.value = ancestorKeys.filter((key) => {
+    const node = findNodeByKey(treeData.value, key);
+    return node && hasExpandableChildren(node);
+  });
+  selectedKeys.value = [targetKey];
+
+  mainStore.handleMapSelect(targetNode);
+  return true;
+}
+
+defineExpose({ navigateTo });
 
 </script>
 
