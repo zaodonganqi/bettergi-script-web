@@ -1,6 +1,15 @@
 # 📝 更新日志
 
-> 版本号与BGI同步，便于了解对应版本更新内容
+---
+
+## 🚀 版本 1.0.0-LTS (2026-4-17)
+
+此版本起，除了新角色与材料图片等信息上传（也可能两三个版本后才传），仓库页面将停止更新，欢迎广大优秀的作者提交pr。
+
+Github：[https://github.com/zaodonganqi/bettergi-script-web](https://github.com/zaodonganqi/bettergi-script-web)
+
+### 📌简化
+- 移除`更新计划`弹窗
 
 ---
 

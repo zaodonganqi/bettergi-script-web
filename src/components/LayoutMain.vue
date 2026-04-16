@@ -248,11 +248,11 @@
               <CalendarOutlined />
             </a-button>
           </a-tooltip>
-          <a-tooltip :title="$t('action.plan')">
-            <a-button type="text" class="action-btn" @click="mainStore.showPlanModal = true">
-              <EditOutlined />
-            </a-button>
-          </a-tooltip>
+<!--          <a-tooltip :title="$t('action.plan')">-->
+<!--            <a-button type="text" class="action-btn" @click="mainStore.showPlanModal = true">-->
+<!--              <EditOutlined />-->
+<!--            </a-button>-->
+<!--          </a-tooltip>-->
           <a-tooltip :title="$t('action.help')">
             <a-button type="text" class="action-btn" @click="mainStore.showHelpModal = true">
               <QuestionCircleOutlined/>
@@ -417,14 +417,14 @@
 <!--    <Fireworks />-->
 
     <!-- 更新计划弹窗 -->
-    <a-modal v-model:open="mainStore.showPlanModal"
-             :title="$t('plan.title')"
-             :footer="null"
-             centered width="80%"
-             :style="{ maxWidth: '900px' }"
-             @cancel="mainStore.showPlanModal = false">
-      <Plan/>
-    </a-modal>
+<!--    <a-modal v-model:open="mainStore.showPlanModal"-->
+<!--             :title="$t('plan.title')"-->
+<!--             :footer="null"-->
+<!--             centered width="80%"-->
+<!--             :style="{ maxWidth: '900px' }"-->
+<!--             @cancel="mainStore.showPlanModal = false">-->
+<!--      <Plan/>-->
+<!--    </a-modal>-->
 
     <!-- 更新提醒弹窗 -->
 <!--    <a-modal v-model:open="mainStore.showUpdateNoticeModal"-->
@@ -575,9 +575,9 @@ import MapDetail from './details/MapDetail.vue';
 import ReadmeViewer from './items/ReadmeViewer.vue';
 import Help from './items/Help.vue';
 import { useI18n } from 'vue-i18n';
-import Plan from "./items/Plan.vue";
+// import Plan from "./items/Plan.vue";
 import { useMainStore } from "@/stores/mainStore.js";
-import UpdateNotice from "@/components/items/UpdateNotice.vue";
+// import UpdateNotice from "@/components/items/UpdateNotice.vue";
 import Announcement from "@/components/items/Announcement.vue";
 // import Fireworks from "@/components/items/Fireworks.vue";
 
