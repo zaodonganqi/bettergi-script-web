@@ -14,7 +14,7 @@
           <div class="tree-node-left">
             <a-image v-if="dataRef.showIcon" :src="dataRef.icon" :placeholder="false"
               @error="dataRef.showIcon = false" />
-            <span class="tree-node-title-text">{{ title }}</span>
+            <span class="tree-node-title-text" v-html="highlightTitle(title)"></span>
             <span v-if="dataRef.hasUpdate" class="has-update-dot"></span>
           </div>
           <a-button class="subscribe-btn" type="text" size="small" @click.stop="handleSubscribe(dataRef)">
@@ -36,11 +36,17 @@ import {useI18n} from 'vue-i18n';
 import iconUrlMap from '@/assets/icon_url.json';
 import {useMainStore} from "@/stores/mainStore.js";
 import { findAncestorKeys } from '@/utils/routerHelper.js';
+import { highlightText, matchesOrdered, tokenize } from '@/utils/highlight.js';
 
 const { t: $t } = useI18n();
 
 const { copy } = useClipboard();
 const mainStore = useMainStore();
+
+const highlightTitle = (title) => {
+  return highlightText(title, mainStore.search?.trim());
+};
+
 const expandedKeys = ref([]);
 const selectedKeys = ref([]);
 const treeData = ref([]);
@@ -91,19 +97,23 @@ const handleSelect = async (selectedKeysList) => {
     
     // 对文件进行评分和过滤
     const scoreFile = (file) => {
-      let isExact = false;
-      if (file.name && file.name.toLowerCase() === keyword) isExact = true;
-      if (file.authors && file.authors.some(a => normalize(a.name) === keyword)) isExact = true;
-      if ((file.tags || []).some(tag => tag.toLowerCase() === keyword)) isExact = true;
-      if (file.description && file.description.toLowerCase() === keyword) isExact = true;
-      
+      const tokens = tokenize(keyword, s => s);
+      const match = tokens.length === 1
+        ? (text) => text.includes(tokens[0])
+        : (text) => matchesOrdered(text, tokens);
+
+      let isExact = tokens.length === 1 && (
+        (file.name && file.name.toLowerCase() === keyword) ||
+        (file.authors && file.authors.some(a => normalize(a.name) === keyword)) ||
+        ((file.tags || []).some(tag => tag.toLowerCase() === keyword)) ||
+        (file.description && file.description.toLowerCase() === keyword)
+      );
+
       let score = 0;
-      if (!isExact) {
-        if (file.name && file.name.toLowerCase().includes(keyword)) score += 3;
-        if (file.authors && file.authors.some(a => normalize(a.name).includes(keyword))) score += 3;
-        if ((file.tags || []).some(tag => tag.toLowerCase().includes(keyword))) score += 2;
-        if (file.description && file.description.toLowerCase().includes(keyword)) score += 2;
-      }
+      if (file.name && match(file.name.toLowerCase())) score += 3;
+      if (file.authors && file.authors.some(a => match(normalize(a.name)))) score += 3;
+      if ((file.tags || []).some(tag => match(tag.toLowerCase()))) score += 2;
+      if (file.description && match(file.description.toLowerCase())) score += 2;
       return isExact || score > 0;
     };
     
@@ -313,18 +323,22 @@ const generateTreeData = (data) => {
 const filteredTreeData = computed(() => {
   // 递归过滤并加分
   function scoreNode(node, keyword) {
-    let isExact = false;
-    if (node.title && node.title.toLowerCase() === keyword) isExact = true;
-    if (node.authors && node.authors.some(a => normalize(a.name) === keyword)) isExact = true;
-    if ((node.tags || []).some(tag => tag.toLowerCase() === keyword)) isExact = true;
-    if (node.description && node.description.toLowerCase() === keyword) isExact = true;
+    const tokens = tokenize(keyword, s => s);
+    const match = tokens.length === 1
+      ? (text) => text.includes(tokens[0])
+      : (text) => matchesOrdered(text, tokens);
+
+    let isExact = tokens.length === 1 && (
+      (node.title && node.title.toLowerCase() === keyword) ||
+      (node.authors && node.authors.some(a => normalize(a.name) === keyword)) ||
+      ((node.tags || []).some(tag => tag.toLowerCase() === keyword)) ||
+      (node.description && node.description.toLowerCase() === keyword)
+    );
     let score = 0;
-    if (!isExact) {
-      if (node.title && node.title.toLowerCase().includes(keyword)) score += 3;
-      if (node.authors && node.authors.some(a => normalize(a.name).includes(keyword))) score += 3;
-      if ((node.tags || []).some(tag => tag.toLowerCase().includes(keyword))) score += 2;
-      if (node.description && node.description.toLowerCase().includes(keyword)) score += 2;
-    }
+    if (node.title && match(node.title.toLowerCase())) score += 3;
+    if (node.authors && node.authors.some(a => match(normalize(a.name)))) score += 3;
+    if ((node.tags || []).some(tag => match(tag.toLowerCase()))) score += 2;
+    if (node.description && match(node.description.toLowerCase())) score += 2;
     return { ...node, _isExact: isExact, _score: score };
   }
 
@@ -411,11 +425,9 @@ const filteredTreeData = computed(() => {
     const exactLeaf = allLeaf.filter(n => n._isExact);
     const otherLeaf = allLeaf.filter(n => !n._isExact && n._score > 0);
     otherLeaf.sort((a, b) => (b._score || 0) - (a._score || 0));
-    if (exactLeaf.length) {
-      const leafSet = new Set(exactLeaf);
-      return filterByLeaf(filtered, leafSet);
-    } else if (otherLeaf.length) {
-      const leafSet = new Set(otherLeaf);
+    const allMatched = [...exactLeaf, ...otherLeaf];
+    if (allMatched.length) {
+      const leafSet = new Set(allMatched);
       return filterByLeaf(filtered, leafSet);
     } else {
       return [];
@@ -431,11 +443,9 @@ const filteredTreeData = computed(() => {
     const otherLeaf = allLeaf.filter(n => !n._isExact && n._score > 0);
     otherLeaf.sort((a, b) => (b._score || 0) - (a._score || 0));
 
-    if (exactLeaf.length) {
-      const leafSet = new Set(exactLeaf);
-      return filterByLeaf(filtered, leafSet);
-    } else if (otherLeaf.length) {
-      const leafSet = new Set(otherLeaf);
+    const allMatched = [...exactLeaf, ...otherLeaf];
+    if (allMatched.length) {
+      const leafSet = new Set(allMatched);
       return filterByLeaf(filtered, leafSet);
     } else {
       return [];
@@ -566,6 +576,13 @@ defineExpose({ navigateTo });
   font-size: 14px;
   margin: 0 5px 0 2px;
   transition: color 0.3s var(--ease-in-out);
+}
+
+.tree-node-title-text :deep(mark) {
+  background: yellow;
+  color: black;
+  padding: 0;
+  border-radius: 2px;
 }
 
 .tree-node-container:hover .tree-node-title-text {

@@ -8,7 +8,7 @@
         <div :class="['script-item', `script-item-${index}`, 'list-item-slide-in', { active: item.id === listStore.selectedId }]" @click="selectStrategy(item.id)" :style="{ animationDelay: nav.shouldSkipAnimation() ? '0s' : `${index * 0.07}s` }">
           <div class="item-header">
             <div class="item-title-wrap">
-              <span class="item-title-main">{{ item.title }}</span>
+              <span class="item-title-main" v-html="hl(item.title)"></span>
               <span v-if="item.hasUpdate" class="has-update-badge">{{ $t('combatStrategyList.hasUpdate') }}</span>
               <span v-if="item.isSubscribed" class="subscribed-badge">{{ $t('combatStrategyList.subscribed') }}</span>
             </div>
@@ -16,20 +16,20 @@
           </div>
           <div class="item-author">
             <template v-if="item.authors && item.authors.length">
-              {{item.authors.map(a => a.name).join($t('common.comma'))}}
+              <span v-html="hl(item.authors.map(a => a.name).join($t('common.comma')))"></span>
             </template>
             <template v-else>
               {{ $t('combatStrategyList.noAuthor') }}
             </template>
           </div>
-          <div class="item-desc">{{ item.desc }}</div>
+          <div class="item-desc" v-html="hl(item.desc)"></div>
           <div class="item-tags">
             <a-tag
                 v-for="tag in getVisibleTags(item.tags)"
                 :key="tag"
                 class="item-tag"
             >
-              {{ tag }}
+              <span v-html="hl(tag)"></span>
             </a-tag>
             <a-tag
                 v-if="hasMoreTags(item.tags)"
@@ -51,11 +51,13 @@ import {useI18n} from 'vue-i18n';
 import {useMainStore} from "@/stores/mainStore.js";
 import {useListStore} from "@/stores/listStore.js";
 import { createListNavigator } from '@/utils/routerHelper.js';
+import { highlightText } from '@/utils/highlight.js';
 
 const { t: $t } = useI18n();
 
 const mainStore = useMainStore();
 const listStore = useListStore();
+const hl = (text) => highlightText(text, mainStore.search?.trim());
 
 function getCombatStrategiesFromRepo(repo, subscribedPaths = [], parentSubscribed = false, currentPath = 'combat') {
   const combatNode = repo.indexes.find(item => item.name === 'combat');
@@ -160,6 +162,12 @@ defineExpose({ navigateTo: nav.navigateTo });
 </script>
 
 <style scoped>
+.script-item :deep(mark) {
+  background: yellow;
+  color: black;
+  padding: 0;
+  border-radius: 2px;
+}
 .list-container {
   width: 100%;
   max-height: 100%;

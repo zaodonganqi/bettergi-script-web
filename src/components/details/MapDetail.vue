@@ -78,22 +78,19 @@
                       <template #bodyCell="{ column, record }">
                         <template v-if="column.dataIndex === 'name'">
                           <a-popover v-if="record.description" :content="record.description">
-                            <span style="word-break: break-all; white-space: normal;">{{ record.name }}</span>
+                            <span style="word-break: break-all; white-space: normal;" v-html="hl(record.name)"></span>
                           </a-popover>
-                          <span v-else style="word-break: break-all; white-space: normal;">{{ record.name }}</span>
+                          <span v-else style="word-break: break-all; white-space: normal;" v-html="hl(record.name)"></span>
                         </template>
                         <template v-else-if="column.dataIndex === 'authors'">
-                          <span>
-                            {{ Array.isArray(record.authors)
-                              ? record.authors.map(a => (typeof a === 'string' ? a : a && a.name)).filter(Boolean).join($t('common.comma'))
-                              : (record.authors || '')
-                            }}
-                          </span>
+                          <span v-html="hl(Array.isArray(record.authors)
+                            ? record.authors.map(a => (typeof a === 'string' ? a : a && a.name)).filter(Boolean).join($t('common.comma'))
+                            : (record.authors || ''))"></span>
                         </template>
                         <template v-else-if="column.dataIndex === 'tags'">
                           <div class="tags-container">
                             <a-tag v-for="tag in record.tags" :key="tag" :color="getTagColor(tag)" class="tag-item">
-                              {{ tag }}
+                              <span v-html="hl(tag)"></span>
                             </a-tag>
                           </div>
                         </template>
@@ -141,10 +138,10 @@
         <!-- 详情弹窗 -->
         <a-modal v-model:open="modalOpen" :title="$t('detail.modalTitle')" :footer="null" width="480" centered>
           <a-descriptions bordered size="small" :column="1">
-            <a-descriptions-item :label="$t('detail.name')">{{ modalRecord.name }}</a-descriptions-item>
+            <a-descriptions-item :label="$t('detail.name')"><span v-html="hl(modalRecord.name)"></span></a-descriptions-item>
             <a-descriptions-item :label="$t('detail.scriptAuthor')">
               <template v-if="Array.isArray(modalRecord.authors)">
-                {{ modalRecord.authors.map(a => a.name || a).join($t('common.comma')) }}
+                <span v-html="hl(modalRecord.authors.map(a => a.name || a).join($t('common.comma')))"></span>
               </template>
               <template v-else>
                 {{ modalRecord.authors || $t('detail.noAuthor') }}
@@ -152,11 +149,11 @@
             </a-descriptions-item>
             <a-descriptions-item :label="$t('detail.tags')">
               <a-space>
-                <a-tag v-for="tag in modalRecord.tags" :key="tag" :color="getTagColor(tag)">{{ tag }}</a-tag>
+                <a-tag v-for="tag in modalRecord.tags" :key="tag" :color="getTagColor(tag)"><span v-html="hl(tag)"></span></a-tag>
               </a-space>
             </a-descriptions-item>
             <a-descriptions-item :label="$t('detail.lastUpdated')">{{ modalRecord.lastUpdated }}</a-descriptions-item>
-            <a-descriptions-item :label="$t('detail.description')">{{ modalRecord.description }}</a-descriptions-item>
+            <a-descriptions-item :label="$t('detail.description')"><span v-html="hl(modalRecord.description)"></span></a-descriptions-item>
             <a-descriptions-item :label="$t('detail.version')">{{ modalRecord.version }}</a-descriptions-item>
             <a-descriptions-item :label="$t('detail.path')">{{ modalRecord.path }}</a-descriptions-item>
           </a-descriptions>
@@ -191,6 +188,7 @@ import {useI18n} from 'vue-i18n';
 import {jumpToGitHub} from "@/utils/actions.js";
 import Comment from "@/components/items/Comment.vue";
 import {useMainStore} from "@/stores/mainStore.js";
+import { highlightText } from '@/utils/highlight.js';
 
 const {t: $t, locale} = useI18n();
 
@@ -199,6 +197,7 @@ const script = computed(() => mainStore.selectedScript);
 
 const mainStore = useMainStore();
 const {copy} = useClipboard();
+const hl = (text) => highlightText(text, mainStore.search?.trim());
 const currentPage = ref(1);
 const pageSize = ref(10);
 
@@ -587,6 +586,12 @@ function onSubscribeBtnLeave(node) {
 </script>
 
 <style scoped>
+.map-detail :deep(mark) {
+  background: yellow;
+  color: black;
+  padding: 0;
+  border-radius: 2px;
+}
 .map-detail {
   height: 100%;
   background: var(--bg-container);

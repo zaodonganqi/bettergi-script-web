@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { useMainStore } from './mainStore.js'
 import { mapTagsToCanonical } from '@/utils/roleAlias.js'
+import { matchesOrdered, tokenize } from '@/utils/highlight.js'
 
 export const useListStore = defineStore('listStore', () => {
   const mainStore = useMainStore()
@@ -36,11 +37,17 @@ export const useListStore = defineStore('listStore', () => {
     return (str || '').toLowerCase().replace(/[\s【】\[\]（）()·,，.。!！?？\-_]/g, '')
   }
 
-  // 搜索过滤的通用方法（支持完全匹配和相关性评分）
+  // 搜索过滤的通用方法（支持空格分词按顺序匹配和相关性评分）
   const filterBySearchKey = (items, searchKey) => {
     if (!searchKey) return items
 
-    const keyword = normalize(String(searchKey).trim())
+    const tokens = tokenize(String(searchKey), normalize)
+    if (tokens.length === 0) return items
+
+    // 单词时使用 includes，多词时使用 matchesOrdered
+    const match = tokens.length === 1
+      ? (text) => text.includes(tokens[0])
+      : (text) => matchesOrdered(text, tokens)
 
     // 相关性分数排序
     const scored = items.map(item => {
@@ -52,12 +59,12 @@ export const useListStore = defineStore('listStore', () => {
       const authors = (item.authors || []).map(a => normalize(a.name))
       const tags = (item.tags || []).map(tag => normalize(tag))
 
-      if (name.includes(keyword)) score += 8
-      if (name1.includes(keyword)) score += 8
-      if (name2.includes(keyword)) score += 8
-      if (authors.some(author => author.includes(keyword))) score += 4
-      if (tags.some(tag => tag.includes(keyword))) score += 3
-      if (desc.includes(keyword)) score += 2
+      if (match(name)) score += 8
+      if (match(name1)) score += 8
+      if (match(name2)) score += 8
+      if (authors.some(author => match(author))) score += 4
+      if (tags.some(tag => match(tag))) score += 3
+      if (match(desc)) score += 2
 
       return { ...item, _score: score }
     }).filter(item => item._score > 0)
