@@ -9,6 +9,23 @@ const router = createRouter({
   ],
 })
 
+router.beforeEach((to) => {
+  const giscusSession = Array.isArray(to.query.giscus) ? to.query.giscus[0] : to.query.giscus
+  if (!giscusSession) return true
+
+  localStorage.setItem('giscus-session', JSON.stringify(giscusSession))
+
+  const query = { ...to.query }
+  delete query.giscus
+
+  return {
+    path: to.path,
+    query,
+    hash: '',
+    replace: true,
+  }
+})
+
 export default router
 
 // type 名称 与 menu key 映射
