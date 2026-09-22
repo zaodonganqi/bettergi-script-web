@@ -102,7 +102,8 @@ export const useMainStore = defineStore('mainStore', () => {
           const jsonString = new TextDecoder().decode(deUnit8ArrayData);
           repoData.value = JSON.parse(jsonString);
         } catch (err) {
-          useMirror.value = true; // 下次使用镜像
+          // 镜像站暂不可用，刷新重试时继续使用原始线路。
+          // useMirror.value = true; // 下次使用镜像
           clearTimeout(fetchTimeoutId);
           fetchTimeoutId = null;
           if (didTimeout) {
