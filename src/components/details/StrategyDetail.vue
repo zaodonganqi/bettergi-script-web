@@ -74,6 +74,7 @@
             <span>{{ $t('detail.strategyFailed') }}</span>
           </div>
         </transition>
+        <CombatJsonView v-if="combatData" :data="combatData"/>
         <div v-if="txtContent" class="txt-content-plain">{{ txtContent }}</div>
         <!-- 评论弹窗-->
         <Comment />
@@ -94,6 +95,7 @@ import {getRepoPath} from '@/utils/basePaths';
 import { subscribePaths } from '@/utils/subscription';
 import {useI18n} from 'vue-i18n';
 import Comment from "@/components/items/Comment.vue";
+import CombatJsonView from "@/components/details/CombatJsonView.vue";
 import {jumpToGitHub} from "@/utils/actions.js";
 import {useMainStore} from "@/stores/mainStore.js";
 
@@ -107,6 +109,7 @@ const {copy} = useClipboard();
 const isLoadingTxt = ref(false);
 const loadTxtError = ref(false);
 const txtContent = ref('');
+const combatData = ref(null);
 
 const isTxt404 = (path) => !!localStorage.getItem('txt404:' + path);
 const setTxt404 = (path) => {
@@ -123,16 +126,12 @@ const getRawTxtUrl = (path) => {
 const fetchTxtContent = async (path) => {
   if (!path) {
     txtContent.value = '';
+    combatData.value = null;
     isLoadingTxt.value = false;
     loadTxtError.value = false;
     return;
   }
-  if (/^combat\//i.test(path) && /\.json$/i.test(path)) {
-    txtContent.value = '';
-    isLoadingTxt.value = false;
-    loadTxtError.value = false;
-    return;
-  }
+  combatData.value = null;
   if (isTxt404(path)) {
     txtContent.value = '';
     isLoadingTxt.value = false;
@@ -182,10 +181,27 @@ const fetchTxtContent = async (path) => {
   }
   if (fetchError) {
     txtContent.value = '';
+    combatData.value = null;
     isLoadingTxt.value = false;
     loadTxtError.value = true;
     return;
   }
+
+  // 战斗策略的 JSON 文件渲染成动作表格，其余文件仍按纯文本展示
+  if (/^combat\//i.test(path) && /\.json$/i.test(path)) {
+    try {
+      combatData.value = JSON.parse(txt);
+      txtContent.value = '';
+    } catch (e) {
+      combatData.value = null;
+      txtContent.value = txt;
+    }
+    isLoadingTxt.value = false;
+    loadTxtError.value = false;
+    return;
+  }
+
+  combatData.value = null;
   txtContent.value = txt;
   isLoadingTxt.value = false;
   loadTxtError.value = false;
@@ -219,6 +235,7 @@ watch(() => script.value, (newScript) => {
     fetchTxtContent(newScript.path);
   } else {
     txtContent.value = '';
+    combatData.value = null;
     isLoadingTxt.value = false;
     loadTxtError.value = false;
   }
