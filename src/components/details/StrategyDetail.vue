@@ -127,7 +127,7 @@ const fetchTxtContent = async (path) => {
     loadTxtError.value = false;
     return;
   }
-  if (/\.json$/i.test(path)) {
+  if (/^combat\//i.test(path) && /\.json$/i.test(path)) {
     txtContent.value = '';
     isLoadingTxt.value = false;
     loadTxtError.value = false;
