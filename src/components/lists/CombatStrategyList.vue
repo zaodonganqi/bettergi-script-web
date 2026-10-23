@@ -105,7 +105,7 @@ const strategies = computed(() => {
     id: idx + 1,
     title: removeFileSuffix(item.name),
     name: item.name,
-    authors: item.authors || [],
+    authors: (item.authors && item.authors.length) ? item.authors : (item.author ? [{ name: item.author }] : []),
     desc: item.description,
     tags: item.tags || [],
     lastUpdated: item.lastUpdated || '',
