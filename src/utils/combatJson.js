@@ -13,7 +13,7 @@ const DIR_NAMES = {
 
 const MOVE_NAMES = {
   w: '前进', s: '后退', a: '左移', d: '右移',
-  W: '冲刺前进', S: '冲刺后退', A: '冲刺左移', D: '冲刺右移',
+  W: '前进', S: '后退', A: '左移', D: '右移',
 };
 
 const CMP_TEXT = {
@@ -87,7 +87,7 @@ function parseSteps(action) {
       continue;
     }
 
-    if ((m = p.match(/^wait\(([\d.]+)\)$/))) {
+    if ((m = p.match(/^(?:wait|after|等待)\(([\d.]+)\)$/))) {
       steps.push(['wait', Number(m[1])]);
       continue;
     }
@@ -102,12 +102,41 @@ function parseSteps(action) {
       continue;
     }
 
-    if (p === 'j' || p === 'jump') {
+    if (p === 'j' || p === 'jump' || p === '跳跃') {
       steps.push(['move', '跳跃']);
       continue;
     }
-    if (p === 'dash') {
+
+    if (p === 'dash' || p === '冲刺') {
       steps.push(['move', '冲刺']);
+      continue;
+    }
+    if ((m = p.match(/^dash\(([\d.]+)\)$/))) {
+      steps.push(['move', `冲刺 ${fmtSec(m[1])}`]);
+      continue;
+    }
+
+    if (p === 'check' || p === '检测') {
+      steps.push(['text', '战斗结束检查']);
+      continue;
+    }
+    if (p === 'ready' || p === '完成') {
+      steps.push(['text', '等角色就绪']);
+      continue;
+    }
+    if (p === 'round') {
+      steps.push(['text', '回合标记']);
+      continue;
+    }
+
+    if ((m = p.match(/^(?:verticalscroll|scroll)\(\s*(-?\d+)\s*\)$/))) {
+      const n = Number(m[1]);
+      steps.push(['text', n < 0 ? `滚轮向下 ${Math.abs(n)} 格` : `滚轮向上 ${n} 格`]);
+      continue;
+    }
+
+    if ((m = p.match(/^walk\(\s*([wasdWASD])\s*,\s*([\d.]+)\s*\)$/))) {
+      steps.push(['move', `${MOVE_NAMES[m[1]] || m[1]} ${fmtSec(m[2])}`]);
       continue;
     }
 
@@ -318,34 +347,67 @@ function stripOuterParens(expr) {
   return s;
 }
 
-function transValue(raw) {
-  const m = String(raw || '').match(/^([a-z-]+)\((.*)\)$/s);
-  if (!m) return raw;
+const BARE_NAMES = {
+  'e-ready': 'E 就绪',
+  'q-ready': 'Q 就绪',
+  t: '战斗开始后',
+  'last-check': '距上次战斗结束检查',
+  onfield: '当前角色在场',
+  'low-hp': '血量偏低',
+  count: '执行次数',
+};
+
+function replaceBare(text) {
+  let out = text;
+  for (const [k, v] of Object.entries(BARE_NAMES)) {
+    out = out.replace(new RegExp(`\\b${k.replace(/-/g, '\\-')}\\b`, 'g'), v);
+  }
+  return out;
+}
+
+function transValue(raw, time = false) {
+  const src = String(raw ?? '').trim();
+  const m = src.match(/^([a-z-]+)\((.*)\)$/s);
+  if (!m) {
+    if (src === 'since') return time ? '距上次施放的时间' : '距上次施放';
+    return replaceBare(src);
+  }
   const fn = m[1];
   const args = splitArgs(m[2]);
   const a0 = args[0] || '';
 
   switch (fn) {
     case 'e-ready':
-      return `${a0} E 就绪`;
+      return a0 ? `${a0} E 就绪` : 'E 就绪';
     case 'q-ready':
-      return `${a0} Q 就绪`;
+      return a0 ? `${a0} Q 就绪` : 'Q 就绪';
     case 'in-party':
-      return `队伍中有 ${a0}`;
+      return a0 ? `队伍中有 ${a0}` : '在队伍中';
     case 'onfield':
-      return `${a0} 在场`;
-    case 'since':
-      return `距「${a0}」`;
-    case 'last-exec':
+      return a0 ? `${a0} 在场` : '当前角色在场';
+    case 'since': {
+      if (!a0) return time ? '距上次施放的时间' : '距上次施放';
+      if (/^-?[\d.]+$/.test(a0)) return time ? `距 Index ${a0} 的动作上次执行的时间` : `距 Index ${a0} 的动作`;
+      return time ? `距「${a0}」上次施放的时间` : `距「${a0}」`;
+    }
+    case 'last-exec': {
+      if (!a0) return time ? '距上次施放的时间' : '距上次施放';
+      if (/^-?[\d.]+$/.test(a0)) return `距 Index ${a0} 的动作上次施放`;
       return `距上次「${a0}」`;
-    case 'count':
+    }
+    case 'count': {
+      if (!a0) return time ? '执行次数' : '执行次数';
+      if (/^-?[\d.]+$/.test(a0)) return `Index ${a0} 的动作执行次数`;
       return `「${a0}」执行次数`;
+    }
+    case 'last-check':
+      return '距上次战斗结束检查';
     case 'e-cd':
-      return `${a0} 的 E 冷却`;
+      return a0 ? `${a0} 的 E 冷却` : 'E 冷却';
     case 'q-cd':
-      return `${a0} 的 Q 冷却`;
+      return a0 ? `${a0} 的 Q 冷却` : 'Q 冷却';
     case 'low-hp':
-      return `${a0} 血量偏低`;
+      return a0 ? `${a0} 血量偏低` : '血量偏低';
     case 't':
       return '战斗开始后';
     case 'battle-time':
@@ -367,24 +429,39 @@ function transValue(raw) {
   }
 }
 
+const CMP_WORD = {
+  '>': '长于', '<': '短于', '>=': '不短于', '<=': '不长于', '==': '等于', '!=': '不等于',
+};
+
+function transCompare(term) {
+  if (term.includes('&&') || term.includes('||')) return translateCondition(term);
+
+  for (const op of ['>=', '<=', '==', '!=', '>', '<']) {
+    const parts = splitTop(term, op);
+    if (parts.length !== 2) continue;
+    const [left, right] = parts;
+    if (/^-?[\d.]+$/.test(right)) {
+      const phrase = CMP_TEXT[op] ? CMP_TEXT[op](right) : `${op} ${right}`;
+      return transValue(left) + phrase;
+    }
+    return `${transValue(left, true)} ${CMP_WORD[op]} ${transValue(right, true)}`;
+  }
+
+  return transValue(term);
+}
+
 function transTerm(termRaw) {
-  let term = String(termRaw || '').trim();
+  let term = stripOuterParens(String(termRaw || '').trim());
+  if (term === 'true') return '恒成立';
+  if (term === 'false') return '恒不成立';
+
   let neg = false;
   while (term.startsWith('!')) {
     neg = true;
-    term = term.slice(1).trim();
+    term = stripOuterParens(term.slice(1).trim());
   }
 
-  let text;
-  const m = term.match(/^(.+?)\s*(>=|<=|==|!=|>|<)\s*(-?[\d.]+)$/);
-  if (m) {
-    const phrase = CMP_TEXT[m[2]] ? CMP_TEXT[m[2]](m[3]) : `${m[2]} ${m[3]}`;
-    text = transValue(m[1].trim()) + phrase;
-  } else if (term.includes('&&') || term.includes('||')) {
-    text = translateCondition(term);
-  } else {
-    text = transValue(term);
-  }
+  const text = transCompare(term);
   return neg ? `非（${text}）` : text;
 }
 
@@ -427,17 +504,52 @@ export function translateCondition(exprRaw) {
 // ---------- 策略结构整理 ----------
 
 export function buildCombatRows(data) {
-  const actions = (data && (data.Actions || data.actions)) || [];
-  return actions.map((a, i) => {
-    const cond = (a.Condition && a.Condition.Expression) || '';
+  const src = data || {};
+  const info = src.Info || src.info || {};
+  const actions = src.Actions || src.actions || [];
+
+  // 按引擎的方式展开：主条件条目用 Index 作优先级，morePriorities 各用自己的 priority
+  const queue = [];
+  actions.forEach((a, i) => {
+    const index = a.Index ?? a.index ?? i;
+    const cond = (a.Condition && (a.Condition.Expression ?? a.Condition.expression))
+      || (a.condition && (a.condition.expression ?? a.condition.Expression)) || '';
+    queue.push({ action: a, priority: index, isExtra: false, index, condition: cond });
+    (a.MorePriorities || a.morePriorities || []).forEach((m) => {
+      queue.push({
+        action: a,
+        priority: (m && (m.Priority ?? m.priority)) ?? 0,
+        isExtra: true,
+        index,
+        condition: (m && (m.Expression ?? m.expression)) || '',
+      });
+    });
+  });
+
+  queue.sort((x, y) => x.priority - y.priority);
+
+  const rows = queue.map((item, i) => {
+    const a = item.action;
+    const act = a.Action ?? a.action ?? '';
     return {
-      key: `${a.Index ?? i}-${i}`,
-      index: a.Index ?? i,
-      character: a.Character || '',
-      condition: cond,
-      conditionText: translateCondition(cond),
-      action: a.Action || '',
-      actionText: translateAction(a.Action || '').join(' → '),
+      key: `${item.priority}-${item.index}-${i}`,
+      priority: item.priority,
+      isExtra: item.isExtra,
+      ownIndex: item.index,
+      character: a.Character || a.character || '',
+      actionName: a.Name || a.name || '',
+      condition: item.condition,
+      conditionText: translateCondition(item.condition),
+      action: act,
+      actionText: translateAction(act).join(' → '),
+      ensureCast: !!(a.EnsureCast ?? a.ensureCast),
     };
   });
+
+  const preActions = (info.PreActions || info.preActions || []).map((s) => ({
+    raw: s,
+    text: translateAction(s).join(' → ') || s,
+  }));
+
+  return { preActions, rows };
 }
