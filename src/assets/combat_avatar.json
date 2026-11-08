@@ -1969,7 +1969,7 @@
     "name": "杜林",
     "nameEn": "Durin",
     "skillCD": 12,
-    "weapon": "10"
+    "weapon": "1"
   },
   {
     "alias": [
@@ -1981,7 +1981,7 @@
     "name": "雅珂达",
     "nameEn": "Jahoda",
     "skillCD": 15,
-    "weapon": "10"
+    "weapon": "12"
   },
   {
     "alias": [
@@ -2011,7 +2011,7 @@
     "name": "兹白",
     "nameEn": "Zibai",
     "skillCD": 18,
-    "weapon": "10"
+    "weapon": "1"
   },
   {
     "alias": [
@@ -2025,7 +2025,7 @@
     "name": "叶洛亚",
     "nameEn": "Illuga",
     "skillCD": 15,
-    "weapon": "10"
+    "weapon": "13"
   },
   {
     "alias": [
@@ -2039,7 +2039,7 @@
     "name": "法尔伽",
     "nameEn": "Varka",
     "skillCD": 16,
-    "weapon": "10"
+    "weapon": "11"
   },
   {
     "alias": [
@@ -2051,7 +2051,7 @@
     "name": "莉奈娅",
     "nameEn": "Linnea",
     "skillCD": 18,
-    "weapon": "10"
+    "weapon": "12"
   },
   {
     "alias": [
@@ -2063,7 +2063,7 @@
     "name": "洛恩",
     "nameEn": "Lohen",
     "skillCD": 18,
-    "weapon": "10"
+    "weapon": "13"
   },
   {
     "alias": [
@@ -2100,7 +2100,7 @@
     "name": "桑多涅",
     "nameEn": "Marionette",
     "skillCD": 4,
-    "weapon": "10"
+    "weapon": "11"
   },
   {
     "alias": [
@@ -2112,7 +2112,7 @@
     "name": "阿罗夏",
     "nameEn": "Alyosha",
     "skillCD": 15,
-    "weapon": "10"
+    "weapon": "13"
   },
   {
     "alias": [
@@ -2124,6 +2124,58 @@
     "name": "奥黛塔",
     "nameEn": "Odette",
     "skillCD": 15,
+    "weapon": "1"
+  },
+  {
+    "alias": [
+      "沃雅妮莎",
+      "沃",
+      "水妖",
+      "Vodyanitsa"
+    ],
+    "burstCD": 15,
+    "id": "10000140",
+    "name": "沃雅妮莎",
+    "nameEn": "Vodyanitsa",
+    "skillCD": 16,
+    "weapon": "10"
+  },
+  {
+    "alias": [
+      "薇斯纳",
+      "没头脑",
+      "风仙",
+      "Vesna"
+    ],
+    "burstCD": 15,
+    "id": "10000143",
+    "name": "薇斯纳",
+    "nameEn": "Vesna",
+    "skillCD": 18,
+    "weapon": "1"
+  },
+  {
+    "alias": [
+      "瓦列里",
+      "Valeriy"
+    ],
+    "burstCD": 15,
+    "id": "10000137",
+    "name": "瓦列里",
+    "nameEn": "Valeriy",
+    "skillCD": 10,
+    "weapon": "1"
+  },
+  {
+    "alias": [
+      "米提亚",
+      "Mitya"
+    ],
+    "burstCD": 15,
+    "id": "10000136",
+    "name": "米提亚",
+    "nameEn": "Mitya",
+    "skillCD": 18,
     "weapon": "10"
   }
 ]
